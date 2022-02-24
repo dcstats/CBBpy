@@ -1,0 +1,4 @@
+
+*.ipynb
+*.pyc
+.ipynb_checkpoints/game-checkpoint.csv
