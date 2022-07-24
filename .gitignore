@@ -5,3 +5,5 @@
 testing/
 __pycache__/
 .DS_Store
+.ipynb_checkpoints/setup-checkpoint.cfg
+.ipynb_checkpoints/setup-checkpoint.py
