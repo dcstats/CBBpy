@@ -8,3 +8,5 @@ __pycache__/
 .ipynb_checkpoints/setup-checkpoint.cfg
 .ipynb_checkpoints/setup-checkpoint.py
 *.gz
+.ipynb_checkpoints/LICENSE-checkpoint
+.ipynb_checkpoints/pyproject-checkpoint.toml

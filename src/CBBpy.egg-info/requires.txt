@@ -1,5 +1,5 @@
-pandas
-numpy
-python-dateutil
-pytz
-tqdm
+pandas>=1.4.2
+numpy>=1.22.3
+python-dateutil>=2.8.2
+pytz>=2022.1
+tqdm>=4.63.0
