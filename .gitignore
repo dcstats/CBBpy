@@ -10,3 +10,4 @@ __pycache__/
 *.gz
 .ipynb_checkpoints/LICENSE-checkpoint
 .ipynb_checkpoints/pyproject-checkpoint.toml
+src/cbbpy/.ipynb_checkpoints/mens_scraper-checkpoint.py

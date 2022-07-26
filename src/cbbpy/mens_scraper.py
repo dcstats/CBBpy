@@ -12,7 +12,7 @@ import time
 import logging
 
 
-logging.basicConfig(filename='scraper.log', encoding='utf-8', level=logging.DEBUG)
+_log = logging.getLogger(__name__)
 
 ATTEMPTS = 3
 SCOREBOARD_URL = (
@@ -72,7 +72,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
         status_div = soup.find("div", {"class": "game-status"})
         for bad_game in BAD_GAMES:
             if bad_game in status_div.get_text():
-                logging.warning(f'"{time.ctime()}": {game_id} - {bad_game}')
+                _log.warning(f'"{time.ctime()}": {game_id} - {bad_game}')
                 return pd.DataFrame([])
 
         div = soup.find("div", {"id": "gamepackage-boxscore-module"})
@@ -94,7 +94,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
         df_away = _clean_boxscore_table(away_table, away_team_name, game_id)
         
     except Exception as ex:
-        logging.error(f'"{time.ctime()}": {game_id} - {ex}')
+        _log.error(f'"{time.ctime()}": {game_id} - {ex}')
         return pd.DataFrame([])
 
     return pd.concat([df_home, df_away])
@@ -110,7 +110,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
         status_div = soup.find("div", {"class": "game-status"})
         for bad_game in BAD_GAMES:
             if bad_game in status_div.get_text():
-                logging.warning(f'"{time.ctime()}": {game_id} - {bad_game}')
+                _log.warning(f'"{time.ctime()}": {game_id} - {bad_game}')
                 return pd.DataFrame([])
 
         # GET PBP METADATA
@@ -132,7 +132,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             pbp_halves.append(cleaned_pbp_half)
     
     except Exception as ex:
-        logging.error(f'"{time.ctime()}": {game_id} - {ex}')
+        _log.error(f'"{time.ctime()}": {game_id} - {ex}')
         return pd.DataFrame([])
     
     return pd.concat(pbp_halves)
@@ -199,7 +199,7 @@ def _get_game_info(game_id):
         status_div = soup.find("div", {"class": "game-status"})
         for bad_game in BAD_GAMES:
             if bad_game in status_div.get_text():
-                logging.warning(f'"{time.ctime()}": {game_id} - {bad_game}')
+                _log.warning(f'"{time.ctime()}": {game_id} - {bad_game}')
                 return pd.DataFrame([])
 
         # GET DIVS
@@ -382,7 +382,7 @@ def _get_game_info(game_id):
         ]
 
     except Exception as ex:
-        logging.error(f'"{time.ctime()}": {game_id} - {ex}')
+        _log.error(f'"{time.ctime()}": {game_id} - {ex}')
         return pd.DataFrame([])
     
     return pd.DataFrame([game_info_list], columns=game_info_cols)
