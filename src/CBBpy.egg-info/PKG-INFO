@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: CBBpy
-Version: 0.8
+Version: 0.9
 Summary: A Python-based web scraper for NCAA basketball.
 Author-email: Daniel Cowan <dnlcowan37@gmail.com>
 License: MIT License

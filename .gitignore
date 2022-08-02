@@ -1,7 +1,7 @@
 
 *.ipynb
 *.pyc
-.ipynb_checkpoints/game-checkpoint.csv
+.ipynb_checkpoints/
 testing/
 __pycache__/
 .DS_Store
@@ -11,3 +11,7 @@ __pycache__/
 .ipynb_checkpoints/LICENSE-checkpoint
 .ipynb_checkpoints/pyproject-checkpoint.toml
 src/cbbpy/.ipynb_checkpoints/mens_scraper-checkpoint.py
+*.whl
+build/
+dist/
+CBBpy.egg-info/
