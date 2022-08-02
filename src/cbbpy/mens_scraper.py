@@ -12,6 +12,7 @@ import time
 import logging
 
 
+logging.basicConfig(filename='cbbpy.log')
 _log = logging.getLogger(__name__)
 
 ATTEMPTS = 3
