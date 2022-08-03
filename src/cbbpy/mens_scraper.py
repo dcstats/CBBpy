@@ -1,3 +1,10 @@
+"""
+A tool to scrape data for NCAA D1 Men's college basketball games.
+
+Author: Daniel Cowan
+"""
+
+
 from bs4 import BeautifulSoup as bs
 import requests as r
 import pandas as pd
@@ -48,22 +55,38 @@ BAD_GAMES = [
 ]
 
 
-def get_game(game_id: str, boxscore: bool = True, pbp: bool = True) -> tuple:
-    boxscore_df = pd.DataFrame([])
-    pbp_df = pd.DataFrame([])
-    
-    game_info_df = _get_game_info(game_id)
+def get_game(game_id: str) -> tuple:
+    """A function that scrapes all game info (metadata, boxscore, play-by-play).
 
-    if boxscore:
-        boxscore_df = get_game_boxscore(game_id)
- 
-    if pbp:
-        pbp_df = get_game_pbp(game_id)
+    Parameters:
+        - game_id: a string representing the game's ESPN game ID
+
+    Returns
+        - (game_info_df, boxscore_df, pbp_df), a tuple consisting of:
+            -- game_info_df: a DataFrame of the game's metadata
+            -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
+            -- pbp_df: a DataFrame of the game's play-by-play
+    """
+
+    game_info_df = get_game_info(game_id)
+
+    boxscore_df = get_game_boxscore(game_id)
+
+    pbp_df = get_game_pbp(game_id)
 
     return (game_info_df, boxscore_df, pbp_df)
 
 
 def get_game_boxscore(game_id: str) -> pd.DataFrame:
+    """A function that scrapes a game's boxscore.
+
+    Parameters:
+        - game_id: a string representing the game's ESPN game ID
+
+    Returns
+        - the game boxscore as a DataFrame
+    """
+
     try:
         url = BOXSCORE_URL.format(game_id)
         page = r.get(url)
@@ -93,7 +116,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
 
         df_home = _clean_boxscore_table(home_table, home_team_name, game_id)
         df_away = _clean_boxscore_table(away_table, away_team_name, game_id)
-        
+
     except Exception as ex:
         _log.error(f'"{time.ctime()}": {game_id} - {ex}')
         return pd.DataFrame([])
@@ -102,6 +125,15 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
 
 
 def get_game_pbp(game_id: str) -> pd.DataFrame:
+    """A function that scrapes a game's play-by-play information.
+
+    Parameters:
+        - game_id: a string representing the game's ESPN game ID
+
+    Returns
+        - the game's play-by-play information represented as a DataFrame
+    """
+
     try:
         url = PBP_URL.format(game_id)
         page = r.get(url)
@@ -131,28 +163,30 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 table, (team_map, num_halves, i + 1, game_id)
             )
             pbp_halves.append(cleaned_pbp_half)
-    
+
     except Exception as ex:
         _log.error(f'"{time.ctime()}": {game_id} - {ex}')
         return pd.DataFrame([])
-    
+
     return pd.concat(pbp_halves)
 
 
-def get_game_ids(date: str) -> list:
-    d = date.strftime("%Y%m%d")
-    url = SCOREBOARD_URL.format(d)
-    page = r.get(url)
-    soup = bs(page.content, "lxml")
-    sec = soup.find("section", {"class": "Card gameModules"})
-    games = sec.find_all(
-        "section", {"class": "Scoreboard bg-clr-white flex flex-auto justify-between"}
-    )
-    ids = [game["id"] for game in games]
-    return ids
+def get_games_season(season: int) -> tuple:
+    """A function that scrapes all game info (metadata, boxscore, play-by-play) for every game of
+    a given season.
 
+    Parameters:
+        - season: an integer representing the season to be scraped. NOTE: season is takes the form
+        of the four-digit representation of the later year of the season. So, as an example, the
+        2021-22 season is referred to by the integer 2022.
 
-def get_games_season(season) -> tuple:
+    Returns
+        - (game_info_df, boxscore_df, pbp_df), a tuple consisting of:
+            -- game_info_df: a DataFrame of the game's metadata
+            -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
+            -- pbp_df: a DataFrame of the game's play-by-play
+    """
+
     season_start_date = datetime(season - 1, 11, 1)
     season_end_date = datetime(season, 5, 1)
     len_season = (season_end_date - season_start_date).days
@@ -190,7 +224,16 @@ def get_games_season(season) -> tuple:
     return (game_info_df, game_boxscore_df, game_pbp_df)
 
 
-def _get_game_info(game_id):
+def get_game_info(game_id: str) -> pd.DataFrame:
+    """A function that scrapes game metadata.
+
+    Parameters:
+        - game_id: a string representing the game's ESPN game ID
+
+    Returns
+        - a DataFrame with one row and a column for each piece of metadata
+    """
+
     try:
         url = GAME_URL.format(game_id)
         page = r.get(url)
@@ -214,7 +257,8 @@ def _get_game_info(game_id):
             + " "
             + home_div.find("span", {"class": "short-name"}).get_text()
         )
-        home_score = home_div.find("div", {"class": "score-container"}).get_text()
+        home_score = home_div.find(
+            "div", {"class": "score-container"}).get_text()
         try:
             home_id_pre = home_div.find("a", {"class": "team-name"})["href"]
             home_id = [x for x in home_id_pre.split("/") if x.isdigit()][0]
@@ -236,7 +280,8 @@ def _get_game_info(game_id):
             + " "
             + away_div.find("span", {"class": "short-name"}).get_text()
         )
-        away_score = away_div.find("div", {"class": "score-container"}).get_text()
+        away_score = away_div.find(
+            "div", {"class": "score-container"}).get_text()
         try:
             away_id_pre = away_div.find("a", {"class": "team-name"})["href"]
             away_id = [x for x in away_id_pre.split("/") if x.isdigit()][0]
@@ -255,7 +300,8 @@ def _get_game_info(game_id):
         # GET GAME INFO
         game_info_div = soup.find("div", {"data-module": "gameInformation"})
         game_date_pre = parse(
-            game_info_div.find("span", {"data-behavior": "date_time"})["data-date"]
+            game_info_div.find(
+                "span", {"data-behavior": "date_time"})["data-date"]
         )
         game_date = game_date_pre.replace(tzinfo=timezone.utc).astimezone(
             tz=tz("US/Pacific")
@@ -265,13 +311,15 @@ def _get_game_info(game_id):
 
         try:
             game_meta = (
-                soup.find("div", {"class": "game-details header"}).get_text().strip()
+                soup.find(
+                    "div", {"class": "game-details header"}).get_text().strip()
             )
         except:
             game_meta = np.nan
 
         home_win = True if int(home_score) > int(away_score) else False
-        num_ots = len(linesc_div.find("table").find("thead").find_all("th")) - 4
+        num_ots = len(linesc_div.find("table").find(
+            "thead").find_all("th")) - 4
 
         try:
             game_network = (
@@ -283,23 +331,30 @@ def _get_game_info(game_id):
         except:
             game_network = np.nan
 
-        game_arena_pre = game_info_div.find("div", {"class": "caption-wrapper"})
+        game_arena_pre = game_info_div.find(
+            "div", {"class": "caption-wrapper"})
 
         if not game_arena_pre:
             div_loc = game_info_div.find("div", {"class": "location-details"})
-            game_arena = div_loc.find("span", {"class": "game-location"}).get_text().strip()
-            game_loc = div_loc.find("div", {"class": "game-location"}).get_text().strip()
+            game_arena = div_loc.find(
+                "span", {"class": "game-location"}).get_text().strip()
+            game_loc = div_loc.find(
+                "div", {"class": "game-location"}).get_text().strip()
         else:
             game_arena = game_arena_pre.get_text().strip()
             game_loc = (
-                game_info_div.find("div", {"class": "game-location"}).get_text().strip()
+                game_info_div.find(
+                    "div", {"class": "game-location"}).get_text().strip()
             )
 
-        game_cap_pre = game_info_div.find_all("div", {"class": "game-info-note capacity"})
+        game_cap_pre = game_info_div.find_all(
+            "div", {"class": "game-info-note capacity"})
 
         if len(game_cap_pre) > 1:
-            game_att = game_cap_pre[0].get_text().strip().replace("Attendance: ", "")
-            game_cap = game_cap_pre[1].get_text().strip().replace("Capacity: ", "")
+            game_att = game_cap_pre[0].get_text(
+            ).strip().replace("Attendance: ", "")
+            game_cap = game_cap_pre[1].get_text(
+            ).strip().replace("Capacity: ", "")
         elif len(game_cap_pre) == 1:
             info = game_cap_pre[0].get_text().strip()
 
@@ -315,7 +370,8 @@ def _get_game_info(game_id):
 
         try:
             game_refs = (
-                game_info_div.find("span", {"class": "game-info-note__content"})
+                game_info_div.find(
+                    "span", {"class": "game-info-note__content"})
                 .get_text()
                 .split(", ")
             )
@@ -385,11 +441,36 @@ def _get_game_info(game_id):
     except Exception as ex:
         _log.error(f'"{time.ctime()}": {game_id} - {ex}')
         return pd.DataFrame([])
-    
+
     return pd.DataFrame([game_info_list], columns=game_info_cols)
 
 
+def get_game_ids(date: str) -> list:
+    """A function that scrapes all game IDs on a date.
+
+    Parameters:
+        - date: a string representing the date to be scraped
+
+    Returns
+        - a list of ESPN all game IDs for games played on the date given
+    """
+
+    d = date.strftime("%Y%m%d")
+    url = SCOREBOARD_URL.format(d)
+    page = r.get(url)
+    soup = bs(page.content, "lxml")
+    sec = soup.find("section", {"class": "Card gameModules"})
+    games = sec.find_all(
+        "section", {
+            "class": "Scoreboard bg-clr-white flex flex-auto justify-between"}
+    )
+    ids = [game["id"] for game in games]
+    return ids
+
+
 def _clean_boxscore_table(table, team, game_id):
+    """A helper function to clean the DataFrame returned by get_game_boxscore"""
+
     # GET RID OF UNWANTED ROWS
     all_rows = table.find_all("tr")
     bad_rows_a = table.find_all("thead")[1].find_all("tr")
@@ -410,7 +491,8 @@ def _clean_boxscore_table(table, team, game_id):
     df.columns = [x.lower() for x in df.columns]
 
     # GET PLAYER IDS
-    ids = [x.find("a")["href"].split("/")[-2] for x in good_rows if x.find("a")]
+    ids = [x.find("a")["href"].split("/")[-2]
+           for x in good_rows if x.find("a")]
     # GET POSITION OF PLAYERS
     pos = [x[-1] for x in df["starters"]]
     # GET INFO ABOUT STARTERS
@@ -450,6 +532,8 @@ def _clean_boxscore_table(table, team, game_id):
 
 
 def _get_pbp_map(soup):
+    """A helper function to map plays in the play-by-play 
+    to the teams who carried out the play"""
     # GET DIVS
     away_div = soup.find("div", {"class": "team away"})
     home_div = soup.find("div", {"class": "team home"})
@@ -489,7 +573,8 @@ def _get_pbp_map(soup):
     return {home_logo: home_name, away_logo: away_name}
 
 
-def _clean_pbp_table(table, info: tuple) -> pd.DataFrame:
+def _clean_pbp_table(table, info):
+    """A helper function to clean the DataFrame returned by get_game_pbp"""
     team_map = info[0]
     num_halves = info[1]
     cur_half = info[2]
@@ -499,7 +584,8 @@ def _clean_pbp_table(table, info: tuple) -> pd.DataFrame:
     body_rows = [x for x in table.find_all("tr") if not x.find("th")]
 
     # MAP THE LOGOS IN THE PBP TO THE TEAMS
-    links = [row.find("img")["src"] if row.find("img") else None for row in body_rows]
+    links = [row.find("img")["src"] if row.find("img")
+             else None for row in body_rows]
     links = [x.split(html.unescape("&amp;"))[0] if x else x for x in links]
     pbp_teams = [team_map[x] for x in links]
     if num_halves == 2:
@@ -572,7 +658,8 @@ def _clean_pbp_table(table, info: tuple) -> pd.DataFrame:
         for x in zip(df.play, df.play_type, df.scoring_play)
     ]
 
-    shooters = [x[0] if not x[0] == "" else x[1] for x in zip(scorers, non_scorers)]
+    shooters = [x[0] if not x[0] == "" else x[1]
+                for x in zip(scorers, non_scorers)]
 
     df["shooter"] = shooters
 
