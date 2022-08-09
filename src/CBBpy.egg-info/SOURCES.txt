@@ -1,9 +1,0 @@
-LICENSE
-README.md
-pyproject.toml
-src/CBBpy.egg-info/PKG-INFO
-src/CBBpy.egg-info/SOURCES.txt
-src/CBBpy.egg-info/dependency_links.txt
-src/CBBpy.egg-info/requires.txt
-src/CBBpy.egg-info/top_level.txt
-src/cbbpy/mens_scraper.py
