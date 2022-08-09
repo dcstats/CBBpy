@@ -17,6 +17,7 @@ from tqdm import trange
 import re
 import time
 import logging
+import traceback
 
 
 logging.basicConfig(filename='cbbpy.log')
@@ -118,7 +119,8 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
         df_away = _clean_boxscore_table(away_table, away_team_name, game_id)
 
     except Exception as ex:
-        _log.error(f'"{time.ctime()}": {game_id} - {ex}')
+        _log.error(
+            f'"{time.ctime()}": {game_id} - {ex}\n{traceback.format_exc()}')
         return pd.DataFrame([])
 
     return pd.concat([df_home, df_away])
@@ -165,7 +167,8 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             pbp_halves.append(cleaned_pbp_half)
 
     except Exception as ex:
-        _log.error(f'"{time.ctime()}": {game_id} - {ex}')
+        _log.error(
+            f'"{time.ctime()}": {game_id} - {ex}\n{traceback.format_exc()}')
         return pd.DataFrame([])
 
     return pd.concat(pbp_halves)
@@ -439,7 +442,8 @@ def get_game_info(game_id: str) -> pd.DataFrame:
         ]
 
     except Exception as ex:
-        _log.error(f'"{time.ctime()}": {game_id} - {ex}')
+        _log.error(
+            f'"{time.ctime()}": {game_id} - {ex}\n{traceback.print_exc()}')
         return pd.DataFrame([])
 
     return pd.DataFrame([game_info_list], columns=game_info_cols)
@@ -592,22 +596,34 @@ def _clean_pbp_table(table, info):
         tot_seconds_in_game = num_halves * 20 * 60
     else:
         tot_seconds_in_game = (2 * 20 * 60) + ((num_halves - 2) * 5 * 60)
+
     df = pd.read_html(str(table))[0]
-    df["team"] = pbp_teams
     df = df.dropna(axis=1, how="all")
     df.columns = [x.lower() for x in df.columns]
+
+    # type handling
+    df.time = df.time.astype(str)
+    df.play = df.play.astype(str)
+    df.score = df.score.astype(str)
+
+    df["team"] = pbp_teams
+    df.team = df.team.astype(str)
     df.insert(1, "game_id", game_id)
+    df.game_id = df.game_id.astype(str)
 
     # SCORE FORMATTING
     score_splits = [x.split(" - ") for x in df.score]
-    away_scores = [x[0] for x in score_splits]
-    home_scores = [x[1] for x in score_splits]
+    away_scores = [int(x[0]) for x in score_splits]
+    home_scores = [int(x[1]) for x in score_splits]
     df.insert(3, "home_score", home_scores)
+    df.home_score = df.home_score.astype(int)
     df.insert(4, "away_score", away_scores)
+    df.away_score = df.away_score.astype(int)
     df = df.drop(columns=["score"])
 
     # HALF NUMBER
     df.insert(5, "half", cur_half)
+    df.half = df.half.astype(int)
 
     # TIME FORMATTING
     time_splits = [x.split(":") for x in df.time]
@@ -618,7 +634,9 @@ def _clean_pbp_table(table, info):
     reg_secs_left = [1200 + x if cur_half == 1 else x for x in tot_secs_left]
 
     df.insert(6, "secs_left_half", tot_secs_left)
+    df.secs_left_half = df.secs_left_half.astype(int)
     df.insert(7, "secs_left_reg", reg_secs_left)
+    df.secs_left_reg = df.secs_left_reg.astype(int)
     df = df.drop(columns=["time"])
 
     # ASSIGN PLAY TYPES
@@ -641,12 +659,14 @@ def _clean_pbp_table(table, info):
             p_types.append('')
 
     df["play_type"] = p_types
+    df.play_type = df.play_type.astype(str)
 
     scoring_play = [
         True if not row.find("th") and row.has_attr("class") else False
         for row in body_rows
     ]
     df["scoring_play"] = scoring_play
+    df.scoring_play = df.scoring_play.astype(bool)
 
     # FIND SHOOTERS
     scorers = [
@@ -662,20 +682,25 @@ def _clean_pbp_table(table, info):
                 for x in zip(scorers, non_scorers)]
 
     df["shooter"] = shooters
+    df.shooter = df.shooter.astype(str)
 
     # INSERT TEAMS
     df = df.rename(columns={"team": "play_team"})
     df = df.rename(columns={"play": "play_desc"})
     df.insert(1, "home_team", home_name)
+    df.home_team = df.home_team.astype(str)
     df.insert(2, "away_team", away_name)
+    df.away_team = df.away_team.astype(str)
 
     # GET ASSIST INFO
     is_assisted = [True if "Assisted" in x else False for x in df.play_desc]
     df["is_assisted"] = is_assisted
+    df.is_assisted = df.is_assisted.astype(bool)
     assisted_pls = [
         x[0].split("Assisted by ")[-1].replace(".", "") if x[1] else ""
         for x in zip(df.play_desc, df.is_assisted)
     ]
     df["assist_player"] = assisted_pls
+    df.assist_player = df.assist_player.astype(str)
 
     return df
