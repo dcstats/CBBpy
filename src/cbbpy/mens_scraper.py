@@ -53,6 +53,7 @@ BAD_GAMES = [
     "Forfeit",
     "Postponed",
     "Canceled",
+    "Uncontested",
 ]
 
 
