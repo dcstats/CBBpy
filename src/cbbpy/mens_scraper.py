@@ -494,6 +494,22 @@ def _clean_boxscore_table(table, team, game_id):
     df = pd.read_html(t)[0]
     df.columns = [x.lower() for x in df.columns]
 
+    # type handling
+    df.starters = df.starters.astype(str)
+    df['min'] = df['min'].astype(int)
+    df.fg = df.fg.astype(str)
+    df['3pt'] = df['3pt'].astype(str)
+    df.ft = df.ft.astype(str)
+    df.oreb = df.oreb.astype(int)
+    df.dreb = df.dreb.astype(int)
+    df.reb = df.reb.astype(int)
+    df.ast = df.ast.astype(int)
+    df.stl = df.stl.astype(int)
+    df.blk = df.blk.astype(int)
+    df.to = df.to.astype(int)
+    df.pf = df.pf.astype(int)
+    df.pts = df.pts.astype(int)
+
     # GET PLAYER IDS
     ids = [x.find("a")["href"].split("/")[-2]
            for x in good_rows if x.find("a")]
@@ -519,18 +535,31 @@ def _clean_boxscore_table(table, team, game_id):
 
     # INSERT COLUMNS WHERE NECESSARY
     df.insert(0, "game_id", game_id)
+    df.game_id = df.game_id.astype(str)
     df.insert(1, "team", team)
+    df.team = df.team.astype(str)
     df.insert(3, "player_id", ids)
+    df.player_id = df.player_id.astype(str)
     df.insert(4, "position", pos)
+    df.position = df.position.astype(str)
     df.insert(5, "starter", start)
+    df.starter = df.starter.astype(bool)
     df.insert(7, "fgm", fgm)
+    df.fgm = df.fgm.astype(int)
     df.insert(8, "fga", fga)
+    df.fga = df.fga.astype(int)
     df.insert(9, "2pm", [int(x) - int(y) for x, y in zip(fgm, thpm)])
+    df['2pm'] = df['2pm'].astype(int)
     df.insert(10, "2pa", [int(x) - int(y) for x, y in zip(fga, thpa)])
+    df['2pa'] = df['2pa'].astype(int)
     df.insert(11, "3pm", thpm)
+    df['3pm'] = df['3pm'].astype(int)
     df.insert(12, "3pa", thpa)
+    df['3pa'] = df['3pa'].astype(int)
     df.insert(13, "ftm", ftm)
+    df['ftm'] = df['ftm'].astype(int)
     df.insert(14, "fta", fta)
+    df['fta'] = df['fta'].astype(int)
 
     return df
 
