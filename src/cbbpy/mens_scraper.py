@@ -25,7 +25,7 @@ _log = logging.getLogger(__name__)
 
 ATTEMPTS = 3
 SCOREBOARD_URL = (
-    "https://www.espn.com/mens-college-basketball/scoreboard/_/date/{}/group/50"
+    "https://www.espn.com/mens-college-basketball/scoreboard/_/date/{}"
 )
 GAME_URL = "https://www.espn.com/mens-college-basketball/game/_/gameId/{}"
 BOXSCORE_URL = "https://www.espn.com/mens-college-basketball/boxscore/_/gameId/{}"
