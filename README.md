@@ -1,4 +1,4 @@
-[![PyPi Version](https://img.shields.io/pypi/v/cbbpy.svg)](https://pypi.org/project/cbbpy/)
+[![PyPi Version](https://img.shields.io/pypi/v/cbbpy.svg)](https://pypi.org/project/cbbpy/) [![Downloads](https://pepy.tech/badge/cbbpy)](https://pepy.tech/project/cbbpy)
 
 # CBBpy: A Python-based web scraper for NCAA basketball
 
