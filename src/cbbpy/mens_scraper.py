@@ -135,7 +135,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(0.2)
+                time.sleep(1)
                 continue
         else:
             # no exception thrown
@@ -194,7 +194,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(0.2)
+                time.sleep(1)
                 continue
         else:
             # no exception thrown
@@ -435,7 +435,7 @@ def get_game_info(game_id: str) -> pd.DataFrame:
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(0.2)
+                time.sleep(1)
                 continue
         else:
             # no exception thrown
@@ -529,7 +529,7 @@ def get_game_ids(date: str) -> list:
                 return []
             else:
                 # try again
-                time.sleep(0.2)
+                time.sleep(1)
                 continue
         else:
             # no exception thrown
