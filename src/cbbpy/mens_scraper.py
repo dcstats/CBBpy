@@ -18,12 +18,18 @@ import re
 import time
 import logging
 import traceback
+from typing import Union
 
 
 logging.basicConfig(filename='cbbpy.log')
 _log = logging.getLogger(__name__)
 
 ATTEMPTS = 3
+DATE_PARSES = ['%Y-%m-%d',
+               '%Y/%m/%d',
+               '%m-%d-%Y',
+               '%m/%d/%Y',
+               ]
 SCOREBOARD_URL = (
     "https://www.espn.com/mens-college-basketball/scoreboard/_/date/{}"
 )
@@ -56,6 +62,10 @@ BAD_GAMES = [
     "Uncontested",
     "TBD",
 ]
+
+
+class CouldNotParseError(Exception):
+    pass
 
 
 def get_game(game_id: str) -> tuple:
@@ -460,7 +470,6 @@ def get_games_season(season: int) -> tuple:
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-
     season_start_date = datetime(season - 1, 11, 1)
     season_end_date = datetime(season, 5, 1)
     len_season = (season_end_date - season_start_date).days
@@ -498,7 +507,7 @@ def get_games_season(season: int) -> tuple:
     return (game_info_df, game_boxscore_df, game_pbp_df)
 
 
-def get_game_ids(date: str) -> list:
+def get_game_ids(date: Union[str, datetime]) -> list:
     """A function that scrapes all game IDs on a date.
 
     Parameters:
@@ -507,6 +516,21 @@ def get_game_ids(date: str) -> list:
     Returns
         - a list of ESPN all game IDs for games played on the date given
     """
+    if type(date) == str:
+        parsed = False
+
+        for parse in DATE_PARSES:
+            try:
+                date = datetime.strptime(date, parse)
+            except:
+                continue
+            else:
+                parsed = True
+                break
+
+        if not parsed:
+            raise CouldNotParseError('The given date could not be parsed. Try any of these formats:\n' +
+                                     'Y-m-d\nY/m/d\nm-d-Y\nm/d/Y')
 
     for i in range(ATTEMPTS):
         try:
