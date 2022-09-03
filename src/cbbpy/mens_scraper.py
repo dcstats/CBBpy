@@ -61,6 +61,7 @@ BAD_GAMES = [
     "Canceled",
     "Uncontested",
     "TBD",
+    "Suspended"
 ]
 
 
