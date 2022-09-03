@@ -18,14 +18,20 @@ import re
 import time
 import logging
 import traceback
+from typing import Union
 
 
 logging.basicConfig(filename='cbbpy.log')
 _log = logging.getLogger(__name__)
 
 ATTEMPTS = 3
+DATE_PARSES = ['%Y-%m-%d',
+               '%Y/%m/%d',
+               '%m-%d-%Y',
+               '%m/%d/%Y',
+               ]
 SCOREBOARD_URL = (
-    "https://www.espn.com/mens-college-basketball/scoreboard/_/date/{}/group/50"
+    "https://www.espn.com/mens-college-basketball/scoreboard/_/date/{}"
 )
 GAME_URL = "https://www.espn.com/mens-college-basketball/game/_/gameId/{}"
 BOXSCORE_URL = "https://www.espn.com/mens-college-basketball/boxscore/_/gameId/{}"
@@ -54,7 +60,13 @@ BAD_GAMES = [
     "Postponed",
     "Canceled",
     "Uncontested",
+    "TBD",
+    "Suspended"
 ]
+
+
+class CouldNotParseError(Exception):
+    pass
 
 
 def get_game(game_id: str) -> tuple:
@@ -89,40 +101,57 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
         - the game boxscore as a DataFrame
     """
 
-    try:
-        url = BOXSCORE_URL.format(game_id)
-        page = r.get(url)
-        soup = bs(page.content, "lxml")
+    for i in range(ATTEMPTS):
+        try:
+            url = BOXSCORE_URL.format(game_id)
+            page = r.get(url)
+            soup = bs(page.content, "lxml")
 
-        # check if game was postponed
-        status_div = soup.find("div", {"class": "game-status"})
-        for bad_game in BAD_GAMES:
-            if bad_game in status_div.get_text():
-                _log.warning(f'"{time.ctime()}": {game_id} - {bad_game}')
+            # check if game was postponed
+            status_div = soup.find("div", {"class": "game-status"})
+            for bad_game in BAD_GAMES:
+                if bad_game in status_div.get_text():
+                    _log.warning(f'"{time.ctime()}": {game_id} - {bad_game}')
+                    return pd.DataFrame([])
+
+            div = soup.find("div", {"id": "gamepackage-boxscore-module"})
+            tables = div.find_all("table")
+            away_table = tables[0]
+            home_table = tables[1]
+
+            # GET TEAM NAMES
+            home_info = soup.find("div", {"class": "team home"})
+            home_long = home_info.find(
+                "span", {"class": "long-name"}).get_text()
+            home_short = home_info.find(
+                "span", {"class": "short-name"}).get_text()
+            home_team_name = home_long + " " + home_short
+            away_info = soup.find("div", {"class": "team away"})
+            away_long = away_info.find(
+                "span", {"class": "long-name"}).get_text()
+            away_short = away_info.find(
+                "span", {"class": "short-name"}).get_text()
+            away_team_name = away_long + " " + away_short
+
+            df_home = _clean_boxscore_table(
+                home_table, home_team_name, game_id)
+            df_away = _clean_boxscore_table(
+                away_table, away_team_name, game_id)
+
+        except Exception as ex:
+            _log.error(
+                f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
+
+            if i+1 == ATTEMPTS:
+                # max number of attempts reached, so return blank df
                 return pd.DataFrame([])
-
-        div = soup.find("div", {"id": "gamepackage-boxscore-module"})
-        tables = div.find_all("table")
-        away_table = tables[0]
-        home_table = tables[1]
-
-        # GET TEAM NAMES
-        home_info = soup.find("div", {"class": "team home"})
-        home_long = home_info.find("span", {"class": "long-name"}).get_text()
-        home_short = home_info.find("span", {"class": "short-name"}).get_text()
-        home_team_name = home_long + " " + home_short
-        away_info = soup.find("div", {"class": "team away"})
-        away_long = away_info.find("span", {"class": "long-name"}).get_text()
-        away_short = away_info.find("span", {"class": "short-name"}).get_text()
-        away_team_name = away_long + " " + away_short
-
-        df_home = _clean_boxscore_table(home_table, home_team_name, game_id)
-        df_away = _clean_boxscore_table(away_table, away_team_name, game_id)
-
-    except Exception as ex:
-        _log.error(
-            f'"{time.ctime()}": {game_id} - {ex}\n{traceback.format_exc()}')
-        return pd.DataFrame([])
+            else:
+                # try again
+                time.sleep(1)
+                continue
+        else:
+            # no exception thrown
+            break
 
     return pd.concat([df_home, df_away])
 
@@ -137,42 +166,294 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
         - the game's play-by-play information represented as a DataFrame
     """
 
-    try:
-        url = PBP_URL.format(game_id)
-        page = r.get(url)
-        soup = bs(page.content, "lxml")
+    for i in range(ATTEMPTS):
+        try:
+            url = PBP_URL.format(game_id)
+            page = r.get(url)
+            soup = bs(page.content, "lxml")
 
-        # check if game was postponed
-        status_div = soup.find("div", {"class": "game-status"})
-        for bad_game in BAD_GAMES:
-            if bad_game in status_div.get_text():
-                _log.warning(f'"{time.ctime()}": {game_id} - {bad_game}')
+            # check if game was postponed
+            status_div = soup.find("div", {"class": "game-status"})
+            for bad_game in BAD_GAMES:
+                if bad_game in status_div.get_text():
+                    _log.warning(f'"{time.ctime()}": {game_id} - {bad_game}')
+                    return pd.DataFrame([])
+
+            # GET PBP METADATA
+            team_map = _get_pbp_map(soup)
+
+            # GET PBP DATA
+            div = soup.find("div", {"id": "gamepackage-play-by-play"})
+            tables = div.find_all("table")
+            num_halves = len(tables)
+            pbp_halves = []
+
+            if num_halves == 0:
                 return pd.DataFrame([])
 
-        # GET PBP METADATA
-        team_map = _get_pbp_map(soup)
+            for i, table in enumerate(tables):
+                cleaned_pbp_half = _clean_pbp_table(
+                    table, (team_map, num_halves, i + 1, game_id)
+                )
+                pbp_halves.append(cleaned_pbp_half)
 
-        # GET PBP DATA
-        div = soup.find("div", {"id": "gamepackage-play-by-play"})
-        tables = div.find_all("table")
-        num_halves = len(tables)
-        pbp_halves = []
+        except Exception as ex:
+            _log.error(
+                f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
 
-        if num_halves == 0:
-            return pd.DataFrame([])
-
-        for i, table in enumerate(tables):
-            cleaned_pbp_half = _clean_pbp_table(
-                table, (team_map, num_halves, i + 1, game_id)
-            )
-            pbp_halves.append(cleaned_pbp_half)
-
-    except Exception as ex:
-        _log.error(
-            f'"{time.ctime()}": {game_id} - {ex}\n{traceback.format_exc()}')
-        return pd.DataFrame([])
+            if i+1 == ATTEMPTS:
+                # max number of attempts reached, so return blank df
+                return pd.DataFrame([])
+            else:
+                # try again
+                time.sleep(1)
+                continue
+        else:
+            # no exception thrown
+            break
 
     return pd.concat(pbp_halves)
+
+
+def get_game_info(game_id: str) -> pd.DataFrame:
+    """A function that scrapes game metadata.
+
+    Parameters:
+        - game_id: a string representing the game's ESPN game ID
+
+    Returns
+        - a DataFrame with one row and a column for each piece of metadata
+    """
+
+    for i in range(ATTEMPTS):
+        try:
+            url = GAME_URL.format(game_id)
+            page = r.get(url)
+            soup = bs(page.content, "lxml")
+
+            # check if game was postponed
+            status_div = soup.find("div", {"class": "game-status"})
+            for bad_game in BAD_GAMES:
+                if bad_game in status_div.get_text():
+                    _log.warning(f'"{time.ctime()}": {game_id} - {bad_game}')
+                    return pd.DataFrame([])
+
+            # GET DIVS
+            linesc_div = soup.find("div", {"id": "gamepackage-linescore-wrap"})
+            home_div = soup.find("div", {"class": "team home"})
+            away_div = soup.find("div", {"class": "team away"})
+
+            # GET HOME INFO
+            home_team = (
+                home_div.find("span", {"class": "long-name"}).get_text()
+                + " "
+                + home_div.find("span", {"class": "short-name"}).get_text()
+            )
+            home_score = home_div.find(
+                "div", {"class": "score-container"}).get_text()
+            try:
+                home_id_pre = home_div.find(
+                    "a", {"class": "team-name"})["href"]
+                home_id = [x for x in home_id_pre.split("/") if x.isdigit()][0]
+                try:
+                    home_rank = home_div.find(
+                        "span", {"class": "rank"}).get_text()
+                except:
+                    home_rank = np.nan
+                home_record = home_div.find(
+                    "div", {"class": "record"}).get_text()
+            except:
+                # this case is for teams who are not D1
+                ht = home_team.lower().replace(" ", "-")
+                home_id = "nd-" + re.sub("[^0-9a-zA-Z\-]", "", ht)
+                home_rank = np.nan
+                home_record = np.nan
+
+            # GET AWAY INFO
+            away_team = (
+                away_div.find("span", {"class": "long-name"}).get_text()
+                + " "
+                + away_div.find("span", {"class": "short-name"}).get_text()
+            )
+            away_score = away_div.find(
+                "div", {"class": "score-container"}).get_text()
+            try:
+                away_id_pre = away_div.find(
+                    "a", {"class": "team-name"})["href"]
+                away_id = [x for x in away_id_pre.split("/") if x.isdigit()][0]
+                try:
+                    away_rank = away_div.find(
+                        "span", {"class": "rank"}).get_text()
+                except:
+                    away_rank = np.nan
+                away_record = away_div.find(
+                    "div", {"class": "record"}).get_text()
+            except:
+                # this case is for teams who are not D1
+                at = away_team.lower().replace(" ", "-")
+                away_id = "nd-" + re.sub("[^0-9a-zA-Z\-]", "", at)
+                away_rank = np.nan
+                away_record = np.nan
+
+            # GET GAME INFO
+            game_info_div = soup.find(
+                "div", {"data-module": "gameInformation"})
+            game_date_pre = parse(
+                game_info_div.find(
+                    "span", {"data-behavior": "date_time"})["data-date"]
+            )
+            game_date = game_date_pre.replace(tzinfo=timezone.utc).astimezone(
+                tz=tz("US/Pacific")
+            )
+            game_day = game_date.strftime("%B %d, %Y")
+            game_time = game_date.strftime("%I:%M %p %Z")
+
+            try:
+                game_meta = (
+                    soup.find(
+                        "div", {"class": "game-details header"}).get_text().strip()
+                )
+            except:
+                game_meta = np.nan
+
+            home_win = True if int(home_score) > int(away_score) else False
+            num_ots = len(linesc_div.find("table").find(
+                "thead").find_all("th")) - 4
+
+            try:
+                game_network = (
+                    game_info_div.find("div", {"class": "game-network"})
+                    .get_text()
+                    .strip()
+                    .replace("Coverage: ", "")
+                )
+            except:
+                game_network = np.nan
+
+            game_arena_pre = game_info_div.find(
+                "div", {"class": "caption-wrapper"})
+
+            if not game_arena_pre:
+                div_loc = game_info_div.find(
+                    "div", {"class": "location-details"})
+                game_arena = div_loc.find(
+                    "span", {"class": "game-location"}).get_text().strip()
+                game_loc = div_loc.find(
+                    "div", {"class": "game-location"}).get_text().strip()
+            else:
+                game_arena = game_arena_pre.get_text().strip()
+                game_loc = (
+                    game_info_div.find(
+                        "div", {"class": "game-location"}).get_text().strip()
+                )
+
+            game_cap_pre = game_info_div.find_all(
+                "div", {"class": "game-info-note capacity"})
+
+            if len(game_cap_pre) > 1:
+                game_att = game_cap_pre[0].get_text(
+                ).strip().replace("Attendance: ", "")
+                game_cap = game_cap_pre[1].get_text(
+                ).strip().replace("Capacity: ", "")
+            elif len(game_cap_pre) == 1:
+                info = game_cap_pre[0].get_text().strip()
+
+                if "Capacity" in info:
+                    game_att = np.nan
+                    game_cap = info.replace("Capacity: ", "")
+                else:
+                    game_att = info.replace("Attendance: ", "")
+                    game_cap = np.nan
+            else:
+                game_att = np.nan
+                game_cap = np.nan
+
+            try:
+                game_refs = (
+                    game_info_div.find(
+                        "span", {"class": "game-info-note__content"})
+                    .get_text()
+                    .split(", ")
+                )
+                game_r1 = game_refs[0] if len(game_refs) > 0 else np.nan
+                game_r2 = game_refs[1] if len(game_refs) > 1 else np.nan
+                game_r3 = game_refs[2] if len(game_refs) > 2 else np.nan
+            except:
+                game_r1 = np.nan
+                game_r2 = np.nan
+                game_r3 = np.nan
+
+            # AGGREGATE DATA INTO DATAFRAME AND RETURN
+            game_info_list = [
+                game_id,
+                home_team,
+                home_id,
+                home_rank,
+                home_record,
+                home_score,
+                away_team,
+                away_id,
+                away_rank,
+                away_record,
+                away_score,
+                home_win,
+                num_ots,
+                game_meta,
+                game_day,
+                game_time,
+                game_loc,
+                game_arena,
+                game_cap,
+                game_att,
+                game_network,
+                game_r1,
+                game_r2,
+                game_r3,
+            ]
+
+            game_info_cols = [
+                "game_id",
+                "home_team",
+                "home_id",
+                "home_rank",
+                "home_record",
+                "home_score",
+                "away_team",
+                "away_id",
+                "away_rank",
+                "away_record",
+                "away_score",
+                "home_win",
+                "num_ots",
+                "tournament",
+                "game_day",
+                "game_time",
+                "game_loc",
+                "arena",
+                "arena_capacity",
+                "attendance",
+                "tv_network",
+                "referee_1",
+                "referee_2",
+                "referee_3",
+            ]
+
+        except Exception as ex:
+            _log.error(
+                f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
+
+            if i+1 == ATTEMPTS:
+                # max number of attempts reached, so return blank df
+                return pd.DataFrame([])
+            else:
+                # try again
+                time.sleep(1)
+                continue
+        else:
+            # no exception thrown
+            break
+
+    return pd.DataFrame([game_info_list], columns=game_info_cols)
 
 
 def get_games_season(season: int) -> tuple:
@@ -190,7 +471,6 @@ def get_games_season(season: int) -> tuple:
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-
     season_start_date = datetime(season - 1, 11, 1)
     season_end_date = datetime(season, 5, 1)
     len_season = (season_end_date - season_start_date).days
@@ -228,229 +508,7 @@ def get_games_season(season: int) -> tuple:
     return (game_info_df, game_boxscore_df, game_pbp_df)
 
 
-def get_game_info(game_id: str) -> pd.DataFrame:
-    """A function that scrapes game metadata.
-
-    Parameters:
-        - game_id: a string representing the game's ESPN game ID
-
-    Returns
-        - a DataFrame with one row and a column for each piece of metadata
-    """
-
-    try:
-        url = GAME_URL.format(game_id)
-        page = r.get(url)
-        soup = bs(page.content, "lxml")
-
-        # check if game was postponed
-        status_div = soup.find("div", {"class": "game-status"})
-        for bad_game in BAD_GAMES:
-            if bad_game in status_div.get_text():
-                _log.warning(f'"{time.ctime()}": {game_id} - {bad_game}')
-                return pd.DataFrame([])
-
-        # GET DIVS
-        linesc_div = soup.find("div", {"id": "gamepackage-linescore-wrap"})
-        home_div = soup.find("div", {"class": "team home"})
-        away_div = soup.find("div", {"class": "team away"})
-
-        # GET HOME INFO
-        home_team = (
-            home_div.find("span", {"class": "long-name"}).get_text()
-            + " "
-            + home_div.find("span", {"class": "short-name"}).get_text()
-        )
-        home_score = home_div.find(
-            "div", {"class": "score-container"}).get_text()
-        try:
-            home_id_pre = home_div.find("a", {"class": "team-name"})["href"]
-            home_id = [x for x in home_id_pre.split("/") if x.isdigit()][0]
-            try:
-                home_rank = home_div.find("span", {"class": "rank"}).get_text()
-            except:
-                home_rank = np.nan
-            home_record = home_div.find("div", {"class": "record"}).get_text()
-        except:
-            # this case is for teams who are not D1
-            ht = home_team.lower().replace(" ", "-")
-            home_id = "nd-" + re.sub("[^0-9a-zA-Z\-]", "", ht)
-            home_rank = np.nan
-            home_record = np.nan
-
-        # GET AWAY INFO
-        away_team = (
-            away_div.find("span", {"class": "long-name"}).get_text()
-            + " "
-            + away_div.find("span", {"class": "short-name"}).get_text()
-        )
-        away_score = away_div.find(
-            "div", {"class": "score-container"}).get_text()
-        try:
-            away_id_pre = away_div.find("a", {"class": "team-name"})["href"]
-            away_id = [x for x in away_id_pre.split("/") if x.isdigit()][0]
-            try:
-                away_rank = away_div.find("span", {"class": "rank"}).get_text()
-            except:
-                away_rank = np.nan
-            away_record = away_div.find("div", {"class": "record"}).get_text()
-        except:
-            # this case is for teams who are not D1
-            at = away_team.lower().replace(" ", "-")
-            away_id = "nd-" + re.sub("[^0-9a-zA-Z\-]", "", at)
-            away_rank = np.nan
-            away_record = np.nan
-
-        # GET GAME INFO
-        game_info_div = soup.find("div", {"data-module": "gameInformation"})
-        game_date_pre = parse(
-            game_info_div.find(
-                "span", {"data-behavior": "date_time"})["data-date"]
-        )
-        game_date = game_date_pre.replace(tzinfo=timezone.utc).astimezone(
-            tz=tz("US/Pacific")
-        )
-        game_day = game_date.strftime("%B %d, %Y")
-        game_time = game_date.strftime("%I:%M %p %Z")
-
-        try:
-            game_meta = (
-                soup.find(
-                    "div", {"class": "game-details header"}).get_text().strip()
-            )
-        except:
-            game_meta = np.nan
-
-        home_win = True if int(home_score) > int(away_score) else False
-        num_ots = len(linesc_div.find("table").find(
-            "thead").find_all("th")) - 4
-
-        try:
-            game_network = (
-                game_info_div.find("div", {"class": "game-network"})
-                .get_text()
-                .strip()
-                .replace("Coverage: ", "")
-            )
-        except:
-            game_network = np.nan
-
-        game_arena_pre = game_info_div.find(
-            "div", {"class": "caption-wrapper"})
-
-        if not game_arena_pre:
-            div_loc = game_info_div.find("div", {"class": "location-details"})
-            game_arena = div_loc.find(
-                "span", {"class": "game-location"}).get_text().strip()
-            game_loc = div_loc.find(
-                "div", {"class": "game-location"}).get_text().strip()
-        else:
-            game_arena = game_arena_pre.get_text().strip()
-            game_loc = (
-                game_info_div.find(
-                    "div", {"class": "game-location"}).get_text().strip()
-            )
-
-        game_cap_pre = game_info_div.find_all(
-            "div", {"class": "game-info-note capacity"})
-
-        if len(game_cap_pre) > 1:
-            game_att = game_cap_pre[0].get_text(
-            ).strip().replace("Attendance: ", "")
-            game_cap = game_cap_pre[1].get_text(
-            ).strip().replace("Capacity: ", "")
-        elif len(game_cap_pre) == 1:
-            info = game_cap_pre[0].get_text().strip()
-
-            if "Capacity" in info:
-                game_att = np.nan
-                game_cap = info.replace("Capacity: ", "")
-            else:
-                game_att = info.replace("Attendance: ", "")
-                game_cap = np.nan
-        else:
-            game_att = np.nan
-            game_cap = np.nan
-
-        try:
-            game_refs = (
-                game_info_div.find(
-                    "span", {"class": "game-info-note__content"})
-                .get_text()
-                .split(", ")
-            )
-            game_r1 = game_refs[0] if len(game_refs) > 0 else np.nan
-            game_r2 = game_refs[1] if len(game_refs) > 1 else np.nan
-            game_r3 = game_refs[2] if len(game_refs) > 2 else np.nan
-        except:
-            game_r1 = np.nan
-            game_r2 = np.nan
-            game_r3 = np.nan
-
-        # AGGREGATE DATA INTO DATAFRAME AND RETURN
-        game_info_list = [
-            game_id,
-            home_team,
-            home_id,
-            home_rank,
-            home_record,
-            home_score,
-            away_team,
-            away_id,
-            away_rank,
-            away_record,
-            away_score,
-            home_win,
-            num_ots,
-            game_meta,
-            game_day,
-            game_time,
-            game_loc,
-            game_arena,
-            game_cap,
-            game_att,
-            game_network,
-            game_r1,
-            game_r2,
-            game_r3,
-        ]
-
-        game_info_cols = [
-            "game_id",
-            "home_team",
-            "home_id",
-            "home_rank",
-            "home_record",
-            "home_score",
-            "away_team",
-            "away_id",
-            "away_rank",
-            "away_record",
-            "away_score",
-            "home_win",
-            "num_ots",
-            "tournament",
-            "game_day",
-            "game_time",
-            "game_loc",
-            "arena",
-            "arena_capacity",
-            "attendance",
-            "tv_network",
-            "referee_1",
-            "referee_2",
-            "referee_3",
-        ]
-
-    except Exception as ex:
-        _log.error(
-            f'"{time.ctime()}": {game_id} - {ex}\n{traceback.print_exc()}')
-        return pd.DataFrame([])
-
-    return pd.DataFrame([game_info_list], columns=game_info_cols)
-
-
-def get_game_ids(date: str) -> list:
+def get_game_ids(date: Union[str, datetime]) -> list:
     """A function that scrapes all game IDs on a date.
 
     Parameters:
@@ -459,17 +517,50 @@ def get_game_ids(date: str) -> list:
     Returns
         - a list of ESPN all game IDs for games played on the date given
     """
+    if type(date) == str:
+        parsed = False
 
-    d = date.strftime("%Y%m%d")
-    url = SCOREBOARD_URL.format(d)
-    page = r.get(url)
-    soup = bs(page.content, "lxml")
-    sec = soup.find("section", {"class": "Card gameModules"})
-    games = sec.find_all(
-        "section", {
-            "class": "Scoreboard bg-clr-white flex flex-auto justify-between"}
-    )
-    ids = [game["id"] for game in games]
+        for parse in DATE_PARSES:
+            try:
+                date = datetime.strptime(date, parse)
+            except:
+                continue
+            else:
+                parsed = True
+                break
+
+        if not parsed:
+            raise CouldNotParseError('The given date could not be parsed. Try any of these formats:\n' +
+                                     'Y-m-d\nY/m/d\nm-d-Y\nm/d/Y')
+
+    for i in range(ATTEMPTS):
+        try:
+            d = date.strftime("%Y%m%d")
+            url = SCOREBOARD_URL.format(d)
+            page = r.get(url)
+            soup = bs(page.content, "lxml")
+            sec = soup.find("section", {"class": "Card gameModules"})
+            games = sec.find_all(
+                "section", {
+                    "class": "Scoreboard bg-clr-white flex flex-auto justify-between"}
+            )
+            ids = [game["id"] for game in games]
+
+        except Exception as ex:
+            _log.error(
+                f'"{time.ctime()}": {date} - {ex}\n{traceback.format_exc()}')
+
+            if i+1 == ATTEMPTS:
+                # max number of attempts reached, so return blank df
+                return []
+            else:
+                # try again
+                time.sleep(1)
+                continue
+        else:
+            # no exception thrown
+            break
+
     return ids
 
 
