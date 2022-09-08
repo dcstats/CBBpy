@@ -722,6 +722,7 @@ def _clean_pbp_table(table, info):
     df = pd.read_html(str(table))[0]
     df = df.dropna(axis=1, how="all")
     df.columns = [x.lower() for x in df.columns]
+    df = df.loc[:, ~df.columns.str.contains('unnamed')]
 
     # type handling
     df.time = df.time.astype(str)
