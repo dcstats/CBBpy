@@ -709,8 +709,9 @@ def _clean_pbp_table(table, info):
     body_rows = [x for x in table.find_all("tr") if not x.find("th")]
 
     # MAP THE LOGOS IN THE PBP TO THE TEAMS
-    links = [row.find("img")["src"] if row.find("img")
-             else None for row in body_rows]
+    logos = [row.find("td", {'class': 'logo'}) for row in body_rows]
+    links = [logo.find('img')['src'] if logo.find('img')
+             else None for logo in logos]
     links = [x.split(html.unescape("&amp;"))[0] if x else x for x in links]
     pbp_teams = [team_map[x] for x in links]
     if num_halves == 2:
