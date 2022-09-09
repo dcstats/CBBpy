@@ -548,7 +548,7 @@ def get_game_ids(date: Union[str, datetime]) -> list:
 
         except Exception as ex:
             _log.error(
-                f'"{time.ctime()}": {date} - {ex}\n{traceback.format_exc()}')
+                f'"{time.ctime()}" attempt {i+1}: {date} - {ex}\n{traceback.format_exc()}')
 
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
@@ -588,19 +588,19 @@ def _clean_boxscore_table(table, team, game_id):
 
     # type handling
     df.starters = df.starters.astype(str)
-    df['min'] = df['min'].astype(int)
+    df['min'] = pd.to_numeric(df['min'], errors='coerce')
     df.fg = df.fg.astype(str)
     df['3pt'] = df['3pt'].astype(str)
     df.ft = df.ft.astype(str)
-    df.oreb = df.oreb.astype(int)
-    df.dreb = df.dreb.astype(int)
-    df.reb = df.reb.astype(int)
-    df.ast = df.ast.astype(int)
-    df.stl = df.stl.astype(int)
-    df.blk = df.blk.astype(int)
-    df.to = df.to.astype(int)
-    df.pf = df.pf.astype(int)
-    df.pts = df.pts.astype(int)
+    df.oreb = pd.to_numeric(df.oreb, errors='coerce')
+    df.dreb = pd.to_numeric(df.dreb, errors='coerce')
+    df.reb = pd.to_numeric(df.reb, errors='coerce')
+    df.ast = pd.to_numeric(df.ast, errors='coerce')
+    df.stl = pd.to_numeric(df.stl, errors='coerce')
+    df.blk = pd.to_numeric(df.blk, errors='coerce')
+    df.to = pd.to_numeric(df.to, errors='coerce')
+    df.pf = pd.to_numeric(df.pf, errors='coerce')
+    df.pts = pd.to_numeric(df.pts, errors='coerce')
 
     # GET PLAYER IDS
     ids = [x.find("a")["href"].split("/")[-2]
@@ -637,21 +637,21 @@ def _clean_boxscore_table(table, team, game_id):
     df.insert(5, "starter", start)
     df.starter = df.starter.astype(bool)
     df.insert(7, "fgm", fgm)
-    df.fgm = df.fgm.astype(int)
+    df.fgm = pd.to_numeric(df.fgm, errors='coerce')
     df.insert(8, "fga", fga)
-    df.fga = df.fga.astype(int)
+    df.fga = pd.to_numeric(df.fga, errors='coerce')
     df.insert(9, "2pm", [int(x) - int(y) for x, y in zip(fgm, thpm)])
-    df['2pm'] = df['2pm'].astype(int)
+    df['2pm'] = pd.to_numeric(df['2pm'], errors='coerce')
     df.insert(10, "2pa", [int(x) - int(y) for x, y in zip(fga, thpa)])
-    df['2pa'] = df['2pa'].astype(int)
+    df['2pa'] = pd.to_numeric(df['2pa'], errors='coerce')
     df.insert(11, "3pm", thpm)
-    df['3pm'] = df['3pm'].astype(int)
+    df['3pm'] = pd.to_numeric(df['3pm'], errors='coerce')
     df.insert(12, "3pa", thpa)
-    df['3pa'] = df['3pa'].astype(int)
+    df['3pa'] = pd.to_numeric(df['3pa'], errors='coerce')
     df.insert(13, "ftm", ftm)
-    df['ftm'] = df['ftm'].astype(int)
+    df['ftm'] = pd.to_numeric(df['ftm'], errors='coerce')
     df.insert(14, "fta", fta)
-    df['fta'] = df['fta'].astype(int)
+    df['fta'] = pd.to_numeric(df['fta'], errors='coerce')
 
     return df
 
@@ -739,14 +739,14 @@ def _clean_pbp_table(table, info):
     away_scores = [int(x[0]) for x in score_splits]
     home_scores = [int(x[1]) for x in score_splits]
     df.insert(3, "home_score", home_scores)
-    df.home_score = df.home_score.astype(int)
+    df.home_score = pd.to_numeric(df.home_score, errors='coerce')
     df.insert(4, "away_score", away_scores)
-    df.away_score = df.away_score.astype(int)
+    df.away_score = pd.to_numeric(df.away_score, errors='coerce')
     df = df.drop(columns=["score"])
 
     # HALF NUMBER
     df.insert(5, "half", cur_half)
-    df.half = df.half.astype(int)
+    df.half = pd.to_numeric(df.half, errors='coerce')
 
     # TIME FORMATTING
     time_splits = [x.split(":") for x in df.time]
@@ -757,9 +757,9 @@ def _clean_pbp_table(table, info):
     reg_secs_left = [1200 + x if cur_half == 1 else x for x in tot_secs_left]
 
     df.insert(6, "secs_left_half", tot_secs_left)
-    df.secs_left_half = df.secs_left_half.astype(int)
+    df.secs_left_half = pd.to_numeric(df.secs_left_half, errors='coerce')
     df.insert(7, "secs_left_reg", reg_secs_left)
-    df.secs_left_reg = df.secs_left_reg.astype(int)
+    df.secs_left_reg = pd.to_numeric(df.secs_left_reg, errors='coerce')
     df = df.drop(columns=["time"])
 
     # ASSIGN PLAY TYPES
