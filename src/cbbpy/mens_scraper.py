@@ -152,11 +152,10 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
                 away_table, away_team_name, game_id)
 
         except Exception as ex:
-            _log.error(
-                f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
-
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
+                _log.error(
+                    f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
@@ -211,11 +210,10 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 pbp_halves.append(cleaned_pbp_half)
 
         except Exception as ex:
-            _log.error(
-                f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
-
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
+                _log.error(
+                    f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
@@ -452,11 +450,10 @@ def get_game_info(game_id: str) -> pd.DataFrame:
             ]
 
         except Exception as ex:
-            _log.error(
-                f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
-
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
+                _log.error(
+                    f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
@@ -560,11 +557,10 @@ def get_game_ids(date: Union[str, datetime]) -> list:
             ids = [game["id"] for game in games]
 
         except Exception as ex:
-            _log.error(
-                f'"{time.ctime()}" attempt {i+1}: {date} - {ex}\n{traceback.format_exc()}')
-
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
+                _log.error(
+                    f'"{time.ctime()}" attempt {i+1}: {date} - {ex}\n{traceback.format_exc()}')
                 return []
             else:
                 # try again
