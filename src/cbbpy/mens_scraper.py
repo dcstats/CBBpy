@@ -31,7 +31,7 @@ DATE_PARSES = ['%Y-%m-%d',
                '%m/%d/%Y',
                ]
 SCOREBOARD_URL = (
-    "https://www.espn.com/mens-college-basketball/scoreboard/_/date/{}"
+    "https://www.espn.com/mens-college-basketball/scoreboard/_/date/{}/seasontype/2/group/50"
 )
 GAME_URL = "https://www.espn.com/mens-college-basketball/game/_/gameId/{}"
 BOXSCORE_URL = "https://www.espn.com/mens-college-basketball/boxscore/_/gameId/{}"
