@@ -30,6 +30,19 @@ DATE_PARSES = ['%Y-%m-%d',
                '%m-%d-%Y',
                '%m/%d/%Y',
                ]
+HEADERS = [
+    {
+        'User-Agent':
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) ' +
+        'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
+    },
+
+    {
+        'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
+        'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36'
+    }
+]
 SCOREBOARD_URL = (
     "https://www.espn.com/mens-college-basketball/scoreboard/_/date/{}/seasontype/2/group/50"
 )
@@ -104,7 +117,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
     for i in range(ATTEMPTS):
         try:
             url = BOXSCORE_URL.format(game_id)
-            page = r.get(url)
+            page = r.get(url, headers=np.random.choice(HEADERS))
             soup = bs(page.content, "lxml")
 
             # check if game was postponed
@@ -169,7 +182,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
     for i in range(ATTEMPTS):
         try:
             url = PBP_URL.format(game_id)
-            page = r.get(url)
+            page = r.get(url, headers=np.random.choice(HEADERS))
             soup = bs(page.content, "lxml")
 
             # check if game was postponed
@@ -228,7 +241,7 @@ def get_game_info(game_id: str) -> pd.DataFrame:
     for i in range(ATTEMPTS):
         try:
             url = GAME_URL.format(game_id)
-            page = r.get(url)
+            page = r.get(url, headers=np.random.choice(HEADERS))
             soup = bs(page.content, "lxml")
 
             # check if game was postponed
@@ -485,7 +498,7 @@ def get_games_season(season: int) -> tuple:
                 games_info_day = []
                 for j, gid in enumerate(game_ids):
                     t.set_description(
-                        f"Scraping game {gid} ({j+1}/{len(game_ids)}) on {date}"
+                        f"Scraping {gid} ({j+1}/{len(game_ids)}) on {date.strftime('%D')}"
                     )
                     games_info_day.append(get_game(gid))
                 all_data.append(games_info_day)
@@ -537,7 +550,7 @@ def get_game_ids(date: Union[str, datetime]) -> list:
         try:
             d = date.strftime("%Y%m%d")
             url = SCOREBOARD_URL.format(d)
-            page = r.get(url)
+            page = r.get(url, headers=np.random.choice(HEADERS))
             soup = bs(page.content, "lxml")
             sec = soup.find("section", {"class": "Card gameModules"})
             games = sec.find_all(
