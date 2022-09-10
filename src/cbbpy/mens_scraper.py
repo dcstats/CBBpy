@@ -24,24 +24,43 @@ from typing import Union
 logging.basicConfig(filename='cbbpy.log')
 _log = logging.getLogger(__name__)
 
-ATTEMPTS = 3
+ATTEMPTS = 10
 DATE_PARSES = ['%Y-%m-%d',
                '%Y/%m/%d',
                '%m-%d-%Y',
                '%m/%d/%Y',
                ]
-HEADERS = [
-    {
-        'User-Agent':
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) ' +
-        'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
-    },
-
-    {
-        'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
-        'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36'
-    }
+USER_AGENTS = [
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 ' +
+    '(KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36',
+]
+REFERERS = [
+    'https://google.com/',
+    'https://youtube.com/',
+    'https://facebook.com/',
+    'https://twitter.com/',
+    'https://nytimes.com/',
+    'https://washingtonpost.com/',
+    'https://linkedin.com/',
+    'https://nhl.com/',
+    'https://mlb.com/',
+    'https://nfl.com/'
 ]
 SCOREBOARD_URL = (
     "https://www.espn.com/mens-college-basketball/scoreboard/_/date/{}/seasontype/2/group/50"
@@ -116,8 +135,12 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
 
     for i in range(ATTEMPTS):
         try:
+            header = {
+                'User-Agent': np.random.choice(USER_AGENTS),
+                'Referer': np.random.choice(REFERERS),
+            }
             url = BOXSCORE_URL.format(game_id)
-            page = r.get(url, headers=np.random.choice(HEADERS))
+            page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
 
             # check if game was postponed
@@ -159,7 +182,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(1)
+                time.sleep(1.5)
                 continue
         else:
             # no exception thrown
@@ -180,8 +203,12 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
 
     for i in range(ATTEMPTS):
         try:
+            header = {
+                'User-Agent': np.random.choice(USER_AGENTS),
+                'Referer': np.random.choice(REFERERS),
+            }
             url = PBP_URL.format(game_id)
-            page = r.get(url, headers=np.random.choice(HEADERS))
+            page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
 
             # check if game was postponed
@@ -217,7 +244,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(1)
+                time.sleep(1.5)
                 continue
         else:
             # no exception thrown
@@ -238,8 +265,12 @@ def get_game_info(game_id: str) -> pd.DataFrame:
 
     for i in range(ATTEMPTS):
         try:
+            header = {
+                'User-Agent': np.random.choice(USER_AGENTS),
+                'Referer': np.random.choice(REFERERS),
+            }
             url = GAME_URL.format(game_id)
-            page = r.get(url, headers=np.random.choice(HEADERS))
+            page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
 
             # check if game was postponed
@@ -457,7 +488,7 @@ def get_game_info(game_id: str) -> pd.DataFrame:
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(1)
+                time.sleep(1.5)
                 continue
         else:
             # no exception thrown
@@ -522,7 +553,7 @@ def get_game_ids(date: Union[str, datetime]) -> list:
     """A function that scrapes all game IDs on a date.
 
     Parameters:
-        - date: a string representing the date to be scraped
+        - date: a string/datetime object representing the date to be scraped
 
     Returns
         - a list of ESPN all game IDs for games played on the date given
@@ -545,9 +576,13 @@ def get_game_ids(date: Union[str, datetime]) -> list:
 
     for i in range(ATTEMPTS):
         try:
+            header = {
+                'User-Agent': np.random.choice(USER_AGENTS),
+                'Referer': np.random.choice(REFERERS),
+            }
             d = date.strftime("%Y%m%d")
             url = SCOREBOARD_URL.format(d)
-            page = r.get(url, headers=np.random.choice(HEADERS))
+            page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
             sec = soup.find("section", {"class": "Card gameModules"})
             games = sec.find_all(
@@ -560,11 +595,11 @@ def get_game_ids(date: Union[str, datetime]) -> list:
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
                 _log.error(
-                    f'"{time.ctime()}" attempt {i+1}: {date} - {ex}\n{traceback.format_exc()}')
+                    f'"{time.ctime()}" attempt {i+1}: {date.strftime("%D")} - {ex}\n{traceback.format_exc()}')
                 return []
             else:
                 # try again
-                time.sleep(1)
+                time.sleep(1.5)
                 continue
         else:
             # no exception thrown
