@@ -24,14 +24,46 @@ from typing import Union
 logging.basicConfig(filename='cbbpy.log')
 _log = logging.getLogger(__name__)
 
-ATTEMPTS = 3
+ATTEMPTS = 10
 DATE_PARSES = ['%Y-%m-%d',
                '%Y/%m/%d',
                '%m-%d-%Y',
                '%m/%d/%Y',
                ]
+USER_AGENTS = [
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 ' +
+    '(KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 ' +
+    '(KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36',
+]
+REFERERS = [
+    'https://google.com/',
+    'https://youtube.com/',
+    'https://facebook.com/',
+    'https://twitter.com/',
+    'https://nytimes.com/',
+    'https://washingtonpost.com/',
+    'https://linkedin.com/',
+    'https://nhl.com/',
+    'https://mlb.com/',
+    'https://nfl.com/'
+]
 SCOREBOARD_URL = (
-    "https://www.espn.com/mens-college-basketball/scoreboard/_/date/{}"
+    "https://www.espn.com/mens-college-basketball/scoreboard/_/date/{}/seasontype/2/group/50"
 )
 GAME_URL = "https://www.espn.com/mens-college-basketball/game/_/gameId/{}"
 BOXSCORE_URL = "https://www.espn.com/mens-college-basketball/boxscore/_/gameId/{}"
@@ -103,8 +135,12 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
 
     for i in range(ATTEMPTS):
         try:
+            header = {
+                'User-Agent': np.random.choice(USER_AGENTS),
+                'Referer': np.random.choice(REFERERS),
+            }
             url = BOXSCORE_URL.format(game_id)
-            page = r.get(url)
+            page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
 
             # check if game was postponed
@@ -139,15 +175,14 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
                 away_table, away_team_name, game_id)
 
         except Exception as ex:
-            _log.error(
-                f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
-
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
+                _log.error(
+                    f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(1)
+                time.sleep(1.5)
                 continue
         else:
             # no exception thrown
@@ -168,8 +203,12 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
 
     for i in range(ATTEMPTS):
         try:
+            header = {
+                'User-Agent': np.random.choice(USER_AGENTS),
+                'Referer': np.random.choice(REFERERS),
+            }
             url = PBP_URL.format(game_id)
-            page = r.get(url)
+            page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
 
             # check if game was postponed
@@ -198,15 +237,14 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 pbp_halves.append(cleaned_pbp_half)
 
         except Exception as ex:
-            _log.error(
-                f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
-
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
+                _log.error(
+                    f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(1)
+                time.sleep(1.5)
                 continue
         else:
             # no exception thrown
@@ -227,8 +265,12 @@ def get_game_info(game_id: str) -> pd.DataFrame:
 
     for i in range(ATTEMPTS):
         try:
+            header = {
+                'User-Agent': np.random.choice(USER_AGENTS),
+                'Referer': np.random.choice(REFERERS),
+            }
             url = GAME_URL.format(game_id)
-            page = r.get(url)
+            page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
 
             # check if game was postponed
@@ -439,15 +481,14 @@ def get_game_info(game_id: str) -> pd.DataFrame:
             ]
 
         except Exception as ex:
-            _log.error(
-                f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
-
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
+                _log.error(
+                    f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(1)
+                time.sleep(1.5)
                 continue
         else:
             # no exception thrown
@@ -485,7 +526,7 @@ def get_games_season(season: int) -> tuple:
                 games_info_day = []
                 for j, gid in enumerate(game_ids):
                     t.set_description(
-                        f"Scraping game {gid} ({j+1}/{len(game_ids)}) on {date}"
+                        f"Scraping {gid} ({j+1}/{len(game_ids)}) on {date.strftime('%D')}"
                     )
                     games_info_day.append(get_game(gid))
                 all_data.append(games_info_day)
@@ -512,7 +553,7 @@ def get_game_ids(date: Union[str, datetime]) -> list:
     """A function that scrapes all game IDs on a date.
 
     Parameters:
-        - date: a string representing the date to be scraped
+        - date: a string/datetime object representing the date to be scraped
 
     Returns
         - a list of ESPN all game IDs for games played on the date given
@@ -535,9 +576,13 @@ def get_game_ids(date: Union[str, datetime]) -> list:
 
     for i in range(ATTEMPTS):
         try:
+            header = {
+                'User-Agent': np.random.choice(USER_AGENTS),
+                'Referer': np.random.choice(REFERERS),
+            }
             d = date.strftime("%Y%m%d")
             url = SCOREBOARD_URL.format(d)
-            page = r.get(url)
+            page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
             sec = soup.find("section", {"class": "Card gameModules"})
             games = sec.find_all(
@@ -547,15 +592,14 @@ def get_game_ids(date: Union[str, datetime]) -> list:
             ids = [game["id"] for game in games]
 
         except Exception as ex:
-            _log.error(
-                f'"{time.ctime()}": {date} - {ex}\n{traceback.format_exc()}')
-
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
+                _log.error(
+                    f'"{time.ctime()}" attempt {i+1}: {date.strftime("%D")} - {ex}\n{traceback.format_exc()}')
                 return []
             else:
                 # try again
-                time.sleep(1)
+                time.sleep(1.5)
                 continue
         else:
             # no exception thrown
@@ -588,19 +632,19 @@ def _clean_boxscore_table(table, team, game_id):
 
     # type handling
     df.starters = df.starters.astype(str)
-    df['min'] = df['min'].astype(int)
+    df['min'] = pd.to_numeric(df['min'], errors='coerce')
     df.fg = df.fg.astype(str)
     df['3pt'] = df['3pt'].astype(str)
     df.ft = df.ft.astype(str)
-    df.oreb = df.oreb.astype(int)
-    df.dreb = df.dreb.astype(int)
-    df.reb = df.reb.astype(int)
-    df.ast = df.ast.astype(int)
-    df.stl = df.stl.astype(int)
-    df.blk = df.blk.astype(int)
-    df.to = df.to.astype(int)
-    df.pf = df.pf.astype(int)
-    df.pts = df.pts.astype(int)
+    df.oreb = pd.to_numeric(df.oreb, errors='coerce')
+    df.dreb = pd.to_numeric(df.dreb, errors='coerce')
+    df.reb = pd.to_numeric(df.reb, errors='coerce')
+    df.ast = pd.to_numeric(df.ast, errors='coerce')
+    df.stl = pd.to_numeric(df.stl, errors='coerce')
+    df.blk = pd.to_numeric(df.blk, errors='coerce')
+    df.to = pd.to_numeric(df.to, errors='coerce')
+    df.pf = pd.to_numeric(df.pf, errors='coerce')
+    df.pts = pd.to_numeric(df.pts, errors='coerce')
 
     # GET PLAYER IDS
     ids = [x.find("a")["href"].split("/")[-2]
@@ -637,21 +681,21 @@ def _clean_boxscore_table(table, team, game_id):
     df.insert(5, "starter", start)
     df.starter = df.starter.astype(bool)
     df.insert(7, "fgm", fgm)
-    df.fgm = df.fgm.astype(int)
+    df.fgm = pd.to_numeric(df.fgm, errors='coerce')
     df.insert(8, "fga", fga)
-    df.fga = df.fga.astype(int)
+    df.fga = pd.to_numeric(df.fga, errors='coerce')
     df.insert(9, "2pm", [int(x) - int(y) for x, y in zip(fgm, thpm)])
-    df['2pm'] = df['2pm'].astype(int)
+    df['2pm'] = pd.to_numeric(df['2pm'], errors='coerce')
     df.insert(10, "2pa", [int(x) - int(y) for x, y in zip(fga, thpa)])
-    df['2pa'] = df['2pa'].astype(int)
+    df['2pa'] = pd.to_numeric(df['2pa'], errors='coerce')
     df.insert(11, "3pm", thpm)
-    df['3pm'] = df['3pm'].astype(int)
+    df['3pm'] = pd.to_numeric(df['3pm'], errors='coerce')
     df.insert(12, "3pa", thpa)
-    df['3pa'] = df['3pa'].astype(int)
+    df['3pa'] = pd.to_numeric(df['3pa'], errors='coerce')
     df.insert(13, "ftm", ftm)
-    df['ftm'] = df['ftm'].astype(int)
+    df['ftm'] = pd.to_numeric(df['ftm'], errors='coerce')
     df.insert(14, "fta", fta)
-    df['fta'] = df['fta'].astype(int)
+    df['fta'] = pd.to_numeric(df['fta'], errors='coerce')
 
     return df
 
@@ -709,8 +753,9 @@ def _clean_pbp_table(table, info):
     body_rows = [x for x in table.find_all("tr") if not x.find("th")]
 
     # MAP THE LOGOS IN THE PBP TO THE TEAMS
-    links = [row.find("img")["src"] if row.find("img")
-             else None for row in body_rows]
+    logos = [row.find("td", {'class': 'logo'}) for row in body_rows]
+    links = [logo.find('img')['src'] if logo.find('img')
+             else None for logo in logos]
     links = [x.split(html.unescape("&amp;"))[0] if x else x for x in links]
     pbp_teams = [team_map[x] for x in links]
     if num_halves == 2:
@@ -721,6 +766,7 @@ def _clean_pbp_table(table, info):
     df = pd.read_html(str(table))[0]
     df = df.dropna(axis=1, how="all")
     df.columns = [x.lower() for x in df.columns]
+    df = df.loc[:, ~df.columns.str.contains('unnamed')]
 
     # type handling
     df.time = df.time.astype(str)
@@ -737,14 +783,14 @@ def _clean_pbp_table(table, info):
     away_scores = [int(x[0]) for x in score_splits]
     home_scores = [int(x[1]) for x in score_splits]
     df.insert(3, "home_score", home_scores)
-    df.home_score = df.home_score.astype(int)
+    df.home_score = pd.to_numeric(df.home_score, errors='coerce')
     df.insert(4, "away_score", away_scores)
-    df.away_score = df.away_score.astype(int)
+    df.away_score = pd.to_numeric(df.away_score, errors='coerce')
     df = df.drop(columns=["score"])
 
     # HALF NUMBER
     df.insert(5, "half", cur_half)
-    df.half = df.half.astype(int)
+    df.half = pd.to_numeric(df.half, errors='coerce')
 
     # TIME FORMATTING
     time_splits = [x.split(":") for x in df.time]
@@ -755,9 +801,9 @@ def _clean_pbp_table(table, info):
     reg_secs_left = [1200 + x if cur_half == 1 else x for x in tot_secs_left]
 
     df.insert(6, "secs_left_half", tot_secs_left)
-    df.secs_left_half = df.secs_left_half.astype(int)
+    df.secs_left_half = pd.to_numeric(df.secs_left_half, errors='coerce')
     df.insert(7, "secs_left_reg", reg_secs_left)
-    df.secs_left_reg = df.secs_left_reg.astype(int)
+    df.secs_left_reg = pd.to_numeric(df.secs_left_reg, errors='coerce')
     df = df.drop(columns=["time"])
 
     # ASSIGN PLAY TYPES
