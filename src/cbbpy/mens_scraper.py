@@ -425,6 +425,23 @@ def get_game_info(game_id: str) -> pd.DataFrame:
                 game_r2 = np.nan
                 game_r3 = np.nan
 
+            conf_home = 'conf' in home_div.get_text().lower()
+            conf_away = 'conf' in away_div.get_text().lower()
+            home_home = 'home' in home_div.get_text().lower()
+            away_away = 'away' in away_div.get_text().lower()
+
+            if conf_home and conf_away:
+                is_conf = True
+            else:
+                is_conf = False
+
+            if home_home or away_away:
+                is_neutral = False
+            elif is_conf and not type(game_meta) == str:
+                is_neutral = False
+            else:
+                is_neutral = True
+
             # AGGREGATE DATA INTO DATAFRAME AND RETURN
             game_info_list = [
                 game_id,
@@ -440,6 +457,8 @@ def get_game_info(game_id: str) -> pd.DataFrame:
                 away_score,
                 home_win,
                 num_ots,
+                is_conf,
+                is_neutral,
                 game_meta,
                 game_day,
                 game_time,
@@ -467,6 +486,8 @@ def get_game_info(game_id: str) -> pd.DataFrame:
                 "away_score",
                 "home_win",
                 "num_ots",
+                "is_conference",
+                "is_neutral",
                 "tournament",
                 "game_day",
                 "game_time",
@@ -532,7 +553,7 @@ def get_games_season(season: int) -> tuple:
                 all_data.append(games_info_day)
 
             else:
-                t.set_description(f"No games on {date}")
+                t.set_description(f"No games on {date.strftime('%D')}")
 
             date += timedelta(days=1)
 
