@@ -188,7 +188,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
             # no exception thrown
             break
 
-    return pd.concat([df_home, df_away])
+    return pd.concat([df_home, df_away]).reset_index(drop=True)
 
 
 def get_game_pbp(game_id: str) -> pd.DataFrame:
@@ -250,7 +250,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             # no exception thrown
             break
 
-    return pd.concat(pbp_halves)
+    return pd.concat(pbp_halves).reset_index(drop=True)
 
 
 def get_game_info(game_id: str) -> pd.DataFrame:
@@ -667,6 +667,32 @@ def _clean_boxscore_table(table, team, game_id):
     df.pf = pd.to_numeric(df.pf, errors='coerce')
     df.pts = pd.to_numeric(df.pts, errors='coerce')
 
+    # TOTALS ROW
+    tot_row = [row for row in all_rows if 'TEAM' in row.get_text()]
+    tot_t = "<table>"
+    tot_t += str(tot_row[0])
+    tot_t += "</table>"
+
+    df_tot = pd.read_html(tot_t)[0]
+
+    df_tot.columns = df.columns
+    # type handling
+    df_tot.starters = df_tot.starters.astype(str)
+    df_tot['min'] = pd.to_numeric(df_tot['min'], errors='coerce')
+    df_tot.fg = df_tot.fg.astype(str)
+    df_tot['3pt'] = df_tot['3pt'].astype(str)
+    df_tot.ft = df_tot.ft.astype(str)
+    df_tot.oreb = pd.to_numeric(df_tot.oreb, errors='coerce')
+    df_tot.dreb = pd.to_numeric(df_tot.dreb, errors='coerce')
+    df_tot.reb = pd.to_numeric(df_tot.reb, errors='coerce')
+    df_tot.ast = pd.to_numeric(df_tot.ast, errors='coerce')
+    df_tot.stl = pd.to_numeric(df_tot.stl, errors='coerce')
+    df_tot.blk = pd.to_numeric(df_tot.blk, errors='coerce')
+    df_tot.to = pd.to_numeric(df_tot.to, errors='coerce')
+    df_tot.pf = pd.to_numeric(df_tot.pf, errors='coerce')
+    df_tot.pts = pd.to_numeric(df_tot.pts, errors='coerce')
+
+    # START BY CLEANING PLAYER BOXSCORES
     # GET PLAYER IDS
     ids = [x.find("a")["href"].split("/")[-2]
            for x in good_rows if x.find("a")]
@@ -718,7 +744,68 @@ def _clean_boxscore_table(table, team, game_id):
     df.insert(14, "fta", fta)
     df['fta'] = pd.to_numeric(df['fta'], errors='coerce')
 
-    return df
+    # THEN CLEAN TOTAL ROW
+    # SPLIT UP THE FG FIELDS
+    fgm = [x.split('-')[0]
+           if x.split('-')[0] != ''
+           else np.nan
+           for x in df_tot['fg']]
+    fga = [x.split('-')[1]
+           if x.split('-')[1] != ''
+           else np.nan
+           for x in df_tot['fg']]
+    thpm = [x.split('-')[0]
+            if x.split('-')[0] != ''
+            else np.nan
+            for x in df_tot['3pt']]
+    thpa = [x.split('-')[1]
+            if x.split('-')[1] != ''
+            else np.nan
+            for x in df_tot['3pt']]
+    ftm = [x.split('-')[0]
+           if x.split('-')[0] != ''
+           else np.nan
+           for x in df_tot['ft']]
+    fta = [x.split('-')[1]
+           if x.split('-')[1] != ''
+           else np.nan
+           for x in df_tot['ft']]
+
+    # GET RID OF UNWANTED COLUMNS
+    df_tot = df_tot.drop(columns=["fg", "3pt", "ft"])
+
+    df_tot = df_tot.rename(columns={"starters": "player"})
+    df_tot['player'] = 'TEAM'
+
+    # INSERT COLUMNS WHERE NECESSARY
+    df_tot.insert(0, "game_id", game_id)
+    df_tot.game_id = df_tot.game_id.astype(str)
+    df_tot.insert(1, "team", team)
+    df_tot.team = df_tot.team.astype(str)
+    df_tot.insert(3, "player_id", 'TOTAL')
+    df_tot.player_id = df_tot.player_id.astype(str)
+    df_tot.insert(4, "position", 'TOTAL')
+    df_tot.position = df_tot.position.astype(str)
+    df_tot.insert(5, "starter", 0)
+    df_tot.starter = df_tot.starter.astype(bool)
+    df_tot.insert(7, "fgm", fgm)
+    df_tot.fgm = pd.to_numeric(df_tot.fgm, errors='coerce')
+    df_tot.insert(8, "fga", fga)
+    df_tot.fga = pd.to_numeric(df_tot.fga, errors='coerce')
+    df_tot.insert(9, "2pm", [float(x) - float(y) for x, y in zip(fgm, thpm)])
+    df_tot['2pm'] = pd.to_numeric(df_tot['2pm'], errors='coerce')
+    df_tot.insert(10, "2pa", [float(x) - float(y) for x, y in zip(fga, thpa)])
+    df_tot['2pa'] = pd.to_numeric(df_tot['2pa'], errors='coerce')
+    df_tot.insert(11, "3pm", thpm)
+    df_tot['3pm'] = pd.to_numeric(df_tot['3pm'], errors='coerce')
+    df_tot.insert(12, "3pa", thpa)
+    df_tot['3pa'] = pd.to_numeric(df_tot['3pa'], errors='coerce')
+    df_tot.insert(13, "ftm", ftm)
+    df_tot['ftm'] = pd.to_numeric(df_tot['ftm'], errors='coerce')
+    df_tot.insert(14, "fta", fta)
+    df_tot['fta'] = pd.to_numeric(df_tot['fta'], errors='coerce')
+
+    return pd.concat([df, df_tot])
 
 
 def _get_pbp_map(soup):
