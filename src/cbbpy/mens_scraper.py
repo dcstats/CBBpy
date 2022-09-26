@@ -633,7 +633,7 @@ def get_game_ids(date: Union[str, datetime]) -> list:
 def _clean_boxscore_table(table, team, game_id):
     """A helper function to clean the DataFrame returned by get_game_boxscore"""
 
-    if len(table.find_all("thead")) == 0:
+    if len(table.find_all("thead")) <= 1:
         return pd.DataFrame([])
 
     # GET RID OF UNWANTED ROWS
