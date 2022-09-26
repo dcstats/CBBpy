@@ -25,11 +25,12 @@ logging.basicConfig(filename='cbbpy.log')
 _log = logging.getLogger(__name__)
 
 ATTEMPTS = 10
-DATE_PARSES = ['%Y-%m-%d',
-               '%Y/%m/%d',
-               '%m-%d-%Y',
-               '%m/%d/%Y',
-               ]
+DATE_PARSES = [
+    '%Y-%m-%d',
+    '%Y/%m/%d',
+    '%m-%d-%Y',
+    '%m/%d/%Y',
+]
 USER_AGENTS = [
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 ' +
     '(KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36',
@@ -631,6 +632,9 @@ def get_game_ids(date: Union[str, datetime]) -> list:
 
 def _clean_boxscore_table(table, team, game_id):
     """A helper function to clean the DataFrame returned by get_game_boxscore"""
+
+    if len(table.find_all("thead")) == 0:
+        return pd.DataFrame([])
 
     # GET RID OF UNWANTED ROWS
     all_rows = table.find_all("tr")
