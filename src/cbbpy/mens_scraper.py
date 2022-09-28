@@ -96,6 +96,25 @@ BAD_GAMES = [
     "TBD",
     "Suspended"
 ]
+TOURN_WORDS = [
+    'tournament',
+    'championship',
+    'playoff',
+    '1st round',
+    '2nd round',
+    'quarterfinal',
+    'semifinal',
+    'final'
+]
+
+TOURN_SPEC = [
+    'cit ',
+    'cbi ',
+    'nit - ',
+    "men's basketball championship",
+    'the basketball classic',
+    'vegas 16',
+]
 
 
 class CouldNotParseError(Exception):
@@ -443,6 +462,11 @@ def get_game_info(game_id: str) -> pd.DataFrame:
             else:
                 is_neutral = True
 
+            game_meta = str(game_meta)
+
+            is_postseason = (any(x in game_meta.lower() for x in TOURN_WORDS) or
+                             any(x in game_meta.lower() for x in TOURN_SPEC))
+
             # AGGREGATE DATA INTO DATAFRAME AND RETURN
             game_info_list = [
                 game_id,
@@ -460,6 +484,7 @@ def get_game_info(game_id: str) -> pd.DataFrame:
                 num_ots,
                 is_conf,
                 is_neutral,
+                is_postseason,
                 game_meta,
                 game_day,
                 game_time,
@@ -489,6 +514,7 @@ def get_game_info(game_id: str) -> pd.DataFrame:
                 "num_ots",
                 "is_conference",
                 "is_neutral",
+                "is_postseason",
                 "tournament",
                 "game_day",
                 "game_time",
