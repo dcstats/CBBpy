@@ -392,27 +392,32 @@ def get_game_info(game_id: str) -> pd.DataFrame:
             except:
                 game_network = np.nan
 
-            game_arena_pre = game_info_div.find(
-                'div', {'class': 'caption-wrapper'})
+            try:
+                game_arena_pre = game_info_div.find(
+                    'div', {'class': 'caption-wrapper'})
 
-            if not game_arena_pre:
-                div_loc = game_info_div.find(
-                    'div', {'class': 'location-details'})
-                game_arena = div_loc.find('span', {'class': 'game-location'})
+                if not game_arena_pre:
+                    div_loc = game_info_div.find(
+                        'div', {'class': 'location-details'})
+                    game_arena = div_loc.find(
+                        'span', {'class': 'game-location'})
 
-                if game_arena:
-                    game_arena = game_arena.get_text().strip()
-                    game_loc = div_loc.find(
-                        'div', {'class': 'game-location'}).get_text().strip()
+                    if game_arena:
+                        game_arena = game_arena.get_text().strip()
+                        game_loc = div_loc.find(
+                            'div', {'class': 'game-location'}).get_text().strip()
 
+                    else:
+                        game_arena = game_info_div.find(
+                            'div', {'class': 'game-location'}).get_text().strip()
+                        game_loc = None
                 else:
-                    game_arena = game_info_div.find(
+                    game_arena = game_arena_pre.get_text().strip()
+                    game_loc = game_info_div.find(
                         'div', {'class': 'game-location'}).get_text().strip()
-                    game_loc = None
-            else:
-                game_arena = game_arena_pre.get_text().strip()
-                game_loc = game_info_div.find(
-                    'div', {'class': 'game-location'}).get_text().strip()
+            except:
+                game_arena = None
+                game_loc = None
 
             game_cap_pre = game_info_div.find_all(
                 "div", {"class": "game-info-note capacity"})
