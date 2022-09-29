@@ -910,6 +910,7 @@ def _clean_pbp_table(table, info):
     df = df.dropna(axis=1, how="all")
     df.columns = [x.lower() for x in df.columns]
     df = df.loc[:, ~df.columns.str.contains('unnamed')]
+    df = df.rename(columns={'time_of_day': 'time'})
 
     # type handling
     df.time = df.time.astype(str)
