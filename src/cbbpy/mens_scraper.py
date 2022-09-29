@@ -244,6 +244,10 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             # GET PBP DATA
             div = soup.find("div", {"id": "gamepackage-play-by-play"})
             tables = div.find_all("table")
+
+            if '0th Half' in div.get_text():
+                tables = tables[1:]
+
             num_halves = len(tables)
             pbp_halves = []
 
