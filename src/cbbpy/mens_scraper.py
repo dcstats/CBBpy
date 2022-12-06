@@ -18,6 +18,7 @@ import re
 import time
 import logging
 import traceback
+import json
 from typing import Union
 
 
@@ -297,191 +298,99 @@ def get_game_info(game_id: str) -> pd.DataFrame:
             page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
 
+            js = soup.find_all('script')[3].text
+            js = js.replace("window[\'__espnfitt__\']=", '')[:-1]
+            jsn = json.loads(js)
+            gamepackage = jsn['page']['content']['gamepackage']
+
             # check if game was postponed
-            status_div = soup.find("div", {"class": "game-status"})
-            for bad_game in BAD_GAMES:
-                if bad_game in status_div.get_text():
-                    _log.warning(f'"{time.ctime()}": {game_id} - {bad_game}')
-                    return pd.DataFrame([])
+            gm_status = gamepackage['gmStrp']['status']['desc']
+            gsbool = (gm_status == 'Final') or (gm_status == 'In Progress')
+            if not gsbool:
+                _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
+                return pd.DataFrame([])
 
-            # GET DIVS
-            linesc_div = soup.find("div", {"id": "gamepackage-linescore-wrap"})
-            home_div = soup.find("div", {"class": "team home"})
-            away_div = soup.find("div", {"class": "team away"})
+            # get general game info
+            info = gamepackage['gmInfo']
+            attendance = int(
+                info['attnd']) if 'attnd' in info.keys() else np.nan
+            capacity = int(info['cpcty']) if 'cpcty' in info.keys() else np.nan
+            network = info['cvrg'] if 'cvrg' in info.keys() else ''
 
-            # GET HOME INFO
-            home_team = (
-                home_div.find("span", {"class": "long-name"}).get_text()
-                + " "
-                + home_div.find("span", {"class": "short-name"}).get_text()
-            )
-            home_score = home_div.find(
-                "div", {"class": "score-container"}).get_text()
-            try:
-                home_id_pre = home_div.find(
-                    "a", {"class": "team-name"})["href"]
-                home_id = [x for x in home_id_pre.split("/") if x.isdigit()][0]
-                try:
-                    home_rank = home_div.find(
-                        "span", {"class": "rank"}).get_text()
-                except:
-                    home_rank = np.nan
-                home_record = home_div.find(
-                    "div", {"class": "record"}).get_text()
-            except:
-                # this case is for teams who are not D1
-                ht = home_team.lower().replace(" ", "-")
-                home_id = "nd-" + re.sub("[^0-9a-zA-Z\-]", "", ht)
-                home_rank = np.nan
-                home_record = np.nan
-
-            # GET AWAY INFO
-            away_team = (
-                away_div.find("span", {"class": "long-name"}).get_text()
-                + " "
-                + away_div.find("span", {"class": "short-name"}).get_text()
-            )
-            away_score = away_div.find(
-                "div", {"class": "score-container"}).get_text()
-            try:
-                away_id_pre = away_div.find(
-                    "a", {"class": "team-name"})["href"]
-                away_id = [x for x in away_id_pre.split("/") if x.isdigit()][0]
-                try:
-                    away_rank = away_div.find(
-                        "span", {"class": "rank"}).get_text()
-                except:
-                    away_rank = np.nan
-                away_record = away_div.find(
-                    "div", {"class": "record"}).get_text()
-            except:
-                # this case is for teams who are not D1
-                at = away_team.lower().replace(" ", "-")
-                away_id = "nd-" + re.sub("[^0-9a-zA-Z\-]", "", at)
-                away_rank = np.nan
-                away_record = np.nan
-
-            # GET GAME INFO
-            game_info_div = soup.find(
-                "div", {"data-module": "gameInformation"})
-            game_date_pre = parse(
-                game_info_div.find(
-                    "span", {"data-behavior": "date_time"})["data-date"]
-            )
-            game_date = game_date_pre.replace(tzinfo=timezone.utc).astimezone(
-                tz=tz("US/Pacific")
-            )
+            gm_date = parse(info['dtTm'])
+            game_date = gm_date.replace(
+                tzinfo=timezone.utc).astimezone(tz=tz("US/Pacific"))
             game_day = game_date.strftime("%B %d, %Y")
             game_time = game_date.strftime("%I:%M %p %Z")
 
-            try:
-                game_meta = (
-                    soup.find(
-                        "div", {"class": "game-details header"}).get_text().strip()
-                )
-            except:
-                game_meta = np.nan
+            arena = info['loc'] if 'loc' in info.keys() else ''
+            loc = info['locAddr']['city'] + ', ' + \
+                info['locAddr']['state'] if 'locAddr' in info.keys() else ''
 
-            home_win = True if int(home_score) > int(away_score) else False
-            num_ots = len(linesc_div.find("table").find(
-                "thead").find_all("th")) - 4
+            tot_refs = info['refs'] if 'refs' in info.keys() else {}
+            ref_1 = tot_refs[0]['dspNm'] if len(tot_refs) > 0 else ''
+            ref_2 = tot_refs[1]['dspNm'] if len(tot_refs) > 1 else ''
+            ref_3 = tot_refs[2]['dspNm'] if len(tot_refs) > 2 else ''
 
-            try:
-                game_network = (
-                    game_info_div.find("div", {"class": "game-network"})
-                    .get_text()
-                    .strip()
-                    .replace("Coverage: ", "")
-                )
-            except:
-                game_network = np.nan
+            # get team info
+            more_info = gamepackage['gmStrp']
 
-            try:
-                game_arena_pre = game_info_div.find(
-                    'div', {'class': 'caption-wrapper'})
+            teams = more_info['tms']
+            ht_info, at_info = teams[0], teams[1]
 
-                if not game_arena_pre:
-                    div_loc = game_info_div.find(
-                        'div', {'class': 'location-details'})
-                    game_arena = div_loc.find(
-                        'span', {'class': 'game-location'})
+            home_team, away_team = ht_info['displayName'], at_info['displayName']
 
-                    if game_arena:
-                        game_arena = game_arena.get_text().strip()
-                        game_loc = div_loc.find(
-                            'div', {'class': 'game-location'}).get_text().strip()
+            home_id = ht_info['id']
+            away_id = at_info['id']
 
-                    else:
-                        game_arena = game_info_div.find(
-                            'div', {'class': 'game-location'}).get_text().strip()
-                        game_loc = None
-                else:
-                    game_arena = game_arena_pre.get_text().strip()
-                    game_loc = game_info_div.find(
-                        'div', {'class': 'game-location'}).get_text().strip()
-            except:
-                game_arena = None
-                game_loc = None
+            if len(ht_info['links']) == 0:
+                ht = home_team.lower().replace(" ", "-")
+                home_id = "nd-" + re.sub("[^0-9a-zA-Z\-]", "", ht)
+            elif len(ht_info['records']) == 0:
+                ht = home_team.lower().replace(" ", "-")
+                home_id = "nd-" + re.sub("[^0-9a-zA-Z\-]", "", ht)
 
-            game_cap_pre = game_info_div.find_all(
-                "div", {"class": "game-info-note capacity"})
+            if len(at_info['links']) == 0:
+                at = away_team.lower().replace(" ", "-")
+                away_id = "nd-" + re.sub("[^0-9a-zA-Z\-]", "", at)
+            elif len(at_info['records']) == 0:
+                at = away_team.lower().replace(" ", "-")
+                away_id = "nd-" + re.sub("[^0-9a-zA-Z\-]", "", at)
 
-            if len(game_cap_pre) > 1:
-                game_att = game_cap_pre[0].get_text(
-                ).strip().replace("Attendance: ", "")
-                game_cap = game_cap_pre[1].get_text(
-                ).strip().replace("Capacity: ", "")
-            elif len(game_cap_pre) == 1:
-                info = game_cap_pre[0].get_text().strip()
+            home_rank = ht_info['rank'] if 'rank' in ht_info.keys() else np.nan
+            away_rank = at_info['rank'] if 'rank' in at_info.keys() else np.nan
 
-                if "Capacity" in info:
-                    game_att = np.nan
-                    game_cap = info.replace("Capacity: ", "")
-                else:
-                    game_att = info.replace("Attendance: ", "")
-                    game_cap = np.nan
-            else:
-                game_att = np.nan
-                game_cap = np.nan
+            home_record = ht_info['records'][0]['displayValue'] if len(
+                ht_info['records']) > 0 else ''
+            away_record = at_info['records'][0]['displayValue'] if len(
+                at_info['records']) > 0 else ''
 
-            try:
-                game_refs = (
-                    game_info_div.find(
-                        "span", {"class": "game-info-note__content"})
-                    .get_text()
-                    .split(", ")
-                )
-                game_r1 = game_refs[0] if len(game_refs) > 0 else np.nan
-                game_r2 = game_refs[1] if len(game_refs) > 1 else np.nan
-                game_r3 = game_refs[2] if len(game_refs) > 2 else np.nan
-            except:
-                game_r1 = np.nan
-                game_r2 = np.nan
-                game_r3 = np.nan
+            home_score, away_score = int(
+                ht_info['score']), int(at_info['score'])
 
-            conf_home = 'conf' in home_div.get_text().lower()
-            conf_away = 'conf' in away_div.get_text().lower()
-            home_home = 'home' in home_div.get_text().lower()
-            away_away = 'away' in away_div.get_text().lower()
+            home_win = True if home_score > away_score else False
 
-            if conf_home and conf_away:
-                is_conf = True
-            else:
-                is_conf = False
+            is_postseason = True if more_info['seasonType'] == 3 else False
+            is_conference = more_info['isConferenceGame']
 
-            if home_home or away_away:
-                is_neutral = False
-            elif is_conf and not type(game_meta) == str:
-                is_neutral = False
+            if len(ht_info['records']) > 1:
+                if ht_info['records'][1]['type'] == 'home':
+                    is_neutral = False
+
+            elif len(at_info['records']) > 1:
+                if at_info['records'][1]['type'] == 'away':
+                    is_neutral = False
+
             else:
                 is_neutral = True
 
-            game_meta = str(game_meta)
+            tournament = more_info['nte'] if 'nte' in more_info.keys() else ''
 
-            is_postseason = (any(x in game_meta.lower() for x in TOURN_WORDS) or
-                             any(x in game_meta.lower() for x in TOURN_SPEC))
+            h_ot, a_ot = len(ht_info['linescores']) - \
+                             2, len(at_info['linescores']) - 2
+            assert h_ot == a_ot
+            num_ots = h_ot
 
-            # AGGREGATE DATA INTO DATAFRAME AND RETURN
             game_info_list = [
                 game_id,
                 home_team,
@@ -496,50 +405,50 @@ def get_game_info(game_id: str) -> pd.DataFrame:
                 away_score,
                 home_win,
                 num_ots,
-                is_conf,
+                is_conference,
                 is_neutral,
                 is_postseason,
-                game_meta,
+                tournament,
                 game_day,
                 game_time,
-                game_loc,
-                game_arena,
-                game_cap,
-                game_att,
-                game_network,
-                game_r1,
-                game_r2,
-                game_r3,
+                loc,
+                arena,
+                capacity,
+                attendance,
+                network,
+                ref_1,
+                ref_2,
+                ref_3
             ]
 
             game_info_cols = [
-                "game_id",
-                "home_team",
-                "home_id",
-                "home_rank",
-                "home_record",
-                "home_score",
-                "away_team",
-                "away_id",
-                "away_rank",
-                "away_record",
-                "away_score",
-                "home_win",
-                "num_ots",
-                "is_conference",
-                "is_neutral",
-                "is_postseason",
-                "tournament",
-                "game_day",
-                "game_time",
-                "game_loc",
-                "arena",
-                "arena_capacity",
-                "attendance",
-                "tv_network",
-                "referee_1",
-                "referee_2",
-                "referee_3",
+                'game_id',
+                'home_team',
+                'home_id',
+                'home_rank',
+                'home_record',
+                'home_score',
+                'away_team',
+                'away_id',
+                'away_rank',
+                'away_record',
+                'away_score',
+                'home_win',
+                'num_ots',
+                'is_conference',
+                'is_neutral',
+                'is_postseason',
+                'tournament',
+                'game_day',
+                'game_time',
+                'game_loc',
+                'arena',
+                'arena_capacity',
+                'attendance',
+                'tv_network',
+                'referee_1',
+                'referee_2',
+                'referee_3'
             ]
 
         except Exception as ex:
