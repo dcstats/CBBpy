@@ -71,23 +71,23 @@ GAME_URL = "https://www.espn.com/mens-college-basketball/game/_/gameId/{}"
 BOXSCORE_URL = "https://www.espn.com/mens-college-basketball/boxscore/_/gameId/{}"
 PBP_URL = "https://www.espn.com/mens-college-basketball/playbyplay/_/gameId/{}"
 NON_SHOT_TYPES = [
-    "Turnover",
-    "Steal",
-    "Rebound",
-    "Foul",
-    "Timeout",
-    "TV Timeout",
-    "Block",
-    "Jump Ball",
-    "End",
+    'TV Timeout',
+    'Jump Ball',
+    'Turnover',
+    'Timeout',
+    'Rebound',
+    'Block',
+    'Steal',
+    'Foul',
+    'End'
 ]
 SHOT_TYPES = [
-    "Jumper",
-    "Three Point Jumper",
-    "Two Point Tip Shot",
-    "Free Throw",
-    "Layup",
-    "Dunk",
+    'Three Point Jumper',
+    'Two Point Tip Shot',
+    'Free Throw',
+    'Jumper',
+    'Layup',
+    'Dunk'
 ]
 BAD_GAMES = [
     "Forfeit",
@@ -340,12 +340,12 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
                 return pd.DataFrame([])
 
-            num_halves = len(pbp['playGrps'])
+            # num_halves = len(pbp['playGrps'])
 
-            if num_halves == 2:
-                tot_seconds_in_game = (num_halves*20*60)
-            else:
-                tot_seconds_in_game = (2*20*60) + ((num_halves-2)*5*60)
+            # if num_halves == 2:
+            #     tot_seconds_in_game = (num_halves*20*60)
+            # else:
+            #     tot_seconds_in_game = (2*20*60) + ((num_halves-2)*5*60)
 
             home_team = pbp['tms']['home']['displayName']
             away_team = pbp['tms']['away']['displayName']
@@ -382,6 +382,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             for x in all_plays:
                 if not 'text' in x.keys():
                     p_types.append('')
+                    continue
 
                 play = x['text']
 
