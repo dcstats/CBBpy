@@ -9,7 +9,6 @@ from bs4 import BeautifulSoup as bs
 import requests as r
 import pandas as pd
 import numpy as np
-import html
 from datetime import datetime, timedelta, timezone
 from dateutil.parser import parse
 from pytz import timezone as tz
@@ -25,7 +24,7 @@ from typing import Union
 logging.basicConfig(filename='cbbpy.log')
 _log = logging.getLogger(__name__)
 
-ATTEMPTS = 10
+ATTEMPTS = 5
 DATE_PARSES = [
     '%Y-%m-%d',
     '%Y/%m/%d',
@@ -88,14 +87,6 @@ SHOT_TYPES = [
     'Jumper',
     'Layup',
     'Dunk'
-]
-BAD_GAMES = [
-    "Forfeit",
-    "Postponed",
-    "Canceled",
-    "Uncontested",
-    "TBD",
-    "Suspended"
 ]
 
 
@@ -263,39 +254,53 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
             df = pd.concat([tm1_df, tm2_df])
 
             # SPLIT UP THE FG FIELDS
-            fgm = [x.split("-")[0] for x in df["fg"]]
-            fga = [x.split("-")[1] for x in df["fg"]]
-            thpm = [x.split("-")[0] for x in df["3pt"]]
-            thpa = [x.split("-")[1] for x in df["3pt"]]
-            ftm = [x.split("-")[0] for x in df["ft"]]
-            fta = [x.split("-")[1] for x in df["ft"]]
+            fgm = pd.to_numeric([x.split("-")[0]
+                                for x in df["fg"]], errors='coerce')
+            fga = pd.to_numeric([x.split("-")[1]
+                                for x in df["fg"]], errors='coerce')
+            thpm = pd.to_numeric([x.split("-")[0]
+                                 for x in df["3pt"]], errors='coerce')
+            thpa = pd.to_numeric([x.split("-")[1]
+                                 for x in df["3pt"]], errors='coerce')
+            ftm = pd.to_numeric([x.split("-")[0]
+                                for x in df["ft"]], errors='coerce')
+            fta = pd.to_numeric([x.split("-")[1]
+                                for x in df["ft"]], errors='coerce')
 
             # GET RID OF UNWANTED COLUMNS
             df = df.drop(columns=["fg", "3pt", "ft"])
 
             # INSERT COLUMNS WHERE NECESSARY
             df.insert(7, "fgm", fgm)
-            df.fgm = pd.to_numeric(df.fgm, errors='coerce')
             df.insert(8, "fga", fga)
-            df.fga = pd.to_numeric(df.fga, errors='coerce')
-            df.insert(9, "2pm", [int(x) - int(y) for x, y in zip(fgm, thpm)])
-            df['2pm'] = pd.to_numeric(df['2pm'], errors='coerce')
-            df.insert(10, "2pa", [int(x) - int(y) for x, y in zip(fga, thpa)])
-            df['2pa'] = pd.to_numeric(df['2pa'], errors='coerce')
+            df.insert(9, "2pm", fgm - thpm)
+            df.insert(10, "2pa", fga - thpa)
             df.insert(11, "3pm", thpm)
-            df['3pm'] = pd.to_numeric(df['3pm'], errors='coerce')
             df.insert(12, "3pa", thpa)
-            df['3pa'] = pd.to_numeric(df['3pa'], errors='coerce')
             df.insert(13, "ftm", ftm)
-            df['ftm'] = pd.to_numeric(df['ftm'], errors='coerce')
             df.insert(14, "fta", fta)
-            df['fta'] = pd.to_numeric(df['fta'], errors='coerce')
+
+            # column type handling
+            df['min'] = pd.to_numeric(df['min'], errors='coerce')
+            df['oreb'] = pd.to_numeric(df['oreb'], errors='coerce')
+            df['dreb'] = pd.to_numeric(df['dreb'], errors='coerce')
+            df['reb'] = pd.to_numeric(df['reb'], errors='coerce')
+            df['ast'] = pd.to_numeric(df['ast'], errors='coerce')
+            df['stl'] = pd.to_numeric(df['stl'], errors='coerce')
+            df['blk'] = pd.to_numeric(df['blk'], errors='coerce')
+            df['to'] = pd.to_numeric(df['to'], errors='coerce')
+            df['pf'] = pd.to_numeric(df['pf'], errors='coerce')
+            df['pts'] = pd.to_numeric(df['pts'], errors='coerce')
 
         except Exception as ex:
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
-                _log.error(
-                    f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
+                if 'Page not found.' in soup.text:
+                    _log.error(
+                        f'"{time.ctime()}": {game_id} - Page not found error')
+                else:
+                    _log.error(
+                        f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
@@ -351,6 +356,11 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             away_team = pbp['tms']['away']['displayName']
 
             all_plays = [play for half in pbp['playGrps'] for play in half]
+
+            # check if PBP exists
+            if len(all_plays) <= 0:
+                _log.warning(f'"{time.ctime()}": {game_id} - No PBP available')
+                return pd.DataFrame([])
 
             descs = [x['text'] if 'text' in x.keys() else '' for x in all_plays]
             teams = ['' if not 'homeAway' in x.keys()
@@ -443,8 +453,12 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
         except Exception as ex:
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
-                _log.error(
-                    f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
+                if 'Page not found.' in soup.text:
+                    _log.error(
+                        f'"{time.ctime()}": {game_id} - Page not found error')
+                else:
+                    _log.error(
+                        f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
@@ -631,8 +645,12 @@ def get_game_info(game_id: str) -> pd.DataFrame:
         except Exception as ex:
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
-                _log.error(
-                    f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
+                if 'Page not found.' in soup.text:
+                    _log.error(
+                        f'"{time.ctime()}": {game_id} - Page not found error')
+                else:
+                    _log.error(
+                        f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
@@ -732,12 +750,12 @@ def get_game_ids(date: Union[str, datetime]) -> list:
             url = SCOREBOARD_URL.format(d)
             page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
-            sec = soup.find("section", {"class": "Card gameModules"})
-            games = sec.find_all(
-                "section", {
-                    "class": "Scoreboard bg-clr-white flex flex-auto justify-between"}
-            )
-            ids = [game["id"] for game in games]
+            js = soup.find_all('script')[3].text
+            js = js.replace("window[\'__espnfitt__\']=", '')[:-1]
+            jsn = json.loads(js)
+
+            scoreboard = jsn['page']['content']['scoreboard']['evts']
+            ids = [x['id'] for x in scoreboard]
 
         except Exception as ex:
             if i+1 == ATTEMPTS:
