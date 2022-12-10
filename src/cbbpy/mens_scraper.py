@@ -139,14 +139,15 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
             js = js.replace("window[\'__espnfitt__\']=", '')[:-1]
             jsn = json.loads(js)
             gamepackage = jsn['page']['content']['gamepackage']
-            boxscore = gamepackage['bxscr']
 
             # check if game was postponed
             gm_status = gamepackage['gmStrp']['status']['desc']
-            gsbool = (gm_status == 'Final') or (gm_status == 'In Progress')
+            gsbool = (gm_status == 'Final')  # or (gm_status == 'In Progress')
             if not gsbool:
                 _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
                 return pd.DataFrame([])
+
+            boxscore = gamepackage['bxscr']
 
             tm1, tm2 = boxscore[0], boxscore[1]
             tm1_name, tm2_name = tm1['tm']['dspNm'], tm2['tm']['dspNm']
@@ -336,11 +337,10 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             js = js.replace("window[\'__espnfitt__\']=", '')[:-1]
             jsn = json.loads(js)
             gamepackage = jsn['page']['content']['gamepackage']
-            pbp = gamepackage['pbp']
 
             # check if game was postponed
             gm_status = gamepackage['gmStrp']['status']['desc']
-            gsbool = (gm_status == 'Final') or (gm_status == 'In Progress')
+            gsbool = (gm_status == 'Final')  # or (gm_status == 'In Progress')
             if not gsbool:
                 _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
                 return pd.DataFrame([])
@@ -351,6 +351,8 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             #     tot_seconds_in_game = (num_halves*20*60)
             # else:
             #     tot_seconds_in_game = (2*20*60) + ((num_halves-2)*5*60)
+
+            pbp = gamepackage['pbp']
 
             home_team = pbp['tms']['home']['displayName']
             away_team = pbp['tms']['away']['displayName']
@@ -498,7 +500,7 @@ def get_game_info(game_id: str) -> pd.DataFrame:
 
             # check if game was postponed
             gm_status = gamepackage['gmStrp']['status']['desc']
-            gsbool = (gm_status == 'Final') or (gm_status == 'In Progress')
+            gsbool = (gm_status == 'Final')  # or (gm_status == 'In Progress')
             if not gsbool:
                 _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
                 return pd.DataFrame([])
