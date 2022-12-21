@@ -94,7 +94,11 @@ class CouldNotParseError(Exception):
     pass
 
 
-def get_game(game_id: str) -> tuple:
+class InvalidDateRangeError(Exception):
+    pass
+
+
+def get_game(game_id: str, info: bool = True, box: bool = True, pbp: bool = True) -> tuple:
     """A function that scrapes all game info (metadata, boxscore, play-by-play).
 
     Parameters:
@@ -106,12 +110,79 @@ def get_game(game_id: str) -> tuple:
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
+    if info:
+        game_info_df = get_game_info(game_id)
+    else:
+        game_info_df = pd.DataFrame([])
 
-    game_info_df = get_game_info(game_id)
-    boxscore_df = get_game_boxscore(game_id)
-    pbp_df = get_game_pbp(game_id)
+    if box:
+        boxscore_df = get_game_boxscore(game_id)
+    else:
+        boxscore_df = pd.DataFrame([])
+
+    if pbp:
+        pbp_df = get_game_pbp(game_id)
+    else:
+        pbp_df = pd.DataFrame([])
 
     return (game_info_df, boxscore_df, pbp_df)
+
+
+def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool = True, pbp: bool = True) -> tuple:
+    """A function that scrapes a game information between a given range of dates.
+
+    Parameters:
+        - start_date: a string representing the first day of games to scrape
+        - end_date: a string representing the last day of games to scrape
+        - info: a boolean denoting whether game metadata is to be scraped
+        - box: a boolean denoting whether game boxscore is to be scraped
+        - pbp: a boolean denoting whether game play-by-play is to be scraped
+
+    Returns
+        - (game_info_df, boxscore_df, pbp_df), a tuple consisting of:
+            -- game_info_df: a DataFrame of the game's metadata
+            -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
+            -- pbp_df: a DataFrame of the game's play-by-play
+    """
+    start_date = _parse_date(start_date)
+    end_date = _parse_date(end_date)
+    len_scrape = (end_date - start_date).days
+    date = start_date
+    all_data = []
+
+    if start_date > end_date:
+        raise InvalidDateRangeError(
+            "The start date must be sooner than the end date.")
+
+    with trange(len_scrape) as t:
+        for i in t:
+            game_ids = get_game_ids(date)
+
+            if len(game_ids) > 0:
+                games_info_day = []
+                for j, gid in enumerate(game_ids):
+                    t.set_description(
+                        f"Scraping {gid} ({j+1}/{len(game_ids)}) on {date.strftime('%D')}"
+                    )
+                    games_info_day.append(get_game(gid, info, box, pbp))
+                all_data.append(games_info_day)
+
+            else:
+                t.set_description(f"No games on {date.strftime('%D')}")
+
+            date += timedelta(days=1)
+
+    game_info_df = pd.concat([game[0] for day in all_data for game in day]).reset_index(
+        drop=True
+    )
+    game_boxscore_df = pd.concat(
+        [game[1] for day in all_data for game in day]
+    ).reset_index(drop=True)
+    game_pbp_df = pd.concat([game[2] for day in all_data for game in day]).reset_index(
+        drop=True
+    )
+
+    return (game_info_df, game_boxscore_df, game_pbp_df)
 
 
 def get_game_boxscore(game_id: str) -> pd.DataFrame:
@@ -294,7 +365,7 @@ def get_game_info(game_id: str) -> pd.DataFrame:
     return df
 
 
-def get_games_season(season: int) -> tuple:
+def get_games_season(season: int, info: bool = True, box: bool = True, pbp: bool = True) -> tuple:
     """A function that scrapes all game info (metadata, boxscore, play-by-play) for every game of
     a given season.
 
@@ -325,7 +396,7 @@ def get_games_season(season: int) -> tuple:
                     t.set_description(
                         f"Scraping {gid} ({j+1}/{len(game_ids)}) on {date.strftime('%D')}"
                     )
-                    games_info_day.append(get_game(gid))
+                    games_info_day.append(get_game(gid, info, box, pbp))
                 all_data.append(games_info_day)
 
             else:
@@ -356,20 +427,7 @@ def get_game_ids(date: Union[str, datetime]) -> list:
         - a list of ESPN all game IDs for games played on the date given
     """
     if type(date) == str:
-        parsed = False
-
-        for parse in DATE_PARSES:
-            try:
-                date = datetime.strptime(date, parse)
-            except:
-                continue
-            else:
-                parsed = True
-                break
-
-        if not parsed:
-            raise CouldNotParseError('The given date could not be parsed. Try any of these formats:\n' +
-                                     'Y-m-d\nY/m/d\nm-d-Y\nm/d/Y')
+        date = _parse_date(date)
 
     for i in range(ATTEMPTS):
         try:
@@ -405,7 +463,35 @@ def get_game_ids(date: Union[str, datetime]) -> list:
     return ids
 
 
+def _parse_date(date: str) -> datetime:
+    parsed = False
+
+    for parse in DATE_PARSES:
+        try:
+            date = datetime.strptime(date, parse)
+        except:
+            continue
+        else:
+            parsed = True
+            break
+
+    if not parsed:
+        raise CouldNotParseError('The given date could not be parsed. Try any of these formats:\n' +
+                                 'Y-m-d\nY/m/d\nm-d-Y\nm/d/Y')
+
+    return date
+
+
 def _get_game_boxscore_helper(boxscore, game_id):
+    """A helper function that cleans a game's boxscore.
+
+    Parameters:
+        - boxscore: a JSON object containing the boxscore
+        - game_id: a string representing the game's ESPN game ID
+
+    Returns
+        - the game boxscore as a DataFrame
+    """
     tm1, tm2 = boxscore[0], boxscore[1]
     tm1_name, tm2_name = tm1['tm']['dspNm'], tm2['tm']['dspNm']
     tm1_stats, tm2_stats = tm1['stats'], tm2['stats']
@@ -554,6 +640,15 @@ def _get_game_boxscore_helper(boxscore, game_id):
 
 
 def _get_game_pbp_helper(pbp, game_id):
+    """A helper function that cleans a game's PBP.
+
+    Parameters:
+        - pbp: a JSON object containing the play-by-play
+        - game_id: a string representing the game's ESPN game ID
+
+    Returns
+        - the game PBP as a DataFrame
+    """
     home_team = pbp['tms']['home']['displayName']
     away_team = pbp['tms']['away']['displayName']
 
@@ -656,6 +751,16 @@ def _get_game_pbp_helper(pbp, game_id):
 
 
 def _get_game_info_helper(info, more_info, game_id):
+    """A helper function that cleans a game's metadata.
+
+    Parameters:
+        - info: a JSON object containing game metadata
+        - more_info: a JSON object containing game metadata
+        - game_id: a string representing the game's ESPN game ID
+
+    Returns
+        - the game metadata as a DataFrame
+    """
     attendance = int(info['attnd']) if 'attnd' in info.keys() else np.nan
     capacity = int(info['cpcty']) if 'cpcty' in info.keys() else np.nan
     network = info['cvrg'] if 'cvrg' in info.keys() else ''
