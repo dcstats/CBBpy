@@ -449,9 +449,13 @@ def get_game_ids(date: Union[str, datetime]) -> list:
         except Exception as ex:
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
-                _log.error(
-                    f'"{time.ctime()}" attempt {i+1}: {date.strftime("%D")} - {ex}\n{traceback.format_exc()}')
-                return []
+                if 'Page not found.' in soup.text:
+                    _log.error(
+                        f'"{time.ctime()}": {date.strftime("%D")} - Page not found error')
+                else:
+                    _log.error(
+                        f'"{time.ctime()}" attempt {i+1}: {date.strftime("%D")} - {ex}\n{traceback.format_exc()}')
+                return pd.DataFrame([])
             else:
                 # try again
                 time.sleep(1.5)
