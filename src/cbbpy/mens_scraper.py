@@ -146,7 +146,7 @@ def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool
     """
     start_date = _parse_date(start_date)
     end_date = _parse_date(end_date)
-    len_scrape = (end_date - start_date).days
+    len_scrape = (end_date - start_date).days + 1
     date = start_date
     all_data = []
 
