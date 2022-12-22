@@ -6,12 +6,13 @@
 This package is designed to bridge the gap between data and analysis for NCAA D1 basketball. CBBpy can grab play-by-play, boxscore, and other game metadata for any NCAA D1 men's basketball game.
 
 ## Installation and import
-CBBpy requires Python >= 3.9 as well as the following packages:
+CBBpy requires Python >= 3.7 as well as the following packages:
 * pandas>=1.4.2
 * numpy>=1.22.3
 * python-dateutil>=2.8.2
 * pytz>=2022.1
 * tqdm>=4.63.0
+* lxml>=4.9.0
 
 
 Install using pip:
@@ -33,9 +34,11 @@ NOTE: game ID, as far as CBBpy is concernced, is a valid **ESPN** game ID
 
 `ms.get_game_pbp(game_id: str)` scrapes the play-by-play tables for a game and returns a pandas DataFrame, with each entry representing a play made during the game.
 
-`ms.get_game(game_id: str)` gets *all* information about a game (game info, boxscore, PBP) and returns a tuple of results `(game_info, boxscore, pbp)`
+`ms.get_game(game_id: str, info: bool = True, box: bool = True, pbp: bool = True)` gets *all* information about a game (game info, boxscore, PBP) and returns a tuple of results `(game_info, boxscore, pbp)`. `info, box, pbp` are booleans which users can set to `False` if there is any information they wish not to scrape. For example, `box = False` would return an empty DataFrame for the boxscore info, while scraping PBP and metadata info normally.
 
-`ms.get_games_season(season: int)` scrapes all game information for all games in a particular season. As an example, to scrape games for the 2020-21 season, call `get_games_season(2021)`. Returns a tuple of 3 DataFrames, similar to `get_game`.
+`ms.get_games_season(season: int, info: bool = True, box: bool = True, pbp: bool = True)` scrapes all game information for all games in a particular season. As an example, to scrape games for the 2020-21 season, call `get_games_season(2021)`. Returns a tuple of 3 DataFrames, similar to `get_game`. See `get_game` for an explanation of booleans `info, box, pbp`.
+
+`ms.get_games_range(start_date: str, end_date: str, info: bool = True, box: bool = True, pbp: bool = True)` scrapes all game information for all games between `start_date` and `end_date` (inclusive). As an example, to scrape games between November 30, 2022 and December 10, 2022, call `get_games_season('11-30-2022', '12-10-2022')`. Returns a tuple of 3 DataFrames, similar to `get_game`. See `get_game` for an explanation of booleans `info, box, pbp`.
 
 `ms.get_game_ids(date: str)` returns a list of all game IDs for a particular date.
 
