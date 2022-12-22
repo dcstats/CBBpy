@@ -525,7 +525,9 @@ def _get_game_boxscore_helper(boxscore, game_id):
         tm1_st_df.insert(0, 'game_id', game_id)
 
     else:
-        tm1_st_df = pd.DataFrame([])
+        cols = ['starter', 'position', 'player_id', 'player',
+                'team', 'game_id'] + [x.lower() for x in labels]
+        tm1_st_df = pd.DataFrame(columns=cols)
 
     # bench players' stats
     if len(tm1_bench) > 0:
@@ -545,7 +547,9 @@ def _get_game_boxscore_helper(boxscore, game_id):
         tm1_bn_df.insert(0, 'game_id', game_id)
 
     else:
-        tm1_bn_df = pd.DataFrame([])
+        cols = ['starter', 'position', 'player_id', 'player',
+                'team', 'game_id'] + [x.lower() for x in labels]
+        tm1_bn_df = pd.DataFrame(columns=cols)
 
     # team totals
     if len(tm1_totals) > 0:
@@ -561,7 +565,9 @@ def _get_game_boxscore_helper(boxscore, game_id):
         tm1_tot_df.insert(0, 'game_id', game_id)
 
     else:
-        tm1_tot_df = pd.DataFrame([])
+        cols = ['starter', 'position', 'player_id', 'player',
+                'team', 'game_id'] + [x.lower() for x in labels]
+        tm1_tot_df = pd.DataFrame(columns=cols)
 
     tm1_df = pd.concat([tm1_st_df, tm1_bn_df, tm1_tot_df])
 
@@ -583,7 +589,9 @@ def _get_game_boxscore_helper(boxscore, game_id):
         tm2_st_df.insert(0, 'game_id', game_id)
 
     else:
-        tm2_st_df = pd.DataFrame([])
+        cols = ['starter', 'position', 'player_id', 'player',
+                'team', 'game_id'] + [x.lower() for x in labels]
+        tm2_st_df = pd.DataFrame(columns=cols)
 
     # bench players' stats
     if len(tm2_bench) > 0:
@@ -603,7 +611,9 @@ def _get_game_boxscore_helper(boxscore, game_id):
         tm2_bn_df.insert(0, 'game_id', game_id)
 
     else:
-        tm2_bn_df = pd.DataFrame([])
+        cols = ['starter', 'position', 'player_id', 'player',
+                'team', 'game_id'] + [x.lower() for x in labels]
+        tm2_bn_df = pd.DataFrame(columns=cols)
 
     # team totals
     if len(tm2_totals) > 0:
@@ -619,11 +629,16 @@ def _get_game_boxscore_helper(boxscore, game_id):
         tm2_tot_df.insert(0, 'game_id', game_id)
 
     else:
-        tm2_tot_df = pd.DataFrame([])
+        cols = ['starter', 'position', 'player_id', 'player',
+                'team', 'game_id'] + [x.lower() for x in labels]
+        tm2_tot_df = pd.DataFrame(columns=cols)
 
     tm2_df = pd.concat([tm2_st_df, tm2_bn_df, tm2_tot_df])
 
     df = pd.concat([tm1_df, tm2_df])
+
+    if len(df) <= 0:
+        return pd.DataFrame([])
 
     # SPLIT UP THE FG FIELDS
     fgm = pd.to_numeric([x.split("-")[0]
