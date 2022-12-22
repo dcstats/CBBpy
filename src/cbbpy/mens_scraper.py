@@ -638,6 +638,7 @@ def _get_game_boxscore_helper(boxscore, game_id):
     df = pd.concat([tm1_df, tm2_df])
 
     if len(df) <= 0:
+        _log.warning(f'"{time.ctime()}": {game_id} - No boxscore available')
         return pd.DataFrame([])
 
     # SPLIT UP THE FG FIELDS
