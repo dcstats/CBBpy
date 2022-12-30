@@ -513,14 +513,24 @@ def _get_game_boxscore_helper(boxscore, game_id):
                                            for j in range(len(tm1_starters))]
                        for i in range(len(labels))}
 
+        tm1_st_pos = [tm1_starters[i]['athlt']['pos']
+                      if 'pos' in tm1_starters[i]['athlt'].keys()
+                      else ''
+                      for i in range(len(tm1_starters))]
+        tm1_st_id = [tm1_starters[i]['athlt']['uid'].split(':')[-1]
+                     if 'uid' in tm1_starters[i]['athlt'].keys()
+                     else ''
+                     for i in range(len(tm1_starters))]
+        tm1_st_nm = [tm1_starters[i]['athlt']['shrtNm']
+                     if 'shrtNm' in tm1_starters[i]['athlt'].keys()
+                     else ''
+                     for i in range(len(tm1_starters))]
+
         tm1_st_df = pd.DataFrame(tm1_st_dict)
         tm1_st_df.insert(0, 'starter', True)
-        tm1_st_df.insert(0, 'position', [
-                            tm1_starters[i]['athlt']['pos'] for i in range(len(tm1_starters))])
-        tm1_st_df.insert(0, 'player_id', [tm1_starters[i]['athlt']['uid'].split(':')[-1]
-                                          for i in range(len(tm1_starters))])
-        tm1_st_df.insert(0, 'player', [
-                            tm1_starters[i]['athlt']['shrtNm'] for i in range(len(tm1_starters))])
+        tm1_st_df.insert(0, 'position', tm1_st_pos)
+        tm1_st_df.insert(0, 'player_id', tm1_st_id)
+        tm1_st_df.insert(0, 'player', tm1_st_nm)
         tm1_st_df.insert(0, 'team', tm1_name)
         tm1_st_df.insert(0, 'game_id', game_id)
 
@@ -535,14 +545,24 @@ def _get_game_boxscore_helper(boxscore, game_id):
                                            for j in range(len(tm1_bench))]
                        for i in range(len(labels))}
 
+        tm1_bn_pos = [tm1_bench[i]['athlt']['pos']
+                      if 'pos' in tm1_bench[i]['athlt'].keys()
+                      else ''
+                      for i in range(len(tm1_bench))]
+        tm1_bn_id = [tm1_bench[i]['athlt']['uid'].split(':')[-1]
+                     if 'uid' in tm1_bench[i]['athlt'].keys()
+                     else ''
+                     for i in range(len(tm1_bench))]
+        tm1_bn_nm = [tm1_bench[i]['athlt']['shrtNm']
+                     if 'shrtNm' in tm1_bench[i]['athlt'].keys()
+                     else ''
+                     for i in range(len(tm1_bench))]
+
         tm1_bn_df = pd.DataFrame(tm1_bn_dict)
         tm1_bn_df.insert(0, 'starter', False)
-        tm1_bn_df.insert(
-            0, 'position', [tm1_bench[i]['athlt']['pos'] for i in range(len(tm1_bench))])
-        tm1_bn_df.insert(0, 'player_id', [tm1_bench[i]['athlt']['uid'].split(':')[-1]
-                                          for i in range(len(tm1_bench))])
-        tm1_bn_df.insert(
-            0, 'player', [tm1_bench[i]['athlt']['shrtNm'] for i in range(len(tm1_bench))])
+        tm1_bn_df.insert(0, 'position', tm1_bn_pos)
+        tm1_bn_df.insert(0, 'player_id', tm1_bn_id)
+        tm1_bn_df.insert(0, 'player', tm1_bn_nm)
         tm1_bn_df.insert(0, 'team', tm1_name)
         tm1_bn_df.insert(0, 'game_id', game_id)
 
@@ -577,14 +597,23 @@ def _get_game_boxscore_helper(boxscore, game_id):
                                            for j in range(len(tm2_starters))]
                        for i in range(len(labels))}
 
+        tm2_st_pos = [tm2_starters[i]['athlt']['pos']
+                      if 'pos' in tm2_starters[i]['athlt'].keys()
+                      else ''
+                      for i in range(len(tm2_starters))]
+        tm2_st_id = [tm2_starters[i]['athlt']['uid'].split(':')[-1]
+                     if 'uid' in tm2_starters[i]['athlt'].keys()
+                     else '' for i in range(len(tm2_starters))]
+        tm2_st_nm = [tm2_starters[i]['athlt']['shrtNm']
+                     if 'shrtNm' in tm2_starters[i]['athlt'].keys()
+                     else ''
+                     for i in range(len(tm2_starters))]
+
         tm2_st_df = pd.DataFrame(tm2_st_dict)
         tm2_st_df.insert(0, 'starter', True)
-        tm2_st_df.insert(0, 'position', [
-                            tm2_starters[i]['athlt']['pos'] for i in range(len(tm2_starters))])
-        tm2_st_df.insert(0, 'player_id', [tm2_starters[i]['athlt']['uid'].split(':')[-1]
-                                          for i in range(len(tm2_starters))])
-        tm2_st_df.insert(0, 'player', [
-                            tm2_starters[i]['athlt']['shrtNm'] for i in range(len(tm2_starters))])
+        tm2_st_df.insert(0, 'position', tm2_st_pos)
+        tm2_st_df.insert(0, 'player_id', tm2_st_id)
+        tm2_st_df.insert(0, 'player', tm2_st_nm)
         tm2_st_df.insert(0, 'team', tm2_name)
         tm2_st_df.insert(0, 'game_id', game_id)
 
@@ -599,14 +628,24 @@ def _get_game_boxscore_helper(boxscore, game_id):
                                            for j in range(len(tm2_bench))]
                        for i in range(len(labels))}
 
+        tm2_bn_pos = [tm2_bench[i]['athlt']['pos']
+                      if 'pos' in tm2_bench[i]['athlt'].keys()
+                      else ''
+                      for i in range(len(tm2_bench))]
+        tm2_bn_id = [tm2_bench[i]['athlt']['uid'].split(':')[-1]
+                     if 'uid' in tm2_bench[i]['athlt'].keys()
+                     else ''
+                     for i in range(len(tm2_bench))]
+        tm2_bn_nm = [tm2_bench[i]['athlt']['shrtNm']
+                     if 'shrtNm' in tm2_bench[i]['athlt'].keys()
+                     else ''
+                     for i in range(len(tm2_bench))]
+
         tm2_bn_df = pd.DataFrame(tm2_bn_dict)
         tm2_bn_df.insert(0, 'starter', False)
-        tm2_bn_df.insert(
-            0, 'position', [tm2_bench[i]['athlt']['pos'] for i in range(len(tm2_bench))])
-        tm2_bn_df.insert(0, 'player_id', [tm2_bench[i]['athlt']['uid'].split(':')[-1]
-                                          for i in range(len(tm2_bench))])
-        tm2_bn_df.insert(
-            0, 'player', [tm2_bench[i]['athlt']['shrtNm'] for i in range(len(tm2_bench))])
+        tm2_bn_df.insert(0, 'position', tm2_bn_pos)
+        tm2_bn_df.insert(0, 'player_id', tm2_bn_id)
+        tm2_bn_df.insert(0, 'player', tm2_bn_nm)
         tm2_bn_df.insert(0, 'team', tm2_name)
         tm2_bn_df.insert(0, 'game_id', game_id)
 
