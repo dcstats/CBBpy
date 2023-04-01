@@ -279,9 +279,9 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             # else:
             #     tot_seconds_in_game = (2*20*60) + ((num_halves-2)*5*60)
 
-            pbp = gamepackage['pbp']
+            # pbp = gamepackage['pbp']
 
-            df = _get_game_pbp_helper(pbp, game_id)
+            df = _get_game_pbp_helper(gamepackage, game_id)
 
         except Exception as ex:
             if i+1 == ATTEMPTS:
@@ -722,7 +722,7 @@ def _get_game_boxscore_helper(boxscore, game_id):
     return df
 
 
-def _get_game_pbp_helper(pbp, game_id):
+def _get_game_pbp_helper(gamepackage, game_id):
     """A helper function that cleans a game's PBP.
 
     Parameters:
@@ -732,6 +732,7 @@ def _get_game_pbp_helper(pbp, game_id):
     Returns
         - the game PBP as a DataFrame
     """
+    pbp = gamepackage['pbp']
     home_team = pbp['tms']['home']['displayName']
     away_team = pbp['tms']['away']['displayName']
 
@@ -811,6 +812,8 @@ def _get_game_pbp_helper(pbp, game_id):
     assisted_pls = [x[0].split('Assisted by ')[-1].replace('.', '') if x[1] else '' for x in
                     zip(descs, is_assisted)]
 
+    is_three = ['three point' in x.lower() for x in descs]
+
     data = {
         'game_id': game_id,
         'home_team': home_team,
@@ -825,12 +828,72 @@ def _get_game_pbp_helper(pbp, game_id):
         'play_type': p_types,
         'shooting_play': shooting_play,
         'scoring_play': sc_play,
+        'is_three': is_three,
         'shooter': shooters,
         'is_assisted': is_assisted,
         'assist_player': assisted_pls,
     }
 
-    return pd.DataFrame(data)
+    df = pd.DataFrame(data)
+
+    # add shot data if it exists
+    is_shotchart = 'shtChrt' in gamepackage
+
+    if is_shotchart:
+        chart = gamepackage['shtChrt']['plays']
+
+        shotteams = [x['homeAway'] for x in chart]
+        xs = [x['coordinate']['x'] for x in chart]
+        ys = [x['coordinate']['y'] for x in chart]
+
+        shot_data = {
+            'team': shotteams,
+            'x': xs,
+            'y': ys
+        }
+
+        shot_df = pd.DataFrame(shot_data)
+
+        # shot matching
+        shot_info = {
+            'shot_x': [],
+            'shot_y': [],
+        }
+        shot_count = 0
+
+        for play in df.play_desc:
+            if shot_count >= len(shot_df):
+                shot_info['shot_x'].append(np.nan)
+                shot_info['shot_y'].append(np.nan)
+                continue
+
+            shot_play = shot_df.play_desc.iloc[shot_count]
+
+            if play == shot_play:
+                shot_info['shot_x'].append(shot_df.x.iloc[shot_count])
+                shot_info['shot_y'].append(shot_df.y.iloc[shot_count])
+                shot_count += 1
+            else:
+                shot_info['shot_x'].append(np.nan)
+                shot_info['shot_y'].append(np.nan)
+
+        # make sure that length of shot data matches number of shots in PBP data
+        if (not (len(shot_info['shot_x']) == len(df))) or (not (len(shot_info['shot_y']) == len(df))):
+            _log.warning(
+                f'"{time.ctime()}": {game_id} - Shot data length does not match PBP data')
+            df['shot_x'] = np.nan
+            df['shot_y'] = np.nan
+            return df
+
+        df['shot_x'] = shot_info['shot_x']
+        df['shot_y'] = shot_info['shot_y']
+
+    else:
+        df['shot_x'] = np.nan
+        df['shot_y'] = np.nan
+        return df
+
+    return df
 
 
 def _get_game_info_helper(info, more_info, game_id):
