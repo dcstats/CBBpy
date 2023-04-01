@@ -843,11 +843,13 @@ def _get_game_pbp_helper(gamepackage, game_id):
         chart = gamepackage['shtChrt']['plays']
 
         shotteams = [x['homeAway'] for x in chart]
+        shotdescs = [x['text'] for x in chart]
         xs = [x['coordinate']['x'] for x in chart]
         ys = [x['coordinate']['y'] for x in chart]
 
         shot_data = {
             'team': shotteams,
+            'play_desc': shotdescs,
             'x': xs,
             'y': ys
         }
