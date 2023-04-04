@@ -380,8 +380,8 @@ def get_games_season(season: int, info: bool = True, box: bool = True, pbp: bool
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-    season_start_date = datetime(season - 1, 11, 1)
-    season_end_date = datetime(season, 5, 1)
+    season_start_date = f'{season-1}-11-01'
+    season_end_date = f'{season}-05-01'
 
     info = get_games_range(season_start_date, season_end_date, info, box, pbp)
 
@@ -815,8 +815,8 @@ def _get_game_pbp_helper(gamepackage, game_id):
 
         shotteams = [x['homeAway'] for x in chart]
         shotdescs = [x['text'] for x in chart]
-        xs = [x['coordinate']['x'] for x in chart]
-        ys = [x['coordinate']['y'] for x in chart]
+        xs = [50-int(x['coordinate']['x']) for x in chart]
+        ys = [int(x['coordinate']['y']) for x in chart]
 
         shot_data = {
             'team': shotteams,
@@ -848,6 +848,7 @@ def _get_game_pbp_helper(gamepackage, game_id):
             if 'free throw' in play.lower():
                 shot_info['shot_x'].append(np.nan)
                 shot_info['shot_y'].append(np.nan)
+                shot_count += 1
                 continue
 
             shot_play = shot_df.play_desc.iloc[shot_count]
