@@ -133,7 +133,7 @@ def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool
 
     Parameters:
         - start_date: a string representing the first day of games to scrape
-        - end_date: a string representing the last day of games to scrape
+        - end_date: a string representing the last day of games to scrape (inclusive)
         - info: a boolean denoting whether game metadata is to be scraped
         - box: a boolean denoting whether game boxscore is to be scraped
         - pbp: a boolean denoting whether game play-by-play is to be scraped
@@ -382,39 +382,10 @@ def get_games_season(season: int, info: bool = True, box: bool = True, pbp: bool
     """
     season_start_date = datetime(season - 1, 11, 1)
     season_end_date = datetime(season, 5, 1)
-    len_season = (season_end_date - season_start_date).days
-    date = season_start_date
-    all_data = []
 
-    with trange(len_season) as t:
-        for i in t:
-            game_ids = get_game_ids(date)
+    info = get_games_range(season_start_date, season_end_date, info, box, pbp)
 
-            if len(game_ids) > 0:
-                games_info_day = []
-                for j, gid in enumerate(game_ids):
-                    t.set_description(
-                        f"Scraping {gid} ({j+1}/{len(game_ids)}) on {date.strftime('%D')}"
-                    )
-                    games_info_day.append(get_game(gid, info, box, pbp))
-                all_data.append(games_info_day)
-
-            else:
-                t.set_description(f"No games on {date.strftime('%D')}")
-
-            date += timedelta(days=1)
-
-    game_info_df = pd.concat([game[0] for day in all_data for game in day]).reset_index(
-        drop=True
-    )
-    game_boxscore_df = pd.concat(
-        [game[1] for day in all_data for game in day]
-    ).reset_index(drop=True)
-    game_pbp_df = pd.concat([game[2] for day in all_data for game in day]).reset_index(
-        drop=True
-    )
-
-    return (game_info_df, game_boxscore_df, game_pbp_df)
+    return info
 
 
 def get_game_ids(date: Union[str, datetime]) -> list:
@@ -863,8 +834,18 @@ def _get_game_pbp_helper(gamepackage, game_id):
         }
         shot_count = 0
 
-        for play in df.play_desc:
+        for play, isshot in zip(df.play_desc, df.shooting_play):
             if shot_count >= len(shot_df):
+                shot_info['shot_x'].append(np.nan)
+                shot_info['shot_y'].append(np.nan)
+                continue
+
+            if not isshot:
+                shot_info['shot_x'].append(np.nan)
+                shot_info['shot_y'].append(np.nan)
+                continue
+
+            if 'free throw' in play.lower():
                 shot_info['shot_x'].append(np.nan)
                 shot_info['shot_y'].append(np.nan)
                 continue
