@@ -26,7 +26,7 @@ from typing import Union
 logging.basicConfig(filename='cbbpy.log')
 _log = logging.getLogger(__name__)
 
-ATTEMPTS = 10
+ATTEMPTS = 20
 DATE_PARSES = [
     '%Y-%m-%d',
     '%Y/%m/%d',
@@ -238,7 +238,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(1.5)
+                time.sleep(2)
                 continue
         else:
             # no exception thrown
@@ -304,7 +304,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(1.5)
+                time.sleep(2)
                 continue
         else:
             # no exception thrown
@@ -368,7 +368,7 @@ def get_game_info(game_id: str) -> pd.DataFrame:
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(1.5)
+                time.sleep(2)
                 continue
         else:
             # no exception thrown
@@ -444,7 +444,7 @@ def get_game_ids(date: Union[str, datetime]) -> list:
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(1.5)
+                time.sleep(2)
                 continue
         else:
             # no exception thrown
