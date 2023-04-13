@@ -162,10 +162,10 @@ def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool
     with trange(len_scrape, bar_format=bar_format) as t:
         for i in t:
             date = date_range[i]
-            t.set_description(f"Scraping games on {str(date.date())}")
+            t.set_description(f"Scraping games on {date.strftime('%D')}")
             game_ids = get_game_ids(date)
             t.set_description(
-                f"Scraping {len(game_ids)} games on {str(date.date())}")
+                f"Scraping {len(game_ids)} games on {date.strftime('%D')}")
 
             if len(game_ids) > 0:
                 result = Parallel(n_jobs=cpus)(
@@ -173,7 +173,7 @@ def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool
                 all_data.append(result)
 
             else:
-                t.set_description(f"No games on {str(date.date())}")
+                t.set_description(f"No games on {date.strftime('%D')}")
 
     game_info_df = pd.concat([game[0] for day in all_data for game in day]).reset_index(
         drop=True
@@ -229,6 +229,9 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
+                elif 'Page error' in soup.text:
+                    _log.error(
+                        f'"{time.ctime()}": {game_id} - Page error')
                 else:
                     _log.error(
                         f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
@@ -292,6 +295,9 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
+                elif 'Page error' in soup.text:
+                    _log.error(
+                        f'"{time.ctime()}": {game_id} - Page error')
                 else:
                     _log.error(
                         f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
@@ -353,6 +359,9 @@ def get_game_info(game_id: str) -> pd.DataFrame:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
+                elif 'Page error' in soup.text:
+                    _log.error(
+                        f'"{time.ctime()}": {game_id} - Page error')
                 else:
                     _log.error(
                         f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
@@ -426,6 +435,9 @@ def get_game_ids(date: Union[str, datetime]) -> list:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {date.strftime("%D")} - Page not found error')
+                elif 'Page error' in soup.text:
+                    _log.error(
+                        f'"{time.ctime()}": {date.strftime("%D")} - Page error')
                 else:
                     _log.error(
                         f'"{time.ctime()}" attempt {i+1}: {date.strftime("%D")} - {ex}\n{traceback.format_exc()}')
