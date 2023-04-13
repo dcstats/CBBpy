@@ -13,11 +13,13 @@ from datetime import datetime, timedelta, timezone
 from dateutil.parser import parse
 from pytz import timezone as tz
 from tqdm import trange
+from joblib import Parallel, delayed
 import re
 import time
 import logging
 import traceback
 import json
+import os
 from typing import Union
 
 
@@ -144,33 +146,34 @@ def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-    start_date = _parse_date(start_date)
-    end_date = _parse_date(end_date)
-    len_scrape = (end_date - start_date).days + 1
-    date = start_date
+    sd = _parse_date(start_date)
+    ed = _parse_date(end_date)
+    date_range = pd.date_range(sd, ed)
+    len_scrape = len(date_range)
     all_data = []
+    cpus = os.cpu_count() - 1
 
-    if start_date > end_date:
+    if len_scrape < 1:
         raise InvalidDateRangeError(
             "The start date must be sooner than the end date.")
 
-    with trange(len_scrape) as t:
+    bar_format = '{l_bar}{bar}| {n_fmt} of {total_fmt} days scraped in {elapsed_s:.1f} sec'
+
+    with trange(len_scrape, bar_format=bar_format) as t:
         for i in t:
+            date = date_range[i]
+            t.set_description(f"Scraping games on {str(date.date())}")
             game_ids = get_game_ids(date)
+            t.set_description(
+                f"Scraping {len(game_ids)} games on {str(date.date())}")
 
             if len(game_ids) > 0:
-                games_info_day = []
-                for j, gid in enumerate(game_ids):
-                    t.set_description(
-                        f"Scraping {gid} ({j+1}/{len(game_ids)}) on {date.strftime('%D')}"
-                    )
-                    games_info_day.append(get_game(gid, info, box, pbp))
-                all_data.append(games_info_day)
+                result = Parallel(n_jobs=cpus)(
+                    delayed(get_game)(gid) for gid in game_ids)
+                all_data.append(result)
 
             else:
-                t.set_description(f"No games on {date.strftime('%D')}")
-
-            date += timedelta(days=1)
+                t.set_description(f"No games on {str(date.date())}")
 
     game_info_df = pd.concat([game[0] for day in all_data for game in day]).reset_index(
         drop=True
