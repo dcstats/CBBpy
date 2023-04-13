@@ -26,7 +26,7 @@ from typing import Union
 logging.basicConfig(filename='cbbpy.log')
 _log = logging.getLogger(__name__)
 
-ATTEMPTS = 10
+ATTEMPTS = 20
 DATE_PARSES = [
     '%Y-%m-%d',
     '%Y/%m/%d',
