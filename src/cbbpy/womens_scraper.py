@@ -13,11 +13,13 @@ from datetime import datetime, timedelta, timezone
 from dateutil.parser import parse
 from pytz import timezone as tz
 from tqdm import trange
+from joblib import Parallel, delayed
 import re
 import time
 import logging
 import traceback
 import json
+import os
 from typing import Union
 
 
@@ -133,7 +135,7 @@ def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool
 
     Parameters:
         - start_date: a string representing the first day of games to scrape
-        - end_date: a string representing the last day of games to scrape
+        - end_date: a string representing the last day of games to scrape (inclusive)
         - info: a boolean denoting whether game metadata is to be scraped
         - box: a boolean denoting whether game boxscore is to be scraped
         - pbp: a boolean denoting whether game play-by-play is to be scraped
@@ -144,33 +146,34 @@ def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-    start_date = _parse_date(start_date)
-    end_date = _parse_date(end_date)
-    len_scrape = (end_date - start_date).days + 1
-    date = start_date
+    sd = _parse_date(start_date)
+    ed = _parse_date(end_date)
+    date_range = pd.date_range(sd, ed)
+    len_scrape = len(date_range)
     all_data = []
+    cpus = os.cpu_count() - 1
 
-    if start_date > end_date:
+    if len_scrape < 1:
         raise InvalidDateRangeError(
             "The start date must be sooner than the end date.")
 
-    with trange(len_scrape) as t:
+    bar_format = '{l_bar}{bar}| {n_fmt} of {total_fmt} days scraped in {elapsed_s:.1f} sec'
+
+    with trange(len_scrape, bar_format=bar_format) as t:
         for i in t:
+            date = date_range[i]
+            t.set_description(f"Scraping games on {date.strftime('%D')}")
             game_ids = get_game_ids(date)
+            t.set_description(
+                f"Scraping {len(game_ids)} games on {date.strftime('%D')}")
 
             if len(game_ids) > 0:
-                games_info_day = []
-                for j, gid in enumerate(game_ids):
-                    t.set_description(
-                        f"Scraping {gid} ({j+1}/{len(game_ids)}) on {date.strftime('%D')}"
-                    )
-                    games_info_day.append(get_game(gid, info, box, pbp))
-                all_data.append(games_info_day)
+                result = Parallel(n_jobs=cpus)(
+                    delayed(get_game)(gid) for gid in game_ids)
+                all_data.append(result)
 
             else:
                 t.set_description(f"No games on {date.strftime('%D')}")
-
-            date += timedelta(days=1)
 
     game_info_df = pd.concat([game[0] for day in all_data for game in day]).reset_index(
         drop=True
@@ -226,13 +229,16 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
+                elif 'Page error' in soup.text:
+                    _log.error(
+                        f'"{time.ctime()}": {game_id} - Page error')
                 else:
                     _log.error(
                         f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(1.5)
+                time.sleep(2)
                 continue
         else:
             # no exception thrown
@@ -279,9 +285,9 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             # else:
             #     tot_seconds_in_game = (2*20*60) + ((num_halves-2)*5*60)
 
-            pbp = gamepackage['pbp']
+            # pbp = gamepackage['pbp']
 
-            df = _get_game_pbp_helper(pbp, game_id)
+            df = _get_game_pbp_helper(gamepackage, game_id)
 
         except Exception as ex:
             if i+1 == ATTEMPTS:
@@ -289,13 +295,16 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
+                elif 'Page error' in soup.text:
+                    _log.error(
+                        f'"{time.ctime()}": {game_id} - Page error')
                 else:
                     _log.error(
                         f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(1.5)
+                time.sleep(2)
                 continue
         else:
             # no exception thrown
@@ -350,13 +359,16 @@ def get_game_info(game_id: str) -> pd.DataFrame:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
+                elif 'Page error' in soup.text:
+                    _log.error(
+                        f'"{time.ctime()}": {game_id} - Page error')
                 else:
                     _log.error(
                         f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(1.5)
+                time.sleep(2)
                 continue
         else:
             # no exception thrown
@@ -380,41 +392,12 @@ def get_games_season(season: int, info: bool = True, box: bool = True, pbp: bool
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-    season_start_date = datetime(season - 1, 11, 1)
-    season_end_date = datetime(season, 5, 1)
-    len_season = (season_end_date - season_start_date).days
-    date = season_start_date
-    all_data = []
+    season_start_date = f'{season-1}-11-01'
+    season_end_date = f'{season}-05-01'
 
-    with trange(len_season) as t:
-        for i in t:
-            game_ids = get_game_ids(date)
+    info = get_games_range(season_start_date, season_end_date, info, box, pbp)
 
-            if len(game_ids) > 0:
-                games_info_day = []
-                for j, gid in enumerate(game_ids):
-                    t.set_description(
-                        f"Scraping {gid} ({j+1}/{len(game_ids)}) on {date.strftime('%D')}"
-                    )
-                    games_info_day.append(get_game(gid, info, box, pbp))
-                all_data.append(games_info_day)
-
-            else:
-                t.set_description(f"No games on {date.strftime('%D')}")
-
-            date += timedelta(days=1)
-
-    game_info_df = pd.concat([game[0] for day in all_data for game in day]).reset_index(
-        drop=True
-    )
-    game_boxscore_df = pd.concat(
-        [game[1] for day in all_data for game in day]
-    ).reset_index(drop=True)
-    game_pbp_df = pd.concat([game[2] for day in all_data for game in day]).reset_index(
-        drop=True
-    )
-
-    return (game_info_df, game_boxscore_df, game_pbp_df)
+    return info
 
 
 def get_game_ids(date: Union[str, datetime]) -> list:
@@ -452,13 +435,16 @@ def get_game_ids(date: Union[str, datetime]) -> list:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {date.strftime("%D")} - Page not found error')
+                elif 'Page error' in soup.text:
+                    _log.error(
+                        f'"{time.ctime()}": {date.strftime("%D")} - Page error')
                 else:
                     _log.error(
                         f'"{time.ctime()}" attempt {i+1}: {date.strftime("%D")} - {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
-                time.sleep(1.5)
+                time.sleep(2)
                 continue
         else:
             # no exception thrown
@@ -722,7 +708,7 @@ def _get_game_boxscore_helper(boxscore, game_id):
     return df
 
 
-def _get_game_pbp_helper(pbp, game_id):
+def _get_game_pbp_helper(gamepackage, game_id):
     """A helper function that cleans a game's PBP.
 
     Parameters:
@@ -732,6 +718,7 @@ def _get_game_pbp_helper(pbp, game_id):
     Returns
         - the game PBP as a DataFrame
     """
+    pbp = gamepackage['pbp']
     home_team = pbp['tms']['home']['displayName']
     away_team = pbp['tms']['away']['displayName']
 
@@ -811,6 +798,8 @@ def _get_game_pbp_helper(pbp, game_id):
     assisted_pls = [x[0].split('Assisted by ')[-1].replace('.', '') if x[1] else '' for x in
                     zip(descs, is_assisted)]
 
+    is_three = ['three point' in x.lower() for x in descs]
+
     data = {
         'game_id': game_id,
         'home_team': home_team,
@@ -825,12 +814,85 @@ def _get_game_pbp_helper(pbp, game_id):
         'play_type': p_types,
         'shooting_play': shooting_play,
         'scoring_play': sc_play,
+        'is_three': is_three,
         'shooter': shooters,
         'is_assisted': is_assisted,
         'assist_player': assisted_pls,
     }
 
-    return pd.DataFrame(data)
+    df = pd.DataFrame(data)
+
+    # add shot data if it exists
+    is_shotchart = 'shtChrt' in gamepackage
+
+    if is_shotchart:
+        chart = gamepackage['shtChrt']['plays']
+
+        shotteams = [x['homeAway'] for x in chart]
+        shotdescs = [x['text'] for x in chart]
+        xs = [50-int(x['coordinate']['x']) for x in chart]
+        ys = [int(x['coordinate']['y']) for x in chart]
+
+        shot_data = {
+            'team': shotteams,
+            'play_desc': shotdescs,
+            'x': xs,
+            'y': ys
+        }
+
+        shot_df = pd.DataFrame(shot_data)
+
+        # shot matching
+        shot_info = {
+            'shot_x': [],
+            'shot_y': [],
+        }
+        shot_count = 0
+
+        for play, isshot in zip(df.play_desc, df.shooting_play):
+            if shot_count >= len(shot_df):
+                shot_info['shot_x'].append(np.nan)
+                shot_info['shot_y'].append(np.nan)
+                continue
+
+            if not isshot:
+                shot_info['shot_x'].append(np.nan)
+                shot_info['shot_y'].append(np.nan)
+                continue
+
+            if 'free throw' in play.lower():
+                shot_info['shot_x'].append(np.nan)
+                shot_info['shot_y'].append(np.nan)
+                shot_count += 1
+                continue
+
+            shot_play = shot_df.play_desc.iloc[shot_count]
+
+            if play == shot_play:
+                shot_info['shot_x'].append(shot_df.x.iloc[shot_count])
+                shot_info['shot_y'].append(shot_df.y.iloc[shot_count])
+                shot_count += 1
+            else:
+                shot_info['shot_x'].append(np.nan)
+                shot_info['shot_y'].append(np.nan)
+
+        # make sure that length of shot data matches number of shots in PBP data
+        if (not (len(shot_info['shot_x']) == len(df))) or (not (len(shot_info['shot_y']) == len(df))):
+            _log.warning(
+                f'"{time.ctime()}": {game_id} - Shot data length does not match PBP data')
+            df['shot_x'] = np.nan
+            df['shot_y'] = np.nan
+            return df
+
+        df['shot_x'] = shot_info['shot_x']
+        df['shot_y'] = shot_info['shot_y']
+
+    else:
+        df['shot_x'] = np.nan
+        df['shot_y'] = np.nan
+        return df
+
+    return df
 
 
 def _get_game_info_helper(info, more_info, game_id):
