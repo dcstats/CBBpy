@@ -3,7 +3,7 @@
 # CBBpy: A Python-based web scraper for NCAA basketball
 
 ## Purpose
-This package is designed to bridge the gap between data and analysis for NCAA D1 basketball. CBBpy can grab play-by-play, boxscore, and other game metadata for any NCAA D1 men's basketball game.
+This package is designed to bridge the gap between data and analysis for NCAA D1 basketball. CBBpy can grab play-by-play, boxscore, and other game metadata for any NCAA D1 men's or women's basketball game.
 
 ## Installation and import
 CBBpy requires Python >= 3.7 as well as the following packages:
@@ -13,6 +13,7 @@ CBBpy requires Python >= 3.7 as well as the following packages:
 * pytz>=2022.1
 * tqdm>=4.63.0
 * lxml>=4.9.0
+* joblib>=1.1.0
 
 
 Install using pip:
@@ -20,33 +21,34 @@ Install using pip:
 pip install cbbpy
 ```
 
-As of now, CBBpy only offers a men's basketball scraper, which can be imported as such:
+The men's and women's scrapers can be imported as such:
 ```
-import cbbpy.mens_scraper as ms
+import cbbpy.mens_scraper as s
+import cbbpy.womens_scraper as s
 ```
 
 ## Functions available in CBBpy
 NOTE: game ID, as far as CBBpy is concernced, is a valid **ESPN** game ID
 
-`ms.get_game_info(game_id: str)` grabs all the metadata (game date, time, score, teams, referees, etc) for a particular game.
+`s.get_game_info(game_id: str)` grabs all the metadata (game date, time, score, teams, referees, etc) for a particular game.
 
-`ms.get_game_boxscore(game_id: str)` returns a pandas DataFrame with each player's stats for a particular game.
+`s.get_game_boxscore(game_id: str)` returns a pandas DataFrame with each player's stats for a particular game.
 
-`ms.get_game_pbp(game_id: str)` scrapes the play-by-play tables for a game and returns a pandas DataFrame, with each entry representing a play made during the game.
+`s.get_game_pbp(game_id: str)` scrapes the play-by-play tables for a game and returns a pandas DataFrame, with each entry representing a play made during the game.
 
-`ms.get_game(game_id: str, info: bool = True, box: bool = True, pbp: bool = True)` gets *all* information about a game (game info, boxscore, PBP) and returns a tuple of results `(game_info, boxscore, pbp)`. `info, box, pbp` are booleans which users can set to `False` if there is any information they wish not to scrape. For example, `box = False` would return an empty DataFrame for the boxscore info, while scraping PBP and metadata info normally.
+`s.get_game(game_id: str, info: bool = True, box: bool = True, pbp: bool = True)` gets *all* information about a game (game info, boxscore, PBP) and returns a tuple of results `(game_info, boxscore, pbp)`. `info, box, pbp` are booleans which users can set to `False` if there is any information they wish not to scrape. For example, `box = False` would return an empty DataFrame for the boxscore info, while scraping PBP and metadata info normally.
 
-`ms.get_games_season(season: int, info: bool = True, box: bool = True, pbp: bool = True)` scrapes all game information for all games in a particular season. As an example, to scrape games for the 2020-21 season, call `get_games_season(2021)`. Returns a tuple of 3 DataFrames, similar to `get_game`. See `get_game` for an explanation of booleans `info, box, pbp`.
+`s.get_games_season(season: int, info: bool = True, box: bool = True, pbp: bool = True)` scrapes all game information for all games in a particular season. As an example, to scrape games for the 2020-21 season, call `get_games_season(2021)`. Returns a tuple of 3 DataFrames, similar to `get_game`. See `get_game` for an explanation of booleans `info, box, pbp`.
 
-`ms.get_games_range(start_date: str, end_date: str, info: bool = True, box: bool = True, pbp: bool = True)` scrapes all game information for all games between `start_date` and `end_date` (inclusive). As an example, to scrape games between November 30, 2022 and December 10, 2022, call `get_games_season('11-30-2022', '12-10-2022')`. Returns a tuple of 3 DataFrames, similar to `get_game`. See `get_game` for an explanation of booleans `info, box, pbp`.
+`s.get_games_range(start_date: str, end_date: str, info: bool = True, box: bool = True, pbp: bool = True)` scrapes all game information for all games between `start_date` and `end_date` (inclusive). As an example, to scrape games between November 30, 2022 and December 10, 2022, call `get_games_season('11-30-2022', '12-10-2022')`. Returns a tuple of 3 DataFrames, similar to `get_game`. See `get_game` for an explanation of booleans `info, box, pbp`.
 
-`ms.get_game_ids(date: str)` returns a list of all game IDs for a particular date.
+`s.get_game_ids(date: str)` returns a list of all game IDs for a particular date.
 
 ## Examples
 
 Function call: 
 
-`ms.get_game_info('401408636')`
+`s.get_game_info('401408636')`
 
 Returns: 
 |    |   game_id | home_team       |   home_id |   home_rank | home_record   |   home_score | away_team                |   away_id |   away_rank | away_record   |   away_score | home_win   |   num_ots | is_conference   | is_neutral   | is_postseason   | tournament                                            | game_day       | game_time    | game_loc        | arena             |   arena_capacity | attendance   | tv_network   | referee_1   | referee_2     | referee_3     |
@@ -55,7 +57,7 @@ Returns:
 
 Function call: 
 
-`ms.get_game_boxscore('401408636')`
+`s.get_game_boxscore('401408636')`
 
 Returns (partially): 
 |    |   game_id | team            | player       |   player_id | position   | starter   |   min |   fgm |   fga |   2pm |   2pa |   3pm |   3pa |   ftm |   fta |   oreb |   dreb |   reb |   ast |   stl |   blk |   to |   pf |   pts |
@@ -68,7 +70,7 @@ Returns (partially):
 
 Function call: 
 
-`ms.get_game_pbp('401408636')`
+`s.get_game_pbp('401408636')`
 
 Returns (partially): 
 |    |   game_id | home_team       | away_team                | play_team                |   home_score |   away_score |   half |   secs_left_half |   secs_left_reg | play_desc                                                          | play_type   | scoring_play   | shooter         | is_assisted   | assist_player    |
