@@ -224,6 +224,11 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
             df = _get_game_boxscore_helper(boxscore, game_id)
 
         except Exception as ex:
+            if 'No Box Score Available' in soup.text:
+                _log.warning(
+                    f'"{time.ctime()}": {game_id} - No boxscore available')
+                return pd.DataFrame([])
+
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
                 if 'Page not found.' in soup.text:
