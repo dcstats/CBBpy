@@ -727,7 +727,7 @@ def _get_game_pbp_helper(gamepackage, game_id):
     home_team = pbp['tms']['home']['displayName']
     away_team = pbp['tms']['away']['displayName']
 
-    all_plays = [play for half in pbp['playGrps'] for play in half]
+    all_plays = [play for quart in pbp['playGrps'] for play in quart]
 
     # check if PBP exists
     if len(all_plays) <= 0:
@@ -741,17 +741,20 @@ def _get_game_pbp_helper(gamepackage, game_id):
                else np.nan for x in all_plays]
     ascores = [int(x['awayScore']) if 'awayScore' in x.keys()
                else np.nan for x in all_plays]
-    halves = [int(x['period']['number'])
-              if 'period' in x.keys() else np.nan for x in all_plays]
+    quarters = [int(x['period']['number'])
+                if 'period' in x.keys() else np.nan for x in all_plays]
 
     time_splits = [x['clock']['displayValue'].split(':') if 'clock' in x.keys()
                    else '' for x in all_plays]
     minutes = [int(x[0]) for x in time_splits]
     seconds = [int(x[1]) for x in time_splits]
     min_to_sec = [x*60 for x in minutes]
-    hf_secs_left = [x+y for x, y in zip(min_to_sec, seconds)]
-    reg_secs_left = [1200+x if half_num == 1 else x for x,
-                     half_num in zip(hf_secs_left, halves)]
+    qt_secs_left = [x+y for x, y in zip(min_to_sec, seconds)]
+    reg_secs_left = [1800+x if qt_num == 1
+                     else 1200+x if qt_num == 2
+                     else 600+x if qt_num == 3
+                     else x
+                     for x, qt_num in zip(qt_secs_left, quarters)]
 
     sc_play = [True if 'scoringPlay' in x.keys()
                else False for x in all_plays]
@@ -812,8 +815,8 @@ def _get_game_pbp_helper(gamepackage, game_id):
         'play_desc': descs,
         'home_score': hscores,
         'away_score': ascores,
-        'half': halves,
-        'secs_left_half': hf_secs_left,
+        'quarter': quarters,
+        'secs_left_qt': qt_secs_left,
         'secs_left_reg': reg_secs_left,
         'play_team': teams,
         'play_type': p_types,
@@ -979,8 +982,7 @@ def _get_game_info_helper(info, more_info, game_id):
 
     tournament = more_info['nte'] if 'nte' in more_info.keys() else ''
 
-    h_ot, a_ot = len(ht_info['linescores']) - \
-        2, len(at_info['linescores']) - 2
+    h_ot, a_ot = len(ht_info['linescores']) - 4, len(at_info['linescores']) - 4
     assert h_ot == a_ot
     num_ots = h_ot
 
