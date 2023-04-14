@@ -979,10 +979,13 @@ def _get_game_info_helper(info, more_info, game_id):
 
     tournament = more_info['nte'] if 'nte' in more_info.keys() else ''
 
-    h_ot, a_ot = len(ht_info['linescores']) - \
-        2, len(at_info['linescores']) - 2
-    assert h_ot == a_ot
-    num_ots = h_ot
+    if ('linescores' in ht_info) and ('linescores' in at_info):
+        h_ot, a_ot = len(ht_info['linescores']) - \
+            2, len(at_info['linescores']) - 2
+        assert h_ot == a_ot
+        num_ots = h_ot
+    else:
+        num_ots = -1
 
     game_info_list = [
         game_id,
