@@ -985,6 +985,7 @@ def _get_game_info_helper(info, more_info, game_id):
         assert h_ot == a_ot
         num_ots = h_ot
     else:
+        _log.warning(f'"{time.ctime()}": {game_id} - No score info available')
         num_ots = -1
 
     game_info_list = [
