@@ -42,7 +42,7 @@ NOTE: game ID, as far as CBBpy is concernced, is a valid **ESPN** game ID
 
 `s.get_games_range(start_date: str, end_date: str, info: bool = True, box: bool = True, pbp: bool = True)` scrapes all game information for all games between `start_date` and `end_date` (inclusive). As an example, to scrape games between November 30, 2022 and December 10, 2022, call `get_games_season('11-30-2022', '12-10-2022')`. Returns a tuple of 3 DataFrames, similar to `get_game`. See `get_game` for an explanation of booleans `info, box, pbp`.
 
-`s.get_game_ids(date: str)` returns a list of all game IDs for a particular date.
+`s.get_game_ids(date: Union[str, datetime])` returns a list of all game IDs for a particular date.
 
 ## Examples
 
