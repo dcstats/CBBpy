@@ -48,38 +48,47 @@ NOTE: game ID, as far as CBBpy is concernced, is a valid **ESPN** game ID
 
 Function call: 
 
-`s.get_game_info('401408636')`
+```
+import cbbpy.mens_scraper as s
+s.get_game_info('401522202')
+```
 
 Returns: 
-|    |   game_id | home_team       |   home_id |   home_rank | home_record   |   home_score | away_team                |   away_id |   away_rank | away_record   |   away_score | home_win   |   num_ots | is_conference   | is_neutral   | is_postseason   | tournament                                            | game_day       | game_time    | game_loc        | arena             |   arena_capacity | attendance   | tv_network   | referee_1   | referee_2     | referee_3     |
-|---:|----------:|:----------------|----------:|------------:|:--------------|-------------:|:-------------------------|----------:|------------:|:--------------|-------------:|:-----------|----------:|:----------------|:-------------|:----------------|:------------------------------------------------------|:---------------|:-------------|:----------------|:------------------|-----------------:|:-------------|:-------------|:------------|:--------------|:--------------|
-|  0 | 401408636 | Kansas Jayhawks |      2305 |           1 | 34-6          |           72 | North Carolina Tar Heels |       153 |           8 | 29-10         |           69 | True       |         0 | False           | True         | True            | Men's Basketball Championship - National Championship | April 04, 2022 | 06:20 PM PDT | New Orleans, LA | Caesars Superdome |              nan | 69,423       | TBS          | Ron Groover | Terry Oglesby | Jeff Anderson |
+|    |   game_id | home_team     |   home_id |   home_rank | home_record   |   home_score | away_team              |   away_id |   away_rank | away_record   |   away_score | home_win   |   num_ots | is_conference   | is_neutral   | is_postseason   | tournament                                            | game_day       | game_time    | game_loc    | arena       |   arena_capacity |   attendance | tv_network   | referee_1   | referee_2     | referee_3    |
+|---:|----------:|:--------------|----------:|------------:|:--------------|-------------:|:-----------------------|----------:|------------:|:--------------|-------------:|:-----------|----------:|:----------------|:-------------|:----------------|:------------------------------------------------------|:---------------|:-------------|:------------|:------------|-----------------:|-------------:|:-------------|:------------|:--------------|:-------------|
+|  0 | 401522202 | UConn Huskies |        41 |           4 | 31-8          |           76 | San Diego State Aztecs |        21 |           5 | 32-7          |           59 | True       |         0 | False           | True         | True            | Men's Basketball Championship - National Championship | April 03, 2023 | 06:20 PM PDT | Houston, TX | NRG Stadium |                0 |        72423 | CBS          | Ron Groover | Terry Oglesby | Keith Kimble |
 
 Function call: 
 
-`s.get_game_boxscore('401408636')`
+```
+import cbbpy.womens_scraper as s 
+s.get_game_boxscore('401408636')
+```
 
 Returns (partially): 
-|    |   game_id | team            | player       |   player_id | position   | starter   |   min |   fgm |   fga |   2pm |   2pa |   3pm |   3pa |   ftm |   fta |   oreb |   dreb |   reb |   ast |   stl |   blk |   to |   pf |   pts |
-|---:|----------:|:----------------|:-------------|------------:|:-----------|:----------|------:|------:|------:|------:|------:|------:|------:|------:|------:|-------:|-------:|------:|------:|------:|------:|-----:|-----:|------:|
-|  0 | 401408636 | Kansas Jayhawks | J. Wilson    |     4431714 | F          | True      |    34 |     5 |    13 |     4 |     8 |     1 |     5 |     4 |     4 |      1 |      3 |     4 |     2 |     0 |     1 |    0 |    1 |    15 |
-|  1 | 401408636 | Kansas Jayhawks | D. McCormack |     4397019 | F          | True      |    29 |     7 |    15 |     7 |    15 |     0 |     0 |     1 |     2 |      3 |      7 |    10 |     0 |     1 |     1 |    1 |    4 |    15 |
-|  2 | 401408636 | Kansas Jayhawks | D. Harris    |     4431983 | G          | True      |    27 |     1 |     5 |     1 |     4 |     0 |     1 |     0 |     0 |      0 |      0 |     0 |     3 |     3 |     1 |    4 |    0 |     2 |
-|  3 | 401408636 | Kansas Jayhawks | C. Braun     |     4431767 | G          | True      |    40 |     6 |    14 |     6 |    13 |     0 |     1 |     0 |     0 |      1 |     11 |    12 |     3 |     0 |     0 |    1 |    3 |    12 |
-|  4 | 401408636 | Kansas Jayhawks | O. Agbaji    |     4397018 | G          | True      |    37 |     4 |     9 |     3 |     5 |     1 |     4 |     3 |     8 |      1 |      2 |     3 |     1 |     1 |     1 |    2 |    1 |    12 |
+|    |   game_id | team       | player      |   player_id | position   | starter   |   min |   fgm |   fga |   2pm |   2pa |   3pm |   3pa |   ftm |   fta |   oreb |   dreb |   reb |   ast |   stl |   blk |   to |   pf |   pts |
+|---:|----------:|:-----------|:------------|------------:|:-----------|:----------|------:|------:|------:|------:|------:|------:|------:|------:|------:|-------:|-------:|------:|------:|------:|------:|-----:|-----:|------:|
+|  0 | 401528028 | LSU Tigers | A. Reese    |     4433402 | F          | True      |    29 |     5 |    12 |     5 |    12 |     0 |     0 |     5 |     8 |      6 |      4 |    10 |     5 |     3 |     1 |    0 |    3 |    15 |
+|  1 | 401528028 | LSU Tigers | L. Williams |     4280886 | F          | True      |    37 |     9 |    16 |     9 |    16 |     0 |     0 |     2 |     2 |      1 |      4 |     5 |     0 |     3 |     0 |    3 |    4 |    20 |
+|  2 | 401528028 | LSU Tigers | F. Johnson  |     4698736 | G          | True      |    37 |     4 |    11 |     3 |     7 |     1 |     4 |     1 |     1 |      2 |      5 |     7 |     4 |     1 |     0 |    4 |    1 |    10 |
+|  3 | 401528028 | LSU Tigers | K. Poole    |     4433418 | G          | True      |    24 |     2 |     3 |     0 |     1 |     2 |     2 |     0 |     2 |      0 |      3 |     3 |     1 |     0 |     1 |    1 |    2 |     6 |
+|  4 | 401528028 | LSU Tigers | A. Morris   |     4281251 | G          | True      |    33 |     8 |    14 |     7 |    11 |     1 |     3 |     4 |     4 |      1 |      1 |     2 |     9 |     1 |     0 |    2 |    3 |    21 |
 
 Function call: 
 
-`s.get_game_pbp('401408636')`
+```
+import cbbpy.mens_scraper as s
+s.get_game_pbp('401522202')
+```
 
 Returns (partially): 
-|    |   game_id | home_team       | away_team                | play_team                |   home_score |   away_score |   half |   secs_left_half |   secs_left_reg | play_desc                                                          | play_type   | scoring_play   | shooter         | is_assisted   | assist_player    |
-|---:|----------:|:----------------|:-------------------------|:-------------------------|-------------:|-------------:|-------:|-----------------:|----------------:|:-------------------------------------------------------------------|:------------|:---------------|:----------------|:--------------|:-----------------|
-|  0 | 401408636 | Kansas Jayhawks | North Carolina Tar Heels | Kansas Jayhawks          |            0 |            0 |      1 |             1200 |            2400 | Jump Ball won by Kansas                                            | jump ball   | False          |                 | False         |                  |
-|  1 | 401408636 | Kansas Jayhawks | North Carolina Tar Heels | Kansas Jayhawks          |            3 |            0 |      1 |             1179 |            2379 | Ochai Agbaji made Three Point Jumper. Assisted by Christian Braun. | jumper      | True           | Ochai Agbaji    | True          | Christian Braun  |
-|  2 | 401408636 | Kansas Jayhawks | North Carolina Tar Heels | North Carolina Tar Heels |            3 |            0 |      1 |             1161 |            2361 | Armando Bacot missed Jumper.                                       | jumper      | False          |                 | False         |                  |
-|  3 | 401408636 | Kansas Jayhawks | North Carolina Tar Heels | Kansas Jayhawks          |            3 |            0 |      1 |             1161 |            2361 | Christian Braun Defensive Rebound.                                 | rebound     | False          |                 | False         |                  |
-|  4 | 401408636 | Kansas Jayhawks | North Carolina Tar Heels | Kansas Jayhawks          |            5 |            0 |      1 |             1144 |            2344 | David McCormack made Jumper. Assisted by Dajuan Harris Jr..        | jumper      | True           | David McCormack | True          | Dajuan Harris Jr |
+|    |   game_id | home_team     | away_team              | play_desc                                                             |   home_score |   away_score |   half |   secs_left_half |   secs_left_reg | play_team              | play_type          | shooting_play   | scoring_play   | is_three   | shooter          | is_assisted   | assist_player   |   shot_x |   shot_y |
+|---:|----------:|:--------------|:-----------------------|:----------------------------------------------------------------------|-------------:|-------------:|-------:|-----------------:|----------------:|:-----------------------|:-------------------|:----------------|:---------------|:-----------|:-----------------|:--------------|:----------------|---------:|---------:|
+|  0 | 401522202 | UConn Huskies | San Diego State Aztecs | Jump Ball won by UConn                                                |            0 |            0 |      1 |             1200 |            2400 | UConn Huskies          | jump ball          | False           | False          | False      |                  | False         |                 |      nan |      nan |
+|  1 | 401522202 | UConn Huskies | San Diego State Aztecs | Jordan Hawkins made Jumper. Assisted by Adama Sanogo.                 |            2 |            0 |      1 |             1174 |            2374 | UConn Huskies          | jumper             | True            | True           | False      | Jordan Hawkins   | True          | Adama Sanogo    |       18 |       15 |
+|  2 | 401522202 | UConn Huskies | San Diego State Aztecs | Lamont Butler made Three Point Jumper. Assisted by Matt Bradley.      |            2 |            3 |      1 |             1152 |            2352 | San Diego State Aztecs | three point jumper | True            | True           | True       | Lamont Butler    | True          | Matt Bradley    |       39 |       22 |
+|  3 | 401522202 | UConn Huskies | San Diego State Aztecs | Tristen Newton Turnover.                                              |            2 |            3 |      1 |             1130 |            2330 | UConn Huskies          | turnover           | False           | False          | False      |                  | False         |                 |      nan |      nan |
+|  4 | 401522202 | UConn Huskies | San Diego State Aztecs | Darrion Trammell made Three Point Jumper. Assisted by Keshad Johnson. |            2 |            6 |      1 |             1108 |            2308 | San Diego State Aztecs | three point jumper | True            | True           | True       | Darrion Trammell | True          | Keshad Johnson  |        1 |        0 |
 
 ## Contact
 Feel free to reach out to me directly with any questions, requests, or suggestions at <dnlcowan37@gmail.com>.
