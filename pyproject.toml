@@ -15,16 +15,27 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
 ]
-keywords = ["college", "basketball", "scraper"]
+keywords = [
+  "college", 
+  "basketball", 
+  "scraper", 
+  "scraping",
+  "web scraper",
+  "data",
+  "espn",
+  "analysis",
+  "science",
+  "analytics",
+]
 dependencies = [
-        'pandas>=1.4.2',
-        'numpy>=1.22.3',
-        'python-dateutil>=2.8.2',
-        'pytz>=2022.1',
-        'tqdm>=4.63.0',
-        'lxml>=4.9.0',
-        'joblib>=1.2.0',
-      ]
+  'pandas>=1.4.2',
+  'numpy>=1.22.3',
+  'python-dateutil>=2.8.2',
+  'pytz>=2022.1',
+  'tqdm>=4.63.0',
+  'lxml>=4.9.0',
+  'joblib>=1.2.0',
+]
 requires-python = ">=3.7"
 
 [tool.setuptools.dynamic]
