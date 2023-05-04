@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup as bs
 import requests as r
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from dateutil.parser import parse
 from pytz import timezone as tz
 from tqdm import trange
@@ -25,6 +25,10 @@ from typing import Union
 
 logging.basicConfig(filename='cbbpy.log')
 _log = logging.getLogger(__name__)
+
+# PNF will check if the page exists
+# if it doesn't exist, don't run the other scrape functions to save time
+PNF = False
 
 ATTEMPTS = 20
 DATE_PARSES = [
@@ -112,20 +116,23 @@ def get_game(game_id: str, info: bool = True, box: bool = True, pbp: bool = True
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-    if info:
+    if info and not PNF:
         game_info_df = get_game_info(game_id)
     else:
         game_info_df = pd.DataFrame([])
 
-    if box:
+    if box and not PNF:
         boxscore_df = get_game_boxscore(game_id)
     else:
         boxscore_df = pd.DataFrame([])
 
-    if pbp:
+    if pbp and not PNF:
         pbp_df = get_game_pbp(game_id)
     else:
         pbp_df = pd.DataFrame([])
+
+    global PNF
+    PNF = False
 
     return (game_info_df, boxscore_df, pbp_df)
 
@@ -234,6 +241,8 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
+                    global PNF
+                    PNF = True
                 elif 'Page error' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page error')
@@ -283,15 +292,6 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
                 return pd.DataFrame([])
 
-            # num_halves = len(pbp['playGrps'])
-
-            # if num_halves == 2:
-            #     tot_seconds_in_game = (num_halves*20*60)
-            # else:
-            #     tot_seconds_in_game = (2*20*60) + ((num_halves-2)*5*60)
-
-            # pbp = gamepackage['pbp']
-
             df = _get_game_pbp_helper(gamepackage, game_id)
 
         except Exception as ex:
@@ -300,6 +300,8 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
+                    global PNF
+                    PNF = True
                 elif 'Page error' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page error')
@@ -364,6 +366,8 @@ def get_game_info(game_id: str) -> pd.DataFrame:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
+                    global PNF
+                    PNF = True
                 elif 'Page error' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page error')

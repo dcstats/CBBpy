@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup as bs
 import requests as r
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from dateutil.parser import parse
 from pytz import timezone as tz
 from tqdm import trange
@@ -25,6 +25,10 @@ from typing import Union
 
 logging.basicConfig(filename='cbbpy.log')
 _log = logging.getLogger(__name__)
+
+# PNF will check if the page exists
+# if it doesn't exist, don't run the other scrape functions to save time
+PNF = False
 
 ATTEMPTS = 20
 DATE_PARSES = [
@@ -112,24 +116,23 @@ def get_game(game_id: str, info: bool = True, box: bool = True, pbp: bool = True
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-    # scrape status will check if the page exists
-    # if it doesn't exist, don't run the other scrape functions to save time
-    scrape_status = True
-
-    if info and scrape_status:
-        scrape_status, game_info_df = get_game_info(game_id)
+    if info and not PNF:
+        game_info_df = get_game_info(game_id)
     else:
         game_info_df = pd.DataFrame([])
 
-    if box and scrape_status:
-        scrape_status, boxscore_df = get_game_boxscore(game_id)
+    if box and not PNF:
+        boxscore_df = get_game_boxscore(game_id)
     else:
         boxscore_df = pd.DataFrame([])
 
-    if pbp and scrape_status:
-        scrape_status, pbp_df = get_game_pbp(game_id)
+    if pbp and not PNF:
+        pbp_df = get_game_pbp(game_id)
     else:
         pbp_df = pd.DataFrame([])
+
+    global PNF
+    PNF = False
 
     return (game_info_df, boxscore_df, pbp_df)
 
@@ -201,8 +204,6 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
     Returns
         - the game boxscore as a DataFrame
     """
-    scrape_status = True
-
     for i in range(ATTEMPTS):
         try:
             header = {
@@ -222,7 +223,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
             gsbool = (gm_status == 'Final')  # or (gm_status == 'In Progress')
             if not gsbool:
                 _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
-                return (scrape_status, pd.DataFrame([]))
+                return pd.DataFrame([])
 
             boxscore = gamepackage['bxscr']
 
@@ -232,21 +233,22 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
             if 'No Box Score Available' in soup.text:
                 _log.warning(
                     f'"{time.ctime()}": {game_id} - No boxscore available')
-                return (scrape_status, pd.DataFrame([]))
+                return pd.DataFrame([])
 
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
-                    scrape_status = False
+                    global PNF
+                    PNF = True
                 elif 'Page error' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page error')
                 else:
                     _log.error(
                         f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
-                return (scrape_status, pd.DataFrame([]))
+                return pd.DataFrame([])
             else:
                 # try again
                 time.sleep(2)
@@ -255,7 +257,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
             # no exception thrown
             break
 
-    return (scrape_status, df)
+    return df
 
 
 def get_game_pbp(game_id: str) -> pd.DataFrame:
@@ -267,8 +269,6 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
     Returns
         - the game's play-by-play information represented as a DataFrame
     """
-    scrape_status = True
-
     for i in range(ATTEMPTS):
         try:
             header = {
@@ -288,16 +288,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             gsbool = (gm_status == 'Final')  # or (gm_status == 'In Progress')
             if not gsbool:
                 _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
-                return (scrape_status, pd.DataFrame([]))
-
-            # num_halves = len(pbp['playGrps'])
-
-            # if num_halves == 2:
-            #     tot_seconds_in_game = (num_halves*20*60)
-            # else:
-            #     tot_seconds_in_game = (2*20*60) + ((num_halves-2)*5*60)
-
-            # pbp = gamepackage['pbp']
+                return pd.DataFrame([])
 
             df = _get_game_pbp_helper(gamepackage, game_id)
 
@@ -307,14 +298,15 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
-                    scrape_status = False
+                    global PNF
+                    PNF = True
                 elif 'Page error' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page error')
                 else:
                     _log.error(
                         f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
-                return (scrape_status, pd.DataFrame([]))
+                return pd.DataFrame([])
             else:
                 # try again
                 time.sleep(2)
@@ -323,7 +315,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             # no exception thrown
             break
 
-    return (scrape_status, df)
+    return df
 
 
 def get_game_info(game_id: str) -> pd.DataFrame:
@@ -335,8 +327,6 @@ def get_game_info(game_id: str) -> pd.DataFrame:
     Returns
         - a DataFrame with one row and a column for each piece of metadata
     """
-    scrape_status = True
-
     for i in range(ATTEMPTS):
         try:
             header = {
@@ -357,7 +347,7 @@ def get_game_info(game_id: str) -> pd.DataFrame:
             gsbool = (gm_status == 'Final')  # or (gm_status == 'In Progress')
             if not gsbool:
                 _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
-                return (scrape_status, pd.DataFrame([]))
+                return pd.DataFrame([])
 
             # get general game info
             info = gamepackage['gmInfo']
@@ -373,14 +363,15 @@ def get_game_info(game_id: str) -> pd.DataFrame:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
-                    scrape_status = False
+                    global PNF
+                    PNF = True
                 elif 'Page error' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page error')
                 else:
                     _log.error(
                         f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
-                return (scrape_status, pd.DataFrame([]))
+                return pd.DataFrame([])
             else:
                 # try again
                 time.sleep(2)
@@ -389,7 +380,7 @@ def get_game_info(game_id: str) -> pd.DataFrame:
             # no exception thrown
             break
 
-    return (scrape_status, df)
+    return df
 
 
 def get_games_season(season: int, info: bool = True, box: bool = True, pbp: bool = True) -> tuple:
