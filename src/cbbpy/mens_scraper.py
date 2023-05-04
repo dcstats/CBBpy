@@ -30,7 +30,7 @@ _log = logging.getLogger(__name__)
 # if it doesn't exist, don't run the other scrape functions to save time
 PNF = False
 
-ATTEMPTS = 20
+ATTEMPTS = 15
 DATE_PARSES = [
     '%Y-%m-%d',
     '%Y/%m/%d',
