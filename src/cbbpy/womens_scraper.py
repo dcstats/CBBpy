@@ -116,6 +116,8 @@ def get_game(game_id: str, info: bool = True, box: bool = True, pbp: bool = True
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
+    global PNF
+
     if info and not PNF:
         game_info_df = get_game_info(game_id)
     else:
@@ -131,7 +133,6 @@ def get_game(game_id: str, info: bool = True, box: bool = True, pbp: bool = True
     else:
         pbp_df = pd.DataFrame([])
 
-    global PNF
     PNF = False
 
     return (game_info_df, boxscore_df, pbp_df)
