@@ -26,9 +26,6 @@ from typing import Union
 logging.basicConfig(filename='cbbpy.log')
 _log = logging.getLogger(__name__)
 
-# PNF will check if the page exists
-# if it doesn't exist, don't run the other scrape functions to save time
-PNF = False
 
 ATTEMPTS = 15
 DATE_PARSES = [
@@ -104,6 +101,11 @@ class InvalidDateRangeError(Exception):
     pass
 
 
+# pnf_ will keep track of games w/ page not found errors
+# if game has error, don't run the other scrape functions to save time
+pnf_ = []
+
+
 def get_game(game_id: str, info: bool = True, box: bool = True, pbp: bool = True) -> tuple:
     """A function that scrapes all game info (metadata, boxscore, play-by-play).
 
@@ -116,24 +118,20 @@ def get_game(game_id: str, info: bool = True, box: bool = True, pbp: bool = True
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-    global PNF
-
-    if info and not PNF:
+    if info and not game_id in pnf_:
         game_info_df = get_game_info(game_id)
     else:
         game_info_df = pd.DataFrame([])
 
-    if box and not PNF:
+    if box and not game_id in pnf_:
         boxscore_df = get_game_boxscore(game_id)
     else:
         boxscore_df = pd.DataFrame([])
 
-    if pbp and not PNF:
+    if pbp and not game_id in pnf_:
         pbp_df = get_game_pbp(game_id)
     else:
         pbp_df = pd.DataFrame([])
-
-    PNF = False
 
     return (game_info_df, boxscore_df, pbp_df)
 
@@ -242,8 +240,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
-                    global PNF
-                    PNF = True
+                    pnf_.append(game_id)
                 elif 'Page error' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page error')
@@ -301,8 +298,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
-                    global PNF
-                    PNF = True
+                    pnf_.append(game_id)
                 elif 'Page error' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page error')
@@ -367,8 +363,7 @@ def get_game_info(game_id: str) -> pd.DataFrame:
                 if 'Page not found.' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page not found error')
-                    global PNF
-                    PNF = True
+                    pnf_.append(game_id)
                 elif 'Page error' in soup.text:
                     _log.error(
                         f'"{time.ctime()}": {game_id} - Page error')
