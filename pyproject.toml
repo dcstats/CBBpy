@@ -26,6 +26,11 @@ keywords = [
   "analysis",
   "science",
   "analytics",
+  "cbb",
+  "cbbpy",
+  "ncaa",
+  "ncaam",
+  "ncaaw",
 ]
 dependencies = [
   'pandas>=1.4.2',
