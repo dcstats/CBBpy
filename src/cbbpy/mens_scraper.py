@@ -181,6 +181,9 @@ def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool
             else:
                 t.set_description(f"No games on {date.strftime('%D')}")
 
+    if not len(all_data) > 0:
+        return ()
+
     game_info_df = pd.concat([game[0] for day in all_data for game in day]).reset_index(
         drop=True
     )
