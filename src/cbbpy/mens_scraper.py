@@ -346,9 +346,17 @@ def get_game_info(game_id: str) -> pd.DataFrame:
             url = GAME_URL.format(game_id)
             page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
+            script_string = _find_json_in_content(soup)
 
-            js = soup.find_all('script')[3].text
-            js = js.replace("window[\'__espnfitt__\']=", '')[:-1]
+            if script_string == '':
+                _log.warning(
+                    f'"{time.ctime()}": {game_id} - Game JSON not found on page.')
+                return pd.DataFrame([])
+
+            regex_match = r"window\[\'__espnfitt__\'\]={(.*)};"
+            pattern = re.compile(regex_match)
+            found = re.search(pattern, script_string).group(1)
+            js = '{' + found + '}'
             jsn = json.loads(js)
             gamepackage = jsn['page']['content']['gamepackage']
 
