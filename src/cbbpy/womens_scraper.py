@@ -163,6 +163,14 @@ def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool
     if len_scrape < 1:
         raise InvalidDateRangeError(
             "The start date must be sooner than the end date.")
+    
+    if sd > datetime.today():
+        raise InvalidDateRangeError(
+            "The start date must not be in the future.")
+    
+    if ed > datetime.today():
+        raise InvalidDateRangeError(
+            "The end date must not be in the future.")
 
     bar_format = '{l_bar}{bar}| {n_fmt} of {total_fmt} days scraped in {elapsed_s:.1f} sec'
 
@@ -345,7 +353,7 @@ def get_game_info(game_id: str) -> pd.DataFrame:
             page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
-            
+
             if not gamepackage:
                 _log.warning(
                     f'"{time.ctime()}": {game_id} - Game JSON not found on page.')
