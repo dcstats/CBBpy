@@ -92,6 +92,7 @@ SHOT_TYPES = [
     'Dunk'
 ]
 WINDOW_STRING = "window[\'__espnfitt__\']="
+JSON_REGEX = r"window\[\'__espnfitt__\'\]={(.*)};"
 
 
 class CouldNotParseError(Exception):
@@ -444,11 +445,13 @@ def get_game_ids(date: Union[str, datetime]) -> list:
             url = SCOREBOARD_URL.format(d)
             page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
-            js = soup.find_all('script')[3].text
-            js = js.replace("window[\'__espnfitt__\']=", '')[:-1]
-            jsn = json.loads(js)
+            scoreboard = _get_scoreboard_from_soup(soup)
 
-            scoreboard = jsn['page']['content']['scoreboard']['evts']
+            if not scoreboard:
+                _log.warning(
+                    f'"{time.ctime()}": {date} - JSON not found on page.')
+                return pd.DataFrame([])
+            
             ids = [x['id'] for x in scoreboard]
 
         except Exception as ex:
@@ -1077,14 +1080,28 @@ def _get_gamepackage_from_soup(soup):
     if script_string == '':
         return None
 
-    regex_match = r"window\[\'__espnfitt__\'\]={(.*)};"
-    pattern = re.compile(regex_match)
+    pattern = re.compile(JSON_REGEX)
     found = re.search(pattern, script_string).group(1)
     js = '{' + found + '}'
     jsn = json.loads(js)
     gamepackage = jsn['page']['content']['gamepackage']
 
     return gamepackage
+
+
+def _get_scoreboard_from_soup(soup):
+    script_string = _find_json_in_content(soup)
+
+    if script_string == '':
+        return None
+
+    pattern = re.compile(JSON_REGEX)
+    found = re.search(pattern, script_string).group(1)
+    js = '{' + found + '}'
+    jsn = json.loads(js)
+    scoreboard = jsn['page']['content']['scoreboard']['evts']
+
+    return scoreboard
 
 
 def _find_json_in_content(soup):
