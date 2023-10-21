@@ -228,9 +228,9 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
-            if not gamepackage:
+            if gamepackage is None:
                 _log.warning(
-                    f'"{time.ctime()}": {game_id} - Game JSON not found on page.')
+                    f'"{time.ctime()}": {game_id} - Boxscore: Game JSON not found on page.')
                 return pd.DataFrame([])
 
             # check if game was postponed
@@ -295,9 +295,9 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
-            if not gamepackage:
+            if gamepackage is None:
                 _log.warning(
-                    f'"{time.ctime()}": {game_id} - Game JSON not found on page.')
+                    f'"{time.ctime()}": {game_id} - PBP: Game JSON not found on page.')
                 return pd.DataFrame([])
 
             # check if game was postponed
@@ -355,9 +355,9 @@ def get_game_info(game_id: str) -> pd.DataFrame:
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
-            if not gamepackage:
+            if gamepackage is None:
                 _log.warning(
-                    f'"{time.ctime()}": {game_id} - Game JSON not found on page.')
+                    f'"{time.ctime()}": {game_id} - Game Info: Game JSON not found on page.')
                 return pd.DataFrame([])
 
             # check if game was postponed
@@ -447,7 +447,7 @@ def get_game_ids(date: Union[str, datetime]) -> list:
             soup = bs(page.content, "lxml")
             scoreboard = _get_scoreboard_from_soup(soup)
 
-            if not scoreboard:
+            if scoreboard is None:
                 _log.warning(
                     f'"{time.ctime()}": {date} - JSON not found on page.')
                 return pd.DataFrame([])
