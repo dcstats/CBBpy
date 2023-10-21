@@ -1084,6 +1084,22 @@ def _get_game_info_helper(info, more_info, game_id):
     return pd.DataFrame([game_info_list], columns=game_info_cols)
 
 
+def _get_gamepackage_from_soup(soup):
+    script_string = _find_json_in_content(soup)
+
+    if script_string == '':
+        return None
+
+    regex_match = r"window\[\'__espnfitt__\'\]={(.*)};"
+    pattern = re.compile(regex_match)
+    found = re.search(pattern, script_string).group(1)
+    js = '{' + found + '}'
+    jsn = json.loads(js)
+    gamepackage = jsn['page']['content']['gamepackage']
+
+    return gamepackage
+
+
 def _find_json_in_content(soup):
     script_string = ''
     for x in soup.find_all('script'):
