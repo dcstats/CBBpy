@@ -217,19 +217,12 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
             url = BOXSCORE_URL.format(game_id)
             page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
-            script_string = _find_json_in_content(soup)
+            gamepackage = _get_gamepackage_from_soup(soup)
 
-            if script_string == '':
+            if not gamepackage:
                 _log.warning(
                     f'"{time.ctime()}": {game_id} - Game JSON not found on page.')
                 return pd.DataFrame([])
-
-            regex_match = r"window\[\'__espnfitt__\'\]={(.*)};"
-            pattern = re.compile(regex_match)
-            found = re.search(pattern, script_string).group(1)
-            js = '{' + found + '}'
-            jsn = json.loads(js)
-            gamepackage = jsn['page']['content']['gamepackage']
 
             # check if game was postponed
             gm_status = gamepackage['gmStrp']['status']['desc']
@@ -291,19 +284,12 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             url = PBP_URL.format(game_id)
             page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
-            script_string = _find_json_in_content(soup)
+            gamepackage = _get_gamepackage_from_soup(soup)
 
-            if script_string == '':
+            if not gamepackage:
                 _log.warning(
                     f'"{time.ctime()}": {game_id} - Game JSON not found on page.')
                 return pd.DataFrame([])
-
-            regex_match = r"window\[\'__espnfitt__\'\]={(.*)};"
-            pattern = re.compile(regex_match)
-            found = re.search(pattern, script_string).group(1)
-            js = '{' + found + '}'
-            jsn = json.loads(js)
-            gamepackage = jsn['page']['content']['gamepackage']
 
             # check if game was postponed
             gm_status = gamepackage['gmStrp']['status']['desc']
@@ -358,19 +344,12 @@ def get_game_info(game_id: str) -> pd.DataFrame:
             url = GAME_URL.format(game_id)
             page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
-            script_string = _find_json_in_content(soup)
-
-            if script_string == '':
+            gamepackage = _get_gamepackage_from_soup(soup)
+            
+            if not gamepackage:
                 _log.warning(
                     f'"{time.ctime()}": {game_id} - Game JSON not found on page.')
                 return pd.DataFrame([])
-
-            regex_match = r"window\[\'__espnfitt__\'\]={(.*)};"
-            pattern = re.compile(regex_match)
-            found = re.search(pattern, script_string).group(1)
-            js = '{' + found + '}'
-            jsn = json.loads(js)
-            gamepackage = jsn['page']['content']['gamepackage']
 
             # check if game was postponed
             gm_status = gamepackage['gmStrp']['status']['desc']
