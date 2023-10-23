@@ -178,7 +178,6 @@ def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool
     with trange(len_scrape, bar_format=bar_format) as t:
         for i in t:
             date = date_range[i]
-            t.set_description(f"Scraping games on {date.strftime('%D')}")
             game_ids = get_game_ids(date)
             t.set_description(
                 f"Scraping {len(game_ids)} games on {date.strftime('%D')}")
@@ -227,11 +226,6 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
-            if gamepackage is None:
-                _log.warning(
-                    f'"{time.ctime()}": {game_id} - Boxscore: Game JSON not found on page.')
-                return pd.DataFrame([])
-
             # check if game was postponed
             gm_status = gamepackage['gmStrp']['status']['desc']
             gsbool = (gm_status == 'Final')  # or (gm_status == 'In Progress')
@@ -253,14 +247,17 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
                 # max number of attempts reached, so return blank df
                 if 'Page not found.' in soup.text:
                     _log.error(
-                        f'"{time.ctime()}": {game_id} - Page not found error')
+                        f'"{time.ctime()}": {game_id} - Boxscore: Page not found error')
                     pnf_.append(game_id)
                 elif 'Page error' in soup.text:
                     _log.error(
-                        f'"{time.ctime()}": {game_id} - Page error')
+                        f'"{time.ctime()}": {game_id} - Boxscore: Page error')    
+                elif gamepackage is None:
+                    _log.error(
+                        f'"{time.ctime()}": {game_id} - Boxscore: Game JSON not found on page.')
                 else:
                     _log.error(
-                        f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
+                        f'"{time.ctime()}": {game_id} - Boxscore: {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
@@ -293,11 +290,6 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
-            if gamepackage is None:
-                _log.warning(
-                    f'"{time.ctime()}": {game_id} - PBP: Game JSON not found on page.')
-                return pd.DataFrame([])
-
             # check if game was postponed
             gm_status = gamepackage['gmStrp']['status']['desc']
             gsbool = (gm_status == 'Final')  # or (gm_status == 'In Progress')
@@ -312,14 +304,17 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 # max number of attempts reached, so return blank df
                 if 'Page not found.' in soup.text:
                     _log.error(
-                        f'"{time.ctime()}": {game_id} - Page not found error')
+                        f'"{time.ctime()}": {game_id} - PBP: Page not found error')
                     pnf_.append(game_id)
                 elif 'Page error' in soup.text:
                     _log.error(
-                        f'"{time.ctime()}": {game_id} - Page error')
+                        f'"{time.ctime()}": {game_id} - PBP: Page error')    
+                elif gamepackage is None:
+                    _log.error(
+                        f'"{time.ctime()}": {game_id} - PBP: Game JSON not found on page.')
                 else:
                     _log.error(
-                        f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
+                        f'"{time.ctime()}": {game_id} - PBP: {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
@@ -352,11 +347,6 @@ def get_game_info(game_id: str) -> pd.DataFrame:
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
-            if gamepackage is None:
-                _log.warning(
-                    f'"{time.ctime()}": {game_id} - Game Info: Game JSON not found on page.')
-                return pd.DataFrame([])
-
             # check if game was postponed
             gm_status = gamepackage['gmStrp']['status']['desc']
             gsbool = (gm_status == 'Final')  # or (gm_status == 'In Progress')
@@ -377,14 +367,17 @@ def get_game_info(game_id: str) -> pd.DataFrame:
             if i+1 == ATTEMPTS:
                 if 'Page not found.' in soup.text:
                     _log.error(
-                        f'"{time.ctime()}": {game_id} - Page not found error')
+                        f'"{time.ctime()}": {game_id} - Game Info: Page not found error')
                     pnf_.append(game_id)
                 elif 'Page error' in soup.text:
                     _log.error(
-                        f'"{time.ctime()}": {game_id} - Page error')
+                        f'"{time.ctime()}": {game_id} - Game Info: Page error')    
+                elif gamepackage is None:
+                    _log.error(
+                        f'"{time.ctime()}": {game_id} - Game Info: Game JSON not found on page.')
                 else:
                     _log.error(
-                        f'"{time.ctime()}" attempt {i+1}: {game_id} - {ex}\n{traceback.format_exc()}')
+                        f'"{time.ctime()}": {game_id} - Game Info: {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
@@ -443,12 +436,6 @@ def get_game_ids(date: Union[str, datetime]) -> list:
             page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
             scoreboard = _get_scoreboard_from_soup(soup)
-
-            if scoreboard is None:
-                _log.warning(
-                    f'"{time.ctime()}": {date} - JSON not found on page.')
-                return pd.DataFrame([])
-            
             ids = [x['id'] for x in scoreboard]
 
         except Exception as ex:
@@ -456,13 +443,16 @@ def get_game_ids(date: Union[str, datetime]) -> list:
                 # max number of attempts reached, so return blank df
                 if 'Page not found.' in soup.text:
                     _log.error(
-                        f'"{time.ctime()}": {date.strftime("%D")} - Page not found error')
+                        f'"{time.ctime()}": {date.strftime("%D")} - IDs: Page not found error')
                 elif 'Page error' in soup.text:
                     _log.error(
-                        f'"{time.ctime()}": {date.strftime("%D")} - Page error')
+                        f'"{time.ctime()}": {date.strftime("%D")} - IDs: Page error')
+                elif scoreboard is None:
+                    _log.error(
+                        f'"{time.ctime()}": {date.strftime("%D")} - IDs: JSON not found on page.')
                 else:
                     _log.error(
-                        f'"{time.ctime()}" attempt {i+1}: {date.strftime("%D")} - {ex}\n{traceback.format_exc()}')
+                        f'"{time.ctime()}": {date.strftime("%D")} - IDs: {ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
