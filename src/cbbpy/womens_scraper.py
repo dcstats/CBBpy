@@ -176,7 +176,8 @@ def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool
 
     bar_format = '{l_bar}{bar}| {n_fmt} of {total_fmt} days scraped in {elapsed_s:.1f} sec'
 
-    with trange(len_scrape, bar_format=bar_format) as t:
+    with trange(len_scrape, bar_format=bar_format, desc='Scraping games', 
+                position=0, leave=True) as t:
         for i in t:
             date = date_range[i]
             game_ids = get_game_ids(date)
