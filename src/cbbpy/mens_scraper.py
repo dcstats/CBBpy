@@ -93,6 +93,7 @@ SHOT_TYPES = [
 ]
 WINDOW_STRING = "window[\'__espnfitt__\']="
 JSON_REGEX = r"window\[\'__espnfitt__\'\]={(.*)};"
+STATUS_OK = 200
 
 
 class CouldNotParseError(Exception):
@@ -238,26 +239,31 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
             df = _get_game_boxscore_helper(boxscore, game_id)
 
         except Exception as ex:
-            if 'No Box Score Available' in soup.text:
-                _log.warning(
-                    f'"{time.ctime()}": {game_id} - No boxscore available')
-                return pd.DataFrame([])
+            if page.status_code == STATUS_OK:
+                if 'No Box Score Available' in soup.text:
+                    _log.warning(
+                        f'"{time.ctime()}": {game_id} - No boxscore available')
+                    return pd.DataFrame([])
 
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
-                if 'Page not found.' in soup.text:
-                    _log.error(
-                        f'"{time.ctime()}": {game_id} - Boxscore: Page not found error')
-                    pnf_.append(game_id)
-                elif 'Page error' in soup.text:
-                    _log.error(
-                        f'"{time.ctime()}": {game_id} - Boxscore: Page error')    
-                elif gamepackage is None:
-                    _log.error(
-                        f'"{time.ctime()}": {game_id} - Boxscore: Game JSON not found on page.')
+                if page.status_code == STATUS_OK:
+                    if 'Page not found.' in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {game_id} - Boxscore: Page not found error')
+                        pnf_.append(game_id)
+                    elif 'Page error' in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {game_id} - Boxscore: Page error')    
+                    elif gamepackage is None:
+                        _log.error(
+                            f'"{time.ctime()}": {game_id} - Boxscore: Game JSON not found on page.')
+                    else:
+                        _log.error(
+                            f'"{time.ctime()}": {game_id} - Boxscore: {ex}\n{traceback.format_exc()}')
                 else:
                     _log.error(
-                        f'"{time.ctime()}": {game_id} - Boxscore: {ex}\n{traceback.format_exc()}')
+                        f'"{time.ctime()}": {game_id} - Boxscore: GET error\n{ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
@@ -302,19 +308,23 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
         except Exception as ex:
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
-                if 'Page not found.' in soup.text:
-                    _log.error(
-                        f'"{time.ctime()}": {game_id} - PBP: Page not found error')
-                    pnf_.append(game_id)
-                elif 'Page error' in soup.text:
-                    _log.error(
-                        f'"{time.ctime()}": {game_id} - PBP: Page error')    
-                elif gamepackage is None:
-                    _log.error(
-                        f'"{time.ctime()}": {game_id} - PBP: Game JSON not found on page.')
+                if page.status_code == STATUS_OK:
+                    if 'Page not found.' in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {game_id} - PBP: Page not found error')
+                        pnf_.append(game_id)
+                    elif 'Page error' in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {game_id} - PBP: Page error')    
+                    elif gamepackage is None:
+                        _log.error(
+                            f'"{time.ctime()}": {game_id} - PBP: Game JSON not found on page.')
+                    else:
+                        _log.error(
+                            f'"{time.ctime()}": {game_id} - PBP: {ex}\n{traceback.format_exc()}')
                 else:
                     _log.error(
-                        f'"{time.ctime()}": {game_id} - PBP: {ex}\n{traceback.format_exc()}')
+                        f'"{time.ctime()}": {game_id} - PBP: GET error\n{ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
@@ -363,21 +373,25 @@ def get_game_info(game_id: str) -> pd.DataFrame:
             df = _get_game_info_helper(info, more_info, game_id)
 
         except Exception as ex:
-            # max number of attempts reached, so return blank df
             if i+1 == ATTEMPTS:
-                if 'Page not found.' in soup.text:
-                    _log.error(
-                        f'"{time.ctime()}": {game_id} - Game Info: Page not found error')
-                    pnf_.append(game_id)
-                elif 'Page error' in soup.text:
-                    _log.error(
-                        f'"{time.ctime()}": {game_id} - Game Info: Page error')    
-                elif gamepackage is None:
-                    _log.error(
-                        f'"{time.ctime()}": {game_id} - Game Info: Game JSON not found on page.')
+                # max number of attempts reached, so return blank df
+                if page.status_code == STATUS_OK:
+                    if 'Page not found.' in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {game_id} - Game Info: Page not found error')
+                        pnf_.append(game_id)
+                    elif 'Page error' in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {game_id} - Game Info: Page error')    
+                    elif gamepackage is None:
+                        _log.error(
+                            f'"{time.ctime()}": {game_id} - Game Info: Game JSON not found on page.')
+                    else:
+                        _log.error(
+                            f'"{time.ctime()}": {game_id} - Game Info: {ex}\n{traceback.format_exc()}')
                 else:
                     _log.error(
-                        f'"{time.ctime()}": {game_id} - Game Info: {ex}\n{traceback.format_exc()}')
+                        f'"{time.ctime()}": {game_id} - Game Info: GET error\n{ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
@@ -441,18 +455,22 @@ def get_game_ids(date: Union[str, datetime]) -> list:
         except Exception as ex:
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
-                if 'Page not found.' in soup.text:
-                    _log.error(
-                        f'"{time.ctime()}": {date.strftime("%D")} - IDs: Page not found error')
-                elif 'Page error' in soup.text:
-                    _log.error(
-                        f'"{time.ctime()}": {date.strftime("%D")} - IDs: Page error')
-                elif scoreboard is None:
-                    _log.error(
-                        f'"{time.ctime()}": {date.strftime("%D")} - IDs: JSON not found on page.')
+                if page.status_code == STATUS_OK:
+                    if 'Page not found.' in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: Page not found error')
+                    elif 'Page error' in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: Page error')
+                    elif scoreboard is None:
+                        _log.error(
+                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: JSON not found on page.')
+                    else:
+                        _log.error(
+                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: {ex}\n{traceback.format_exc()}')
                 else:
                     _log.error(
-                        f'"{time.ctime()}": {date.strftime("%D")} - IDs: {ex}\n{traceback.format_exc()}')
+                        f'"{time.ctime()}": {date.strftime("%D")} - IDs: GET error\n{ex}\n{traceback.format_exc()}')
                 return pd.DataFrame([])
             else:
                 # try again
