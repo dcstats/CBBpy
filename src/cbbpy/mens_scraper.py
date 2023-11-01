@@ -121,20 +121,22 @@ def get_game(game_id: str, info: bool = True, box: bool = True, pbp: bool = True
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-    if info and not game_id in pnf_:
+    game_info_df = boxscore_df = pbp_df = pd.DataFrame([])
+
+    if game_id in pnf_:
+        _log.error(f'"{time.ctime()}": {game_id} - Game Info: Page not found error')
+    elif info:
         game_info_df = get_game_info(game_id)
-    else:
-        game_info_df = pd.DataFrame([])
 
-    if box and not game_id in pnf_:
+    if game_id in pnf_:
+        _log.error(f'"{time.ctime()}": {game_id} - Boxscore: Page not found error')
+    elif box:
         boxscore_df = get_game_boxscore(game_id)
-    else:
-        boxscore_df = pd.DataFrame([])
 
-    if pbp and not game_id in pnf_:
+    if game_id in pnf_:
+        _log.error(f'"{time.ctime()}": {game_id} - PBP: Page not found error')
+    elif pbp:
         pbp_df = get_game_pbp(game_id)
-    else:
-        pbp_df = pd.DataFrame([])
 
     return (game_info_df, boxscore_df, pbp_df)
 
@@ -176,7 +178,7 @@ def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool
 
     bar_format = '{l_bar}{bar}| {n_fmt} of {total_fmt} days scraped in {elapsed_s:.1f} sec'
 
-    with trange(len_scrape, bar_format=bar_format, desc='Scraping games') as t:
+    with trange(len_scrape, bar_format=bar_format, position=0, leave=True) as t:
         for i in t:
             date = date_range[i]
             game_ids = get_game_ids(date)
@@ -216,6 +218,8 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
     Returns
         - the game boxscore as a DataFrame
     """
+    soup = None
+
     for i in range(ATTEMPTS):
         try:
             header = {
@@ -239,7 +243,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
             df = _get_game_boxscore_helper(boxscore, game_id)
 
         except Exception as ex:
-            if page.status_code == STATUS_OK:
+            if soup is not None:
                 if 'No Box Score Available' in soup.text:
                     _log.warning(
                         f'"{time.ctime()}": {game_id} - No boxscore available')
@@ -247,7 +251,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
 
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
-                if page.status_code == STATUS_OK:
+                if soup is not None:
                     if 'Page not found.' in soup.text:
                         _log.error(
                             f'"{time.ctime()}": {game_id} - Boxscore: Page not found error')
@@ -285,6 +289,8 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
     Returns
         - the game's play-by-play information represented as a DataFrame
     """
+    soup = None
+
     for i in range(ATTEMPTS):
         try:
             header = {
@@ -308,7 +314,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
         except Exception as ex:
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
-                if page.status_code == STATUS_OK:
+                if soup is not None:
                     if 'Page not found.' in soup.text:
                         _log.error(
                             f'"{time.ctime()}": {game_id} - PBP: Page not found error')
@@ -346,6 +352,8 @@ def get_game_info(game_id: str) -> pd.DataFrame:
     Returns
         - a DataFrame with one row and a column for each piece of metadata
     """
+    soup = None
+
     for i in range(ATTEMPTS):
         try:
             header = {
@@ -375,7 +383,7 @@ def get_game_info(game_id: str) -> pd.DataFrame:
         except Exception as ex:
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
-                if page.status_code == STATUS_OK:
+                if soup is not None:
                     if 'Page not found.' in soup.text:
                         _log.error(
                             f'"{time.ctime()}": {game_id} - Game Info: Page not found error')
@@ -436,6 +444,8 @@ def get_game_ids(date: Union[str, datetime]) -> list:
     Returns
         - a list of ESPN all game IDs for games played on the date given
     """
+    soup = None
+
     if type(date) == str:
         date = _parse_date(date)
 
@@ -455,7 +465,7 @@ def get_game_ids(date: Union[str, datetime]) -> list:
         except Exception as ex:
             if i+1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
-                if page.status_code == STATUS_OK:
+                if soup is not None:
                     if 'Page not found.' in soup.text:
                         _log.error(
                             f'"{time.ctime()}": {date.strftime("%D")} - IDs: Page not found error')
