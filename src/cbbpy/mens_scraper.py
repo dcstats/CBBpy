@@ -182,8 +182,8 @@ def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool
         for i in t:
             date = date_range[i]
             game_ids = get_game_ids(date)
-            t.set_description(
-                f"Scraping {len(game_ids)} games on {date.strftime('%D')}")
+            t.set_description(f"Scraping {len(game_ids)} games on {date.strftime('%D')}", 
+                              refresh=False)
 
             if len(game_ids) > 0:
                 result = Parallel(n_jobs=cpus)(
@@ -191,7 +191,7 @@ def get_games_range(start_date: str, end_date: str, info: bool = True, box: bool
                 all_data.append(result)
 
             else:
-                t.set_description(f"No games on {date.strftime('%D')}")
+                t.set_description(f"No games on {date.strftime('%D')}", refresh=False)
 
     if not len(all_data) > 0:
         return ()
