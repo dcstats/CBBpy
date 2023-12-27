@@ -1,10 +1,3 @@
-"""
-A tool to scrape data for NCAA D1 Women's college basketball games.
-
-Author: Daniel Cowan
-"""
-
-
 from bs4 import BeautifulSoup as bs
 import requests as r
 import pandas as pd
@@ -16,12 +9,83 @@ from tqdm import trange
 from joblib import Parallel, delayed
 import re
 import time
-import logging
 import traceback
 import json
 import os
-from typing import Union
-from cbbpy_utils import *
+import logging
+
+
+ATTEMPTS = 15
+DATE_PARSES = [
+    "%Y-%m-%d",
+    "%Y/%m/%d",
+    "%m-%d-%Y",
+    "%m/%d/%Y",
+]
+USER_AGENTS = [
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 "
+    + "(KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+    + "(KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 "
+    + "(KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 "
+    + "(KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    + "(KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    + "(KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 "
+    + "(KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+    + "(KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 "
+    + "(KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36",
+]
+REFERERS = [
+    "https://google.com/",
+    "https://youtube.com/",
+    "https://facebook.com/",
+    "https://twitter.com/",
+    "https://nytimes.com/",
+    "https://washingtonpost.com/",
+    "https://linkedin.com/",
+    "https://nhl.com/",
+    "https://mlb.com/",
+    "https://nfl.com/",
+]
+MENS_SCOREBOARD_URL = "https://www.espn.com/mens-college-basketball/scoreboard/_/date/{}/seasontype/2/group/50"
+MENS_GAME_URL = "https://www.espn.com/mens-college-basketball/game/_/gameId/{}"
+MENS_BOXSCORE_URL = "https://www.espn.com/mens-college-basketball/boxscore/_/gameId/{}"
+MENS_PBP_URL = "https://www.espn.com/mens-college-basketball/playbyplay/_/gameId/{}"
+WOMENS_SCOREBOARD_URL = "https://www.espn.com/womens-college-basketball/scoreboard/_/date/{}/seasontype/2/group/50"
+WOMENS_GAME_URL = "https://www.espn.com/womens-college-basketball/game/_/gameId/{}"
+WOMENS_BOXSCORE_URL = (
+    "https://www.espn.com/womens-college-basketball/boxscore/_/gameId/{}"
+)
+WOMENS_PBP_URL = "https://www.espn.com/womens-college-basketball/playbyplay/_/gameId/{}"
+NON_SHOT_TYPES = [
+    "TV Timeout",
+    "Jump Ball",
+    "Turnover",
+    "Timeout",
+    "Rebound",
+    "Block",
+    "Steal",
+    "Foul",
+    "End",
+]
+SHOT_TYPES = [
+    "Three Point Jumper",
+    "Two Point Tip Shot",
+    "Free Throw",
+    "Jumper",
+    "Layup",
+    "Dunk",
+]
+WINDOW_STRING = "window['__espnfitt__']="
+JSON_REGEX = r"window\[\'__espnfitt__\'\]={(.*)};"
+STATUS_OK = 200
 
 
 logging.basicConfig(filename="cbbpy.log")
@@ -33,9 +97,15 @@ _log = logging.getLogger(__name__)
 pnf_ = []
 
 
-def get_game(
-    game_id: str, info: bool = True, box: bool = True, pbp: bool = True
-) -> tuple:
+class CouldNotParseError(Exception):
+    pass
+
+
+class InvalidDateRangeError(Exception):
+    pass
+
+
+def _get_game(game_id, game_type, info, box, pbp):
     """A function that scrapes all game info (metadata, boxscore, play-by-play).
 
     Parameters:
@@ -52,28 +122,22 @@ def get_game(
     if game_id in pnf_:
         _log.error(f'"{time.ctime()}": {game_id} - Game Info: Page not found error')
     elif info:
-        game_info_df = get_game_info(game_id)
+        game_info_df = _get_game_info(game_id, game_type)
 
     if game_id in pnf_:
         _log.error(f'"{time.ctime()}": {game_id} - Boxscore: Page not found error')
     elif box:
-        boxscore_df = get_game_boxscore(game_id)
+        boxscore_df = _get_game_boxscore(game_id, game_type)
 
     if game_id in pnf_:
         _log.error(f'"{time.ctime()}": {game_id} - PBP: Page not found error')
     elif pbp:
-        pbp_df = get_game_pbp(game_id)
+        pbp_df = _get_game_pbp(game_id, game_type)
 
     return (game_info_df, boxscore_df, pbp_df)
 
 
-def get_games_range(
-    start_date: str,
-    end_date: str,
-    info: bool = True,
-    box: bool = True,
-    pbp: bool = True,
-) -> tuple:
+def _get_games_range(start_date, end_date, game_type, info, box, pbp):
     """A function that scrapes a game information between a given range of dates.
 
     Parameters:
@@ -112,7 +176,7 @@ def get_games_range(
     with trange(len_scrape, bar_format=bar_format) as t:
         for i in t:
             date = date_range[i]
-            game_ids = get_game_ids(date)
+            game_ids = _get_game_ids(date)
             t.set_description(
                 f"Scraping {len(game_ids)} games on {date.strftime('%D')}",
                 refresh=False,
@@ -120,7 +184,8 @@ def get_games_range(
 
             if len(game_ids) > 0:
                 result = Parallel(n_jobs=cpus)(
-                    delayed(get_game)(gid) for gid in game_ids
+                    delayed(_get_game)(gid, game_type, info=info, box=box, pbp=pbp)
+                    for gid in game_ids
                 )
                 all_data.append(result)
 
@@ -143,7 +208,104 @@ def get_games_range(
     return (game_info_df, game_boxscore_df, game_pbp_df)
 
 
-def get_game_boxscore(game_id: str) -> pd.DataFrame:
+def _get_games_season(season, game_type, info, box, pbp):
+    """A function that scrapes all game info (metadata, boxscore, play-by-play) for every game of
+    a given season.
+
+    Parameters:
+        - season: an integer representing the season to be scraped. NOTE: season is takes the form
+        of the four-digit representation of the later year of the season. So, as an example, the
+        2021-22 season is referred to by the integer 2022.
+
+    Returns
+        - (game_info_df, boxscore_df, pbp_df), a tuple consisting of:
+            -- game_info_df: a DataFrame of the game's metadata
+            -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
+            -- pbp_df: a DataFrame of the game's play-by-play
+    """
+    season_start_date = f"{season-1}-11-01"
+    season_end_date = f"{season}-05-01"
+
+    # if season has not ended yet, set end scrape date to today
+    if datetime.strptime(season_end_date, "%Y-%m-%d") > datetime.today():
+        season_end_date = datetime.today().strftime("%Y-%m-%d")
+
+    info = _get_games_range(
+        season_start_date, season_end_date, game_type, info, box, pbp
+    )
+
+    return info
+
+
+def _get_game_ids(date, game_type):
+    """A function that scrapes all game IDs on a date.
+
+    Parameters:
+        - date: a string/datetime object representing the date to be scraped
+
+    Returns
+        - a list of ESPN all game IDs for games played on the date given
+    """
+    soup = None
+
+    if game_type == "mens":
+        pre_url = MENS_BOXSCORE_URL
+    else:
+        pre_url = WOMENS_BOXSCORE_URL
+
+    if type(date) == str:
+        date = _parse_date(date)
+
+    for i in range(ATTEMPTS):
+        try:
+            header = {
+                "User-Agent": np.random.choice(USER_AGENTS),
+                "Referer": np.random.choice(REFERERS),
+            }
+            d = date.strftime("%Y%m%d")
+            url = pre_url.format(d)
+            page = r.get(url, headers=header)
+            soup = bs(page.content, "lxml")
+            scoreboard = _get_scoreboard_from_soup(soup)
+            ids = [x["id"] for x in scoreboard]
+
+        except Exception as ex:
+            if i + 1 == ATTEMPTS:
+                # max number of attempts reached, so return blank df
+                if soup is not None:
+                    if "Page not found." in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: Page not found error'
+                        )
+                    elif "Page error" in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: Page error'
+                        )
+                    elif scoreboard is None:
+                        _log.error(
+                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: JSON not found on page.'
+                        )
+                    else:
+                        _log.error(
+                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: {ex}\n{traceback.format_exc()}'
+                        )
+                else:
+                    _log.error(
+                        f'"{time.ctime()}": {date.strftime("%D")} - IDs: GET error\n{ex}\n{traceback.format_exc()}'
+                    )
+                return pd.DataFrame([])
+            else:
+                # try again
+                time.sleep(2)
+                continue
+        else:
+            # no exception thrown
+            break
+
+    return ids
+
+
+def _get_game_boxscore(game_id, game_type):
     """A function that scrapes a game's boxscore.
 
     Parameters:
@@ -154,13 +316,18 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
     """
     soup = None
 
+    if game_type == "mens":
+        pre_url = MENS_BOXSCORE_URL
+    else:
+        pre_url = WOMENS_BOXSCORE_URL
+
     for i in range(ATTEMPTS):
         try:
             header = {
                 "User-Agent": np.random.choice(USER_AGENTS),
                 "Referer": np.random.choice(REFERERS),
             }
-            url = WOMENS_BOXSCORE_URL.format(game_id)
+            url = pre_url.format(game_id)
             page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
@@ -218,7 +385,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
     return df
 
 
-def get_game_pbp(game_id: str) -> pd.DataFrame:
+def _get_game_pbp(game_id, game_type):
     """A function that scrapes a game's play-by-play information.
 
     Parameters:
@@ -229,13 +396,18 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
     """
     soup = None
 
+    if game_type == "mens":
+        pre_url = MENS_PBP_URL
+    else:
+        pre_url = WOMENS_PBP_URL
+
     for i in range(ATTEMPTS):
         try:
             header = {
                 "User-Agent": np.random.choice(USER_AGENTS),
                 "Referer": np.random.choice(REFERERS),
             }
-            url = WOMENS_PBP_URL.format(game_id)
+            url = pre_url.format(game_id)
             page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
@@ -247,7 +419,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
                 _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
                 return pd.DataFrame([])
 
-            df = _get_game_pbp_helper(gamepackage, game_id)
+            df = _get_game_pbp_helper(gamepackage, game_id, game_type)
 
         except Exception as ex:
             if i + 1 == ATTEMPTS:
@@ -284,7 +456,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
     return df
 
 
-def get_game_info(game_id: str) -> pd.DataFrame:
+def _get_game_info(game_id, game_type):
     """A function that scrapes game metadata.
 
     Parameters:
@@ -295,13 +467,18 @@ def get_game_info(game_id: str) -> pd.DataFrame:
     """
     soup = None
 
+    if game_type == "mens":
+        pre_url = MENS_GAME_URL
+    else:
+        pre_url = WOMENS_GAME_URL
+
     for i in range(ATTEMPTS):
         try:
             header = {
                 "User-Agent": np.random.choice(USER_AGENTS),
                 "Referer": np.random.choice(REFERERS),
             }
-            url = WOMENS_GAME_URL.format(game_id)
+            url = pre_url.format(game_id)
             page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
@@ -358,99 +535,7 @@ def get_game_info(game_id: str) -> pd.DataFrame:
     return df
 
 
-def get_games_season(
-    season: int, info: bool = True, box: bool = True, pbp: bool = True
-) -> tuple:
-    """A function that scrapes all game info (metadata, boxscore, play-by-play) for every game of
-    a given season.
-
-    Parameters:
-        - season: an integer representing the season to be scraped. NOTE: season is takes the form
-        of the four-digit representation of the later year of the season. So, as an example, the
-        2021-22 season is referred to by the integer 2022.
-
-    Returns
-        - (game_info_df, boxscore_df, pbp_df), a tuple consisting of:
-            -- game_info_df: a DataFrame of the game's metadata
-            -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
-            -- pbp_df: a DataFrame of the game's play-by-play
-    """
-    season_start_date = f"{season-1}-11-01"
-    season_end_date = f"{season}-05-01"
-
-    # if season has not ended yet, set end scrape date to today
-    if datetime.strptime(season_end_date, "%Y-%m-%d") > datetime.today():
-        season_end_date = datetime.today().strftime("%Y-%m-%d")
-
-    info = get_games_range(season_start_date, season_end_date, info, box, pbp)
-
-    return info
-
-
-def get_game_ids(date: Union[str, datetime]) -> list:
-    """A function that scrapes all game IDs on a date.
-
-    Parameters:
-        - date: a string/datetime object representing the date to be scraped
-
-    Returns
-        - a list of ESPN all game IDs for games played on the date given
-    """
-    soup = None
-
-    if type(date) == str:
-        date = _parse_date(date)
-
-    for i in range(ATTEMPTS):
-        try:
-            header = {
-                "User-Agent": np.random.choice(USER_AGENTS),
-                "Referer": np.random.choice(REFERERS),
-            }
-            d = date.strftime("%Y%m%d")
-            url = WOMENS_SCOREBOARD_URL.format(d)
-            page = r.get(url, headers=header)
-            soup = bs(page.content, "lxml")
-            scoreboard = _get_scoreboard_from_soup(soup)
-            ids = [x["id"] for x in scoreboard]
-
-        except Exception as ex:
-            if i + 1 == ATTEMPTS:
-                # max number of attempts reached, so return blank df
-                if soup is not None:
-                    if "Page not found." in soup.text:
-                        _log.error(
-                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: Page not found error'
-                        )
-                    elif "Page error" in soup.text:
-                        _log.error(
-                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: Page error'
-                        )
-                    elif scoreboard is None:
-                        _log.error(
-                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: JSON not found on page.'
-                        )
-                    else:
-                        _log.error(
-                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: {ex}\n{traceback.format_exc()}'
-                        )
-                else:
-                    _log.error(
-                        f'"{time.ctime()}": {date.strftime("%D")} - IDs: GET error\n{ex}\n{traceback.format_exc()}'
-                    )
-                return pd.DataFrame([])
-            else:
-                # try again
-                time.sleep(2)
-                continue
-        else:
-            # no exception thrown
-            break
-
-    return ids
-
-
-def _parse_date(date: str) -> datetime:
+def _parse_date(date):
     parsed = False
 
     for parse in DATE_PARSES:
@@ -744,12 +829,13 @@ def _get_game_boxscore_helper(boxscore, game_id):
     return df
 
 
-def _get_game_pbp_helper(gamepackage, game_id):
+def _get_game_pbp_helper(gamepackage, game_id, game_type):
     """A helper function that cleans a game's PBP.
 
     Parameters:
         - pbp: a JSON object containing the play-by-play
         - game_id: a string representing the game's ESPN game ID
+        - game_type: a string representing whether men's or women's basketball is being scraped
 
     Returns
         - the game PBP as a DataFrame
@@ -758,7 +844,7 @@ def _get_game_pbp_helper(gamepackage, game_id):
     home_team = pbp["tms"]["home"]["displayName"]
     away_team = pbp["tms"]["away"]["displayName"]
 
-    all_plays = [play for quart in pbp["playGrps"] for play in quart]
+    all_plays = [play for period in pbp["playGrps"] for play in period]
 
     # check if PBP exists
     if len(all_plays) <= 0:
@@ -780,7 +866,7 @@ def _get_game_pbp_helper(gamepackage, game_id):
     ascores = [
         int(x["awayScore"]) if "awayScore" in x.keys() else np.nan for x in all_plays
     ]
-    quarters = [
+    periods = [
         int(x["period"]["number"]) if "period" in x.keys() else np.nan
         for x in all_plays
     ]
@@ -792,17 +878,24 @@ def _get_game_pbp_helper(gamepackage, game_id):
     minutes = [int(x[0]) for x in time_splits]
     seconds = [int(x[1]) for x in time_splits]
     min_to_sec = [x * 60 for x in minutes]
-    qt_secs_left = [x + y for x, y in zip(min_to_sec, seconds)]
-    reg_secs_left = [
-        1800 + x
-        if qt_num == 1
-        else 1200 + x
-        if qt_num == 2
-        else 600 + x
-        if qt_num == 3
-        else x
-        for x, qt_num in zip(qt_secs_left, quarters)
-    ]
+    pd_secs_left = [x + y for x, y in zip(min_to_sec, seconds)]
+
+    if game_type == "mens":
+        reg_secs_left = [
+            1200 + x if half_num == 1 else x
+            for x, half_num in zip(pd_secs_left, periods)
+        ]
+    else:
+        reg_secs_left = [
+            1800 + x
+            if qt_num == 1
+            else 1200 + x
+            if qt_num == 2
+            else 600 + x
+            if qt_num == 3
+            else x
+            for x, qt_num in zip(pd_secs_left, periods)
+        ]
 
     sc_play = [True if "scoringPlay" in x.keys() else False for x in all_plays]
     is_assisted = [
@@ -862,6 +955,13 @@ def _get_game_pbp_helper(gamepackage, game_id):
 
     is_three = ["three point" in x.lower() for x in descs]
 
+    if game_type == "mens":
+        pd_type = "half"
+        pd_type_sec = "secs_left_half"
+    else:
+        pd_type = "quarter"
+        pd_type_sec = "secs_left_qt"
+
     data = {
         "game_id": game_id,
         "home_team": home_team,
@@ -869,8 +969,8 @@ def _get_game_pbp_helper(gamepackage, game_id):
         "play_desc": descs,
         "home_score": hscores,
         "away_score": ascores,
-        "quarter": quarters,
-        "secs_left_qt": qt_secs_left,
+        pd_type: periods,
+        pd_type_sec: pd_secs_left,
         "secs_left_reg": reg_secs_left,
         "play_team": teams,
         "play_type": p_types,
@@ -955,13 +1055,14 @@ def _get_game_pbp_helper(gamepackage, game_id):
     return df
 
 
-def _get_game_info_helper(info, more_info, game_id):
+def _get_game_info_helper(info, more_info, game_id, game_type):
     """A helper function that cleans a game's metadata.
 
     Parameters:
         - info: a JSON object containing game metadata
         - more_info: a JSON object containing game metadata
         - game_id: a string representing the game's ESPN game ID
+        - game_type: a string representing whether men's or women's basketball is being scraped
 
     Returns
         - the game metadata as a DataFrame
@@ -1038,7 +1139,7 @@ def _get_game_info_helper(info, more_info, game_id):
     tournament = more_info["nte"] if "nte" in more_info.keys() else ""
 
     if ("linescores" in ht_info) and ("linescores" in at_info):
-        h_ot, a_ot = len(ht_info["linescores"]) - 4, len(at_info["linescores"]) - 4
+        h_ot, a_ot = len(ht_info["linescores"]) - 2, len(at_info["linescores"]) - 2
         assert h_ot == a_ot
         num_ots = h_ot
     else:
