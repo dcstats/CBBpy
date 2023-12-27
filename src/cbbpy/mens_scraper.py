@@ -32,7 +32,7 @@ def get_game(
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-    return _get_game(game_id, info, box, pbp)
+    return _get_game(game_id, "mens", info, box, pbp)
 
 
 def get_games_range(
@@ -57,7 +57,7 @@ def get_games_range(
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-    return _get_games_range(start_date, end_date, info, box, pbp)
+    return _get_games_range(start_date, end_date, "mens", info, box, pbp)
 
 
 def get_games_season(

@@ -176,7 +176,7 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
     with trange(len_scrape, bar_format=bar_format) as t:
         for i in t:
             date = date_range[i]
-            game_ids = _get_game_ids(date)
+            game_ids = _get_game_ids(date, game_type)
             t.set_description(
                 f"Scraping {len(game_ids)} games on {date.strftime('%D')}",
                 refresh=False,
@@ -184,7 +184,7 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
 
             if len(game_ids) > 0:
                 result = Parallel(n_jobs=cpus)(
-                    delayed(_get_game)(gid, game_type, info=info, box=box, pbp=pbp)
+                    delayed(_get_game)(gid, game_type, info, box, pbp)
                     for gid in game_ids
                 )
                 all_data.append(result)
@@ -249,9 +249,9 @@ def _get_game_ids(date, game_type):
     soup = None
 
     if game_type == "mens":
-        pre_url = MENS_BOXSCORE_URL
+        pre_url = MENS_SCOREBOARD_URL
     else:
-        pre_url = WOMENS_BOXSCORE_URL
+        pre_url = WOMENS_SCOREBOARD_URL
 
     if type(date) == str:
         date = _parse_date(date)
@@ -496,7 +496,7 @@ def _get_game_info(game_id, game_type):
             # get team info
             more_info = gamepackage["gmStrp"]
 
-            df = _get_game_info_helper(info, more_info, game_id)
+            df = _get_game_info_helper(info, more_info, game_id, game_type)
 
         except Exception as ex:
             if i + 1 == ATTEMPTS:
@@ -1139,7 +1139,11 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
     tournament = more_info["nte"] if "nte" in more_info.keys() else ""
 
     if ("linescores" in ht_info) and ("linescores" in at_info):
-        h_ot, a_ot = len(ht_info["linescores"]) - 2, len(at_info["linescores"]) - 2
+        if game_type == "mens":
+            h_ot, a_ot = len(ht_info["linescores"]) - 2, len(at_info["linescores"]) - 2
+        else:
+            h_ot, a_ot = len(ht_info["linescores"]) - 4, len(at_info["linescores"]) - 4
+
         assert h_ot == a_ot
         num_ots = h_ot
     else:
