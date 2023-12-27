@@ -1,5 +1,5 @@
 """
-A tool to scrape data for NCAA D1 Men's college basketball games.
+A tool to scrape data for NCAA D1 Women's college basketball games.
 
 Author: Daniel Cowan
 """
@@ -32,7 +32,7 @@ def get_game(
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-    return _get_game(game_id, "mens", info, box, pbp)
+    return _get_game(game_id, "womens", info, box, pbp)
 
 
 def get_games_range(
@@ -57,7 +57,7 @@ def get_games_range(
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-    return _get_games_range(start_date, end_date, "mens", info, box, pbp)
+    return _get_games_range(start_date, end_date, "womens", info, box, pbp)
 
 
 def get_games_season(
@@ -77,7 +77,7 @@ def get_games_season(
             -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
             -- pbp_df: a DataFrame of the game's play-by-play
     """
-    return _get_games_season(season, "mens", info, box, pbp)
+    return _get_games_season(season, "womens", info, box, pbp)
 
 
 def get_game_ids(date: Union[str, datetime]) -> list:
@@ -89,7 +89,7 @@ def get_game_ids(date: Union[str, datetime]) -> list:
     Returns
         - a list of ESPN all game IDs for games played on the date given
     """
-    return _get_game_ids(date, "mens")
+    return _get_game_ids(date, "womens")
 
 
 def get_game_boxscore(game_id: str) -> pd.DataFrame:
@@ -101,7 +101,7 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
     Returns
         - the game boxscore as a DataFrame
     """
-    return _get_game_boxscore(game_id, "mens")
+    return _get_game_boxscore(game_id, "womens")
 
 
 def get_game_pbp(game_id: str) -> pd.DataFrame:
@@ -113,7 +113,7 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
     Returns
         - the game's play-by-play information represented as a DataFrame
     """
-    return _get_game_pbp(game_id, "mens")
+    return _get_game_pbp(game_id, "womens")
 
 
 def get_game_info(game_id: str) -> pd.DataFrame:
@@ -125,4 +125,4 @@ def get_game_info(game_id: str) -> pd.DataFrame:
     Returns
         - a DataFrame with one row and a column for each piece of metadata
     """
-    return _get_game_info(game_id, "mens")
+    return _get_game_info(game_id, "womens")
