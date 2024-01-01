@@ -62,7 +62,7 @@ Function call:
 
 ```
 import cbbpy.womens_scraper as s 
-s.get_game_boxscore('401408636')
+s.get_game_boxscore('401528028')
 ```
 
 Returns (partially): 
