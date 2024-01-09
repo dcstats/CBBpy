@@ -15,6 +15,8 @@ CBBpy requires Python >= 3.9 as well as the following packages:
 * tqdm>=4.63.0
 * lxml>=4.9.0
 * joblib>=1.1.0
+* bs4>=0.0.1
+* requests>=2.27.0
 
 
 Install using pip:
