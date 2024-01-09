@@ -259,8 +259,8 @@ def _get_game_ids(date, game_type):
     for i in range(ATTEMPTS):
         try:
             header = {
-                "User-Agent": np.random.choice(USER_AGENTS),
-                "Referer": np.random.choice(REFERERS),
+                "User-Agent": str(np.random.choice(USER_AGENTS)),
+                "Referer": str(np.random.choice(REFERERS)),
             }
             d = date.strftime("%Y%m%d")
             url = pre_url.format(d)
@@ -324,8 +324,8 @@ def _get_game_boxscore(game_id, game_type):
     for i in range(ATTEMPTS):
         try:
             header = {
-                "User-Agent": np.random.choice(USER_AGENTS),
-                "Referer": np.random.choice(REFERERS),
+                "User-Agent": str(np.random.choice(USER_AGENTS)),
+                "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
             page = r.get(url, headers=header)
@@ -404,8 +404,8 @@ def _get_game_pbp(game_id, game_type):
     for i in range(ATTEMPTS):
         try:
             header = {
-                "User-Agent": np.random.choice(USER_AGENTS),
-                "Referer": np.random.choice(REFERERS),
+                "User-Agent": str(np.random.choice(USER_AGENTS)),
+                "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
             page = r.get(url, headers=header)
@@ -475,8 +475,8 @@ def _get_game_info(game_id, game_type):
     for i in range(ATTEMPTS):
         try:
             header = {
-                "User-Agent": np.random.choice(USER_AGENTS),
-                "Referer": np.random.choice(REFERERS),
+                "User-Agent": str(np.random.choice(USER_AGENTS)),
+                "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
             page = r.get(url, headers=header)
