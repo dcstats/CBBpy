@@ -295,8 +295,8 @@ def _get_game_ids(date, game_type):
                     )
                 return pd.DataFrame([])
             else:
-                # try again
-                time.sleep(2)
+                # try again with a random sleep between 2 and 5
+                time.sleep(np.random.uniform(low=2, high=5))
                 continue
         else:
             # no exception thrown
@@ -375,8 +375,8 @@ def _get_game_boxscore(game_id, game_type):
                     )
                 return pd.DataFrame([])
             else:
-                # try again
-                time.sleep(2)
+                # try again with a random sleep between 2 and 5
+                time.sleep(np.random.uniform(low=2, high=5))
                 continue
         else:
             # no exception thrown
@@ -446,8 +446,8 @@ def _get_game_pbp(game_id, game_type):
                     )
                 return pd.DataFrame([])
             else:
-                # try again
-                time.sleep(2)
+                # try again with a random sleep between 2 and 5
+                time.sleep(np.random.uniform(low=2, high=5))
                 continue
         else:
             # no exception thrown
@@ -525,8 +525,8 @@ def _get_game_info(game_id, game_type):
                     )
                 return pd.DataFrame([])
             else:
-                # try again
-                time.sleep(2)
+                # try again with a random sleep between 2 and 5
+                time.sleep(np.random.uniform(low=2, high=5))
                 continue
         else:
             # no exception thrown
@@ -593,21 +593,27 @@ def _get_game_boxscore_helper(boxscore, game_id):
         }
 
         tm1_st_pos = [
-            tm1_starters[i]["athlt"]["pos"]
-            if "pos" in tm1_starters[i]["athlt"].keys()
-            else ""
+            (
+                tm1_starters[i]["athlt"]["pos"]
+                if "pos" in tm1_starters[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm1_starters))
         ]
         tm1_st_id = [
-            tm1_starters[i]["athlt"]["uid"].split(":")[-1]
-            if "uid" in tm1_starters[i]["athlt"].keys()
-            else ""
+            (
+                tm1_starters[i]["athlt"]["uid"].split(":")[-1]
+                if "uid" in tm1_starters[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm1_starters))
         ]
         tm1_st_nm = [
-            tm1_starters[i]["athlt"]["shrtNm"]
-            if "shrtNm" in tm1_starters[i]["athlt"].keys()
-            else ""
+            (
+                tm1_starters[i]["athlt"]["shrtNm"]
+                if "shrtNm" in tm1_starters[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm1_starters))
         ]
 
@@ -633,21 +639,27 @@ def _get_game_boxscore_helper(boxscore, game_id):
         }
 
         tm1_bn_pos = [
-            tm1_bench[i]["athlt"]["pos"]
-            if "pos" in tm1_bench[i]["athlt"].keys()
-            else ""
+            (
+                tm1_bench[i]["athlt"]["pos"]
+                if "pos" in tm1_bench[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm1_bench))
         ]
         tm1_bn_id = [
-            tm1_bench[i]["athlt"]["uid"].split(":")[-1]
-            if "uid" in tm1_bench[i]["athlt"].keys()
-            else ""
+            (
+                tm1_bench[i]["athlt"]["uid"].split(":")[-1]
+                if "uid" in tm1_bench[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm1_bench))
         ]
         tm1_bn_nm = [
-            tm1_bench[i]["athlt"]["shrtNm"]
-            if "shrtNm" in tm1_bench[i]["athlt"].keys()
-            else ""
+            (
+                tm1_bench[i]["athlt"]["shrtNm"]
+                if "shrtNm" in tm1_bench[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm1_bench))
         ]
 
@@ -695,21 +707,27 @@ def _get_game_boxscore_helper(boxscore, game_id):
         }
 
         tm2_st_pos = [
-            tm2_starters[i]["athlt"]["pos"]
-            if "pos" in tm2_starters[i]["athlt"].keys()
-            else ""
+            (
+                tm2_starters[i]["athlt"]["pos"]
+                if "pos" in tm2_starters[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm2_starters))
         ]
         tm2_st_id = [
-            tm2_starters[i]["athlt"]["uid"].split(":")[-1]
-            if "uid" in tm2_starters[i]["athlt"].keys()
-            else ""
+            (
+                tm2_starters[i]["athlt"]["uid"].split(":")[-1]
+                if "uid" in tm2_starters[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm2_starters))
         ]
         tm2_st_nm = [
-            tm2_starters[i]["athlt"]["shrtNm"]
-            if "shrtNm" in tm2_starters[i]["athlt"].keys()
-            else ""
+            (
+                tm2_starters[i]["athlt"]["shrtNm"]
+                if "shrtNm" in tm2_starters[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm2_starters))
         ]
 
@@ -735,21 +753,27 @@ def _get_game_boxscore_helper(boxscore, game_id):
         }
 
         tm2_bn_pos = [
-            tm2_bench[i]["athlt"]["pos"]
-            if "pos" in tm2_bench[i]["athlt"].keys()
-            else ""
+            (
+                tm2_bench[i]["athlt"]["pos"]
+                if "pos" in tm2_bench[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm2_bench))
         ]
         tm2_bn_id = [
-            tm2_bench[i]["athlt"]["uid"].split(":")[-1]
-            if "uid" in tm2_bench[i]["athlt"].keys()
-            else ""
+            (
+                tm2_bench[i]["athlt"]["uid"].split(":")[-1]
+                if "uid" in tm2_bench[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm2_bench))
         ]
         tm2_bn_nm = [
-            tm2_bench[i]["athlt"]["shrtNm"]
-            if "shrtNm" in tm2_bench[i]["athlt"].keys()
-            else ""
+            (
+                tm2_bench[i]["athlt"]["shrtNm"]
+                if "shrtNm" in tm2_bench[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm2_bench))
         ]
 
@@ -853,11 +877,11 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
 
     descs = [x["text"] if "text" in x.keys() else "" for x in all_plays]
     teams = [
-        ""
-        if not "homeAway" in x.keys()
-        else home_team
-        if x["homeAway"] == "home"
-        else away_team
+        (
+            ""
+            if not "homeAway" in x.keys()
+            else home_team if x["homeAway"] == "home" else away_team
+        )
         for x in all_plays
     ]
     hscores = [
@@ -887,13 +911,11 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         ]
     else:
         reg_secs_left = [
-            1800 + x
-            if qt_num == 1
-            else 1200 + x
-            if qt_num == 2
-            else 600 + x
-            if qt_num == 3
-            else x
+            (
+                1800 + x
+                if qt_num == 1
+                else 1200 + x if qt_num == 2 else 600 + x if qt_num == 3 else x
+            )
             for x, qt_num in zip(pd_secs_left, periods)
         ]
 
@@ -940,9 +962,11 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     scorers = [x[0].split(" made ")[0] if x[1] else "" for x in zip(descs, sc_play)]
 
     non_scorers = [
-        x[0].split(" missed ")[0]
-        if x[1] in (y.lower() for y in SHOT_TYPES) and not x[2]
-        else ""
+        (
+            x[0].split(" missed ")[0]
+            if x[1] in (y.lower() for y in SHOT_TYPES) and not x[2]
+            else ""
+        )
         for x in zip(descs, p_types, sc_play)
     ]
 
