@@ -915,6 +915,8 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
             1200 + x if half_num == 1 else x
             for x, half_num in zip(pd_secs_left, periods)
         ]
+        pd_type = "half"
+        pd_type_sec = "secs_left_half"
     # women (after 14-15) use quarters
     else:
         reg_secs_left = [
@@ -925,6 +927,8 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
             )
             for x, qt_num in zip(pd_secs_left, periods)
         ]
+        pd_type = "quarter"
+        pd_type_sec = "secs_left_qt"
 
     sc_play = [True if "scoringPlay" in x.keys() else False for x in all_plays]
     is_assisted = [
