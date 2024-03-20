@@ -86,6 +86,7 @@ SHOT_TYPES = [
 WINDOW_STRING = "window['__espnfitt__']="
 JSON_REGEX = r"window\[\'__espnfitt__\'\]={(.*)};"
 STATUS_OK = 200
+WOMEN_HALF_RULE_CHANGE_DATE = parse("2015-05-01")
 
 
 logging.basicConfig(filename="cbbpy.log")
@@ -867,6 +868,7 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     pbp = gamepackage["pbp"]
     home_team = pbp["tms"]["home"]["displayName"]
     away_team = pbp["tms"]["away"]["displayName"]
+    game_date = parse(gamepackage["gmInfo"]["dtTm"])
 
     all_plays = [play for period in pbp["playGrps"] for play in period]
 
@@ -904,11 +906,16 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     min_to_sec = [x * 60 for x in minutes]
     pd_secs_left = [x + y for x, y in zip(min_to_sec, seconds)]
 
-    if game_type == "mens":
+    # men, and women before the 15-16 season, use halves
+    if (
+        game_type == "mens"
+        or game_date.replace(tzinfo=None) < WOMEN_HALF_RULE_CHANGE_DATE
+    ):
         reg_secs_left = [
             1200 + x if half_num == 1 else x
             for x, half_num in zip(pd_secs_left, periods)
         ]
+    # women (after 14-15) use quarters
     else:
         reg_secs_left = [
             (
@@ -1159,8 +1166,13 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
     tournament = more_info["nte"] if "nte" in more_info.keys() else ""
 
     if ("linescores" in ht_info) and ("linescores" in at_info):
-        if game_type == "mens":
+        # men, and women before the 15-16 season, use halves
+        if (
+            game_type == "mens"
+            or game_date.replace(tzinfo=None) < WOMEN_HALF_RULE_CHANGE_DATE
+        ):
             h_ot, a_ot = len(ht_info["linescores"]) - 2, len(at_info["linescores"]) - 2
+        # women (after 14-15) use quarters
         else:
             h_ot, a_ot = len(ht_info["linescores"]) - 4, len(at_info["linescores"]) - 4
 
