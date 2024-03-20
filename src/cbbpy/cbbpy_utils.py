@@ -1151,14 +1151,10 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
     is_postseason = True if more_info["seasonType"] == 3 else False
     is_conference = more_info["isConferenceGame"]
 
-    if len(ht_info["records"]) > 1 and ht_info["records"][1]["type"] == "home":
-        is_neutral = False
-
-    elif len(at_info["records"]) > 1 and at_info["records"][1]["type"] == "away":
-        is_neutral = False
-
-    else:
+    if "neutralSite" in more_info:
         is_neutral = True
+    else:
+        is_neutral = False
 
     tournament = more_info["nte"] if "nte" in more_info.keys() else ""
 
