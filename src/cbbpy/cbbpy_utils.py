@@ -990,13 +990,6 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
 
     is_three = ["three point" in x.lower() for x in descs]
 
-    if game_type == "mens":
-        pd_type = "half"
-        pd_type_sec = "secs_left_half"
-    else:
-        pd_type = "quarter"
-        pd_type_sec = "secs_left_qt"
-
     data = {
         "game_id": game_id,
         "home_team": home_team,
