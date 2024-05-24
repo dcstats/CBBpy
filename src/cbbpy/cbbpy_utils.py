@@ -58,12 +58,14 @@ MENS_SCOREBOARD_URL = "https://www.espn.com/mens-college-basketball/scoreboard/_
 MENS_GAME_URL = "https://www.espn.com/mens-college-basketball/game/_/gameId/{}"
 MENS_BOXSCORE_URL = "https://www.espn.com/mens-college-basketball/boxscore/_/gameId/{}"
 MENS_PBP_URL = "https://www.espn.com/mens-college-basketball/playbyplay/_/gameId/{}"
+MENS_PLAYER_URL = "https://www.espn.com/mens-college-basketball/player/_/id/{}"
 WOMENS_SCOREBOARD_URL = "https://www.espn.com/womens-college-basketball/scoreboard/_/date/{}/seasontype/2/group/50"
 WOMENS_GAME_URL = "https://www.espn.com/womens-college-basketball/game/_/gameId/{}"
 WOMENS_BOXSCORE_URL = (
     "https://www.espn.com/womens-college-basketball/boxscore/_/gameId/{}"
 )
 WOMENS_PBP_URL = "https://www.espn.com/womens-college-basketball/playbyplay/_/gameId/{}"
+WOMENS_PLAYER_URL = "https://www.espn.com/womens-college-basketball/player/_/id/{}"
 NON_SHOT_TYPES = [
     "TV Timeout",
     "Jump Ball",
@@ -535,6 +537,72 @@ def _get_game_info(game_id, game_type):
     return df
 
 
+def _get_player(player_id, game_type):
+    """A function that scrapes a player's details.
+
+    Parameters:
+        - player_id: a string representing the players's ESPN ID
+        - game_type: which league we're scraping, "mens" or "womens"
+
+    Returns
+        - the game boxscore as a DataFrame
+    """
+    soup = None
+
+    if game_type == "mens":
+        pre_url = MENS_PLAYER_URL
+    else:
+        pre_url = WOMENS_PLAYER_URL
+
+    for i in range(ATTEMPTS):
+        try:
+            header = {
+                "User-Agent": str(np.random.choice(USER_AGENTS)),
+                "Referer": str(np.random.choice(REFERERS)),
+            }
+            url = pre_url.format(player_id)
+            page = r.get(url, headers=header)
+            soup = bs(page.content, "lxml")
+            raw_player = _get_player_from_soup(soup)
+
+            df = _get_player_details_helper(player_id, raw_player)
+
+        except Exception as ex:
+            if i + 1 == ATTEMPTS:
+                # max number of attempts reached, so return blank df
+                if soup is not None:
+                    if "Page not found." in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {player_id} - player: Page not found error'
+                        )
+                        pnf_.append(game_id)
+                    elif "Page error" in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {player_id} - player: Page error'
+                        )
+                    elif player is None:
+                        _log.error(
+                            f'"{time.ctime()}": {player_id} - player: Player JSON not found on page.'
+                        )
+                    else:
+                        _log.error(
+                            f'"{time.ctime()}": {player_id} - player: {ex}\n{traceback.format_exc()}'
+                        )
+                else:
+                    _log.error(
+                        f'"{time.ctime()}": {player_id} - player: GET error\n{ex}\n{traceback.format_exc()}'
+                    )
+                return pd.DataFrame([])
+            else:
+                # try again
+                time.sleep(2)
+                continue
+        else:
+            # no exception thrown
+            break
+
+    return df
+
 def _parse_date(date):
     parsed = False
 
@@ -549,7 +617,7 @@ def _parse_date(date):
 
     if not parsed:
         raise CouldNotParseError(
-            "The given date could not be parsed. Try any of these formats:\n"
+            f"The given date ({date}) could not be parsed. Try any of these formats:\n"
             + "Y-m-d\nY/m/d\nm-d-Y\nm/d/Y"
         )
 
@@ -1213,6 +1281,41 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
     return pd.DataFrame([game_info_list], columns=game_info_cols)
 
 
+def _get_player_details_helper(player_id, info):
+    """A helper function that cleans a players's metadata.
+
+    Parameters:
+        - player_id: a string representing the player's ESPN player ID
+        - info: a JSON object containing player metadata
+
+    Returns
+        - the player metadata as a DataFrame
+    """
+
+    details = info['plyrHdr']['ath']
+    height = None
+    weight = None
+
+    if 'htwt' in details:
+        height, weight = details['htwt'].split(", ")
+
+    return pd.DataFrame.from_records([{
+        'player_id': player_id,
+        'display_name': details['dspNm'],
+        'display_number': details.get('dspNum'),
+        'first_name': details.get('fNm'),
+        'last_name': details.get('lNm'),
+        'pos': details.get('pos'),
+        'status': details.get('stsid'),
+        'team': details.get('tm'),
+        'experience': details.get('exp'),
+        'height': height,
+        'weight': weight,
+        'birthplace': details.get('brtpl'),
+        'date_of_birth': _parse_date(details['dobRaw']) if 'dobRaw' in details else None,
+    }])
+
+
 def _get_gamepackage_from_soup(soup):
     script_string = _find_json_in_content(soup)
 
@@ -1226,6 +1329,21 @@ def _get_gamepackage_from_soup(soup):
     gamepackage = jsn["page"]["content"]["gamepackage"]
 
     return gamepackage
+
+
+def _get_player_from_soup(soup):
+    script_string = _find_json_in_content(soup)
+
+    if script_string == "":
+        return None
+
+    pattern = re.compile(JSON_REGEX)
+    found = re.search(pattern, script_string).group(1)
+    js = "{" + found + "}"
+    jsn = json.loads(js)
+    player = jsn["page"]["content"]["player"]
+
+    return player
 
 
 def _get_scoreboard_from_soup(soup):
