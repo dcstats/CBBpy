@@ -1,3 +1,4 @@
+import sys
 from bs4 import BeautifulSoup as bs
 import requests as r
 import pandas as pd
@@ -90,7 +91,7 @@ JSON_REGEX = r"window\[\'__espnfitt__\'\]={(.*)};"
 STATUS_OK = 200
 
 
-logging.basicConfig(filename="cbbpy.log")
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 _log = logging.getLogger(__name__)
 
 
@@ -545,9 +546,10 @@ def _get_player(player_id, game_type):
         - game_type: which league we're scraping, "mens" or "womens"
 
     Returns
-        - the game boxscore as a DataFrame
+        - the game boxscore as a DataFrame if the player is found, None otherwise
     """
     soup = None
+    df = None
 
     if game_type == "mens":
         pre_url = MENS_PLAYER_URL
@@ -568,15 +570,16 @@ def _get_player(player_id, game_type):
             df = _get_player_details_helper(player_id, raw_player)
 
         except Exception as ex:
+            if "Page not found." in soup.text:
+                _log.error(
+                    f'"{time.ctime()}": {player_id} - player: Page not found error'
+                )
+                break
+
             if i + 1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
                 if soup is not None:
-                    if "Page not found." in soup.text:
-                        _log.error(
-                            f'"{time.ctime()}": {player_id} - player: Page not found error'
-                        )
-                        pnf_.append(game_id)
-                    elif "Page error" in soup.text:
+                    if "Page error" in soup.text:
                         _log.error(
                             f'"{time.ctime()}": {player_id} - player: Page error'
                         )
