@@ -15,6 +15,7 @@ from .cbbpy_utils import (
     _get_game_boxscore,
     _get_game_pbp,
     _get_game_info,
+    _get_player,
 )
 
 
@@ -126,3 +127,15 @@ def get_game_info(game_id: str) -> pd.DataFrame:
         - a DataFrame with one row and a column for each piece of metadata
     """
     return _get_game_info(game_id, "womens")
+
+
+def get_player_info(player_id: str) -> pd.DataFrame:
+    """A function that scrapes player info for a given player ID
+
+    Parameters:
+        - player_id: a string representing the player's ESPN player ID
+
+    Returns
+        - a DataFrame with one row for the player
+    """
+    return _get_player(player_id, "womens")
