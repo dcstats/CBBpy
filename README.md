@@ -7,7 +7,7 @@
 This package is designed to bridge the gap between data and analysis for NCAA D1 basketball. CBBpy can grab play-by-play, boxscore, and other game metadata for any NCAA D1 men's or women's basketball game. Inspired by the [ncaahoopR package](https://github.com/lbenz730/ncaahoopR) by Luke Benz - check that out if you are an R user!
 
 ## Installation and import
-CBBpy requires Python >= 3.9 as well as the following packages:
+CBBpy requires Python >= 3.7 as well as the following packages:
 * pandas>=1.4.2
 * numpy>=1.22.3
 * python-dateutil>=2.8.2
