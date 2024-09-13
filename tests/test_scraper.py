@@ -13,17 +13,20 @@ def test_get_game_info():
     result_df = get_game_info(game_id)
     pd.testing.assert_frame_equal(result_df, expected_df)
 
+
 def test_get_game_boxscore():
     game_id = "123456"
     expected_df = load_expected_dataframe("expected_data/mens_game_boxscore.csv")
     result_df = get_game_boxscore(game_id)
     pd.testing.assert_frame_equal(result_df, expected_df)
 
+
 def test_get_game_pbp():
     game_id = "123456"
     expected_df = load_expected_dataframe("expected_data/mens_game_pbp.csv")
     result_df = get_game_pbp(game_id)
     pd.testing.assert_frame_equal(result_df, expected_df)
+
 
 def test_get_games_range():
     start_date = "2022-01-01"
@@ -35,6 +38,7 @@ def test_get_games_range():
     pd.testing.assert_frame_equal(result_info_df, expected_info_df)
     pd.testing.assert_frame_equal(result_boxscore_df, expected_boxscore_df)
     pd.testing.assert_frame_equal(result_pbp_df, expected_pbp_df)
+
 
 def test_get_games_season_future():
     future_season = datetime.today().year + 1

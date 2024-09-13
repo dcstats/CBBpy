@@ -584,7 +584,7 @@ def _get_player(player_id, game_type):
                         _log.error(
                             f'"{time.ctime()}": {player_id} - player: Page error'
                         )
-                    elif player is None:
+                    elif raw_player is None:
                         _log.error(
                             f'"{time.ctime()}": {player_id} - player: Player JSON not found on page.'
                         )
@@ -606,6 +606,7 @@ def _get_player(player_id, game_type):
             break
 
     return df
+
 
 def _parse_date(date):
     parsed = False
