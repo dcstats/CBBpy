@@ -1,4 +1,5 @@
-[![PyPi Version](https://img.shields.io/pypi/v/cbbpy.svg)](https://pypi.org/project/cbbpy/) [![Downloads](https://static.pepy.tech/badge/cbbpy)](https://pepy.tech/project/cbbpy)
+[![PyPi Version](https://img.shields.io/pypi/v/cbbpy.svg)](https://pypi.org/project/cbbpy/) [![Downloads](https://img.shields.io/pypi/dm/cbbpy?color=be94e4
+)](https://pypistats.org/packages/cbbpy)
 
 # CBBpy: A Python-based web scraper for NCAA basketball
 
@@ -14,21 +15,23 @@ CBBpy requires Python >= 3.7 as well as the following packages:
 * tqdm>=4.63.0
 * lxml>=4.9.0
 * joblib>=1.1.0
+* beautifulsoup4>=4.11.0
+* requests>=2.27.0
 
 
 Install using pip:
-```
+```shell
 pip install cbbpy
 ```
 
 The men's and women's scrapers can be imported as such:
-```
+```python
 import cbbpy.mens_scraper as s
 import cbbpy.womens_scraper as s
 ```
 
 ## Functions available in CBBpy
-NOTE: game ID, as far as CBBpy is concernced, is a valid **ESPN** game ID
+NOTE: game ID, as far as CBBpy is concerned, is a valid **ESPN** game ID
 
 `s.get_game_info(game_id: str)` grabs all the metadata (game date, time, score, teams, referees, etc) for a particular game.
 
@@ -44,11 +47,13 @@ NOTE: game ID, as far as CBBpy is concernced, is a valid **ESPN** game ID
 
 `s.get_game_ids(date: Union[str, datetime])` returns a list of all game IDs for a particular date.
 
+`s.get_player_info(player_id: str)` returns a dataframe of one record describing the player info for that player
+
 ## Examples
 
 Function call: 
 
-```
+```python
 import cbbpy.mens_scraper as s
 s.get_game_info('401522202')
 ```
@@ -60,7 +65,7 @@ Returns:
 
 Function call: 
 
-```
+```python
 import cbbpy.womens_scraper as s 
 s.get_game_boxscore('401528028')
 ```
@@ -76,7 +81,7 @@ Returns (partially):
 
 Function call: 
 
-```
+```python
 import cbbpy.mens_scraper as s
 s.get_game_pbp('401522202')
 ```

@@ -1,3 +1,4 @@
+import sys
 from bs4 import BeautifulSoup as bs
 import requests as r
 import pandas as pd
@@ -58,12 +59,14 @@ MENS_SCOREBOARD_URL = "https://www.espn.com/mens-college-basketball/scoreboard/_
 MENS_GAME_URL = "https://www.espn.com/mens-college-basketball/game/_/gameId/{}"
 MENS_BOXSCORE_URL = "https://www.espn.com/mens-college-basketball/boxscore/_/gameId/{}"
 MENS_PBP_URL = "https://www.espn.com/mens-college-basketball/playbyplay/_/gameId/{}"
+MENS_PLAYER_URL = "https://www.espn.com/mens-college-basketball/player/_/id/{}"
 WOMENS_SCOREBOARD_URL = "https://www.espn.com/womens-college-basketball/scoreboard/_/date/{}/seasontype/2/group/50"
 WOMENS_GAME_URL = "https://www.espn.com/womens-college-basketball/game/_/gameId/{}"
 WOMENS_BOXSCORE_URL = (
     "https://www.espn.com/womens-college-basketball/boxscore/_/gameId/{}"
 )
 WOMENS_PBP_URL = "https://www.espn.com/womens-college-basketball/playbyplay/_/gameId/{}"
+WOMENS_PLAYER_URL = "https://www.espn.com/womens-college-basketball/player/_/id/{}"
 NON_SHOT_TYPES = [
     "TV Timeout",
     "Jump Ball",
@@ -86,9 +89,10 @@ SHOT_TYPES = [
 WINDOW_STRING = "window['__espnfitt__']="
 JSON_REGEX = r"window\[\'__espnfitt__\'\]={(.*)};"
 STATUS_OK = 200
+WOMEN_HALF_RULE_CHANGE_DATE = parse("2015-05-01")
 
 
-logging.basicConfig(filename="cbbpy.log")
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 _log = logging.getLogger(__name__)
 
 
@@ -259,8 +263,8 @@ def _get_game_ids(date, game_type):
     for i in range(ATTEMPTS):
         try:
             header = {
-                "User-Agent": np.random.choice(USER_AGENTS),
-                "Referer": np.random.choice(REFERERS),
+                "User-Agent": str(np.random.choice(USER_AGENTS)),
+                "Referer": str(np.random.choice(REFERERS)),
             }
             d = date.strftime("%Y%m%d")
             url = pre_url.format(d)
@@ -295,8 +299,8 @@ def _get_game_ids(date, game_type):
                     )
                 return pd.DataFrame([])
             else:
-                # try again
-                time.sleep(2)
+                # try again with a random sleep between 2 and 5
+                time.sleep(np.random.uniform(low=2, high=5))
                 continue
         else:
             # no exception thrown
@@ -324,8 +328,8 @@ def _get_game_boxscore(game_id, game_type):
     for i in range(ATTEMPTS):
         try:
             header = {
-                "User-Agent": np.random.choice(USER_AGENTS),
-                "Referer": np.random.choice(REFERERS),
+                "User-Agent": str(np.random.choice(USER_AGENTS)),
+                "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
             page = r.get(url, headers=header)
@@ -375,8 +379,8 @@ def _get_game_boxscore(game_id, game_type):
                     )
                 return pd.DataFrame([])
             else:
-                # try again
-                time.sleep(2)
+                # try again with a random sleep between 2 and 5
+                time.sleep(np.random.uniform(low=2, high=5))
                 continue
         else:
             # no exception thrown
@@ -404,8 +408,8 @@ def _get_game_pbp(game_id, game_type):
     for i in range(ATTEMPTS):
         try:
             header = {
-                "User-Agent": np.random.choice(USER_AGENTS),
-                "Referer": np.random.choice(REFERERS),
+                "User-Agent": str(np.random.choice(USER_AGENTS)),
+                "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
             page = r.get(url, headers=header)
@@ -446,8 +450,8 @@ def _get_game_pbp(game_id, game_type):
                     )
                 return pd.DataFrame([])
             else:
-                # try again
-                time.sleep(2)
+                # try again with a random sleep between 2 and 5
+                time.sleep(np.random.uniform(low=2, high=5))
                 continue
         else:
             # no exception thrown
@@ -475,8 +479,8 @@ def _get_game_info(game_id, game_type):
     for i in range(ATTEMPTS):
         try:
             header = {
-                "User-Agent": np.random.choice(USER_AGENTS),
-                "Referer": np.random.choice(REFERERS),
+                "User-Agent": str(np.random.choice(USER_AGENTS)),
+                "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
             page = r.get(url, headers=header)
@@ -525,6 +529,75 @@ def _get_game_info(game_id, game_type):
                     )
                 return pd.DataFrame([])
             else:
+                # try again with a random sleep between 2 and 5
+                time.sleep(np.random.uniform(low=2, high=5))
+                continue
+        else:
+            # no exception thrown
+            break
+
+    return df
+
+
+def _get_player(player_id, game_type):
+    """A function that scrapes a player's details.
+
+    Parameters:
+        - player_id: a string representing the players's ESPN ID
+        - game_type: which league we're scraping, "mens" or "womens"
+
+    Returns
+        - the game boxscore as a DataFrame if the player is found, None otherwise
+    """
+    soup = None
+    df = None
+
+    if game_type == "mens":
+        pre_url = MENS_PLAYER_URL
+    else:
+        pre_url = WOMENS_PLAYER_URL
+
+    for i in range(ATTEMPTS):
+        try:
+            header = {
+                "User-Agent": str(np.random.choice(USER_AGENTS)),
+                "Referer": str(np.random.choice(REFERERS)),
+            }
+            url = pre_url.format(player_id)
+            page = r.get(url, headers=header)
+            soup = bs(page.content, "lxml")
+            raw_player = _get_player_from_soup(soup)
+
+            df = _get_player_details_helper(player_id, raw_player)
+
+        except Exception as ex:
+            if "Page not found." in soup.text:
+                _log.error(
+                    f'"{time.ctime()}": {player_id} - player: Page not found error'
+                )
+                break
+
+            if i + 1 == ATTEMPTS:
+                # max number of attempts reached, so return blank df
+                if soup is not None:
+                    if "Page error" in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {player_id} - player: Page error'
+                        )
+                    elif player is None:
+                        _log.error(
+                            f'"{time.ctime()}": {player_id} - player: Player JSON not found on page.'
+                        )
+                    else:
+                        _log.error(
+                            f'"{time.ctime()}": {player_id} - player: {ex}\n{traceback.format_exc()}'
+                        )
+                else:
+                    _log.error(
+                        f'"{time.ctime()}": {player_id} - player: GET error\n{ex}\n{traceback.format_exc()}'
+                    )
+                return pd.DataFrame([])
+            else:
                 # try again
                 time.sleep(2)
                 continue
@@ -533,7 +606,6 @@ def _get_game_info(game_id, game_type):
             break
 
     return df
-
 
 def _parse_date(date):
     parsed = False
@@ -549,7 +621,7 @@ def _parse_date(date):
 
     if not parsed:
         raise CouldNotParseError(
-            "The given date could not be parsed. Try any of these formats:\n"
+            f"The given date ({date}) could not be parsed. Try any of these formats:\n"
             + "Y-m-d\nY/m/d\nm-d-Y\nm/d/Y"
         )
 
@@ -593,21 +665,27 @@ def _get_game_boxscore_helper(boxscore, game_id):
         }
 
         tm1_st_pos = [
-            tm1_starters[i]["athlt"]["pos"]
-            if "pos" in tm1_starters[i]["athlt"].keys()
-            else ""
+            (
+                tm1_starters[i]["athlt"]["pos"]
+                if "pos" in tm1_starters[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm1_starters))
         ]
         tm1_st_id = [
-            tm1_starters[i]["athlt"]["uid"].split(":")[-1]
-            if "uid" in tm1_starters[i]["athlt"].keys()
-            else ""
+            (
+                tm1_starters[i]["athlt"]["uid"].split(":")[-1]
+                if "uid" in tm1_starters[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm1_starters))
         ]
         tm1_st_nm = [
-            tm1_starters[i]["athlt"]["shrtNm"]
-            if "shrtNm" in tm1_starters[i]["athlt"].keys()
-            else ""
+            (
+                tm1_starters[i]["athlt"]["shrtNm"]
+                if "shrtNm" in tm1_starters[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm1_starters))
         ]
 
@@ -633,21 +711,27 @@ def _get_game_boxscore_helper(boxscore, game_id):
         }
 
         tm1_bn_pos = [
-            tm1_bench[i]["athlt"]["pos"]
-            if "pos" in tm1_bench[i]["athlt"].keys()
-            else ""
+            (
+                tm1_bench[i]["athlt"]["pos"]
+                if "pos" in tm1_bench[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm1_bench))
         ]
         tm1_bn_id = [
-            tm1_bench[i]["athlt"]["uid"].split(":")[-1]
-            if "uid" in tm1_bench[i]["athlt"].keys()
-            else ""
+            (
+                tm1_bench[i]["athlt"]["uid"].split(":")[-1]
+                if "uid" in tm1_bench[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm1_bench))
         ]
         tm1_bn_nm = [
-            tm1_bench[i]["athlt"]["shrtNm"]
-            if "shrtNm" in tm1_bench[i]["athlt"].keys()
-            else ""
+            (
+                tm1_bench[i]["athlt"]["shrtNm"]
+                if "shrtNm" in tm1_bench[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm1_bench))
         ]
 
@@ -695,21 +779,27 @@ def _get_game_boxscore_helper(boxscore, game_id):
         }
 
         tm2_st_pos = [
-            tm2_starters[i]["athlt"]["pos"]
-            if "pos" in tm2_starters[i]["athlt"].keys()
-            else ""
+            (
+                tm2_starters[i]["athlt"]["pos"]
+                if "pos" in tm2_starters[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm2_starters))
         ]
         tm2_st_id = [
-            tm2_starters[i]["athlt"]["uid"].split(":")[-1]
-            if "uid" in tm2_starters[i]["athlt"].keys()
-            else ""
+            (
+                tm2_starters[i]["athlt"]["uid"].split(":")[-1]
+                if "uid" in tm2_starters[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm2_starters))
         ]
         tm2_st_nm = [
-            tm2_starters[i]["athlt"]["shrtNm"]
-            if "shrtNm" in tm2_starters[i]["athlt"].keys()
-            else ""
+            (
+                tm2_starters[i]["athlt"]["shrtNm"]
+                if "shrtNm" in tm2_starters[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm2_starters))
         ]
 
@@ -735,21 +825,27 @@ def _get_game_boxscore_helper(boxscore, game_id):
         }
 
         tm2_bn_pos = [
-            tm2_bench[i]["athlt"]["pos"]
-            if "pos" in tm2_bench[i]["athlt"].keys()
-            else ""
+            (
+                tm2_bench[i]["athlt"]["pos"]
+                if "pos" in tm2_bench[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm2_bench))
         ]
         tm2_bn_id = [
-            tm2_bench[i]["athlt"]["uid"].split(":")[-1]
-            if "uid" in tm2_bench[i]["athlt"].keys()
-            else ""
+            (
+                tm2_bench[i]["athlt"]["uid"].split(":")[-1]
+                if "uid" in tm2_bench[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm2_bench))
         ]
         tm2_bn_nm = [
-            tm2_bench[i]["athlt"]["shrtNm"]
-            if "shrtNm" in tm2_bench[i]["athlt"].keys()
-            else ""
+            (
+                tm2_bench[i]["athlt"]["shrtNm"]
+                if "shrtNm" in tm2_bench[i]["athlt"].keys()
+                else ""
+            )
             for i in range(len(tm2_bench))
         ]
 
@@ -843,6 +939,7 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     pbp = gamepackage["pbp"]
     home_team = pbp["tms"]["home"]["displayName"]
     away_team = pbp["tms"]["away"]["displayName"]
+    game_date = parse(gamepackage["gmInfo"]["dtTm"])
 
     all_plays = [play for period in pbp["playGrps"] for play in period]
 
@@ -853,11 +950,11 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
 
     descs = [x["text"] if "text" in x.keys() else "" for x in all_plays]
     teams = [
-        ""
-        if not "homeAway" in x.keys()
-        else home_team
-        if x["homeAway"] == "home"
-        else away_team
+        (
+            ""
+            if not "homeAway" in x.keys()
+            else home_team if x["homeAway"] == "home" else away_team
+        )
         for x in all_plays
     ]
     hscores = [
@@ -880,22 +977,29 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     min_to_sec = [x * 60 for x in minutes]
     pd_secs_left = [x + y for x, y in zip(min_to_sec, seconds)]
 
-    if game_type == "mens":
+    # men, and women before the 15-16 season, use halves
+    if (
+        game_type == "mens"
+        or game_date.replace(tzinfo=None) < WOMEN_HALF_RULE_CHANGE_DATE
+    ):
         reg_secs_left = [
             1200 + x if half_num == 1 else x
             for x, half_num in zip(pd_secs_left, periods)
         ]
+        pd_type = "half"
+        pd_type_sec = "secs_left_half"
+    # women (after 14-15) use quarters
     else:
         reg_secs_left = [
-            1800 + x
-            if qt_num == 1
-            else 1200 + x
-            if qt_num == 2
-            else 600 + x
-            if qt_num == 3
-            else x
+            (
+                1800 + x
+                if qt_num == 1
+                else 1200 + x if qt_num == 2 else 600 + x if qt_num == 3 else x
+            )
             for x, qt_num in zip(pd_secs_left, periods)
         ]
+        pd_type = "quarter"
+        pd_type_sec = "secs_left_qt"
 
     sc_play = [True if "scoringPlay" in x.keys() else False for x in all_plays]
     is_assisted = [
@@ -940,9 +1044,11 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     scorers = [x[0].split(" made ")[0] if x[1] else "" for x in zip(descs, sc_play)]
 
     non_scorers = [
-        x[0].split(" missed ")[0]
-        if x[1] in (y.lower() for y in SHOT_TYPES) and not x[2]
-        else ""
+        (
+            x[0].split(" missed ")[0]
+            if x[1] in (y.lower() for y in SHOT_TYPES) and not x[2]
+            else ""
+        )
         for x in zip(descs, p_types, sc_play)
     ]
 
@@ -954,13 +1060,6 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     ]
 
     is_three = ["three point" in x.lower() for x in descs]
-
-    if game_type == "mens":
-        pd_type = "half"
-        pd_type_sec = "secs_left_half"
-    else:
-        pd_type = "quarter"
-        pd_type_sec = "secs_left_qt"
 
     data = {
         "game_id": game_id,
@@ -1127,20 +1226,21 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
     is_postseason = True if more_info["seasonType"] == 3 else False
     is_conference = more_info["isConferenceGame"]
 
-    if len(ht_info["records"]) > 1 and ht_info["records"][1]["type"] == "home":
-        is_neutral = False
-
-    elif len(at_info["records"]) > 1 and at_info["records"][1]["type"] == "away":
-        is_neutral = False
-
-    else:
+    if "neutralSite" in more_info:
         is_neutral = True
+    else:
+        is_neutral = False
 
     tournament = more_info["nte"] if "nte" in more_info.keys() else ""
 
     if ("linescores" in ht_info) and ("linescores" in at_info):
-        if game_type == "mens":
+        # men, and women before the 15-16 season, use halves
+        if (
+            game_type == "mens"
+            or game_date.replace(tzinfo=None) < WOMEN_HALF_RULE_CHANGE_DATE
+        ):
             h_ot, a_ot = len(ht_info["linescores"]) - 2, len(at_info["linescores"]) - 2
+        # women (after 14-15) use quarters
         else:
             h_ot, a_ot = len(ht_info["linescores"]) - 4, len(at_info["linescores"]) - 4
 
@@ -1213,6 +1313,41 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
     return pd.DataFrame([game_info_list], columns=game_info_cols)
 
 
+def _get_player_details_helper(player_id, info):
+    """A helper function that cleans a players's metadata.
+
+    Parameters:
+        - player_id: a string representing the player's ESPN player ID
+        - info: a JSON object containing player metadata
+
+    Returns
+        - the player metadata as a DataFrame
+    """
+
+    details = info['plyrHdr']['ath']
+    height = None
+    weight = None
+
+    if 'htwt' in details:
+        height, weight = details['htwt'].split(", ")
+
+    return pd.DataFrame.from_records([{
+        'player_id': player_id,
+        'display_name': details['dspNm'],
+        'display_number': details.get('dspNum'),
+        'first_name': details.get('fNm'),
+        'last_name': details.get('lNm'),
+        'pos': details.get('pos'),
+        'status': details.get('stsid'),
+        'team': details.get('tm'),
+        'experience': details.get('exp'),
+        'height': height,
+        'weight': weight,
+        'birthplace': details.get('brtpl'),
+        'date_of_birth': _parse_date(details['dobRaw']) if 'dobRaw' in details else None,
+    }])
+
+
 def _get_gamepackage_from_soup(soup):
     script_string = _find_json_in_content(soup)
 
@@ -1226,6 +1361,21 @@ def _get_gamepackage_from_soup(soup):
     gamepackage = jsn["page"]["content"]["gamepackage"]
 
     return gamepackage
+
+
+def _get_player_from_soup(soup):
+    script_string = _find_json_in_content(soup)
+
+    if script_string == "":
+        return None
+
+    pattern = re.compile(JSON_REGEX)
+    found = re.search(pattern, script_string).group(1)
+    js = "{" + found + "}"
+    jsn = json.loads(js)
+    player = jsn["page"]["content"]["player"]
+
+    return player
 
 
 def _get_scoreboard_from_soup(soup):
