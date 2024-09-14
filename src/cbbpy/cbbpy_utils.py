@@ -92,7 +92,7 @@ STATUS_OK = 200
 WOMEN_HALF_RULE_CHANGE_DATE = parse("2015-05-01")
 
 
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stdout, level=logging.WARNING)
 _log = logging.getLogger(__name__)
 
 
