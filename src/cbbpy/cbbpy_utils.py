@@ -14,6 +14,10 @@ import traceback
 import json
 import os
 import logging
+import warnings
+
+
+warnings.filterwarnings('ignore', category=UserWarning)
 
 
 ATTEMPTS = 15
@@ -199,15 +203,24 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
     if not len(all_data) > 0:
         return ()
 
-    game_info_df = pd.concat([game[0] for day in all_data for game in day]).reset_index(
-        drop=True
-    )
-    game_boxscore_df = pd.concat(
-        [game[1] for day in all_data for game in day]
+    # sort returned dataframes to ensure consistency between runs
+    game_info_df = pd.concat([game[0] for day in all_data for game in day]).sort_values(
+        by=['game_day', 'game_time', 'game_id'], 
+        key=lambda col: pd.to_datetime(col.str.replace(r' P[SD]T', '', 
+                                                       regex=True)) if col.name != 'game_id' else col
     ).reset_index(drop=True)
-    game_pbp_df = pd.concat([game[2] for day in all_data for game in day]).reset_index(
-        drop=True
-    )
+
+    game_boxscore_df = pd.concat([game[1] for day in all_data for game in day]).sort_values(
+        by=['game_id', 'team'], 
+        ascending=False, 
+        kind='mergesort'
+    ).reset_index(drop=True)
+
+    game_pbp_df = pd.concat([game[2] for day in all_data for game in day]).sort_values(
+        by=['game_id'],
+        ascending=False,
+        kind='mergesort'
+    ).reset_index(drop=True)
 
     return (game_info_df, game_boxscore_df, game_pbp_df)
 
