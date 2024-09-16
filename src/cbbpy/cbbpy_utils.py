@@ -243,6 +243,10 @@ def _get_games_season(season, game_type, info, box, pbp):
     season_start_date = f"{season-1}-11-01"
     season_end_date = f"{season}-05-01"
 
+    # if season has not started yet, throw error
+    if datetime.strptime(season_start_date, "%Y-%m-%d") > datetime.today():
+        raise InvalidDateRangeError("The start date must not be in the future.")
+
     # if season has not ended yet, set end scrape date to today
     if datetime.strptime(season_end_date, "%Y-%m-%d") > datetime.today():
         season_end_date = datetime.today().strftime("%Y-%m-%d")
@@ -399,7 +403,7 @@ def _get_game_boxscore(game_id, game_type):
             # no exception thrown
             break
 
-    return df
+    return df.reset_index(drop=True)
 
 
 def _get_game_pbp(game_id, game_type):
@@ -470,7 +474,7 @@ def _get_game_pbp(game_id, game_type):
             # no exception thrown
             break
 
-    return df
+    return df.reset_index(drop=True)
 
 
 def _get_game_info(game_id, game_type):
