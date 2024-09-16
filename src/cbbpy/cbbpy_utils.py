@@ -1215,17 +1215,17 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
 
     if len(ht_info["links"]) == 0:
         ht = home_team.lower().replace(" ", "-")
-        home_id = "nd-" + re.sub("[^0-9a-zA-Z\-]", "", ht)
+        home_id = "nd-" + re.sub(r"[^0-9a-zA-Z-]", "", ht)
     elif len(ht_info["records"]) == 0:
         ht = home_team.lower().replace(" ", "-")
-        home_id = "nd-" + re.sub("[^0-9a-zA-Z\-]", "", ht)
+        home_id = "nd-" + re.sub(r"[^0-9a-zA-Z-]", "", ht)
 
     if len(at_info["links"]) == 0:
         at = away_team.lower().replace(" ", "-")
-        away_id = "nd-" + re.sub("[^0-9a-zA-Z\-]", "", at)
+        away_id = "nd-" + re.sub(r"[^0-9a-zA-Z-]", "", at)
     elif len(at_info["records"]) == 0:
         at = away_team.lower().replace(" ", "-")
-        away_id = "nd-" + re.sub("[^0-9a-zA-Z\-]", "", at)
+        away_id = "nd-" + re.sub(r"[^0-9a-zA-Z-]", "", at)
 
     home_rank = ht_info["rank"] if "rank" in ht_info.keys() else np.nan
     away_rank = at_info["rank"] if "rank" in at_info.keys() else np.nan
