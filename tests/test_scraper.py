@@ -4,6 +4,32 @@ from src.cbbpy.cbbpy_utils import InvalidDateRangeError
 from src.cbbpy import mens_scraper as ms, womens_scraper as ws
 
 
+M_GAMES = [
+    400843495,
+    401082698,
+    400517877,
+    400919646,
+    400990907,
+    400498476,
+    401581583,
+    400871140,
+    401597830,
+    400989020
+]
+W_GAMES = [
+    400842484,
+    401276220,
+    401166919,
+    400905162,
+    401487896,
+    401486000,
+    400993766,
+    303442739,
+    401091038,
+    401387091
+]
+
+
 def converter(value):
     return '' if pd.isna(value) else str(value)
 
@@ -12,11 +38,21 @@ dtypes = {
     'game_id': str,
     'home_id': str,
     'away_id': str,
+    'starter': lambda x: x.lower() == 'true',
     'tournament': converter,
     'tv_network': converter,
     'play_team': converter,
     'shooter': converter,
     'assist_player': converter,
+    'position': converter,
+    'away_record': converter,
+    'play_desc': converter,
+    'play_type': converter,
+    'game_loc': converter,
+    'arena': converter,
+    'referee_1': converter,
+    'referee_2': converter,
+    'referee_3': converter,
 }
 
 
@@ -25,45 +61,45 @@ def load_expected_dataframe(file_path):
 
 
 def test_mens_info():
-    game_id = "401372396"
-    mens_expected_df = load_expected_dataframe("expected_data/mens_game_info.csv")
-    mens_result_df = ms.get_game_info(game_id)
-    pd.testing.assert_frame_equal(mens_result_df, mens_expected_df)
+    for g in M_GAMES:
+        mens_expected_df = load_expected_dataframe(f"tests/expected_data/mens_game_info_{g}.csv")
+        mens_result_df = ms.get_game_info(str(g))
+        pd.testing.assert_frame_equal(mens_result_df, mens_expected_df)
 
 
-# def test_womens_info():
-#     game_id = "123456"
-#     womens_expected_df = load_expected_dataframe("expected_data/womens_game_info.csv")
-#     womens_result_df = ws.get_game_info(game_id)
-#     pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
+def test_womens_info():
+    for g in W_GAMES:
+        womens_expected_df = load_expected_dataframe(f"tests/expected_data/womens_game_info_{g}.csv")
+        womens_result_df = ws.get_game_info(str(g))
+        pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
 
 
 def test_mens_boxscore():
-    game_id = "401372396"
-    mens_expected_df = load_expected_dataframe("expected_data/mens_game_boxscore.csv")
-    mens_result_df = ms.get_game_boxscore(game_id)
-    pd.testing.assert_frame_equal(mens_result_df, mens_expected_df)
+    for g in M_GAMES:
+        mens_expected_df = load_expected_dataframe(f"tests/expected_data/mens_game_boxscore_{g}.csv")
+        mens_result_df = ms.get_game_boxscore(str(g))
+        pd.testing.assert_frame_equal(mens_result_df, mens_expected_df)
 
 
-# def test_womens_boxscore():
-#     game_id = "123456"
-#     womens_expected_df = load_expected_dataframe("expected_data/womens_game_boxscore.csv")
-#     womens_result_df = ws.get_game_boxscore(game_id)
-#     pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
+def test_womens_boxscore():
+    for g in W_GAMES:
+        womens_expected_df = load_expected_dataframe(f"tests/expected_data/womens_game_boxscore_{g}.csv")
+        womens_result_df = ws.get_game_boxscore(str(g))
+        pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
 
 
 def test_mens_pbp():
-    game_id = "401372396"
-    mens_expected_df = load_expected_dataframe("expected_data/mens_game_pbp.csv")
-    mens_result_df = ms.get_game_pbp(game_id)
-    pd.testing.assert_frame_equal(mens_result_df, mens_expected_df)
+    for g in M_GAMES:
+        mens_expected_df = load_expected_dataframe(f"tests/expected_data/mens_game_pbp_{g}.csv")
+        mens_result_df = ms.get_game_pbp(str(g))
+        pd.testing.assert_frame_equal(mens_result_df, mens_expected_df)
 
 
-# def test_womens_pbp():
-#     game_id = "123456"
-#     womens_expected_df = load_expected_dataframe("expected_data/mens_game_pbp.csv")
-#     womens_result_df = ws.get_game_pbp(game_id)
-#     pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
+def test_womens_pbp():
+    for g in W_GAMES:
+        womens_expected_df = load_expected_dataframe(f"tests/expected_data/womens_game_pbp_{g}.csv")
+        womens_result_df = ws.get_game_pbp(str(g))
+        pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
 
 
 # def test_mens_range():

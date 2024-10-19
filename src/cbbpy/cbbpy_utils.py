@@ -939,6 +939,7 @@ def _get_game_boxscore_helper(boxscore, game_id):
     df["to"] = pd.to_numeric(df["to"], errors="coerce")
     df["pf"] = pd.to_numeric(df["pf"], errors="coerce")
     df["pts"] = pd.to_numeric(df["pts"], errors="coerce")
+    df['starter'] = df['starter'].astype(bool)
 
     return df
 
