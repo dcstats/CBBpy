@@ -102,28 +102,28 @@ def test_womens_pbp():
         pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
 
 
-# def test_mens_range():
-#     start_date = "2022-01-01"
-#     end_date = "2022-01-31"
-#     expected_info_df = load_expected_dataframe("expected_data/mens_game_info.csv")
-#     expected_boxscore_df = load_expected_dataframe("expected_data/mens_game_boxscore.csv")
-#     expected_pbp_df = load_expected_dataframe("expected_data/mens_game_pbp.csv")
-#     result_info_df, result_boxscore_df, result_pbp_df = ms.get_games_range(start_date, end_date)
-#     pd.testing.assert_frame_equal(result_info_df, expected_info_df)
-#     pd.testing.assert_frame_equal(result_boxscore_df, expected_boxscore_df)
-#     pd.testing.assert_frame_equal(result_pbp_df, expected_pbp_df)
+def test_mens_range():
+    start_date = "2022-03-01"
+    end_date = "2022-03-31"
+    expected_info_df = load_expected_dataframe("tests/expected_data/mens_game_info_range.csv")
+    expected_boxscore_df = load_expected_dataframe("tests/expected_data/mens_game_boxscore_range.csv")
+    expected_pbp_df = load_expected_dataframe("tests/expected_data/mens_game_pbp_range.csv")
+    result_info_df, result_boxscore_df, result_pbp_df = ms.get_games_range(start_date, end_date)
+    pd.testing.assert_frame_equal(result_info_df, expected_info_df)
+    pd.testing.assert_frame_equal(result_boxscore_df, expected_boxscore_df)
+    pd.testing.assert_frame_equal(result_pbp_df, expected_pbp_df)
 
 
-# def test_womens_range():
-#     start_date = "2022-01-01"
-#     end_date = "2022-01-31"
-#     expected_info_df = load_expected_dataframe("expected_data/mens_game_info.csv")
-#     expected_boxscore_df = load_expected_dataframe("expected_data/mens_game_boxscore.csv")
-#     expected_pbp_df = load_expected_dataframe("expected_data/mens_game_pbp.csv")
-#     result_info_df, result_boxscore_df, result_pbp_df = ws.get_games_range(start_date, end_date)
-#     pd.testing.assert_frame_equal(result_info_df, expected_info_df)
-#     pd.testing.assert_frame_equal(result_boxscore_df, expected_boxscore_df)
-#     pd.testing.assert_frame_equal(result_pbp_df, expected_pbp_df)
+def test_womens_range():
+    start_date = "2022-03-01"
+    end_date = "2022-03-31"
+    expected_info_df = load_expected_dataframe("tests/expected_data/womens_game_info_range.csv")
+    expected_boxscore_df = load_expected_dataframe("tests/expected_data/womens_game_boxscore_range.csv")
+    expected_pbp_df = load_expected_dataframe("tests/expected_data/womens_game_pbp_range.csv")
+    result_info_df, result_boxscore_df, result_pbp_df = ws.get_games_range(start_date, end_date)
+    pd.testing.assert_frame_equal(result_info_df, expected_info_df)
+    pd.testing.assert_frame_equal(result_boxscore_df, expected_boxscore_df)
+    pd.testing.assert_frame_equal(result_pbp_df, expected_pbp_df)
 
 
 def test_mens_season():
