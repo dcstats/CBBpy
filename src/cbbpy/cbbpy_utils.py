@@ -4,7 +4,7 @@ import requests as r
 import pandas as pd
 import numpy as np
 from datetime import datetime, timezone
-from dateutil.parser import parse
+from dateutil import parser
 from pytz import timezone as tz
 from tqdm import trange
 from joblib import Parallel, delayed
@@ -93,7 +93,7 @@ SHOT_TYPES = [
 WINDOW_STRING = "window['__espnfitt__']="
 JSON_REGEX = r"window\[\'__espnfitt__\'\]={(.*)};"
 STATUS_OK = 200
-WOMEN_HALF_RULE_CHANGE_DATE = parse("2015-05-01")
+WOMEN_HALF_RULE_CHANGE_DATE = parser.parse("2015-05-01")
 
 
 logging.basicConfig(stream=sys.stdout, level=logging.WARNING)
@@ -316,8 +316,8 @@ def _get_game_ids(date, game_type):
                     )
                 return pd.DataFrame([])
             else:
-                # try again with a random sleep between 2 and 5
-                time.sleep(np.random.uniform(low=2, high=5))
+                # try again with a random sleep
+                time.sleep(np.random.uniform(low=1, high=3))
                 continue
         else:
             # no exception thrown
@@ -396,8 +396,8 @@ def _get_game_boxscore(game_id, game_type):
                     )
                 return pd.DataFrame([])
             else:
-                # try again with a random sleep between 2 and 5
-                time.sleep(np.random.uniform(low=2, high=5))
+                # try again with a random sleep
+                time.sleep(np.random.uniform(low=1, high=3))
                 continue
         else:
             # no exception thrown
@@ -467,8 +467,8 @@ def _get_game_pbp(game_id, game_type):
                     )
                 return pd.DataFrame([])
             else:
-                # try again with a random sleep between 2 and 5
-                time.sleep(np.random.uniform(low=2, high=5))
+                # try again with a random sleep
+                time.sleep(np.random.uniform(low=1, high=3))
                 continue
         else:
             # no exception thrown
@@ -546,8 +546,8 @@ def _get_game_info(game_id, game_type):
                     )
                 return pd.DataFrame([])
             else:
-                # try again with a random sleep between 2 and 5
-                time.sleep(np.random.uniform(low=2, high=5))
+                # try again with a random sleep
+                time.sleep(np.random.uniform(low=1, high=3))
                 continue
         else:
             # no exception thrown
@@ -590,7 +590,7 @@ def _get_player(player_id, game_type):
         except Exception as ex:
             if "Page not found." in soup.text:
                 _log.error(
-                    f'"{time.ctime()}": {player_id} - player: Page not found error'
+                    f'"{time.ctime()}": {player_id} - Player: Page not found error'
                 )
                 break
 
@@ -599,24 +599,86 @@ def _get_player(player_id, game_type):
                 if soup is not None:
                     if "Page error" in soup.text:
                         _log.error(
-                            f'"{time.ctime()}": {player_id} - player: Page error'
+                            f'"{time.ctime()}": {player_id} - Player: Page error'
                         )
                     elif raw_player is None:
                         _log.error(
-                            f'"{time.ctime()}": {player_id} - player: Player JSON not found on page.'
+                            f'"{time.ctime()}": {player_id} - Player: Player JSON not found on page.'
                         )
                     else:
                         _log.error(
-                            f'"{time.ctime()}": {player_id} - player: {ex}\n{traceback.format_exc()}'
+                            f'"{time.ctime()}": {player_id} - Player: {ex}\n{traceback.format_exc()}'
                         )
                 else:
                     _log.error(
-                        f'"{time.ctime()}": {player_id} - player: GET error\n{ex}\n{traceback.format_exc()}'
+                        f'"{time.ctime()}": {player_id} - Player: GET error\n{ex}\n{traceback.format_exc()}'
                     )
                 return pd.DataFrame([])
             else:
-                # try again
-                time.sleep(2)
+                # try again with a random sleep
+                time.sleep(np.random.uniform(low=1, high=3))
+                continue
+        else:
+            # no exception thrown
+            break
+
+    return df
+
+
+def _get_team_schedule(team, game_type):
+    """A function that scrapes a team's schedule.
+
+    Parameters:
+        - team: a string representing the name of the team to be scraped
+
+    Returns
+        - a DataFrame of the team's schedule
+    """
+    soup = None
+
+    team_id = _get_id_from_team(team)
+
+    if game_type == "mens":
+        pre_url = MENS_GAME_URL
+    else:
+        pre_url = WOMENS_GAME_URL
+
+    for i in range(ATTEMPTS):
+        try:
+            header = {
+                "User-Agent": str(np.random.choice(USER_AGENTS)),
+                "Referer": str(np.random.choice(REFERERS)),
+            }
+            url = pre_url.format(team_id)
+            page = r.get(url, headers=header)
+            soup = bs(page.content, "lxml")
+            jsn = _get_json_from_soup(soup)
+            df = _get_schedule_helper(jsn, game_type)
+
+        except Exception as ex:
+            if i + 1 == ATTEMPTS:
+                # max number of attempts reached, so return blank df
+                if soup is not None:
+                    if "Page not found." in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {team} - Schedule: Page not found error'
+                        )
+                    elif "Page error" in soup.text:
+                        _log.error(
+                            f'"{time.ctime()}": {team} - Schedule: Page error'
+                        )
+                    else:
+                        _log.error(
+                            f'"{time.ctime()}": {team} - Schedule: {ex}\n{traceback.format_exc()}'
+                        )
+                else:
+                    _log.error(
+                        f'"{time.ctime()}": {team} - Schedule: GET error\n{ex}\n{traceback.format_exc()}'
+                    )
+                return pd.DataFrame([])
+            else:
+                # try again with a random sleep
+                time.sleep(np.random.uniform(low=1, high=3))
                 continue
         else:
             # no exception thrown
@@ -958,7 +1020,7 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     pbp = gamepackage["pbp"]
     home_team = pbp["tms"]["home"]["displayName"]
     away_team = pbp["tms"]["away"]["displayName"]
-    game_date = parse(gamepackage["gmInfo"]["dtTm"])
+    game_date = parser.parse(gamepackage["gmInfo"]["dtTm"])
 
     all_plays = [play for period in pbp["playGrps"] for play in period]
 
@@ -1189,7 +1251,7 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
     capacity = int(info["cpcty"]) if "cpcty" in info.keys() else np.nan
     network = info["cvrg"] if "cvrg" in info.keys() else ""
 
-    gm_date = parse(info["dtTm"])
+    gm_date = parser.parse(info["dtTm"])
     game_date = gm_date.replace(tzinfo=timezone.utc).astimezone(tz=tz("US/Pacific"))
     game_day = game_date.strftime("%B %d, %Y")
     game_time = game_date.strftime("%I:%M %p %Z")
@@ -1365,6 +1427,30 @@ def _get_player_details_helper(player_id, info):
         'birthplace': details.get('brtpl'),
         'date_of_birth': _parse_date(details['dobRaw']) if 'dobRaw' in details else None,
     }])
+
+
+# TODO
+def _get_schedule_helper():
+    pass
+
+
+# TODO
+def _get_id_from_team(team):
+    pass
+
+
+def _get_json_from_soup(soup):
+    script_string = _find_json_in_content(soup)
+
+    if script_string == "":
+        return None
+
+    pattern = re.compile(JSON_REGEX)
+    found = re.search(pattern, script_string).group(1)
+    js = "{" + found + "}"
+    jsn = json.loads(js)
+
+    return jsn
 
 
 def _get_gamepackage_from_soup(soup):

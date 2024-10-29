@@ -102,6 +102,26 @@ def test_womens_pbp():
         pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
 
 
+# TODO
+def test_mens_player():
+    pass
+
+
+# TODO
+def test_womens_player():
+    pass
+
+
+# TODO
+def test_mens_schedule():
+    pass
+
+
+# TODO
+def test_womens_schedule():
+    pass
+
+
 def test_mens_range():
     start_date = "2022-03-01"
     end_date = "2022-03-31"

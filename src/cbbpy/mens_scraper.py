@@ -16,6 +16,7 @@ from .cbbpy_utils import (
     _get_game_pbp,
     _get_game_info,
     _get_player,
+    _get_team_schedule,
 )
 
 
@@ -139,3 +140,15 @@ def get_player_info(player_id: str) -> pd.DataFrame:
         - a DataFrame with one row for the player
     """
     return _get_player(player_id, "mens")
+
+
+def get_team_schedule(team: str) -> pd.DataFrame:
+    """A function that scrapes a team's schedule.
+
+    Parameters:
+        - team: a string representing the name of the team to be scraped
+
+    Returns
+        - a DataFrame of the team's schedule
+    """
+    return _get_team_schedule(team, "mens")
