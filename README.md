@@ -17,6 +17,7 @@ CBBpy requires Python >= 3.7 as well as the following packages:
 * joblib>=1.1.0
 * beautifulsoup4>=4.11.0
 * requests>=2.27.0
+* rapidfuzz>=3.10.0
 
 
 Install using pip:
@@ -47,7 +48,7 @@ NOTE: game ID, as far as CBBpy is concerned, is a valid **ESPN** game ID
 
 `s.get_game_ids(date: Union[str, datetime])` returns a list of all game IDs for a particular date.
 
-`s.get_player_info(player_id: str)` returns a dataframe of one record describing the player info for that player
+`s.get_player_info(player_id: str)` returns a DataFrame of one record describing the player info for that player
 
 ## Examples
 
@@ -94,6 +95,19 @@ Returns (partially):
 |  2 | 401522202 | UConn Huskies | San Diego State Aztecs | Lamont Butler made Three Point Jumper. Assisted by Matt Bradley.      |            2 |            3 |      1 |             1152 |            2352 | San Diego State Aztecs | three point jumper | True            | True           | True       | Lamont Butler    | True          | Matt Bradley    |       39 |       22 |
 |  3 | 401522202 | UConn Huskies | San Diego State Aztecs | Tristen Newton Turnover.                                              |            2 |            3 |      1 |             1130 |            2330 | UConn Huskies          | turnover           | False           | False          | False      |                  | False         |                 |      nan |      nan |
 |  4 | 401522202 | UConn Huskies | San Diego State Aztecs | Darrion Trammell made Three Point Jumper. Assisted by Keshad Johnson. |            2 |            6 |      1 |             1108 |            2308 | San Diego State Aztecs | three point jumper | True            | True           | True       | Darrion Trammell | True          | Keshad Johnson  |        1 |        0 |
+
+Function call: 
+
+```python
+import cbbpy.mens_scraper as s
+s.get_player_info('5105865')
+```
+
+Returns: 
+|    |   player_id | first_name   | last_name   |   jersey_number | pos     | status   | team              | experience   | height   | weight   | birthplace   | date_of_birth   |
+|---:|------------:|:-------------|:------------|----------------:|:--------|:---------|:------------------|:-------------|:---------|:---------|:-------------|:----------------|
+|  0 |     5105865 | Reed         | Bailey      |               1 | Forward | active   | Davidson Wildcats | Junior       | 6' 10"   | 230 lbs  | Harvard, MA  |                 |
+
 
 ## Contact
 Feel free to reach out to me directly with any questions, requests, or suggestions at <dnlcowan37@gmail.com>.
