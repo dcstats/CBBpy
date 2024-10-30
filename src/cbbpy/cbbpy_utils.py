@@ -1430,8 +1430,60 @@ def _get_player_details_helper(player_id, info):
 
 
 # TODO
-def _get_schedule_helper():
-    pass
+def _get_schedule_helper(jsn):
+    # reg season, playoffs, etc are separated
+    season_types = jsn["page"]["content"]['scheduleData']['teamSchedule']
+
+    tot_events = []
+    
+    # combine data from diff season types
+    for x in season_types[::-1]:
+        y = x['events']['pre'] + x['events']['post']
+        tot_events.extend(y)
+
+    tot_events = [x for x in tot_events if 'date' in x]
+
+    data = []
+
+    # get info from each game
+    for ev in tot_events:
+        mat = re.search(r'gameId/(\d+)/', ev['time']['link'])
+        game_id = mat.group(1) if mat is not None else ''
+
+        date = parser.parse(ev['date']['date']).astimezone(tz('America/Los_Angeles'))
+        day = date.strftime('%B %d, %Y')
+        time = date.strftime('%I:%M %p %Z')
+
+        opp = ev['opponent']['displayName']
+        opp_id = ev['opponent']['id']
+
+        network = ev['network'][0]['name'] if len(ev['network']) > 0 else ''
+        season_type = ev['seasonType']['name']
+        status = ev['status']['description']
+
+        res = ev['result']
+
+        if status == 'Final':
+            result = res['winLossSymbol'] + ' ' + res['currentTeamScore'] + '-' + res['opponentTeamScore']
+        else:
+            result = 'N/A'
+
+        row = (game_id, day, time, opp, opp_id, season_type, status, network, result)
+        data.append(row)
+
+    cols = [
+        'game_id',
+        'game_day',
+        'game_time',
+        'opponent',
+        'opponent_id',
+        'season_type',
+        'game_status',
+        'tv_network',
+        'game_result'
+    ]
+
+    return pd.DataFrame(data, columns=cols)
 
 
 # TODO
