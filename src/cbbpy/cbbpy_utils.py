@@ -15,6 +15,8 @@ import json
 import os
 import logging
 import warnings
+from rapidfuzz import process
+from pathlib import Path
 
 
 warnings.filterwarnings('ignore', category=UserWarning)
@@ -64,6 +66,7 @@ MENS_GAME_URL = "https://www.espn.com/mens-college-basketball/game/_/gameId/{}"
 MENS_BOXSCORE_URL = "https://www.espn.com/mens-college-basketball/boxscore/_/gameId/{}"
 MENS_PBP_URL = "https://www.espn.com/mens-college-basketball/playbyplay/_/gameId/{}"
 MENS_PLAYER_URL = "https://www.espn.com/mens-college-basketball/player/_/id/{}"
+MENS_SCHEDULE_URL = "https://www.espn.com/mens-college-basketball/team/schedule/_/id/{}/season/{}"
 WOMENS_SCOREBOARD_URL = "https://www.espn.com/womens-college-basketball/scoreboard/_/date/{}/seasontype/2/group/50"
 WOMENS_GAME_URL = "https://www.espn.com/womens-college-basketball/game/_/gameId/{}"
 WOMENS_BOXSCORE_URL = (
@@ -71,6 +74,7 @@ WOMENS_BOXSCORE_URL = (
 )
 WOMENS_PBP_URL = "https://www.espn.com/womens-college-basketball/playbyplay/_/gameId/{}"
 WOMENS_PLAYER_URL = "https://www.espn.com/womens-college-basketball/player/_/id/{}"
+WOMENS_SCHEDULE_URL = "https://www.espn.com/mens-college-basketball/team/schedule/_/id/{}/season/{}"
 NON_SHOT_TYPES = [
     "TV Timeout",
     "Jump Ball",
@@ -625,7 +629,7 @@ def _get_player(player_id, game_type):
     return df
 
 
-def _get_team_schedule(team, game_type):
+def _get_team_schedule(team, season, game_type):
     """A function that scrapes a team's schedule.
 
     Parameters:
@@ -636,12 +640,12 @@ def _get_team_schedule(team, game_type):
     """
     soup = None
 
-    team_id = _get_id_from_team(team)
+    team_id = _get_id_from_team(team, season, game_type)
 
     if game_type == "mens":
-        pre_url = MENS_GAME_URL
+        pre_url = MENS_SCHEDULE_URL
     else:
-        pre_url = WOMENS_GAME_URL
+        pre_url = WOMENS_SCHEDULE_URL
 
     for i in range(ATTEMPTS):
         try:
@@ -649,11 +653,11 @@ def _get_team_schedule(team, game_type):
                 "User-Agent": str(np.random.choice(USER_AGENTS)),
                 "Referer": str(np.random.choice(REFERERS)),
             }
-            url = pre_url.format(team_id)
+            url = pre_url.format(team_id, season)
             page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
             jsn = _get_json_from_soup(soup)
-            df = _get_schedule_helper(jsn, game_type)
+            df = _get_schedule_helper(jsn)
 
         except Exception as ex:
             if i + 1 == ATTEMPTS:
@@ -1435,7 +1439,7 @@ def _get_schedule_helper(jsn):
     season_types = jsn["page"]["content"]['scheduleData']['teamSchedule']
 
     tot_events = []
-    
+
     # combine data from diff season types
     for x in season_types[::-1]:
         y = x['events']['pre'] + x['events']['post']
@@ -1486,9 +1490,25 @@ def _get_schedule_helper(jsn):
     return pd.DataFrame(data, columns=cols)
 
 
-# TODO
-def _get_id_from_team(team):
-    pass
+def _get_id_from_team(team, season, game_type):
+    team = team.lower()
+
+    current_dir = Path(__file__).parent
+    data_path = current_dir.parent / 'data' / f'{game_type}_team_map.csv'
+    teams_map = pd.read_csv(data_path)
+    id_map = teams_map[teams_map.season == season][['id', 'location']]
+    id_map.location = id_map.location.str.lower()
+    id_map = id_map.set_index('location')['id'].to_dict()
+
+    if not team in id_map:
+        choices = [x.lower() for x in id_map.keys()]
+        best_match, score, _ = process.extractOne(team, choices)
+        print(f'Could not find team {team}. Getting season for closest match: {best_match}')
+        id_ = id_map[best_match]
+    else:
+        id_ = id_map[team]
+
+    return id_
 
 
 def _get_json_from_soup(soup):
@@ -1557,3 +1577,9 @@ def _find_json_in_content(soup):
             script_string = x.text
             break
     return script_string
+
+
+def get_current_season():
+    if datetime.today().month >= 10:
+        return datetime.today().year + 1
+    return datetime.today().year

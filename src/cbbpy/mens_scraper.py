@@ -17,6 +17,7 @@ from .cbbpy_utils import (
     _get_game_info,
     _get_player,
     _get_team_schedule,
+    get_current_season,
 )
 
 
@@ -27,6 +28,9 @@ def get_game(
 
     Parameters:
         - game_id: a string representing the game's ESPN game ID
+        - info: a boolean denoting whether game metadata is to be scraped
+        - box: a boolean denoting whether game boxscore is to be scraped
+        - pbp: a boolean denoting whether game play-by-play is to be scraped
 
     Returns
         - (game_info_df, boxscore_df, pbp_df), a tuple consisting of:
@@ -72,6 +76,9 @@ def get_games_season(
         - season: an integer representing the season to be scraped. NOTE: season is takes the form
         of the four-digit representation of the later year of the season. So, as an example, the
         2021-22 season is referred to by the integer 2022.
+        - info: a boolean denoting whether game metadata is to be scraped
+        - box: a boolean denoting whether game boxscore is to be scraped
+        - pbp: a boolean denoting whether game play-by-play is to be scraped
 
     Returns
         - (game_info_df, boxscore_df, pbp_df), a tuple consisting of:
@@ -142,13 +149,16 @@ def get_player_info(player_id: str) -> pd.DataFrame:
     return _get_player(player_id, "mens")
 
 
-def get_team_schedule(team: str) -> pd.DataFrame:
+def get_team_schedule(team: str, season: int = None) -> pd.DataFrame:
     """A function that scrapes a team's schedule.
 
     Parameters:
         - team: a string representing the name of the team to be scraped
+        - season: a string representing the season to be scraped
 
     Returns
         - a DataFrame of the team's schedule
     """
-    return _get_team_schedule(team, "mens")
+    if season is None:
+        season = get_current_season()
+    return _get_team_schedule(team, season, "mens")
