@@ -655,7 +655,7 @@ def _get_team_schedule(team, season, game_type):
     """
     soup = None
 
-    team_id = _get_id_from_team(team, season, game_type)
+    team_id, team_name = _get_id_from_team(team, season, game_type)
 
     if game_type == "mens":
         pre_url = MENS_SCHEDULE_URL
@@ -672,7 +672,7 @@ def _get_team_schedule(team, season, game_type):
             page = r.get(url, headers=header)
             soup = bs(page.content, "lxml")
             jsn = _get_json_from_soup(soup)
-            df = _get_schedule_helper(jsn)
+            df = _get_schedule_helper(jsn, team_name, team_id, season)
 
         except Exception as ex:
             if i + 1 == ATTEMPTS:
@@ -1449,7 +1449,7 @@ def _get_player_details_helper(player_id, info):
 
 
 # TODO
-def _get_schedule_helper(jsn):
+def _get_schedule_helper(jsn, team, id_, season):
     # reg season, playoffs, etc are separated
     season_types = jsn["page"]["content"]['scheduleData']['teamSchedule']
 
@@ -1487,10 +1487,13 @@ def _get_schedule_helper(jsn):
         else:
             result = 'N/A'
 
-        row = (game_id, day, time, opp, opp_id, season_type, status, network, result)
+        row = (team, id_, season, game_id, day, time, opp, opp_id, season_type, status, network, result)
         data.append(row)
 
     cols = [
+        'team',
+        'team_id',
+        'season',
         'game_id',
         'game_day',
         'game_time',
@@ -1506,24 +1509,25 @@ def _get_schedule_helper(jsn):
 
 
 def _get_id_from_team(team, season, game_type):
-    team = team.lower()
+    team = team.title()
 
     current_dir = Path(__file__).parent
-    data_path = current_dir.parent / 'data' / f'{game_type}_team_map.csv'
+    data_path = current_dir.parent / 'utils' / f'{game_type}_team_map.csv'
     teams_map = pd.read_csv(data_path)
     id_map = teams_map[teams_map.season == season][['id', 'location']]
-    id_map.location = id_map.location.str.lower()
+    id_map.location = id_map.location.str.title()
     id_map = id_map.set_index('location')['id'].to_dict()
 
     if not team in id_map:
-        choices = [x.lower() for x in id_map.keys()]
+        choices = list(id_map.keys())
         best_match, score, _ = process.extractOne(team, choices)
         print(f'Could not find team {team}. Getting season for closest match: {best_match}')
+        team = best_match
         id_ = id_map[best_match]
     else:
         id_ = id_map[team]
 
-    return id_
+    return id_, team
 
 
 def _get_json_from_soup(soup):
