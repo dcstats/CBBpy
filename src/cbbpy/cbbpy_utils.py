@@ -122,6 +122,10 @@ def _get_game(game_id, game_type, info, box, pbp):
 
     Parameters:
         - game_id: a string representing the game's ESPN game ID
+        - game_type: the league being scraped, "mens" or "womens"
+        - info: a boolean denoting whether game metadata is to be scraped
+        - box: a boolean denoting whether game boxscore is to be scraped
+        - pbp: a boolean denoting whether game play-by-play is to be scraped
 
     Returns
         - (game_info_df, boxscore_df, pbp_df), a tuple consisting of:
@@ -155,6 +159,7 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
     Parameters:
         - start_date: a string representing the first day of games to scrape
         - end_date: a string representing the last day of games to scrape (inclusive)
+        - game_type: the league being scraped, "mens" or "womens"
         - info: a boolean denoting whether game metadata is to be scraped
         - box: a boolean denoting whether game boxscore is to be scraped
         - pbp: a boolean denoting whether game play-by-play is to be scraped
@@ -237,6 +242,10 @@ def _get_games_season(season, game_type, info, box, pbp):
         - season: an integer representing the season to be scraped. NOTE: season is takes the form
         of the four-digit representation of the later year of the season. So, as an example, the
         2021-22 season is referred to by the integer 2022.
+        - game_type: the league being scraped, "mens" or "womens"
+        - info: a boolean denoting whether game metadata is to be scraped
+        - box: a boolean denoting whether game boxscore is to be scraped
+        - pbp: a boolean denoting whether game play-by-play is to be scraped
 
     Returns
         - (game_info_df, boxscore_df, pbp_df), a tuple consisting of:
@@ -267,6 +276,7 @@ def _get_game_ids(date, game_type):
 
     Parameters:
         - date: a string/datetime object representing the date to be scraped
+        - game_type: the league being scraped, "mens" or "womens"
 
     Returns
         - a list of ESPN all game IDs for games played on the date given
@@ -335,6 +345,7 @@ def _get_game_boxscore(game_id, game_type):
 
     Parameters:
         - game_id: a string representing the game's ESPN game ID
+        - game_type: the league being scraped, "mens" or "womens"
 
     Returns
         - the game boxscore as a DataFrame
@@ -415,6 +426,7 @@ def _get_game_pbp(game_id, game_type):
 
     Parameters:
         - game_id: a string representing the game's ESPN game ID
+        - game_type: the league being scraped, "mens" or "womens"
 
     Returns
         - the game's play-by-play information represented as a DataFrame
@@ -486,6 +498,7 @@ def _get_game_info(game_id, game_type):
 
     Parameters:
         - game_id: a string representing the game's ESPN game ID
+        - game_type: the league being scraped, "mens" or "womens"
 
     Returns
         - a DataFrame with one row and a column for each piece of metadata
@@ -565,7 +578,7 @@ def _get_player(player_id, game_type):
 
     Parameters:
         - player_id: a string representing the players's ESPN ID
-        - game_type: which league we're scraping, "mens" or "womens"
+        - game_type: the league being scraped, "mens" or "womens"
 
     Returns
         - the game boxscore as a DataFrame if the player is found, None otherwise
@@ -634,6 +647,8 @@ def _get_team_schedule(team, season, game_type):
 
     Parameters:
         - team: a string representing the name of the team to be scraped
+        - season: an integer representing the season to be scraped
+        - game_type: the league being scraped, "mens" or "womens"
 
     Returns
         - a DataFrame of the team's schedule
