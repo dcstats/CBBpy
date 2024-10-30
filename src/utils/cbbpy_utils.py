@@ -1433,17 +1433,16 @@ def _get_player_details_helper(player_id, info):
 
     return pd.DataFrame.from_records([{
         'player_id': player_id,
-        'display_name': details['dspNm'],
-        'display_number': details.get('dspNum'),
         'first_name': details.get('fNm'),
         'last_name': details.get('lNm'),
+        'jersey_number': details.get('dspNum', '').replace('#', ''),
         'pos': details.get('pos'),
-        'status': details.get('stsid'),
+        'status': details.get('stsid', '').replace('status-', ''),
         'team': details.get('tm'),
         'experience': details.get('exp'),
         'height': height,
         'weight': weight,
-        'birthplace': details.get('brtpl'),
+        'birthplace': details.get('brthpl'),
         'date_of_birth': _parse_date(details['dobRaw']) if 'dobRaw' in details else None,
     }])
 
