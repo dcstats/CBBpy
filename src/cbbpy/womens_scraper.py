@@ -27,16 +27,17 @@ def get_game(
     """A function that scrapes all game info (metadata, boxscore, play-by-play).
 
     Parameters:
-        - game_id: a string representing the game's ESPN game ID
-        - info: a boolean denoting whether game metadata is to be scraped
-        - box: a boolean denoting whether game boxscore is to be scraped
-        - pbp: a boolean denoting whether game play-by-play is to be scraped
+        game_id (str): The game's ESPN game ID
+        info (bool, optional): Whether the game metadata is to be scraped. Defaults to True.
+        box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
+        pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
 
-    Returns
-        - (game_info_df, boxscore_df, pbp_df), a tuple consisting of:
-            -- game_info_df: a DataFrame of the game's metadata
-            -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
-            -- pbp_df: a DataFrame of the game's play-by-play
+    Returns:
+        a tuple containing
+
+        - pd.DataFrame: The game's metadata.\n
+        - pd.DataFrame: The game's boxscore (both teams combined).\n
+        - pd.DataFrame: The game's play-by-play.
     """
     return _get_game(game_id, "womens", info, box, pbp)
 
@@ -51,17 +52,18 @@ def get_games_range(
     """A function that scrapes a game information between a given range of dates.
 
     Parameters:
-        - start_date: a string representing the first day of games to scrape
-        - end_date: a string representing the last day of games to scrape (inclusive)
-        - info: a boolean denoting whether game metadata is to be scraped
-        - box: a boolean denoting whether game boxscore is to be scraped
-        - pbp: a boolean denoting whether game play-by-play is to be scraped
+        start_date (str): The first day of games to scrape.
+        end_date (str): The last day of games to scrape (inclusive).
+        info (bool, optional): Whether the game metadata is to be scraped. Defaults to True.
+        box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
+        pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
 
-    Returns
-        - (game_info_df, boxscore_df, pbp_df), a tuple consisting of:
-            -- game_info_df: a DataFrame of the game's metadata
-            -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
-            -- pbp_df: a DataFrame of the game's play-by-play
+    Returns:
+        a tuple containing
+
+        - pd.DataFrame: The game's metadata.\n
+        - pd.DataFrame: The game's boxscore (both teams combined).\n
+        - pd.DataFrame: The game's play-by-play.
     """
     return _get_games_range(start_date, end_date, "womens", info, box, pbp)
 
@@ -69,95 +71,95 @@ def get_games_range(
 def get_games_season(
     season: int, info: bool = True, box: bool = True, pbp: bool = True
 ) -> tuple:
-    """A function that scrapes all game info (metadata, boxscore, play-by-play) for every game of
-    a given season.
+    """Scrapes desired game information (metadata, boxscore, play-by-play) for every game of a given season.
 
     Parameters:
-        - season: an integer representing the season to be scraped. NOTE: season is takes the form
-        of the four-digit representation of the later year of the season. So, as an example, the
-        2021-22 season is referred to by the integer 2022.
-        - info: a boolean denoting whether game metadata is to be scraped
-        - box: a boolean denoting whether game boxscore is to be scraped
-        - pbp: a boolean denoting whether game play-by-play is to be scraped
+        season (int): The season to be scraped. 
+            NOTE: season takes the form of the four-digit representation of the later year of the season. 
+            So, as an example, the 2021-22 season is referred to by the integer 2022.
+        info (bool, optional): Whether the game metadata is to be scraped. Defaults to True.
+        box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
+        pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
 
-    Returns
-        - (game_info_df, boxscore_df, pbp_df), a tuple consisting of:
-            -- game_info_df: a DataFrame of the game's metadata
-            -- boxscore_df: a DataFrame of the game's boxscore (both teams combined)
-            -- pbp_df: a DataFrame of the game's play-by-play
+    Returns:
+        a tuple containing
+
+        - pd.DataFrame: The game's metadata.\n
+        - pd.DataFrame: The game's boxscore (both teams combined).\n
+        - pd.DataFrame: The game's play-by-play.
     """
     return _get_games_season(season, "womens", info, box, pbp)
 
 
 def get_game_ids(date: Union[str, datetime]) -> list:
-    """A function that scrapes all game IDs on a date.
+    """Scrapes all game IDs for a given date.
 
     Parameters:
-        - date: a string/datetime object representing the date to be scraped
+        date (str | datetime): The date of the games to be scraped.
 
-    Returns
-        - a list of ESPN all game IDs for games played on the date given
+    Returns:
+        list: The ESPN game IDs for each game played on the given date.
     """
     return _get_game_ids(date, "womens")
 
 
 def get_game_boxscore(game_id: str) -> pd.DataFrame:
-    """A function that scrapes a game's boxscore.
+    """Scrapes each team's boxscore for a given game.
 
     Parameters:
-        - game_id: a string representing the game's ESPN game ID
+        game_id (str): The game's ESPN game ID.
 
-    Returns
-        - the game boxscore as a DataFrame
+    Returns:
+        pd.DataFrame: The boxscores of both teams, combined into one table.
     """
     return _get_game_boxscore(game_id, "womens")
 
 
 def get_game_pbp(game_id: str) -> pd.DataFrame:
-    """A function that scrapes a game's play-by-play information.
+    """Scrapes a game's play-by-play data.
 
     Parameters:
-        - game_id: a string representing the game's ESPN game ID
+        game_id (str): The game's ESPN game ID.
 
-    Returns
-        - the game's play-by-play information represented as a DataFrame
+    Returns:
+        pd.DataFrame: The game's play-by-play information, with a row for each play.
     """
     return _get_game_pbp(game_id, "womens")
 
 
 def get_game_info(game_id: str) -> pd.DataFrame:
-    """A function that scrapes game metadata.
+    """Scrapes game metadata from the ESPN game page.
 
-    Parameters:
-        - game_id: a string representing the game's ESPN game ID
+    Args:
+        game_id (str): The game's ESPN game ID.
 
-    Returns
-        - a DataFrame with one row and a column for each piece of metadata
+    Returns:
+        pd.DataFrame: The game's metadata scraped from the game page.
     """
     return _get_game_info(game_id, "womens")
 
 
 def get_player_info(player_id: str) -> pd.DataFrame:
-    """A function that scrapes player info for a given player ID
+    """Scrapes player details from her bio page for a given player ID.
 
-    Parameters:
-        - player_id: a string representing the player's ESPN player ID
+    Args:
+        player_id (str): The player's ESPN player ID.
 
-    Returns
-        - a DataFrame with one row for the player
+    Returns:
+        pd.DataFrame: The given player's details.
     """
     return _get_player(player_id, "womens")
 
 
 def get_team_schedule(team: str, season: int = None) -> pd.DataFrame:
-    """A function that scrapes a team's schedule.
+    """Scrapes a given team's schedule for a specified season.
 
-    Parameters:
-        - team: a string representing the name of the team to be scraped
-        - season: a string representing the season to be scraped
+    Args:
+        team (str): The name of the team to be scraped.
+        season (int, optional): The season to be scraped. Defaults to current season.
 
-    Returns
-        - a DataFrame of the team's schedule
+    Returns:
+        pd.DataFrame: The given team's schedule for the year.
     """
     if season is None:
         season = get_current_season()
