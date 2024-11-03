@@ -177,18 +177,18 @@ season,id,team,location,conference,conference_abb
 2010,2612,Saint Peter's Peacocks,Saint Peter's,Metro Atlantic Athletic Conference,maac
 2010,2099,Canisius Golden Griffins,Canisius,Metro Atlantic Athletic Conference,maac
 2010,2520,Rider Broncs,Rider,Metro Atlantic Athletic Conference,maac
-2010,189,Bowling Green Falcons,Bowling Green,Mid-American - East,midame
-2010,2309,Kent State Golden Flashes,Kent State,Mid-American - East,midame
-2010,2006,Akron Zips,Akron,Mid-American - East,midame
-2010,193,Miami (OH) RedHawks,Miami (OH),Mid-American - East,midame
-2010,195,Ohio Bobcats,Ohio,Mid-American - East,midame
-2010,2084,Buffalo Bulls,Buffalo,Mid-American - East,midame
-2010,2649,Toledo Rockets,Toledo,Mid-American - West,midamw
-2010,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American - West,midamw
-2010,2117,Central Michigan Chippewas,Central Michigan,Mid-American - West,midamw
-2010,2050,Ball State Cardinals,Ball State,Mid-American - West,midamw
-2010,2711,Western Michigan Broncos,Western Michigan,Mid-American - West,midamw
-2010,2459,Northern Illinois Huskies,Northern Illinois,Mid-American - West,midamw
+2010,189,Bowling Green Falcons,Bowling Green,Mid-American Conference,midame
+2010,2309,Kent State Golden Flashes,Kent State,Mid-American Conference,midame
+2010,2006,Akron Zips,Akron,Mid-American Conference,midame
+2010,193,Miami (OH) RedHawks,Miami (OH),Mid-American Conference,midame
+2010,195,Ohio Bobcats,Ohio,Mid-American Conference,midame
+2010,2084,Buffalo Bulls,Buffalo,Mid-American Conference,midame
+2010,2649,Toledo Rockets,Toledo,Mid-American Conference,midamw
+2010,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American Conference,midamw
+2010,2117,Central Michigan Chippewas,Central Michigan,Mid-American Conference,midamw
+2010,2050,Ball State Cardinals,Ball State,Mid-American Conference,midamw
+2010,2711,Western Michigan Broncos,Western Michigan,Mid-American Conference,midamw
+2010,2459,Northern Illinois Huskies,Northern Illinois,Mid-American Conference,midamw
 2010,2448,North Carolina A&T Aggies,North Carolina A&T,Mid-Eastern Athletic Conference,meac
 2010,2261,Hampton Lady Pirates,Hampton,Mid-Eastern Athletic Conference,meac
 2010,2415,Morgan State Lady Bears,Morgan State,Mid-Eastern Athletic Conference,meac
@@ -314,19 +314,19 @@ season,id,team,location,conference,conference_abb
 2010,253,Southern Utah Thunderbirds,Southern Utah,Summit League,summ
 2010,85,IU Indianapolis Jaguars,IU Indianapolis,Summit League,summ
 2010,2113,Centenary (LA) Gentlemen,Centenary (LA),Summit League,summ
-2010,2393,Middle Tennessee Blue Raiders,Middle Tennessee,Sun Belt - East,belte
-2010,98,Western Kentucky Lady Toppers,Western Kentucky,Sun Belt - East,belte
-2010,2226,Florida Atlantic Owls,Florida Atlantic,Sun Belt - East,belte
-2010,2229,Florida International Panthers,Florida International,Sun Belt - East,belte
-2010,6,South Alabama Jaguars,South Alabama,Sun Belt - East,belte
-2010,2653,Troy Trojans,Troy,Sun Belt - East,belte
-2010,2031,Little Rock Trojans,Little Rock,Sun Belt - West,beltw
-2010,2172,Denver Pioneers,Denver,Sun Belt - West,beltw
-2010,2032,Arkansas State Red Wolves,Arkansas State,Sun Belt - West,beltw
-2010,249,North Texas Mean Green,North Texas,Sun Belt - West,beltw
-2010,2443,New Orleans Privateers,New Orleans,Sun Belt - West,beltw
-2010,309,Louisiana Ragin' Cajuns,Louisiana,Sun Belt - West,beltw
-2010,2433,UL Monroe Warhawks,UL Monroe,Sun Belt - West,beltw
+2010,2393,Middle Tennessee Blue Raiders,Middle Tennessee,Sun Belt Conference,belte
+2010,98,Western Kentucky Lady Toppers,Western Kentucky,Sun Belt Conference,belte
+2010,2226,Florida Atlantic Owls,Florida Atlantic,Sun Belt Conference,belte
+2010,2229,Florida International Panthers,Florida International,Sun Belt Conference,belte
+2010,6,South Alabama Jaguars,South Alabama,Sun Belt Conference,belte
+2010,2653,Troy Trojans,Troy,Sun Belt Conference,belte
+2010,2031,Little Rock Trojans,Little Rock,Sun Belt Conference,beltw
+2010,2172,Denver Pioneers,Denver,Sun Belt Conference,beltw
+2010,2032,Arkansas State Red Wolves,Arkansas State,Sun Belt Conference,beltw
+2010,249,North Texas Mean Green,North Texas,Sun Belt Conference,beltw
+2010,2443,New Orleans Privateers,New Orleans,Sun Belt Conference,beltw
+2010,309,Louisiana Ragin' Cajuns,Louisiana,Sun Belt Conference,beltw
+2010,2433,UL Monroe Warhawks,UL Monroe,Sun Belt Conference,beltw
 2010,2250,Gonzaga Bulldogs,Gonzaga,West Coast Conference,wcc
 2010,2608,Saint Mary's Gaels,Saint Mary's,West Coast Conference,wcc
 2010,2492,Pepperdine Waves,Pepperdine,West Coast Conference,wcc
@@ -522,18 +522,18 @@ season,id,team,location,conference,conference_abb
 2011,2520,Rider Broncs,Rider,Metro Atlantic Athletic Conference,maac
 2011,2612,Saint Peter's Peacocks,Saint Peter's,Metro Atlantic Athletic Conference,maac
 2011,315,Niagara Purple Eagles,Niagara,Metro Atlantic Athletic Conference,maac
-2011,189,Bowling Green Falcons,Bowling Green,Mid-American - East,midame
-2011,2309,Kent State Golden Flashes,Kent State,Mid-American - East,midame
-2011,2084,Buffalo Bulls,Buffalo,Mid-American - East,midame
-2011,2006,Akron Zips,Akron,Mid-American - East,midame
-2011,195,Ohio Bobcats,Ohio,Mid-American - East,midame
-2011,193,Miami (OH) RedHawks,Miami (OH),Mid-American - East,midame
-2011,2649,Toledo Rockets,Toledo,Mid-American - West,midamw
-2011,2117,Central Michigan Chippewas,Central Michigan,Mid-American - West,midamw
-2011,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American - West,midamw
-2011,2459,Northern Illinois Huskies,Northern Illinois,Mid-American - West,midamw
-2011,2711,Western Michigan Broncos,Western Michigan,Mid-American - West,midamw
-2011,2050,Ball State Cardinals,Ball State,Mid-American - West,midamw
+2011,189,Bowling Green Falcons,Bowling Green,Mid-American Conference,midame
+2011,2309,Kent State Golden Flashes,Kent State,Mid-American Conference,midame
+2011,2084,Buffalo Bulls,Buffalo,Mid-American Conference,midame
+2011,2006,Akron Zips,Akron,Mid-American Conference,midame
+2011,195,Ohio Bobcats,Ohio,Mid-American Conference,midame
+2011,193,Miami (OH) RedHawks,Miami (OH),Mid-American Conference,midame
+2011,2649,Toledo Rockets,Toledo,Mid-American Conference,midamw
+2011,2117,Central Michigan Chippewas,Central Michigan,Mid-American Conference,midamw
+2011,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American Conference,midamw
+2011,2459,Northern Illinois Huskies,Northern Illinois,Mid-American Conference,midamw
+2011,2711,Western Michigan Broncos,Western Michigan,Mid-American Conference,midamw
+2011,2050,Ball State Cardinals,Ball State,Mid-American Conference,midamw
 2011,2261,Hampton Lady Pirates,Hampton,Mid-Eastern Athletic Conference,meac
 2011,2448,North Carolina A&T Aggies,North Carolina A&T,Mid-Eastern Athletic Conference,meac
 2011,2415,Morgan State Lady Bears,Morgan State,Mid-Eastern Athletic Conference,meac
@@ -659,18 +659,18 @@ season,id,team,location,conference,conference_abb
 2011,2710,Western Illinois Leathernecks,Western Illinois,Summit League,summ
 2011,85,IU Indianapolis Jaguars,IU Indianapolis,Summit League,summ
 2011,2113,Centenary (LA) Gentlemen,Centenary (LA),Summit League,summ
-2011,2393,Middle Tennessee Blue Raiders,Middle Tennessee,Sun Belt - East,belte
-2011,2229,Florida International Panthers,Florida International,Sun Belt - East,belte
-2011,98,Western Kentucky Lady Toppers,Western Kentucky,Sun Belt - East,belte
-2011,6,South Alabama Jaguars,South Alabama,Sun Belt - East,belte
-2011,2226,Florida Atlantic Owls,Florida Atlantic,Sun Belt - East,belte
-2011,2653,Troy Trojans,Troy,Sun Belt - East,belte
-2011,2031,Little Rock Trojans,Little Rock,Sun Belt - West,beltw
-2011,2172,Denver Pioneers,Denver,Sun Belt - West,beltw
-2011,2433,UL Monroe Warhawks,UL Monroe,Sun Belt - West,beltw
-2011,2032,Arkansas State Red Wolves,Arkansas State,Sun Belt - West,beltw
-2011,309,Louisiana Ragin' Cajuns,Louisiana,Sun Belt - West,beltw
-2011,249,North Texas Mean Green,North Texas,Sun Belt - West,beltw
+2011,2393,Middle Tennessee Blue Raiders,Middle Tennessee,Sun Belt Conference,belte
+2011,2229,Florida International Panthers,Florida International,Sun Belt Conference,belte
+2011,98,Western Kentucky Lady Toppers,Western Kentucky,Sun Belt Conference,belte
+2011,6,South Alabama Jaguars,South Alabama,Sun Belt Conference,belte
+2011,2226,Florida Atlantic Owls,Florida Atlantic,Sun Belt Conference,belte
+2011,2653,Troy Trojans,Troy,Sun Belt Conference,belte
+2011,2031,Little Rock Trojans,Little Rock,Sun Belt Conference,beltw
+2011,2172,Denver Pioneers,Denver,Sun Belt Conference,beltw
+2011,2433,UL Monroe Warhawks,UL Monroe,Sun Belt Conference,beltw
+2011,2032,Arkansas State Red Wolves,Arkansas State,Sun Belt Conference,beltw
+2011,309,Louisiana Ragin' Cajuns,Louisiana,Sun Belt Conference,beltw
+2011,249,North Texas Mean Green,North Texas,Sun Belt Conference,beltw
 2011,2250,Gonzaga Bulldogs,Gonzaga,West Coast Conference,wcc
 2011,2608,Saint Mary's Gaels,Saint Mary's,West Coast Conference,wcc
 2011,2492,Pepperdine Waves,Pepperdine,West Coast Conference,wcc
@@ -861,18 +861,18 @@ season,id,team,location,conference,conference_abb
 2012,2099,Canisius Golden Griffins,Canisius,Metro Atlantic Athletic Conference,maac
 2012,2612,Saint Peter's Peacocks,Saint Peter's,Metro Atlantic Athletic Conference,maac
 2012,2520,Rider Broncs,Rider,Metro Atlantic Athletic Conference,maac
-2012,189,Bowling Green Falcons,Bowling Green,Mid-American - East,midame
-2012,193,Miami (OH) RedHawks,Miami (OH),Mid-American - East,midame
-2012,2006,Akron Zips,Akron,Mid-American - East,midame
-2012,195,Ohio Bobcats,Ohio,Mid-American - East,midame
-2012,2309,Kent State Golden Flashes,Kent State,Mid-American - East,midame
-2012,2084,Buffalo Bulls,Buffalo,Mid-American - East,midame
-2012,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American - West,midamw
-2012,2649,Toledo Rockets,Toledo,Mid-American - West,midamw
-2012,2117,Central Michigan Chippewas,Central Michigan,Mid-American - West,midamw
-2012,2459,Northern Illinois Huskies,Northern Illinois,Mid-American - West,midamw
-2012,2711,Western Michigan Broncos,Western Michigan,Mid-American - West,midamw
-2012,2050,Ball State Cardinals,Ball State,Mid-American - West,midamw
+2012,189,Bowling Green Falcons,Bowling Green,Mid-American Conference,midame
+2012,193,Miami (OH) RedHawks,Miami (OH),Mid-American Conference,midame
+2012,2006,Akron Zips,Akron,Mid-American Conference,midame
+2012,195,Ohio Bobcats,Ohio,Mid-American Conference,midame
+2012,2309,Kent State Golden Flashes,Kent State,Mid-American Conference,midame
+2012,2084,Buffalo Bulls,Buffalo,Mid-American Conference,midame
+2012,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American Conference,midamw
+2012,2649,Toledo Rockets,Toledo,Mid-American Conference,midamw
+2012,2117,Central Michigan Chippewas,Central Michigan,Mid-American Conference,midamw
+2012,2459,Northern Illinois Huskies,Northern Illinois,Mid-American Conference,midamw
+2012,2711,Western Michigan Broncos,Western Michigan,Mid-American Conference,midamw
+2012,2050,Ball State Cardinals,Ball State,Mid-American Conference,midamw
 2012,2261,Hampton Lady Pirates,Hampton,Mid-Eastern Athletic Conference,meac
 2012,50,Florida A&M Rattlers,Florida A&M,Mid-Eastern Athletic Conference,meac
 2012,47,Howard Bison,Howard,Mid-Eastern Athletic Conference,meac
@@ -1002,18 +1002,18 @@ season,id,team,location,conference,conference_abb
 2012,2473,Oakland Golden Grizzlies,Oakland,Summit League,summ
 2012,2870,Purdue Fort Wayne Mastodons,Purdue Fort Wayne,Summit League,summ
 2012,253,Southern Utah Thunderbirds,Southern Utah,Summit League,summ
-2012,2393,Middle Tennessee Blue Raiders,Middle Tennessee,Sun Belt - East,belte
-2012,2226,Florida Atlantic Owls,Florida Atlantic,Sun Belt - East,belte
-2012,2229,Florida International Panthers,Florida International,Sun Belt - East,belte
-2012,6,South Alabama Jaguars,South Alabama,Sun Belt - East,belte
-2012,98,Western Kentucky Lady Toppers,Western Kentucky,Sun Belt - East,belte
-2012,2653,Troy Trojans,Troy,Sun Belt - East,belte
-2012,2031,Little Rock Trojans,Little Rock,Sun Belt - West,beltw
-2012,2172,Denver Pioneers,Denver,Sun Belt - West,beltw
-2012,2433,UL Monroe Warhawks,UL Monroe,Sun Belt - West,beltw
-2012,249,North Texas Mean Green,North Texas,Sun Belt - West,beltw
-2012,2032,Arkansas State Red Wolves,Arkansas State,Sun Belt - West,beltw
-2012,309,Louisiana Ragin' Cajuns,Louisiana,Sun Belt - West,beltw
+2012,2393,Middle Tennessee Blue Raiders,Middle Tennessee,Sun Belt Conference,belte
+2012,2226,Florida Atlantic Owls,Florida Atlantic,Sun Belt Conference,belte
+2012,2229,Florida International Panthers,Florida International,Sun Belt Conference,belte
+2012,6,South Alabama Jaguars,South Alabama,Sun Belt Conference,belte
+2012,98,Western Kentucky Lady Toppers,Western Kentucky,Sun Belt Conference,belte
+2012,2653,Troy Trojans,Troy,Sun Belt Conference,belte
+2012,2031,Little Rock Trojans,Little Rock,Sun Belt Conference,beltw
+2012,2172,Denver Pioneers,Denver,Sun Belt Conference,beltw
+2012,2433,UL Monroe Warhawks,UL Monroe,Sun Belt Conference,beltw
+2012,249,North Texas Mean Green,North Texas,Sun Belt Conference,beltw
+2012,2032,Arkansas State Red Wolves,Arkansas State,Sun Belt Conference,beltw
+2012,309,Louisiana Ragin' Cajuns,Louisiana,Sun Belt Conference,beltw
 2012,2250,Gonzaga Bulldogs,Gonzaga,West Coast Conference,wcc
 2012,301,San Diego Toreros,San Diego,West Coast Conference,wcc
 2012,252,BYU Cougars,BYU,West Coast Conference,wcc
@@ -1204,18 +1204,18 @@ season,id,team,location,conference,conference_abb
 2013,2352,Loyola Maryland Greyhounds,Loyola Maryland,Metro Atlantic Athletic Conference,maac
 2013,2363,Manhattan Jaspers,Manhattan,Metro Atlantic Athletic Conference,maac
 2013,2612,Saint Peter's Peacocks,Saint Peter's,Metro Atlantic Athletic Conference,maac
-2013,2006,Akron Zips,Akron,Mid-American - East,midame
-2013,189,Bowling Green Falcons,Bowling Green,Mid-American - East,midame
-2013,193,Miami (OH) RedHawks,Miami (OH),Mid-American - East,midame
-2013,2084,Buffalo Bulls,Buffalo,Mid-American - East,midame
-2013,2309,Kent State Golden Flashes,Kent State,Mid-American - East,midame
-2013,195,Ohio Bobcats,Ohio,Mid-American - East,midame
-2013,2649,Toledo Rockets,Toledo,Mid-American - West,midamw
-2013,2050,Ball State Cardinals,Ball State,Mid-American - West,midamw
-2013,2117,Central Michigan Chippewas,Central Michigan,Mid-American - West,midamw
-2013,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American - West,midamw
-2013,2711,Western Michigan Broncos,Western Michigan,Mid-American - West,midamw
-2013,2459,Northern Illinois Huskies,Northern Illinois,Mid-American - West,midamw
+2013,2006,Akron Zips,Akron,Mid-American Conference,midame
+2013,189,Bowling Green Falcons,Bowling Green,Mid-American Conference,midame
+2013,193,Miami (OH) RedHawks,Miami (OH),Mid-American Conference,midame
+2013,2084,Buffalo Bulls,Buffalo,Mid-American Conference,midame
+2013,2309,Kent State Golden Flashes,Kent State,Mid-American Conference,midame
+2013,195,Ohio Bobcats,Ohio,Mid-American Conference,midame
+2013,2649,Toledo Rockets,Toledo,Mid-American Conference,midamw
+2013,2050,Ball State Cardinals,Ball State,Mid-American Conference,midamw
+2013,2117,Central Michigan Chippewas,Central Michigan,Mid-American Conference,midamw
+2013,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American Conference,midamw
+2013,2711,Western Michigan Broncos,Western Michigan,Mid-American Conference,midamw
+2013,2459,Northern Illinois Huskies,Northern Illinois,Mid-American Conference,midamw
 2013,2261,Hampton Lady Pirates,Hampton,Mid-Eastern Athletic Conference,meac
 2013,2448,North Carolina A&T Aggies,North Carolina A&T,Mid-Eastern Athletic Conference,meac
 2013,47,Howard Bison,Howard,Mid-Eastern Athletic Conference,meac
@@ -1260,18 +1260,18 @@ season,id,team,location,conference,conference_abb
 2013,2523,Robert Morris Colonials,Robert Morris,Northeast Conference,neast
 2013,2341,LIU Brooklyn Blackbirds,LIU Brooklyn,Northeast Conference,neast
 2013,2681,Wagner Seahawks,Wagner,Northeast Conference,neast
-2013,2635,Tennessee Tech Golden Eagles,Tennessee Tech,Ohio Valley - East,ovce
-2013,2057,Belmont Bruins,Belmont,Ohio Valley - East,ovce
-2013,2198,Eastern Kentucky Colonels,Eastern Kentucky,Ohio Valley - East,ovce
-2013,2634,Tennessee State Lady Tigers,Tennessee State,Ohio Valley - East,ovce
-2013,2413,Morehead State Eagles,Morehead State,Ohio Valley - East,ovce
-2013,55,Jacksonville State Gamecocks,Jacksonville State,Ohio Valley - East,ovce
-2013,2197,Eastern Illinois Panthers,Eastern Illinois,Ohio Valley - West,ovcw
-2013,2630,UT Martin Skyhawks,UT Martin,Ohio Valley - West,ovcw
-2013,2565,SIU Edwardsville Cougars,SIU Edwardsville,Ohio Valley - West,ovcw
-2013,93,Murray State Racers,Murray State,Ohio Valley - West,ovcw
-2013,2546,Southeast Missouri State Redhawks,Southeast Missouri State,Ohio Valley - West,ovcw
-2013,2046,Austin Peay Governors,Austin Peay,Ohio Valley - West,ovcw
+2013,2635,Tennessee Tech Golden Eagles,Tennessee Tech,Ohio Valley Conference,ovce
+2013,2057,Belmont Bruins,Belmont,Ohio Valley Conference,ovce
+2013,2198,Eastern Kentucky Colonels,Eastern Kentucky,Ohio Valley Conference,ovce
+2013,2634,Tennessee State Lady Tigers,Tennessee State,Ohio Valley Conference,ovce
+2013,2413,Morehead State Eagles,Morehead State,Ohio Valley Conference,ovce
+2013,55,Jacksonville State Gamecocks,Jacksonville State,Ohio Valley Conference,ovce
+2013,2197,Eastern Illinois Panthers,Eastern Illinois,Ohio Valley Conference,ovcw
+2013,2630,UT Martin Skyhawks,UT Martin,Ohio Valley Conference,ovcw
+2013,2565,SIU Edwardsville Cougars,SIU Edwardsville,Ohio Valley Conference,ovcw
+2013,93,Murray State Racers,Murray State,Ohio Valley Conference,ovcw
+2013,2546,Southeast Missouri State Redhawks,Southeast Missouri State,Ohio Valley Conference,ovcw
+2013,2046,Austin Peay Governors,Austin Peay,Ohio Valley Conference,ovcw
 2013,25,California Golden Bears,California,Pac-12 Conference,pac12
 2013,24,Stanford Cardinal,Stanford,Pac-12 Conference,pac12
 2013,26,UCLA Bruins,UCLA,Pac-12 Conference,pac12
@@ -1346,17 +1346,17 @@ season,id,team,location,conference,conference_abb
 2013,2449,North Dakota State Bison,North Dakota State,Summit League,summ
 2013,140,Kansas City Roos,Kansas City,Summit League,summ
 2013,2473,Oakland Golden Grizzlies,Oakland,Summit League,summ
-2013,2393,Middle Tennessee Blue Raiders,Middle Tennessee,Sun Belt - East,belte
-2013,98,Western Kentucky Lady Toppers,Western Kentucky,Sun Belt - East,belte
-2013,2229,Florida International Panthers,Florida International,Sun Belt - East,belte
-2013,6,South Alabama Jaguars,South Alabama,Sun Belt - East,belte
-2013,2226,Florida Atlantic Owls,Florida Atlantic,Sun Belt - East,belte
-2013,2653,Troy Trojans,Troy,Sun Belt - East,belte
-2013,2031,Little Rock Trojans,Little Rock,Sun Belt - West,beltw
-2013,2032,Arkansas State Red Wolves,Arkansas State,Sun Belt - West,beltw
-2013,249,North Texas Mean Green,North Texas,Sun Belt - West,beltw
-2013,2433,UL Monroe Warhawks,UL Monroe,Sun Belt - West,beltw
-2013,309,Louisiana Ragin' Cajuns,Louisiana,Sun Belt - West,beltw
+2013,2393,Middle Tennessee Blue Raiders,Middle Tennessee,Sun Belt Conference,belte
+2013,98,Western Kentucky Lady Toppers,Western Kentucky,Sun Belt Conference,belte
+2013,2229,Florida International Panthers,Florida International,Sun Belt Conference,belte
+2013,6,South Alabama Jaguars,South Alabama,Sun Belt Conference,belte
+2013,2226,Florida Atlantic Owls,Florida Atlantic,Sun Belt Conference,belte
+2013,2653,Troy Trojans,Troy,Sun Belt Conference,belte
+2013,2031,Little Rock Trojans,Little Rock,Sun Belt Conference,beltw
+2013,2032,Arkansas State Red Wolves,Arkansas State,Sun Belt Conference,beltw
+2013,249,North Texas Mean Green,North Texas,Sun Belt Conference,beltw
+2013,2433,UL Monroe Warhawks,UL Monroe,Sun Belt Conference,beltw
+2013,309,Louisiana Ragin' Cajuns,Louisiana,Sun Belt Conference,beltw
 2013,2250,Gonzaga Bulldogs,Gonzaga,West Coast Conference,wcc
 2013,301,San Diego Toreros,San Diego,West Coast Conference,wcc
 2013,2608,Saint Mary's Gaels,Saint Mary's,West Coast Conference,wcc
@@ -1550,18 +1550,18 @@ season,id,team,location,conference,conference_abb
 2014,2561,Siena Saints,Siena,Metro Atlantic Athletic Conference,maac
 2014,2405,Monmouth Hawks,Monmouth,Metro Atlantic Athletic Conference,maac
 2014,2612,Saint Peter's Peacocks,Saint Peter's,Metro Atlantic Athletic Conference,maac
-2014,189,Bowling Green Falcons,Bowling Green,Mid-American - East,midame
-2014,2006,Akron Zips,Akron,Mid-American - East,midame
-2014,2084,Buffalo Bulls,Buffalo,Mid-American - East,midame
-2014,195,Ohio Bobcats,Ohio,Mid-American - East,midame
-2014,193,Miami (OH) RedHawks,Miami (OH),Mid-American - East,midame
-2014,2309,Kent State Golden Flashes,Kent State,Mid-American - East,midame
-2014,2117,Central Michigan Chippewas,Central Michigan,Mid-American - West,midamw
-2014,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American - West,midamw
-2014,2050,Ball State Cardinals,Ball State,Mid-American - West,midamw
-2014,2649,Toledo Rockets,Toledo,Mid-American - West,midamw
-2014,2711,Western Michigan Broncos,Western Michigan,Mid-American - West,midamw
-2014,2459,Northern Illinois Huskies,Northern Illinois,Mid-American - West,midamw
+2014,189,Bowling Green Falcons,Bowling Green,Mid-American Conference,midame
+2014,2006,Akron Zips,Akron,Mid-American Conference,midame
+2014,2084,Buffalo Bulls,Buffalo,Mid-American Conference,midame
+2014,195,Ohio Bobcats,Ohio,Mid-American Conference,midame
+2014,193,Miami (OH) RedHawks,Miami (OH),Mid-American Conference,midame
+2014,2309,Kent State Golden Flashes,Kent State,Mid-American Conference,midame
+2014,2117,Central Michigan Chippewas,Central Michigan,Mid-American Conference,midamw
+2014,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American Conference,midamw
+2014,2050,Ball State Cardinals,Ball State,Mid-American Conference,midamw
+2014,2649,Toledo Rockets,Toledo,Mid-American Conference,midamw
+2014,2711,Western Michigan Broncos,Western Michigan,Mid-American Conference,midamw
+2014,2459,Northern Illinois Huskies,Northern Illinois,Mid-American Conference,midamw
 2014,2261,Hampton Lady Pirates,Hampton,Mid-Eastern Athletic Conference,meac
 2014,2448,North Carolina A&T Aggies,North Carolina A&T,Mid-Eastern Athletic Conference,meac
 2014,2542,Savannah State Tigers,Savannah State,Mid-Eastern Athletic Conference,meac
@@ -1606,18 +1606,18 @@ season,id,team,location,conference,conference_abb
 2014,2681,Wagner Seahawks,Wagner,Northeast Conference,neast
 2014,2341,LIU Brooklyn Blackbirds,LIU Brooklyn,Northeast Conference,neast
 2014,161,Fairleigh Dickinson Knights,Fairleigh Dickinson,Northeast Conference,neast
-2014,2198,Eastern Kentucky Colonels,Eastern Kentucky,Ohio Valley - East,ovce
-2014,2057,Belmont Bruins,Belmont,Ohio Valley - East,ovce
-2014,55,Jacksonville State Gamecocks,Jacksonville State,Ohio Valley - East,ovce
-2014,2635,Tennessee Tech Golden Eagles,Tennessee Tech,Ohio Valley - East,ovce
-2014,2413,Morehead State Eagles,Morehead State,Ohio Valley - East,ovce
-2014,2634,Tennessee State Lady Tigers,Tennessee State,Ohio Valley - East,ovce
-2014,2630,UT Martin Skyhawks,UT Martin,Ohio Valley - West,ovcw
-2014,2197,Eastern Illinois Panthers,Eastern Illinois,Ohio Valley - West,ovcw
-2014,93,Murray State Racers,Murray State,Ohio Valley - West,ovcw
-2014,2565,SIU Edwardsville Cougars,SIU Edwardsville,Ohio Valley - West,ovcw
-2014,2546,Southeast Missouri State Redhawks,Southeast Missouri State,Ohio Valley - West,ovcw
-2014,2046,Austin Peay Governors,Austin Peay,Ohio Valley - West,ovcw
+2014,2198,Eastern Kentucky Colonels,Eastern Kentucky,Ohio Valley Conference,ovce
+2014,2057,Belmont Bruins,Belmont,Ohio Valley Conference,ovce
+2014,55,Jacksonville State Gamecocks,Jacksonville State,Ohio Valley Conference,ovce
+2014,2635,Tennessee Tech Golden Eagles,Tennessee Tech,Ohio Valley Conference,ovce
+2014,2413,Morehead State Eagles,Morehead State,Ohio Valley Conference,ovce
+2014,2634,Tennessee State Lady Tigers,Tennessee State,Ohio Valley Conference,ovce
+2014,2630,UT Martin Skyhawks,UT Martin,Ohio Valley Conference,ovcw
+2014,2197,Eastern Illinois Panthers,Eastern Illinois,Ohio Valley Conference,ovcw
+2014,93,Murray State Racers,Murray State,Ohio Valley Conference,ovcw
+2014,2565,SIU Edwardsville Cougars,SIU Edwardsville,Ohio Valley Conference,ovcw
+2014,2546,Southeast Missouri State Redhawks,Southeast Missouri State,Ohio Valley Conference,ovcw
+2014,2046,Austin Peay Governors,Austin Peay,Ohio Valley Conference,ovcw
 2014,24,Stanford Cardinal,Stanford,Pac-12 Conference,pac12
 2014,204,Oregon State Beavers,Oregon State,Pac-12 Conference,pac12
 2014,25,California Golden Bears,California,Pac-12 Conference,pac12
@@ -1901,18 +1901,18 @@ season,id,team,location,conference,conference_abb
 2015,2099,Canisius Golden Griffins,Canisius,Metro Atlantic Athletic Conference,maac
 2015,2612,Saint Peter's Peacocks,Saint Peter's,Metro Atlantic Athletic Conference,maac
 2015,2363,Manhattan Jaspers,Manhattan,Metro Atlantic Athletic Conference,maac
-2015,195,Ohio Bobcats,Ohio,Mid-American - East,midame
-2015,2006,Akron Zips,Akron,Mid-American - East,midame
-2015,2084,Buffalo Bulls,Buffalo,Mid-American - East,midame
-2015,189,Bowling Green Falcons,Bowling Green,Mid-American - East,midame
-2015,193,Miami (OH) RedHawks,Miami (OH),Mid-American - East,midame
-2015,2309,Kent State Golden Flashes,Kent State,Mid-American - East,midame
-2015,2050,Ball State Cardinals,Ball State,Mid-American - West,midamw
-2015,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American - West,midamw
-2015,2711,Western Michigan Broncos,Western Michigan,Mid-American - West,midamw
-2015,2649,Toledo Rockets,Toledo,Mid-American - West,midamw
-2015,2117,Central Michigan Chippewas,Central Michigan,Mid-American - West,midamw
-2015,2459,Northern Illinois Huskies,Northern Illinois,Mid-American - West,midamw
+2015,195,Ohio Bobcats,Ohio,Mid-American Conference,midame
+2015,2006,Akron Zips,Akron,Mid-American Conference,midame
+2015,2084,Buffalo Bulls,Buffalo,Mid-American Conference,midame
+2015,189,Bowling Green Falcons,Bowling Green,Mid-American Conference,midame
+2015,193,Miami (OH) RedHawks,Miami (OH),Mid-American Conference,midame
+2015,2309,Kent State Golden Flashes,Kent State,Mid-American Conference,midame
+2015,2050,Ball State Cardinals,Ball State,Mid-American Conference,midamw
+2015,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American Conference,midamw
+2015,2711,Western Michigan Broncos,Western Michigan,Mid-American Conference,midamw
+2015,2649,Toledo Rockets,Toledo,Mid-American Conference,midamw
+2015,2117,Central Michigan Chippewas,Central Michigan,Mid-American Conference,midamw
+2015,2459,Northern Illinois Huskies,Northern Illinois,Mid-American Conference,midamw
 2015,2261,Hampton Lady Pirates,Hampton,Mid-Eastern Athletic Conference,meac
 2015,2542,Savannah State Tigers,Savannah State,Mid-Eastern Athletic Conference,meac
 2015,2448,North Carolina A&T Aggies,North Carolina A&T,Mid-Eastern Athletic Conference,meac
@@ -1957,18 +1957,18 @@ season,id,team,location,conference,conference_abb
 2015,116,Mount St. Mary's Mountaineers,Mount St. Mary's,Northeast Conference,neast
 2015,2681,Wagner Seahawks,Wagner,Northeast Conference,neast
 2015,2598,St. Francis (PA) Red Flash,St. Francis (PA),Northeast Conference,neast
-2015,55,Jacksonville State Gamecocks,Jacksonville State,Ohio Valley - East,ovce
-2015,2634,Tennessee State Lady Tigers,Tennessee State,Ohio Valley - East,ovce
-2015,2057,Belmont Bruins,Belmont,Ohio Valley - East,ovce
-2015,2413,Morehead State Eagles,Morehead State,Ohio Valley - East,ovce
-2015,2198,Eastern Kentucky Colonels,Eastern Kentucky,Ohio Valley - East,ovce
-2015,2635,Tennessee Tech Golden Eagles,Tennessee Tech,Ohio Valley - East,ovce
-2015,2630,UT Martin Skyhawks,UT Martin,Ohio Valley - West,ovcw
-2015,2565,SIU Edwardsville Cougars,SIU Edwardsville,Ohio Valley - West,ovcw
-2015,2046,Austin Peay Governors,Austin Peay,Ohio Valley - West,ovcw
-2015,2197,Eastern Illinois Panthers,Eastern Illinois,Ohio Valley - West,ovcw
-2015,2546,Southeast Missouri State Redhawks,Southeast Missouri State,Ohio Valley - West,ovcw
-2015,93,Murray State Racers,Murray State,Ohio Valley - West,ovcw
+2015,55,Jacksonville State Gamecocks,Jacksonville State,Ohio Valley Conference,ovce
+2015,2634,Tennessee State Lady Tigers,Tennessee State,Ohio Valley Conference,ovce
+2015,2057,Belmont Bruins,Belmont,Ohio Valley Conference,ovce
+2015,2413,Morehead State Eagles,Morehead State,Ohio Valley Conference,ovce
+2015,2198,Eastern Kentucky Colonels,Eastern Kentucky,Ohio Valley Conference,ovce
+2015,2635,Tennessee Tech Golden Eagles,Tennessee Tech,Ohio Valley Conference,ovce
+2015,2630,UT Martin Skyhawks,UT Martin,Ohio Valley Conference,ovcw
+2015,2565,SIU Edwardsville Cougars,SIU Edwardsville,Ohio Valley Conference,ovcw
+2015,2046,Austin Peay Governors,Austin Peay,Ohio Valley Conference,ovcw
+2015,2197,Eastern Illinois Panthers,Eastern Illinois,Ohio Valley Conference,ovcw
+2015,2546,Southeast Missouri State Redhawks,Southeast Missouri State,Ohio Valley Conference,ovcw
+2015,93,Murray State Racers,Murray State,Ohio Valley Conference,ovcw
 2015,204,Oregon State Beavers,Oregon State,Pac-12 Conference,pac12
 2015,9,Arizona State Sun Devils,Arizona State,Pac-12 Conference,pac12
 2015,24,Stanford Cardinal,Stanford,Pac-12 Conference,pac12
@@ -2250,18 +2250,18 @@ season,id,team,location,conference,conference_abb
 2016,2520,Rider Broncs,Rider,Metro Atlantic Athletic Conference,maac
 2016,315,Niagara Purple Eagles,Niagara,Metro Atlantic Athletic Conference,maac
 2016,2612,Saint Peter's Peacocks,Saint Peter's,Metro Atlantic Athletic Conference,maac
-2016,195,Ohio Bobcats,Ohio,Mid-American - East,midame
-2016,2006,Akron Zips,Akron,Mid-American - East,midame
-2016,2084,Buffalo Bulls,Buffalo,Mid-American - East,midame
-2016,189,Bowling Green Falcons,Bowling Green,Mid-American - East,midame
-2016,193,Miami (OH) RedHawks,Miami (OH),Mid-American - East,midame
-2016,2309,Kent State Golden Flashes,Kent State,Mid-American - East,midame
-2016,2117,Central Michigan Chippewas,Central Michigan,Mid-American - West,midamw
-2016,2050,Ball State Cardinals,Ball State,Mid-American - West,midamw
-2016,2649,Toledo Rockets,Toledo,Mid-American - West,midamw
-2016,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American - West,midamw
-2016,2711,Western Michigan Broncos,Western Michigan,Mid-American - West,midamw
-2016,2459,Northern Illinois Huskies,Northern Illinois,Mid-American - West,midamw
+2016,195,Ohio Bobcats,Ohio,Mid-American Conference,midame
+2016,2006,Akron Zips,Akron,Mid-American Conference,midame
+2016,2084,Buffalo Bulls,Buffalo,Mid-American Conference,midame
+2016,189,Bowling Green Falcons,Bowling Green,Mid-American Conference,midame
+2016,193,Miami (OH) RedHawks,Miami (OH),Mid-American Conference,midame
+2016,2309,Kent State Golden Flashes,Kent State,Mid-American Conference,midame
+2016,2117,Central Michigan Chippewas,Central Michigan,Mid-American Conference,midamw
+2016,2050,Ball State Cardinals,Ball State,Mid-American Conference,midamw
+2016,2649,Toledo Rockets,Toledo,Mid-American Conference,midamw
+2016,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American Conference,midamw
+2016,2711,Western Michigan Broncos,Western Michigan,Mid-American Conference,midamw
+2016,2459,Northern Illinois Huskies,Northern Illinois,Mid-American Conference,midamw
 2016,2448,North Carolina A&T Aggies,North Carolina A&T,Mid-Eastern Athletic Conference,meac
 2016,2065,Bethune-Cookman Wildcats,Bethune-Cookman,Mid-Eastern Athletic Conference,meac
 2016,2261,Hampton Lady Pirates,Hampton,Mid-Eastern Athletic Conference,meac
@@ -2306,18 +2306,18 @@ season,id,team,location,conference,conference_abb
 2016,116,Mount St. Mary's Mountaineers,Mount St. Mary's,Northeast Conference,neast
 2016,2597,St. Francis Brooklyn Terriers,St. Francis Brooklyn,Northeast Conference,neast
 2016,2681,Wagner Seahawks,Wagner,Northeast Conference,neast
-2016,2057,Belmont Bruins,Belmont,Ohio Valley - East,ovce
-2016,2198,Eastern Kentucky Colonels,Eastern Kentucky,Ohio Valley - East,ovce
-2016,2634,Tennessee State Lady Tigers,Tennessee State,Ohio Valley - East,ovce
-2016,2635,Tennessee Tech Golden Eagles,Tennessee Tech,Ohio Valley - East,ovce
-2016,55,Jacksonville State Gamecocks,Jacksonville State,Ohio Valley - East,ovce
-2016,2413,Morehead State Eagles,Morehead State,Ohio Valley - East,ovce
-2016,2630,UT Martin Skyhawks,UT Martin,Ohio Valley - West,ovcw
-2016,2565,SIU Edwardsville Cougars,SIU Edwardsville,Ohio Valley - West,ovcw
-2016,2546,Southeast Missouri State Redhawks,Southeast Missouri State,Ohio Valley - West,ovcw
-2016,2046,Austin Peay Governors,Austin Peay,Ohio Valley - West,ovcw
-2016,93,Murray State Racers,Murray State,Ohio Valley - West,ovcw
-2016,2197,Eastern Illinois Panthers,Eastern Illinois,Ohio Valley - West,ovcw
+2016,2057,Belmont Bruins,Belmont,Ohio Valley Conference,ovce
+2016,2198,Eastern Kentucky Colonels,Eastern Kentucky,Ohio Valley Conference,ovce
+2016,2634,Tennessee State Lady Tigers,Tennessee State,Ohio Valley Conference,ovce
+2016,2635,Tennessee Tech Golden Eagles,Tennessee Tech,Ohio Valley Conference,ovce
+2016,55,Jacksonville State Gamecocks,Jacksonville State,Ohio Valley Conference,ovce
+2016,2413,Morehead State Eagles,Morehead State,Ohio Valley Conference,ovce
+2016,2630,UT Martin Skyhawks,UT Martin,Ohio Valley Conference,ovcw
+2016,2565,SIU Edwardsville Cougars,SIU Edwardsville,Ohio Valley Conference,ovcw
+2016,2546,Southeast Missouri State Redhawks,Southeast Missouri State,Ohio Valley Conference,ovcw
+2016,2046,Austin Peay Governors,Austin Peay,Ohio Valley Conference,ovcw
+2016,93,Murray State Racers,Murray State,Ohio Valley Conference,ovcw
+2016,2197,Eastern Illinois Panthers,Eastern Illinois,Ohio Valley Conference,ovcw
 2016,204,Oregon State Beavers,Oregon State,Pac-12 Conference,pac12
 2016,9,Arizona State Sun Devils,Arizona State,Pac-12 Conference,pac12
 2016,26,UCLA Bruins,UCLA,Pac-12 Conference,pac12
@@ -2598,18 +2598,18 @@ season,id,team,location,conference,conference_abb
 2017,315,Niagara Purple Eagles,Niagara,Metro Atlantic Athletic Conference,maac
 2017,2363,Manhattan Jaspers,Manhattan,Metro Atlantic Athletic Conference,maac
 2017,2612,Saint Peter's Peacocks,Saint Peter's,Metro Atlantic Athletic Conference,maac
-2017,2309,Kent State Golden Flashes,Kent State,Mid-American - East,midame
-2017,195,Ohio Bobcats,Ohio,Mid-American - East,midame
-2017,2084,Buffalo Bulls,Buffalo,Mid-American - East,midame
-2017,193,Miami (OH) RedHawks,Miami (OH),Mid-American - East,midame
-2017,189,Bowling Green Falcons,Bowling Green,Mid-American - East,midame
-2017,2006,Akron Zips,Akron,Mid-American - East,midame
-2017,2117,Central Michigan Chippewas,Central Michigan,Mid-American - West,midamw
-2017,2050,Ball State Cardinals,Ball State,Mid-American - West,midamw
-2017,2459,Northern Illinois Huskies,Northern Illinois,Mid-American - West,midamw
-2017,2649,Toledo Rockets,Toledo,Mid-American - West,midamw
-2017,2711,Western Michigan Broncos,Western Michigan,Mid-American - West,midamw
-2017,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American - West,midamw
+2017,2309,Kent State Golden Flashes,Kent State,Mid-American Conference,midame
+2017,195,Ohio Bobcats,Ohio,Mid-American Conference,midame
+2017,2084,Buffalo Bulls,Buffalo,Mid-American Conference,midame
+2017,193,Miami (OH) RedHawks,Miami (OH),Mid-American Conference,midame
+2017,189,Bowling Green Falcons,Bowling Green,Mid-American Conference,midame
+2017,2006,Akron Zips,Akron,Mid-American Conference,midame
+2017,2117,Central Michigan Chippewas,Central Michigan,Mid-American Conference,midamw
+2017,2050,Ball State Cardinals,Ball State,Mid-American Conference,midamw
+2017,2459,Northern Illinois Huskies,Northern Illinois,Mid-American Conference,midamw
+2017,2649,Toledo Rockets,Toledo,Mid-American Conference,midamw
+2017,2711,Western Michigan Broncos,Western Michigan,Mid-American Conference,midamw
+2017,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American Conference,midamw
 2017,2065,Bethune-Cookman Wildcats,Bethune-Cookman,Mid-Eastern Athletic Conference,meac
 2017,47,Howard Bison,Howard,Mid-Eastern Athletic Conference,meac
 2017,2261,Hampton Lady Pirates,Hampton,Mid-Eastern Athletic Conference,meac
@@ -2948,18 +2948,18 @@ season,id,team,location,conference,conference_abb
 2018,2405,Monmouth Hawks,Monmouth,Metro Atlantic Athletic Conference,maac
 2018,314,Iona Gaels,Iona,Metro Atlantic Athletic Conference,maac
 2018,2612,Saint Peter's Peacocks,Saint Peter's,Metro Atlantic Athletic Conference,maac
-2018,2084,Buffalo Bulls,Buffalo,Mid-American - East,midame
-2018,193,Miami (OH) RedHawks,Miami (OH),Mid-American - East,midame
-2018,195,Ohio Bobcats,Ohio,Mid-American - East,midame
-2018,2309,Kent State Golden Flashes,Kent State,Mid-American - East,midame
-2018,189,Bowling Green Falcons,Bowling Green,Mid-American - East,midame
-2018,2006,Akron Zips,Akron,Mid-American - East,midame
-2018,2117,Central Michigan Chippewas,Central Michigan,Mid-American - West,midamw
-2018,2050,Ball State Cardinals,Ball State,Mid-American - West,midamw
-2018,2711,Western Michigan Broncos,Western Michigan,Mid-American - West,midamw
-2018,2649,Toledo Rockets,Toledo,Mid-American - West,midamw
-2018,2459,Northern Illinois Huskies,Northern Illinois,Mid-American - West,midamw
-2018,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American - West,midamw
+2018,2084,Buffalo Bulls,Buffalo,Mid-American Conference,midame
+2018,193,Miami (OH) RedHawks,Miami (OH),Mid-American Conference,midame
+2018,195,Ohio Bobcats,Ohio,Mid-American Conference,midame
+2018,2309,Kent State Golden Flashes,Kent State,Mid-American Conference,midame
+2018,189,Bowling Green Falcons,Bowling Green,Mid-American Conference,midame
+2018,2006,Akron Zips,Akron,Mid-American Conference,midame
+2018,2117,Central Michigan Chippewas,Central Michigan,Mid-American Conference,midamw
+2018,2050,Ball State Cardinals,Ball State,Mid-American Conference,midamw
+2018,2711,Western Michigan Broncos,Western Michigan,Mid-American Conference,midamw
+2018,2649,Toledo Rockets,Toledo,Mid-American Conference,midamw
+2018,2459,Northern Illinois Huskies,Northern Illinois,Mid-American Conference,midamw
+2018,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American Conference,midamw
 2018,2448,North Carolina A&T Aggies,North Carolina A&T,Mid-Eastern Athletic Conference,meac
 2018,2065,Bethune-Cookman Wildcats,Bethune-Cookman,Mid-Eastern Athletic Conference,meac
 2018,2261,Hampton Lady Pirates,Hampton,Mid-Eastern Athletic Conference,meac
@@ -3298,18 +3298,18 @@ season,id,team,location,conference,conference_abb
 2019,2217,Fairfield Stags,Fairfield,Metro Atlantic Athletic Conference,maac
 2019,314,Iona Gaels,Iona,Metro Atlantic Athletic Conference,maac
 2019,2612,Saint Peter's Peacocks,Saint Peter's,Metro Atlantic Athletic Conference,maac
-2019,195,Ohio Bobcats,Ohio,Mid-American - East,midame
-2019,193,Miami (OH) RedHawks,Miami (OH),Mid-American - East,midame
-2019,2084,Buffalo Bulls,Buffalo,Mid-American - East,midame
-2019,2309,Kent State Golden Flashes,Kent State,Mid-American - East,midame
-2019,2006,Akron Zips,Akron,Mid-American - East,midame
-2019,189,Bowling Green Falcons,Bowling Green,Mid-American - East,midame
-2019,2117,Central Michigan Chippewas,Central Michigan,Mid-American - West,midamw
-2019,2649,Toledo Rockets,Toledo,Mid-American - West,midamw
-2019,2459,Northern Illinois Huskies,Northern Illinois,Mid-American - West,midamw
-2019,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American - West,midamw
-2019,2711,Western Michigan Broncos,Western Michigan,Mid-American - West,midamw
-2019,2050,Ball State Cardinals,Ball State,Mid-American - West,midamw
+2019,195,Ohio Bobcats,Ohio,Mid-American Conference,midame
+2019,193,Miami (OH) RedHawks,Miami (OH),Mid-American Conference,midame
+2019,2084,Buffalo Bulls,Buffalo,Mid-American Conference,midame
+2019,2309,Kent State Golden Flashes,Kent State,Mid-American Conference,midame
+2019,2006,Akron Zips,Akron,Mid-American Conference,midame
+2019,189,Bowling Green Falcons,Bowling Green,Mid-American Conference,midame
+2019,2117,Central Michigan Chippewas,Central Michigan,Mid-American Conference,midamw
+2019,2649,Toledo Rockets,Toledo,Mid-American Conference,midamw
+2019,2459,Northern Illinois Huskies,Northern Illinois,Mid-American Conference,midamw
+2019,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American Conference,midamw
+2019,2711,Western Michigan Broncos,Western Michigan,Mid-American Conference,midamw
+2019,2050,Ball State Cardinals,Ball State,Mid-American Conference,midamw
 2019,2448,North Carolina A&T Aggies,North Carolina A&T,Mid-Eastern Athletic Conference,meac
 2019,2379,Maryland Eastern Shore Hawks,Maryland Eastern Shore,Mid-Eastern Athletic Conference,meac
 2019,2065,Bethune-Cookman Wildcats,Bethune-Cookman,Mid-Eastern Athletic Conference,meac
@@ -3649,18 +3649,18 @@ season,id,team,location,conference,conference_abb
 2020,2612,Saint Peter's Peacocks,Saint Peter's,Metro Atlantic Athletic Conference,maac
 2020,2405,Monmouth Hawks,Monmouth,Metro Atlantic Athletic Conference,maac
 2020,2099,Canisius Golden Griffins,Canisius,Metro Atlantic Athletic Conference,maac
-2020,2309,Kent State Golden Flashes,Kent State,Mid-American - East,midame
-2020,195,Ohio Bobcats,Ohio,Mid-American - East,midame
-2020,2084,Buffalo Bulls,Buffalo,Mid-American - East,midame
-2020,2006,Akron Zips,Akron,Mid-American - East,midame
-2020,193,Miami (OH) RedHawks,Miami (OH),Mid-American - East,midame
-2020,189,Bowling Green Falcons,Bowling Green,Mid-American - East,midame
-2020,2117,Central Michigan Chippewas,Central Michigan,Mid-American - West,midamw
-2020,2050,Ball State Cardinals,Ball State,Mid-American - West,midamw
-2020,2711,Western Michigan Broncos,Western Michigan,Mid-American - West,midamw
-2020,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American - West,midamw
-2020,2649,Toledo Rockets,Toledo,Mid-American - West,midamw
-2020,2459,Northern Illinois Huskies,Northern Illinois,Mid-American - West,midamw
+2020,2309,Kent State Golden Flashes,Kent State,Mid-American Conference,midame
+2020,195,Ohio Bobcats,Ohio,Mid-American Conference,midame
+2020,2084,Buffalo Bulls,Buffalo,Mid-American Conference,midame
+2020,2006,Akron Zips,Akron,Mid-American Conference,midame
+2020,193,Miami (OH) RedHawks,Miami (OH),Mid-American Conference,midame
+2020,189,Bowling Green Falcons,Bowling Green,Mid-American Conference,midame
+2020,2117,Central Michigan Chippewas,Central Michigan,Mid-American Conference,midamw
+2020,2050,Ball State Cardinals,Ball State,Mid-American Conference,midamw
+2020,2711,Western Michigan Broncos,Western Michigan,Mid-American Conference,midamw
+2020,2199,Eastern Michigan Eagles,Eastern Michigan,Mid-American Conference,midamw
+2020,2649,Toledo Rockets,Toledo,Mid-American Conference,midamw
+2020,2459,Northern Illinois Huskies,Northern Illinois,Mid-American Conference,midamw
 2020,2065,Bethune-Cookman Wildcats,Bethune-Cookman,Mid-Eastern Athletic Conference,meac
 2020,2450,Norfolk State Spartans,Norfolk State,Mid-Eastern Athletic Conference,meac
 2020,2415,Morgan State Lady Bears,Morgan State,Mid-Eastern Athletic Conference,meac
@@ -3960,20 +3960,20 @@ season,id,team,location,conference,conference_abb
 2021,2729,William & Mary Tribe,William & Mary,Coastal Athletic Association,col
 2021,232,Charleston Cougars,Charleston,Coastal Athletic Association,col
 2021,350,UNC Wilmington Seahawks,UNC Wilmington,Coastal Athletic Association,col
-2021,2393,Middle Tennessee Blue Raiders,Middle Tennessee,Conference USA - East,usae
-2021,2429,Charlotte 49ers,Charlotte,Conference USA - East,usae
-2021,2229,Florida International Panthers,Florida International,Conference USA - East,usae
-2021,2226,Florida Atlantic Owls,Florida Atlantic,Conference USA - East,usae
-2021,295,Old Dominion Monarchs,Old Dominion,Conference USA - East,usae
-2021,276,Marshall Thundering Herd,Marshall,Conference USA - East,usae
-2021,98,Western Kentucky Lady Toppers,Western Kentucky,Conference USA - East,usae
-2021,242,Rice Owls,Rice,Conference USA - West,usaw
-2021,2638,UTEP Miners,UTEP,Conference USA - West,usaw
-2021,249,North Texas Mean Green,North Texas,Conference USA - West,usaw
-2021,2348,Louisiana Tech Lady Techsters,Louisiana Tech,Conference USA - West,usaw
-2021,2572,Southern Miss Lady Eagles,Southern Miss,Conference USA - West,usaw
-2021,5,UAB Blazers,UAB,Conference USA - West,usaw
-2021,2636,UTSA Roadrunners,UTSA,Conference USA - West,usaw
+2021,2393,Middle Tennessee Blue Raiders,Middle Tennessee,Conference USA,usae
+2021,2429,Charlotte 49ers,Charlotte,Conference USA,usae
+2021,2229,Florida International Panthers,Florida International,Conference USA,usae
+2021,2226,Florida Atlantic Owls,Florida Atlantic,Conference USA,usae
+2021,295,Old Dominion Monarchs,Old Dominion,Conference USA,usae
+2021,276,Marshall Thundering Herd,Marshall,Conference USA,usae
+2021,98,Western Kentucky Lady Toppers,Western Kentucky,Conference USA,usae
+2021,242,Rice Owls,Rice,Conference USA,usaw
+2021,2638,UTEP Miners,UTEP,Conference USA,usaw
+2021,249,North Texas Mean Green,North Texas,Conference USA,usaw
+2021,2348,Louisiana Tech Lady Techsters,Louisiana Tech,Conference USA,usaw
+2021,2572,Southern Miss Lady Eagles,Southern Miss,Conference USA,usaw
+2021,5,UAB Blazers,UAB,Conference USA,usaw
+2021,2636,UTSA Roadrunners,UTSA,Conference USA,usaw
 2021,85,IU Indianapolis Jaguars,IU Indianapolis,Horizon League,hor
 2021,2739,Green Bay Phoenix,Green Bay,Horizon League,hor
 2021,2750,Wright State Raiders,Wright State,Horizon League,hor
@@ -4009,14 +4009,14 @@ season,id,team,location,conference,conference_abb
 2021,2711,Western Michigan Broncos,Western Michigan,Mid-American Conference,midam
 2021,2006,Akron Zips,Akron,Mid-American Conference,midam
 2021,193,Miami (OH) RedHawks,Miami (OH),Mid-American Conference,midam
-2021,47,Howard Bison,Howard,Mid-Eastern Athletic - North,meacn
-2021,2415,Morgan State Lady Bears,Morgan State,Mid-Eastern Athletic - North,meacn
-2021,2169,Delaware State Hornets,Delaware State,Mid-Eastern Athletic - North,meacn
-2021,2154,Coppin State Eagles,Coppin State,Mid-Eastern Athletic - North,meacn
-2021,2448,North Carolina A&T Aggies,North Carolina A&T,Mid-Eastern Athletic - South,meacs
-2021,2450,Norfolk State Spartans,Norfolk State,Mid-Eastern Athletic - South,meacs
-2021,2428,North Carolina Central Eagles,North Carolina Central,Mid-Eastern Athletic - South,meacs
-2021,2569,South Carolina State Lady Bulldogs,South Carolina State,Mid-Eastern Athletic - South,meacs
+2021,47,Howard Bison,Howard,Mid-Eastern Athletic Conference,meacn
+2021,2415,Morgan State Lady Bears,Morgan State,Mid-Eastern Athletic Conference,meacn
+2021,2169,Delaware State Hornets,Delaware State,Mid-Eastern Athletic Conference,meacn
+2021,2154,Coppin State Eagles,Coppin State,Mid-Eastern Athletic Conference,meacn
+2021,2448,North Carolina A&T Aggies,North Carolina A&T,Mid-Eastern Athletic Conference,meacs
+2021,2450,Norfolk State Spartans,Norfolk State,Mid-Eastern Athletic Conference,meacs
+2021,2428,North Carolina Central Eagles,North Carolina Central,Mid-Eastern Athletic Conference,meacs
+2021,2569,South Carolina State Lady Bulldogs,South Carolina State,Mid-Eastern Athletic Conference,meacs
 2021,2623,Missouri State Lady Bears,Missouri State,Missouri Valley Conference,mvc
 2021,2181,Drake Bulldogs,Drake,Missouri Valley Conference,mvc
 2021,2287,Illinois State Redbirds,Illinois State,Missouri Valley Conference,mvc
@@ -4072,16 +4072,16 @@ season,id,team,location,conference,conference_abb
 2021,254,Utah Utes,Utah,Pac-12 Conference,pac12
 2021,264,Washington Huskies,Washington,Pac-12 Conference,pac12
 2021,25,California Golden Bears,California,Pac-12 Conference,pac12
-2021,2083,Bucknell Bison,Bucknell,Central,Central
-2021,2329,Lehigh Mountain Hawks,Lehigh,Central,Central
-2021,322,Lafayette Leopards,Lafayette,Central,Central
-2021,104,Boston University Terriers,Boston University,North,North
-2021,107,Holy Cross Crusaders,Holy Cross,North,North
-2021,349,Army Black Knights,Army,North,North
-2021,2142,Colgate Raiders,Colgate,North,North
-2021,44,American University Eagles,American University,South,South
-2021,2426,Navy Midshipmen,Navy,South,South
-2021,2352,Loyola Maryland Greyhounds,Loyola Maryland,South,South
+2021,2083,Bucknell Bison,Bucknell,Patriot League,Central
+2021,2329,Lehigh Mountain Hawks,Lehigh,Patriot League,Central
+2021,322,Lafayette Leopards,Lafayette,Patriot League,Central
+2021,104,Boston University Terriers,Boston University,Patriot League,North
+2021,107,Holy Cross Crusaders,Holy Cross,Patriot League,North
+2021,349,Army Black Knights,Army,Patriot League,North
+2021,2142,Colgate Raiders,Colgate,Patriot League,North
+2021,44,American University Eagles,American University,Patriot League,South
+2021,2426,Navy Midshipmen,Navy,Patriot League,South
+2021,2352,Loyola Maryland Greyhounds,Loyola Maryland,Patriot League,South
 2021,245,Texas A&M Aggies,Texas A&M,Southeastern Conference,sec
 2021,2579,South Carolina Gamecocks,South Carolina,Southeastern Conference,sec
 2021,2633,Tennessee Lady Volunteers,Tennessee,Southeastern Conference,sec
@@ -4136,18 +4136,18 @@ season,id,team,location,conference,conference_abb
 2021,2437,Omaha Mavericks,Omaha,Summit League,summ
 2021,198,Oral Roberts Golden Eagles,Oral Roberts,Summit League,summ
 2021,155,North Dakota Fighting Hawks,North Dakota,Summit League,summ
-2021,2653,Troy Trojans,Troy,East,East
-2021,2247,Georgia State Panthers,Georgia State,East,East
-2021,2026,App State Mountaineers,App State,East,East
-2021,6,South Alabama Jaguars,South Alabama,East,East
-2021,290,Georgia Southern Eagles,Georgia Southern,East,East
-2021,324,Coastal Carolina Chanticleers,Coastal Carolina,East,East
-2021,309,Louisiana Ragin' Cajuns,Louisiana,West,West
-2021,250,UT Arlington Mavericks,UT Arlington,West,West
-2021,2031,Little Rock Trojans,Little Rock,West,West
-2021,326,Texas State Bobcats,Texas State,West,West
-2021,2032,Arkansas State Red Wolves,Arkansas State,West,West
-2021,2433,UL Monroe Warhawks,UL Monroe,West,West
+2021,2653,Troy Trojans,Troy,Sun Belt Conference,East
+2021,2247,Georgia State Panthers,Georgia State,Sun Belt Conference,East
+2021,2026,App State Mountaineers,App State,Sun Belt Conference,East
+2021,6,South Alabama Jaguars,South Alabama,Sun Belt Conference,East
+2021,290,Georgia Southern Eagles,Georgia Southern,Sun Belt Conference,East
+2021,324,Coastal Carolina Chanticleers,Coastal Carolina,Sun Belt Conference,East
+2021,309,Louisiana Ragin' Cajuns,Louisiana,Sun Belt Conference,West
+2021,250,UT Arlington Mavericks,UT Arlington,Sun Belt Conference,West
+2021,2031,Little Rock Trojans,Little Rock,Sun Belt Conference,West
+2021,326,Texas State Bobcats,Texas State,Sun Belt Conference,West
+2021,2032,Arkansas State Red Wolves,Arkansas State,Sun Belt Conference,West
+2021,2433,UL Monroe Warhawks,UL Monroe,Sun Belt Conference,West
 2021,2250,Gonzaga Bulldogs,Gonzaga,West Coast Conference,wcc
 2021,252,BYU Cougars,BYU,West Coast Conference,wcc
 2021,301,San Diego Toreros,San Diego,West Coast Conference,wcc
@@ -4167,18 +4167,18 @@ season,id,team,location,conference,conference_abb
 2021,292,UT Rio Grande Valley Vaqueros,UT Rio Grande Valley,Western Athletic Conference,wac
 2021,3101,Utah Tech Trailblazers,Utah Tech,Western Athletic Conference,wac
 2021,2130,Chicago State Cougars,Chicago State,Western Athletic Conference,wac
-2022,526,Florida Gulf Coast Eagles,Florida Gulf Coast,ASUN Conference - East,asune
-2022,2335,Liberty Flames,Liberty,ASUN Conference - East,asune
-2022,56,Stetson Hatters,Stetson,ASUN Conference - East,asune
-2022,294,Jacksonville Dolphins,Jacksonville,ASUN Conference - East,asune
-2022,2454,North Florida Ospreys,North Florida,ASUN Conference - East,asune
-2022,338,Kennesaw State Owls,Kennesaw State,ASUN Conference - East,asune
-2022,55,Jacksonville State Gamecocks,Jacksonville State,ASUN Conference - West,asunw
-2022,2453,North Alabama Lions,North Alabama,ASUN Conference - West,asunw
-2022,2198,Eastern Kentucky Colonels,Eastern Kentucky,ASUN Conference - West,asunw
-2022,288,Lipscomb Bisons,Lipscomb,ASUN Conference - West,asunw
-2022,2110,Central Arkansas Sugar Bears,Central Arkansas,ASUN Conference - West,asunw
-2022,91,Bellarmine Knights,Bellarmine,ASUN Conference - West,asunw
+2022,526,Florida Gulf Coast Eagles,Florida Gulf Coast,ASUN Conference,asune
+2022,2335,Liberty Flames,Liberty,ASUN Conference,asune
+2022,56,Stetson Hatters,Stetson,ASUN Conference,asune
+2022,294,Jacksonville Dolphins,Jacksonville,ASUN Conference,asune
+2022,2454,North Florida Ospreys,North Florida,ASUN Conference,asune
+2022,338,Kennesaw State Owls,Kennesaw State,ASUN Conference,asune
+2022,55,Jacksonville State Gamecocks,Jacksonville State,ASUN Conference,asunw
+2022,2453,North Alabama Lions,North Alabama,ASUN Conference,asunw
+2022,2198,Eastern Kentucky Colonels,Eastern Kentucky,ASUN Conference,asunw
+2022,288,Lipscomb Bisons,Lipscomb,ASUN Conference,asunw
+2022,2110,Central Arkansas Sugar Bears,Central Arkansas,ASUN Conference,asunw
+2022,91,Bellarmine Knights,Bellarmine,ASUN Conference,asunw
 2022,311,Maine Black Bears,Maine,America East Conference,aeast
 2022,2619,Stony Brook Seawolves,Stony Brook,America East Conference,aeast
 2022,399,UAlbany Great Danes,UAlbany,America East Conference,aeast
@@ -4308,20 +4308,20 @@ season,id,team,location,conference,conference_abb
 2022,2729,William & Mary Tribe,William & Mary,Coastal Athletic Association,col
 2022,2275,Hofstra Pride,Hofstra,Coastal Athletic Association,col
 2022,350,UNC Wilmington Seahawks,UNC Wilmington,Coastal Athletic Association,col
-2022,2429,Charlotte 49ers,Charlotte,Conference USA - East,usae
-2022,2393,Middle Tennessee Blue Raiders,Middle Tennessee,Conference USA - East,usae
-2022,295,Old Dominion Monarchs,Old Dominion,Conference USA - East,usae
-2022,98,Western Kentucky Lady Toppers,Western Kentucky,Conference USA - East,usae
-2022,276,Marshall Thundering Herd,Marshall,Conference USA - East,usae
-2022,2229,Florida International Panthers,Florida International,Conference USA - East,usae
-2022,2226,Florida Atlantic Owls,Florida Atlantic,Conference USA - East,usae
-2022,2348,Louisiana Tech Lady Techsters,Louisiana Tech,Conference USA - West,usaw
-2022,249,North Texas Mean Green,North Texas,Conference USA - West,usaw
-2022,2572,Southern Miss Lady Eagles,Southern Miss,Conference USA - West,usaw
-2022,242,Rice Owls,Rice,Conference USA - West,usaw
-2022,5,UAB Blazers,UAB,Conference USA - West,usaw
-2022,2638,UTEP Miners,UTEP,Conference USA - West,usaw
-2022,2636,UTSA Roadrunners,UTSA,Conference USA - West,usaw
+2022,2429,Charlotte 49ers,Charlotte,Conference USA,usae
+2022,2393,Middle Tennessee Blue Raiders,Middle Tennessee,Conference USA,usae
+2022,295,Old Dominion Monarchs,Old Dominion,Conference USA,usae
+2022,98,Western Kentucky Lady Toppers,Western Kentucky,Conference USA,usae
+2022,276,Marshall Thundering Herd,Marshall,Conference USA,usae
+2022,2229,Florida International Panthers,Florida International,Conference USA,usae
+2022,2226,Florida Atlantic Owls,Florida Atlantic,Conference USA,usae
+2022,2348,Louisiana Tech Lady Techsters,Louisiana Tech,Conference USA,usaw
+2022,249,North Texas Mean Green,North Texas,Conference USA,usaw
+2022,2572,Southern Miss Lady Eagles,Southern Miss,Conference USA,usaw
+2022,242,Rice Owls,Rice,Conference USA,usaw
+2022,5,UAB Blazers,UAB,Conference USA,usaw
+2022,2638,UTEP Miners,UTEP,Conference USA,usaw
+2022,2636,UTSA Roadrunners,UTSA,Conference USA,usaw
 2022,85,IU Indianapolis Jaguars,IU Indianapolis,Horizon League,hor
 2022,2754,Youngstown State Penguins,Youngstown State,Horizon League,hor
 2022,2739,Green Bay Phoenix,Green Bay,Horizon League,hor
