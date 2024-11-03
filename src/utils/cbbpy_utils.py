@@ -1364,18 +1364,15 @@ def _get_schedule_helper(jsn, team, id_, season):
 
 
 def _get_id_from_team(team, season, game_type):
-    team = team.title()
-
     current_dir = Path(__file__).parent
     data_path = current_dir.parent / 'utils' / f'{game_type}_team_map.csv'
     teams_map = pd.read_csv(data_path)
     id_map = teams_map[teams_map.season == season][['id', 'location']]
-    id_map.location = id_map.location.str.title()
     id_map = id_map.set_index('location')['id'].to_dict()
 
-    if not team in id_map:
-        choices = list(id_map.keys())
-        best_match, score, _ = process.extractOne(team, choices)
+    if not team.lower() in [x.lower() for x in list(id_map.keys())]:
+        choices = [x.lower() for x in list(id_map.keys())]
+        best_match, score, _ = process.extractOne(team.lower(), choices)
         print(f'Could not find team {team}. Getting season for closest match: {best_match}')
         team = best_match
         id_ = id_map[best_match]
