@@ -29,6 +29,30 @@ W_GAMES = [
     401091038,
     401387091
 ]
+M_SCHEDULE = [
+    (2014, "UC Davis"),
+    (2019, "Minnesota"),
+    (2008, "Saint Peter's"),
+    (2014, "Air Force"),
+    (2023, "Eastern Michigan"),
+    (2010, "Alabama A&M"),
+    (2013, "Western Carolina"),
+    (2007, "Northern Iowa"),
+    (2015, "Alcorn State"),
+    (2017, "Pacific")
+]
+W_SCHEDULE = [
+    (2019, "Detroit Mercy"),
+    (2014, "TCU"),
+    (2020, "Iowa State"),
+    (2013, "Arizona"),
+    (2016, "Sam Houston"),
+    (2013, "Troy"),
+    (2019, "Loyola Marymount"),
+    (2021, "Illinois"),
+    (2016, "Morehead State"),
+    (2021, "Cal Poly")
+]
 DATA_PATH = Path(__file__).parent / 'expected_data'
 
 
@@ -40,6 +64,7 @@ dtypes = {
     'game_id': str,
     'home_id': str,
     'away_id': str,
+    'opponent_id': str,
     'starter': lambda x: x.lower() == 'true',
     'tournament': converter,
     'tv_network': converter,
@@ -55,6 +80,7 @@ dtypes = {
     'referee_1': converter,
     'referee_2': converter,
     'referee_3': converter,
+    'game_result': converter,
 }
 
 
@@ -114,14 +140,32 @@ def test_womens_player():
     pass
 
 
-# TODO
 def test_mens_schedule():
-    pass
+    mens_result_df = pd.DataFrame()
+    mens_expected_df = load_expected_dataframe(DATA_PATH / f"mens_schedule.csv")
+
+    for x in M_SCHEDULE:
+        sn, nm = x
+        d = ms.get_team_schedule(nm, sn)
+        mens_result_df = pd.concat([mens_result_df, d])
+
+    mens_result_df.reset_index(inplace=True, drop=True)
+
+    pd.testing.assert_frame_equal(mens_result_df, mens_expected_df)
 
 
-# TODO
 def test_womens_schedule():
-    pass
+    womens_result_df = pd.DataFrame()
+    womens_expected_df = load_expected_dataframe(DATA_PATH / f"womens_schedule.csv")
+
+    for x in W_SCHEDULE:
+        sn, nm = x
+        d = ws.get_team_schedule(nm, sn)
+        womens_result_df = pd.concat([womens_result_df, d])
+
+    womens_result_df.reset_index(inplace=True, drop=True)
+
+    pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
 
 
 def test_mens_range():
