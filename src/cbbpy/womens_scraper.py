@@ -15,7 +15,7 @@ from utils.cbbpy_utils import (
     _get_game_boxscore,
     _get_game_pbp,
     _get_game_info,
-    _get_player,
+    _get_player_info,
     _get_team_schedule,
     get_current_season,
 )
@@ -148,7 +148,7 @@ def get_player_info(player_id: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: The given player's details.
     """
-    return _get_player(player_id, "womens")
+    return _get_player_info(player_id, "womens")
 
 
 def get_team_schedule(team: str, season: int = None) -> pd.DataFrame:

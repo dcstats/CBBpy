@@ -488,7 +488,7 @@ def _get_game_info(game_id, game_type):
     return df
 
 
-def _get_player(player_id, game_type):
+def _get_player_info(player_id, game_type):
     soup = None
     df = None
 
@@ -1281,25 +1281,29 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
 
 def _get_player_details_helper(player_id, info):
     details = info['plyrHdr']['ath']
-    height = None
-    weight = None
+    more_details = info['prtlCmnApiRsp']['athlete']
+    
+    if len(more_details['collegeTeam']) > 0:
+        nba = True
+    else:
+        nba = False
 
-    if 'htwt' in details:
-        height, weight = details['htwt'].split(", ")
+    dob = more_details.get('displayDOB', '')
+    team = more_details['college'].get('displayName', '') if nba else more_details['team'].get('displayName', '')
 
     return pd.DataFrame.from_records([{
         'player_id': player_id,
         'first_name': details.get('fNm'),
         'last_name': details.get('lNm'),
-        'jersey_number': details.get('dspNum', '').replace('#', ''),
-        'pos': details.get('pos'),
-        'status': details.get('stsid', '').replace('status-', ''),
-        'team': details.get('tm'),
-        'experience': details.get('exp'),
-        'height': height,
-        'weight': weight,
-        'birthplace': details.get('brthpl'),
-        'date_of_birth': _parse_date(details['dobRaw']) if 'dobRaw' in details else None,
+        'jersey_number': 'N/A' if nba else details.get('dspNum', '').replace('#', ''),
+        'pos': details.get('position', {}).get('displayName', ''),
+        'status': more_details['status']['name'],
+        'team': team,
+        'experience': 'NBA' if nba else more_details.get('displayExperience'),
+        'height': more_details.get('displayHeight', ''),
+        'weight': more_details.get('displayWeight', ''),
+        'birthplace': more_details.get('displayBirthPlace', ''),
+        'date_of_birth': _parse_date(dob).date() if not dob == '' else ''
     }])
 
 
