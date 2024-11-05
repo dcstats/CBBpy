@@ -11,4 +11,3 @@ build/
 dist/
 *.log
 *.xlsx
-expected_data/

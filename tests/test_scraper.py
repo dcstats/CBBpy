@@ -65,6 +65,8 @@ dtypes = {
     'home_id': str,
     'away_id': str,
     'opponent_id': str,
+    'jersey_number': str,
+    'pos': str,
     'starter': lambda x: x.lower() == 'true',
     'tournament': converter,
     'tv_network': converter,
@@ -81,6 +83,10 @@ dtypes = {
     'referee_2': converter,
     'referee_3': converter,
     'game_result': converter,
+    'height': converter,
+    'weight': converter,
+    'birthplace': converter,
+    'date_of_birth': converter,
 }
 
 
@@ -130,14 +136,30 @@ def test_womens_pbp():
         pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
 
 
-# TODO
 def test_mens_player():
-    pass
+    mens_expected_df = load_expected_dataframe(DATA_PATH / f"mens_players.csv")
+    pl_ls = mens_expected_df.player_id.tolist()
+
+    mens_result_df = pd.DataFrame()
+
+    for pl in pl_ls:
+        d = ms.get_player_info(pl)
+        mens_result_df = pd.concat([mens_result_df, d], ignore_index=True)
+
+    pd.testing.assert_frame_equal(mens_result_df, mens_expected_df)
 
 
-# TODO
 def test_womens_player():
-    pass
+    womens_expected_df = load_expected_dataframe(DATA_PATH / f"womens_players.csv")
+    pl_ls = womens_expected_df.player_id.tolist()
+
+    womens_result_df = pd.DataFrame()
+
+    for pl in pl_ls:
+        d = ws.get_player_info(pl)
+        womens_result_df = pd.concat([womens_result_df, d], ignore_index=True)
+
+    pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
 
 
 def test_mens_schedule():

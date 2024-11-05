@@ -508,7 +508,7 @@ def _get_player_info(player_id, game_type):
             soup = bs(page.content, "lxml")
             raw_player = _get_player_from_soup(soup)
 
-            df = _get_player_details_helper(player_id, raw_player)
+            df = _get_player_details_helper(player_id, raw_player, game_type)
 
         except Exception as ex:
             if "Page not found." in soup.text:
@@ -1279,31 +1279,36 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
     return pd.DataFrame([game_info_list], columns=game_info_cols)
 
 
-def _get_player_details_helper(player_id, info):
+def _get_player_details_helper(player_id, info, game_type):
     details = info['plyrHdr']['ath']
     more_details = info['prtlCmnApiRsp']['athlete']
     
     if len(more_details['collegeTeam']) > 0:
-        nba = True
+        prof = True
     else:
-        nba = False
+        prof = False
+
+    if game_type == 'mens':
+        prof_league = 'NBA'
+    else:
+        prof_league = 'WNBA'
 
     dob = more_details.get('displayDOB', '')
-    team = more_details['college'].get('displayName', '') if nba else more_details['team'].get('displayName', '')
+    team = more_details['college'].get('displayName', '') if prof else more_details['team'].get('displayName', '')
 
     return pd.DataFrame.from_records([{
         'player_id': player_id,
         'first_name': details.get('fNm'),
         'last_name': details.get('lNm'),
-        'jersey_number': 'N/A' if nba else details.get('dspNum', '').replace('#', ''),
+        'jersey_number': 'N/A' if prof else details.get('dspNum', '').replace('#', ''),
         'pos': details.get('position', {}).get('displayName', ''),
         'status': more_details['status']['name'],
         'team': team,
-        'experience': 'NBA' if nba else more_details.get('displayExperience'),
+        'experience': prof_league if prof else more_details.get('displayExperience'),
         'height': more_details.get('displayHeight', ''),
         'weight': more_details.get('displayWeight', ''),
         'birthplace': more_details.get('displayBirthPlace', ''),
-        'date_of_birth': _parse_date(dob).date() if not dob == '' else ''
+        'date_of_birth': str(_parse_date(dob).date()) if not dob == '' else ''
     }])
 
 
