@@ -1,0 +1,2 @@
+game_id,home_team,home_id,home_rank,home_record,home_score,away_team,away_id,away_rank,away_record,away_score,home_win,num_ots,is_conference,is_neutral,is_postseason,tournament,game_day,game_time,game_loc,arena,arena_capacity,attendance,tv_network,referee_1,referee_2,referee_3
+401091038,Creighton Bluejays,156,,1-4,69,Drake Bulldogs,2181,24,7-1,85,False,0,False,False,False,,"November 28, 2018",10:00 AM PST,"Omaha, NE",D.J. Sokol Arena,,1535,,Scott Fruehling,Angela Lewis,Zac Brost

@@ -1,0 +1,2 @@
+game_id,home_team,home_id,home_rank,home_record,home_score,away_team,away_id,away_rank,away_record,away_score,home_win,num_ots,is_conference,is_neutral,is_postseason,tournament,game_day,game_time,game_loc,arena,arena_capacity,attendance,tv_network,referee_1,referee_2,referee_3
+400993766,Ohio State Buckeyes,194,14,23-6,88,Northwestern Wildcats,77,,10-19,54,True,0,True,False,False,,"February 21, 2018",04:00 PM PST,"Columbus, OH",Schottenstein Center,,4774,,Mark Zentz,Dee Kantner,Roy Gulbeyan

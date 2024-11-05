@@ -1,0 +1,2 @@
+game_id,home_team,home_id,home_rank,home_record,home_score,away_team,away_id,away_rank,away_record,away_score,home_win,num_ots,is_conference,is_neutral,is_postseason,tournament,game_day,game_time,game_loc,arena,arena_capacity,attendance,tv_network,referee_1,referee_2,referee_3
+401486000,Fordham Rams,2230,,4-4,75,Fairfield Stags,2217,,3-3,82,False,1,False,False,False,,"November 30, 2022",02:30 PM PST,"Bronx, NY",Rose Hill Gym,,398,ESPN+,Karen Preato,John Capolino,Gerda Gatling
