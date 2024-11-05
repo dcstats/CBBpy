@@ -1,0 +1,316 @@
+team,team_id,season,game_id,game_day,game_time,opponent,opponent_id,season_type,game_status,tv_network,game_result
+UC Davis,302,2014,400502906,"November 08, 2013",07:30 PM PST,Portland Pilots,2501,Regular Season,Final,,L 83-100
+UC Davis,302,2014,400502911,"November 11, 2013",07:00 PM PST,Holy Names University Hawks,2868,Regular Season,Final,,W 80-54
+UC Davis,302,2014,400502920,"November 15, 2013",07:00 PM PST,Utah Utes,254,Regular Season,Final,PACN,L 60-94
+UC Davis,302,2014,400503086,"November 22, 2013",03:00 PM PST,SIU Edwardsville Cougars,2565,Regular Season,Final,,W 80-75
+UC Davis,302,2014,400499991,"November 23, 2013",03:00 PM PST,Loyola Chicago Ramblers,2350,Regular Season,Final,,W 64-61
+UC Davis,302,2014,400513596,"November 24, 2013",03:00 PM PST,Portland State Vikings,2502,Regular Season,Final,,L 63-79
+UC Davis,302,2014,400498053,"November 26, 2013",07:00 PM PST,Sacramento State Hornets,16,Regular Season,Final,,L 67-73
+UC Davis,302,2014,400499797,"November 30, 2013",02:00 PM PST,Idaho Vandals,70,Regular Season,Final,,L 76-80
+UC Davis,302,2014,400499804,"December 02, 2013",07:00 PM PST,Seattle U Redhawks,2547,Regular Season,Final,,L 53-77
+UC Davis,302,2014,400502949,"December 07, 2013",07:00 PM PST,Nevada Wolf Pack,2440,Regular Season,Final,,L 81-87
+UC Davis,302,2014,400502951,"December 14, 2013",05:00 PM PST,Stanford Cardinal,24,Regular Season,Final,PACN,L 56-83
+UC Davis,302,2014,400502958,"December 18, 2013",07:00 PM PST,San José State Spartans,23,Regular Season,Final,,L 85-89
+UC Davis,302,2014,400502964,"December 21, 2013",02:40 PM PST,Air Force Falcons,2005,Regular Season,Final,,W 80-74
+UC Davis,302,2014,400502974,"December 30, 2013",07:00 PM PST,Furman Paladins,231,Regular Season,Final,,L 65-75
+UC Davis,302,2014,400502976,"January 02, 2014",07:00 PM PST,Simpson University (CA) Red Hawks,612,Regular Season,Final,,W 93-69
+UC Davis,302,2014,400502985,"January 09, 2014",07:00 PM PST,Cal State Northridge Matadors,2463,Regular Season,Final,,L 77-89
+UC Davis,302,2014,400502991,"January 11, 2014",04:00 PM PST,Long Beach State Beach,299,Regular Season,Final,,L 74-99
+UC Davis,302,2014,400502995,"January 16, 2014",07:00 PM PST,UC Riverside Highlanders,27,Regular Season,Final,,L 69-81
+UC Davis,302,2014,400502996,"January 18, 2014",07:00 PM PST,Cal State Fullerton Titans,2239,Regular Season,Final,,W 69-61
+UC Davis,302,2014,400503002,"January 23, 2014",07:00 PM PST,Hawai'i Rainbow Warriors,62,Regular Season,Final,,L 73-90
+UC Davis,302,2014,400503008,"January 30, 2014",07:00 PM PST,Cal Poly Mustangs,13,Regular Season,Final,,W 62-58
+UC Davis,302,2014,400503012,"February 01, 2014",04:00 PM PST,UC Santa Barbara Gauchos,2540,Regular Season,Final,,L 67-82
+UC Davis,302,2014,400503017,"February 06, 2014",07:00 PM PST,Cal State Northridge Matadors,2463,Regular Season,Final,,W 90-86
+UC Davis,302,2014,400503021,"February 08, 2014",07:00 PM PST,UC Irvine Anteaters,300,Regular Season,Final,,L 59-61
+UC Davis,302,2014,400503025,"February 13, 2014",07:00 PM PST,Cal State Fullerton Titans,2239,Regular Season,Final,,L 64-74
+UC Davis,302,2014,400503033,"February 20, 2014",07:00 PM PST,Long Beach State Beach,299,Regular Season,Final,,L 57-79
+UC Davis,302,2014,400503039,"February 22, 2014",09:00 PM PST,Hawai'i Rainbow Warriors,62,Regular Season,Final,,L 77-86
+UC Davis,302,2014,400503040,"February 27, 2014",07:00 PM PST,Cal Poly Mustangs,13,Regular Season,Final,,W 85-73
+UC Davis,302,2014,400503047,"March 01, 2014",05:00 PM PST,UC Santa Barbara Gauchos,2540,Regular Season,Final,ESPN3,L 54-67
+UC Davis,302,2014,400503050,"March 06, 2014",07:00 PM PST,UC Riverside Highlanders,27,Regular Season,Final,ESPN3,L 65-78
+UC Davis,302,2014,400503052,"March 08, 2014",04:30 PM PST,UC Irvine Anteaters,300,Regular Season,Final,,L 46-74
+Minnesota,135,2019,401082492,"November 06, 2018",05:00 PM PST,Omaha Mavericks,2437,Regular Season,Final,,W 104-76
+Minnesota,135,2019,401082493,"November 12, 2018",06:00 PM PST,Utah Utes,254,Regular Season,Final,BTN,W 78-69
+Minnesota,135,2019,401082494,"November 18, 2018",07:30 PM PST,Texas A&M Aggies,245,Regular Season,Final,ESPN2,W 69-64
+Minnesota,135,2019,401096873,"November 20, 2018",06:00 PM PST,Santa Clara Broncos,2541,Regular Season,Final,BTN,W 80-66
+Minnesota,135,2019,401087180,"November 21, 2018",03:30 PM PST,Washington Huskies,264,Regular Season,Final,BTN,W 68-66
+Minnesota,135,2019,401082495,"November 26, 2018",06:00 PM PST,Boston College Eagles,103,Regular Season,Final,ESPN2,L 56-68
+Minnesota,135,2019,401082496,"November 30, 2018",07:00 PM PST,Oklahoma State Cowboys,197,Regular Season,Final,BTN,W 83-76
+Minnesota,135,2019,401082497,"December 02, 2018",04:00 PM PST,Ohio State Buckeyes,194,Regular Season,Final,BTN,L 59-79
+Minnesota,135,2019,401082498,"December 05, 2018",06:00 PM PST,Nebraska Cornhuskers,158,Regular Season,Final,BTN,W 85-78
+Minnesota,135,2019,401082499,"December 08, 2018",01:00 PM PST,Arkansas State Red Wolves,2032,Regular Season,Final,,W 72-56
+Minnesota,135,2019,401082500,"December 11, 2018",06:00 PM PST,North Florida Ospreys,2454,Regular Season,Final,BTN,W 80-71
+Minnesota,135,2019,401082501,"December 21, 2018",05:00 PM PST,North Carolina A&T Aggies,2448,Regular Season,Final,,W 86-67
+Minnesota,135,2019,401082502,"December 30, 2018",01:00 PM PST,Mount St. Mary's Mountaineers,116,Regular Season,Final,ESPNU,W 71-53
+Minnesota,135,2019,401082503,"January 03, 2019",06:00 PM PST,Wisconsin Badgers,275,Regular Season,Final,BTN,W 59-52
+Minnesota,135,2019,401082433,"January 08, 2019",04:00 PM PST,Maryland Terrapins,120,Regular Season,Final,BTN,L 67-82
+Minnesota,135,2019,401082504,"January 12, 2019",09:30 AM PST,Rutgers Scarlet Knights,164,Regular Season,Final,BTN,W 88-70
+Minnesota,135,2019,401082347,"January 16, 2019",06:00 PM PST,Illinois Fighting Illini,356,Regular Season,Final,BTN,L 68-95
+Minnesota,135,2019,401082505,"January 19, 2019",05:30 PM PST,Penn State Nittany Lions,213,Regular Season,Final,BTN,W 65-64
+Minnesota,135,2019,401082461,"January 22, 2019",04:00 PM PST,Michigan Wolverines,130,Regular Season,Final,BTN,L 57-59
+Minnesota,135,2019,401082409,"January 27, 2019",02:00 PM PST,Iowa Hawkeyes,2294,Regular Season,Final,FS1,W 92-87
+Minnesota,135,2019,401082351,"January 30, 2019",06:00 PM PST,Illinois Fighting Illini,356,Regular Season,Final,BTN,W 86-75
+Minnesota,135,2019,401082506,"February 03, 2019",09:00 AM PST,Purdue Boilermakers,2509,Regular Season,Final,BTN,L 63-73
+Minnesota,135,2019,401082507,"February 06, 2019",06:00 PM PST,Wisconsin Badgers,275,Regular Season,Final,BTN,L 51-56
+Minnesota,135,2019,401082487,"February 09, 2019",11:00 AM PST,Michigan State Spartans,127,Regular Season,Final,ESPN,L 55-79
+Minnesota,135,2019,401082508,"February 13, 2019",06:00 PM PST,Nebraska Cornhuskers,158,Regular Season,Final,BTN,L 61-62
+Minnesota,135,2019,401082385,"February 16, 2019",11:00 AM PST,Indiana Hoosiers,84,Regular Season,Final,ESPN2,W 84-63
+Minnesota,135,2019,401082466,"February 21, 2019",04:00 PM PST,Michigan Wolverines,130,Regular Season,Final,ESPN,L 60-69
+Minnesota,135,2019,401082509,"February 24, 2019",03:30 PM PST,Rutgers Scarlet Knights,164,Regular Season,Final,BTN,L 64-68
+Minnesota,135,2019,401082510,"February 28, 2019",06:00 PM PST,Northwestern Wildcats,77,Regular Season,Final,ESPN2,W 62-50
+Minnesota,135,2019,401082511,"March 05, 2019",05:00 PM PST,Purdue Boilermakers,2509,Regular Season,Final,BTN,W 73-69
+Minnesota,135,2019,401082445,"March 08, 2019",04:00 PM PST,Maryland Terrapins,120,Regular Season,Final,FS1,L 60-69
+Minnesota,135,2019,401120731,"March 14, 2019",04:00 PM PDT,Penn State Nittany Lions,213,Regular Season,Final,BTN,W 77-72
+Minnesota,135,2019,401120735,"March 15, 2019",04:00 PM PDT,Purdue Boilermakers,2509,Regular Season,Final,BTN,W 75-73
+Minnesota,135,2019,401120738,"March 16, 2019",12:30 PM PDT,Michigan Wolverines,130,Regular Season,Final,CBS,L 49-76
+Minnesota,135,2019,401123436,"March 21, 2019",09:15 AM PDT,Louisville Cardinals,97,Postseason,Final,CBS,W 86-76
+Minnesota,135,2019,401123439,"March 23, 2019",05:00 PM PDT,Michigan State Spartans,127,Postseason,Final,CBS,L 50-70
+Saint Peter's,2612,2008,273142378,"November 10, 2007",05:00 PM PST,UMBC Retrievers,2378,Regular Season,Final,,L 78-81
+Saint Peter's,2612,2008,273182329,"November 14, 2007",04:00 PM PST,Lehigh Mountain Hawks,2329,Regular Season,Final,,L 56-60
+Saint Peter's,2612,2008,273212612,"November 17, 2007",04:00 PM PST,Wagner Seahawks,2681,Regular Season,Final,,W 72-69
+Saint Peter's,2612,2008,273292612,"November 25, 2007",11:00 AM PST,Rutgers Scarlet Knights,164,Regular Season,Final,,W 65-58
+Saint Peter's,2612,2008,273322612,"November 28, 2007",04:00 PM PST,Monmouth Hawks,2405,Regular Season,Final,,W 72-62
+Saint Peter's,2612,2008,273352612,"December 01, 2007",11:00 AM PST,UT Martin Skyhawks,2630,Regular Season,Final,,L 74-78
+Saint Peter's,2612,2008,273382550,"December 04, 2007",04:30 PM PST,Seton Hall Pirates,2550,Regular Season,Final,,L 75-85
+Saint Peter's,2612,2008,273412363,"December 07, 2007",04:00 PM PST,Manhattan Jaspers,2363,Regular Season,Final,,L 62-65
+Saint Peter's,2612,2008,273542341,"December 20, 2007",04:00 PM PST,Long Island University Sharks,112358,Regular Season,Final,,L 62-67
+Saint Peter's,2612,2008,273560161,"December 22, 2007",04:00 PM PST,Fairleigh Dickinson Knights,161,Regular Season,Final,,L 74-85
+Saint Peter's,2612,2008,273622612,"December 28, 2007",04:00 PM PST,Fairfield Stags,2217,Regular Season,Final,,L 78-89
+Saint Peter's,2612,2008,273652507,"December 31, 2007",11:00 AM PST,Providence Friars,2507,Regular Season,Final,,L 78-83
+Saint Peter's,2612,2008,280042612,"January 04, 2008",04:00 PM PST,Canisius Golden Griffins,2099,Regular Season,Final,,W 65-54
+Saint Peter's,2612,2008,280062561,"January 06, 2008",03:00 PM PST,Siena Saints,2561,Regular Season,Final,,L 56-79
+Saint Peter's,2612,2008,280112368,"January 11, 2008",04:30 PM PST,Marist Red Foxes,2368,Regular Season,Final,,L 71-86
+Saint Peter's,2612,2008,280130314,"January 13, 2008",11:00 AM PST,Iona Gaels,314,Regular Season,Final,,L 50-69
+Saint Peter's,2612,2008,280192612,"January 19, 2008",11:00 AM PST,Loyola Maryland Greyhounds,2352,Regular Season,Final,,L 57-62
+Saint Peter's,2612,2008,280212217,"January 21, 2008",04:00 PM PST,Fairfield Stags,2217,Regular Season,Final,,L 64-70
+Saint Peter's,2612,2008,280252612,"January 25, 2008",04:00 PM PST,Niagara Purple Eagles,315,Regular Season,Final,,L 59-79
+Saint Peter's,2612,2008,280272612,"January 27, 2008",12:00 PM PST,Rider Broncs,2520,Regular Season,Final,,L 67-76
+Saint Peter's,2612,2008,280322612,"February 01, 2008",04:00 PM PST,Iona Gaels,314,Regular Season,Final,,L 52-60
+Saint Peter's,2612,2008,280342612,"February 03, 2008",12:30 PM PST,Manhattan Jaspers,2363,Regular Season,Final,,W 78-68
+Saint Peter's,2612,2008,280382352,"February 07, 2008",04:00 PM PST,Loyola Maryland Greyhounds,2352,Regular Season,Final,,L 69-81
+Saint Peter's,2612,2008,280412612,"February 10, 2008",11:00 AM PST,Marist Red Foxes,2368,Regular Season,Final,,L 61-69
+Saint Peter's,2612,2008,280472099,"February 16, 2008",11:00 AM PST,Canisius Golden Griffins,2099,Regular Season,Final,,W 75-68
+Saint Peter's,2612,2008,280490315,"February 18, 2008",04:00 PM PST,Niagara Purple Eagles,315,Regular Season,Final,,L 69-71
+Saint Peter's,2612,2008,280542612,"February 23, 2008",11:00 AM PST,Boston University Terriers,104,Regular Season,Final,,L 64-67
+Saint Peter's,2612,2008,280602520,"February 29, 2008",04:00 PM PST,Rider Broncs,2520,Regular Season,Final,,L 76-88
+Saint Peter's,2612,2008,280622612,"March 02, 2008",11:00 AM PST,Siena Saints,2561,Regular Season,Final,,L 64-77
+Saint Peter's,2612,2008,280672363,"March 07, 2008",04:30 PM PST,Manhattan Jaspers,2363,Regular Season,Final,,L 59-73
+Air Force,2005,2014,400499517,"November 08, 2013",10:00 AM PST,Army Black Knights,349,Regular Season,Final,ESPNU,W 79-68
+Air Force,2005,2014,400516796,"November 09, 2013",05:30 PM PST,VMI Keydets,2678,Regular Season,Final,,L 63-71
+Air Force,2005,2014,400504611,"November 14, 2013",06:00 PM PST,Jackson State Tigers,2296,Regular Season,Final,,L 82-84
+Air Force,2005,2014,400504615,"November 17, 2013",01:00 PM PST,Arkansas-Pine Bluff Golden Lions,2029,Regular Season,Final,,W 67-64
+Air Force,2005,2014,400505496,"November 20, 2013",06:00 PM PST,Colorado Christian Cougars,2862,Regular Season,Final,,W 78-51
+Air Force,2005,2014,400505507,"November 27, 2013",06:00 PM PST,Richmond Spiders,257,Regular Season,Final,,L 60-83
+Air Force,2005,2014,400505512,"November 30, 2013",01:00 PM PST,Colorado Buffaloes,38,Regular Season,Final,,L 57-81
+Air Force,2005,2014,400501587,"December 05, 2013",06:05 PM PST,South Dakota Coyotes,233,Regular Season,Final,ROOT,W 94-86
+Air Force,2005,2014,400505524,"December 09, 2013",06:00 PM PST,Western State Colorado University Mountaineers,2714,Regular Season,Final,,W 94-53
+Air Force,2005,2014,400502952,"December 14, 2013",01:00 PM PST,UC Riverside Highlanders,27,Regular Season,Final,,W 62-52
+Air Force,2005,2014,400502964,"December 21, 2013",02:40 PM PST,UC Davis Aggies,302,Regular Season,Final,,L 74-80
+Air Force,2005,2014,400505540,"January 01, 2014",05:00 PM PST,Utah State Aggies,328,Regular Season,Final,ROOT,W 73-72
+Air Force,2005,2014,400505547,"January 04, 2014",07:00 PM PST,UNLV Rebels,2439,Regular Season,Final,,W 75-68
+Air Force,2005,2014,400505550,"January 08, 2014",07:05 PM PST,Fresno State Bulldogs,278,Regular Season,Final,ROOT,L 65-71
+Air Force,2005,2014,400505558,"January 12, 2014",01:00 PM PST,San Diego State Aztecs,21,Regular Season,Final,ESPN3,L 72-79
+Air Force,2005,2014,400505560,"January 15, 2014",06:00 PM PST,San José State Spartans,23,Regular Season,Final,,W 77-62
+Air Force,2005,2014,400505566,"January 18, 2014",03:00 PM PST,Colorado State Rams,36,Regular Season,Final,ROOT,L 68-74
+Air Force,2005,2014,400505570,"January 22, 2014",06:05 PM PST,Wyoming Cowboys,2751,Regular Season,Final,ROOT,L 59-66
+Air Force,2005,2014,400505580,"January 29, 2014",06:00 PM PST,Boise State Broncos,68,Regular Season,Final,ROOT,L 58-69
+Air Force,2005,2014,400505588,"February 01, 2014",03:00 PM PST,Nevada Wolf Pack,2440,Regular Season,Final,,L 56-69
+Air Force,2005,2014,400505589,"February 05, 2014",06:00 PM PST,Fresno State Bulldogs,278,Regular Season,Final,,L 51-68
+Air Force,2005,2014,400505594,"February 08, 2014",01:00 PM PST,Colorado State Rams,36,Regular Season,Final,,L 56-68
+Air Force,2005,2014,400505601,"February 12, 2014",07:00 PM PST,San José State Spartans,23,Regular Season,Final,ROOT,W 51-48
+Air Force,2005,2014,400505606,"February 15, 2014",05:05 PM PST,San Diego State Aztecs,21,Regular Season,Final,CBSSN,L 56-64
+Air Force,2005,2014,400505614,"February 22, 2014",01:00 PM PST,Nevada Wolf Pack,2440,Regular Season,Final,,L 56-75
+Air Force,2005,2014,400505619,"February 25, 2014",06:05 PM PST,Wyoming Cowboys,2751,Regular Season,Final,ROOT,W 55-53
+Air Force,2005,2014,400505624,"March 01, 2014",01:00 PM PST,UNLV Rebels,2439,Regular Season,Final,ESPN3,L 67-93
+Air Force,2005,2014,400505632,"March 05, 2014",06:00 PM PST,New Mexico Lobos,167,Regular Season,Final,ESPN3,L 52-80
+Air Force,2005,2014,400505634,"March 08, 2014",11:00 AM PST,Boise State Broncos,68,Regular Season,Final,ROOT,W 64-61
+Air Force,2005,2014,400544233,"March 12, 2014",04:30 PM PDT,Fresno State Bulldogs,278,Regular Season,Final,,L 59-61
+Eastern Michigan,2199,2023,401493733,"November 07, 2022",04:30 PM PST,Wayne State (MI) Warriors,131,Regular Season,Final,ESPN3,W 75-66
+Eastern Michigan,2199,2023,401483366,"November 11, 2022",06:00 PM PST,Michigan Wolverines,130,Regular Season,Final,ESPNU,L 83-88
+Eastern Michigan,2199,2023,401489005,"November 15, 2022",05:00 PM PST,Bradley Braves,71,Regular Season,Final,ESPN+,L 61-89
+Eastern Michigan,2199,2023,401493666,"November 19, 2022",12:00 PM PST,Oakland Golden Grizzlies,2473,Regular Season,Final,ESPN+,L 90-92
+Eastern Michigan,2199,2023,401486400,"November 22, 2022",09:30 AM PST,Purdue Fort Wayne Mastodons,2870,Regular Season,Final,,L 67-74
+Eastern Michigan,2199,2023,401486402,"November 23, 2022",09:30 AM PST,Winthrop Eagles,2737,Regular Season,Final,,L 87-101
+Eastern Michigan,2199,2023,401487716,"November 27, 2022",11:00 AM PST,UC San Diego Tritons,28,Regular Season,Final,ESPN+,L 63-66
+Eastern Michigan,2199,2023,401492636,"November 30, 2022",04:00 PM PST,Florida International Panthers,2229,Regular Season,Final,ESPN+,W 80-68
+Eastern Michigan,2199,2023,401489718,"December 04, 2022",11:30 AM PST,Florida Atlantic Owls,2226,Regular Season,Final,ESPN+,L 73-101
+Eastern Michigan,2199,2023,401493734,"December 07, 2022",05:00 PM PST,Illinois State Redbirds,2287,Regular Season,Final,ESPN+,L 81-87
+Eastern Michigan,2199,2023,401492437,"December 11, 2022",10:00 AM PST,Niagara Purple Eagles,315,Regular Season,Final,ESPN+,L 60-67
+Eastern Michigan,2199,2023,401491869,"December 18, 2022",12:00 PM PST,Detroit Mercy Titans,2174,Regular Season,Final,ESPN+,W 79-77
+Eastern Michigan,2199,2023,401483225,"December 30, 2022",04:00 PM PST,South Carolina Gamecocks,2579,Regular Season,Final,ESPN+,L 64-74
+Eastern Michigan,2199,2023,401473509,"January 03, 2023",04:00 PM PST,Bowling Green Falcons,189,Regular Season,Final,ESPN+,L 65-91
+Eastern Michigan,2199,2023,401473513,"January 07, 2023",11:00 AM PST,Central Michigan Chippewas,2117,Regular Season,Final,ESPN3,W 62-56
+Eastern Michigan,2199,2023,401473517,"January 10, 2023",04:00 PM PST,Western Michigan Broncos,2711,Regular Season,Final,ESPN+,L 79-85
+Eastern Michigan,2199,2023,401473525,"January 13, 2023",04:00 PM PST,Akron Zips,2006,Regular Season,Final,ESPNU,L 67-104
+Eastern Michigan,2199,2023,401473532,"January 17, 2023",04:00 PM PST,Kent State Golden Flashes,2309,Regular Season,Final,ESPN+,L 63-77
+Eastern Michigan,2199,2023,401473534,"January 21, 2023",12:41 PM PST,Northern Illinois Huskies,2459,Regular Season,Final,ESPN3,L 67-88
+Eastern Michigan,2199,2023,401473544,"January 24, 2023",04:00 PM PST,Toledo Rockets,2649,Regular Season,Final,CBSSN,L 79-84
+Eastern Michigan,2199,2023,401473547,"January 28, 2023",12:45 PM PST,Miami (OH) RedHawks,193,Regular Season,Final,ESPN3,W 74-69
+Eastern Michigan,2199,2023,401473556,"January 31, 2023",04:00 PM PST,Ohio Bobcats,195,Regular Season,Final,ESPN+,W 90-79
+Eastern Michigan,2199,2023,401473559,"February 03, 2023",03:30 PM PST,Ball State Cardinals,2050,Regular Season,Final,CBSSN,L 90-91
+Eastern Michigan,2199,2023,401473567,"February 07, 2023",04:00 PM PST,Buffalo Bulls,2084,Regular Season,Final,ESPN+,L 97-102
+Eastern Michigan,2199,2023,401473574,"February 11, 2023",04:30 PM PST,Toledo Rockets,2649,Regular Season,Final,ESPN3,L 63-70
+Eastern Michigan,2199,2023,401473580,"February 14, 2023",04:00 PM PST,Akron Zips,2006,Regular Season,Final,ESPN+,L 51-78
+Eastern Michigan,2199,2023,401473585,"February 17, 2023",03:00 PM PST,Kent State Golden Flashes,2309,Regular Season,Final,CBSSN,L 54-81
+Eastern Michigan,2199,2023,401473592,"February 21, 2023",04:00 PM PST,Western Michigan Broncos,2711,Regular Season,Final,ESPN+,W 66-59
+Eastern Michigan,2199,2023,401473596,"February 25, 2023",12:30 PM PST,Ball State Cardinals,2050,Regular Season,Final,ESPN3,W 75-68
+Eastern Michigan,2199,2023,401473603,"February 28, 2023",04:00 PM PST,Bowling Green Falcons,189,Regular Season,Final,ESPN+,L 68-88
+Eastern Michigan,2199,2023,401473610,"March 03, 2023",10:00 AM PST,Northern Illinois Huskies,2459,Regular Season,Final,ESPN3,L 66-85
+Alabama A&M,2010,2010,293172579,"November 13, 2009",04:00 PM PST,South Carolina Gamecocks,2579,Regular Season,Final,,L 50-88
+Alabama A&M,2010,2010,293202010,"November 16, 2009",05:30 PM PST,Oakwood Ambassadors,3083,Regular Season,Final,,W 86-81
+Alabama A&M,2010,2010,293252010,"November 21, 2009",05:30 PM PST,Tennessee Southern Firehawks,2370,Regular Season,Final,,W 76-55
+Alabama A&M,2010,2010,293272010,"November 23, 2009",05:30 PM PST,Stillman Tigers,2948,Regular Season,Final,,L 75-77
+Alabama A&M,2010,2010,293352010,"December 01, 2009",05:30 PM PST,Auburn Tigers,2,Regular Season,Final,,L 52-87
+Alabama A&M,2010,2010,293392010,"December 05, 2009",05:30 PM PST,Tuskegee Golden Tigers,2657,Regular Season,Final,,W 73-51
+Alabama A&M,2010,2010,293492634,"December 15, 2009",05:00 PM PST,Tennessee State Tigers,2634,Regular Season,Final,,L 77-80
+Alabama A&M,2010,2010,293650052,"December 31, 2009",01:00 PM PST,Florida State Seminoles,52,Regular Season,Final,,L 34-81
+Alabama A&M,2010,2010,300042296,"January 04, 2010",06:00 PM PST,Jackson State Tigers,2296,Regular Season,Final,,L 60-71
+Alabama A&M,2010,2010,300062755,"January 06, 2010",05:30 PM PST,Grambling Tigers,2755,Regular Season,Final,,L 62-64
+Alabama A&M,2010,2010,300092010,"January 09, 2010",04:00 PM PST,Arkansas-Pine Bluff Golden Lions,2029,Regular Season,Final,,L 72-82
+Alabama A&M,2010,2010,300112010,"January 11, 2010",05:30 PM PST,Mississippi Valley State Delta Devils,2400,Regular Season,Final,,W 72-56
+Alabama A&M,2010,2010,300162011,"January 16, 2010",03:00 PM PST,Alabama State Hornets,2011,Regular Season,Final,,L 69-83
+Alabama A&M,2010,2010,300232582,"January 23, 2010",02:00 PM PST,Southern Jaguars,2582,Regular Season,Final,,W 70-63
+Alabama A&M,2010,2010,300252016,"January 25, 2010",05:30 PM PST,Alcorn State Braves,2016,Regular Season,Final,,W 84-70
+Alabama A&M,2010,2010,300302010,"January 30, 2010",04:00 PM PST,Prairie View A&M Panthers,2504,Regular Season,Final,,W 59-54
+Alabama A&M,2010,2010,300322010,"February 01, 2010",05:30 PM PST,Texas Southern Tigers,2640,Regular Season,Final,,L 62-67
+Alabama A&M,2010,2010,300372029,"February 06, 2010",05:30 PM PST,Arkansas-Pine Bluff Golden Lions,2029,Regular Season,Final,,L 55-62
+Alabama A&M,2010,2010,300392400,"February 08, 2010",05:30 PM PST,Mississippi Valley State Delta Devils,2400,Regular Season,Final,,W 77-69
+Alabama A&M,2010,2010,300442010,"February 13, 2010",04:00 PM PST,Alabama State Hornets,2011,Regular Season,Final,,L 76-80
+Alabama A&M,2010,2010,300512010,"February 20, 2010",04:00 PM PST,Southern Jaguars,2582,Regular Season,Final,,W 65-54
+Alabama A&M,2010,2010,300532010,"February 22, 2010",06:00 PM PST,Alcorn State Braves,2016,Regular Season,Final,,W 72-60
+Alabama A&M,2010,2010,300582504,"February 27, 2010",05:30 PM PST,Prairie View A&M Panthers,2504,Regular Season,Final,,L 53-62
+Alabama A&M,2010,2010,300602640,"March 01, 2010",06:00 PM PST,Texas Southern Tigers,2640,Regular Season,Final,,L 57-98
+Alabama A&M,2010,2010,300632010,"March 04, 2010",06:20 PM PST,Jackson State Tigers,2296,Regular Season,Final,,L 64-70
+Alabama A&M,2010,2010,300652010,"March 06, 2010",04:00 PM PST,Grambling Tigers,2755,Regular Season,Final,,W 81-60
+Alabama A&M,2010,2010,300702011,"March 11, 2010",12:30 PM PST,Alabama State Hornets,2011,Regular Season,Final,,L 45-56
+Western Carolina,2717,2013,323142427,"November 09, 2012",04:00 PM PST,UNC Asheville Bulldogs,2427,Regular Season,Final,,L 61-71
+Western Carolina,2717,2013,323162717,"November 11, 2012",04:00 PM PST,Mars Hill Mountain Lions,2369,Regular Season,Final,,W 95-68
+Western Carolina,2717,2013,323202724,"November 15, 2012",05:00 PM PST,Wichita State Shockers,2724,Regular Season,Final,,L 63-79
+Western Carolina,2717,2013,323220098,"November 17, 2012",05:30 PM PST,Western Kentucky Hilltoppers,98,Regular Season,Final,,L 81-92
+Western Carolina,2717,2013,323252046,"November 20, 2012",10:30 AM PST,Austin Peay Governors,2046,Regular Season,Final,,L 71-72
+Western Carolina,2717,2013,323262717,"November 21, 2012",10:30 AM PST,Howard Bison,47,Regular Season,Final,,W 69-67
+Western Carolina,2717,2013,323330231,"November 28, 2012",04:00 PM PST,Furman Paladins,231,Regular Season,Final,,W 79-65
+Western Carolina,2717,2013,323362198,"December 01, 2012",04:30 PM PST,Eastern Kentucky Colonels,2198,Regular Season,Final,,L 70-72
+Western Carolina,2717,2013,323390356,"December 04, 2012",05:00 PM PST,Illinois Fighting Illini,356,Regular Season,Final,,L 64-72
+Western Carolina,2717,2013,323432717,"December 08, 2012",01:30 PM PST,App State Mountaineers,2026,Regular Season,Final,,W 70-64
+Western Carolina,2717,2013,323500046,"December 15, 2012",09:00 AM PST,Georgetown Hoyas,46,Regular Season,Final,ESPN3,L 68-81
+Western Carolina,2717,2013,323562633,"December 21, 2012",04:00 PM PST,Tennessee Volunteers,2633,Regular Season,Final,ESPN3,L 52-66
+Western Carolina,2717,2013,323662717,"December 31, 2012",11:00 AM PST,Liberty Flames,2335,Regular Season,Final,,L 62-63
+Western Carolina,2717,2013,330052643,"January 05, 2013",04:05 PM PST,The Citadel Bulldogs,2643,Regular Season,Final,,W 72-55
+Western Carolina,2717,2013,330072717,"January 07, 2013",04:00 PM PST,Warren Wilson Owls,2684,Regular Season,Final,,W 78-53
+Western Carolina,2717,2013,330122717,"January 12, 2013",11:00 AM PST,UNC Greensboro Spartans,2430,Regular Season,Final,,W 62-59
+Western Carolina,2717,2013,330142717,"January 14, 2013",04:00 PM PST,Elon Phoenix,2210,Regular Season,Final,,L 67-80
+Western Carolina,2717,2013,330172535,"January 17, 2013",05:00 PM PST,Samford Bulldogs,2535,Regular Season,Final,,L 60-64
+Western Carolina,2717,2013,330190236,"January 19, 2013",04:00 PM PST,Chattanooga Mocs,236,Regular Season,Final,,W 90-81
+Western Carolina,2717,2013,330242717,"January 24, 2013",04:00 PM PST,Davidson Wildcats,2166,Regular Season,Final,,L 74-79
+Western Carolina,2717,2013,330262717,"January 26, 2013",11:00 AM PST,Georgia Southern Eagles,290,Regular Season,Final,,L 66-72
+Western Carolina,2717,2013,330332026,"February 02, 2013",01:30 PM PST,App State Mountaineers,2026,Regular Season,Final,ESPN3,L 65-74
+Western Carolina,2717,2013,330382166,"February 07, 2013",04:00 PM PST,Davidson Wildcats,2166,Regular Season,Final,,L 59-73
+Western Carolina,2717,2013,330400290,"February 09, 2013",04:30 PM PST,Georgia Southern Eagles,290,Regular Season,Final,,W 71-62
+Western Carolina,2717,2013,330422717,"February 11, 2013",04:00 PM PST,Wofford Terriers,2747,Regular Season,Final,,W 57-56
+Western Carolina,2717,2013,330452430,"February 14, 2013",04:00 PM PST,UNC Greensboro Spartans,2430,Regular Season,Final,,W 70-68
+Western Carolina,2717,2013,330472210,"February 16, 2013",04:00 PM PST,Elon Phoenix,2210,Regular Season,Final,,L 73-80
+Western Carolina,2717,2013,330512717,"February 20, 2013",04:00 PM PST,Charleston Cougars,232,Regular Season,Final,,L 65-67
+Western Carolina,2717,2013,330542717,"February 23, 2013",11:00 AM PST,Coastal Carolina Chanticleers,324,Regular Season,Final,,W 80-70
+Western Carolina,2717,2013,330592717,"February 28, 2013",04:00 PM PST,Chattanooga Mocs,236,Regular Season,Final,,L 72-81
+Western Carolina,2717,2013,330612717,"March 02, 2013",01:30 PM PST,Samford Bulldogs,2535,Regular Season,Final,,W 56-54
+Western Carolina,2717,2013,330672717,"March 08, 2013",05:30 PM PST,The Citadel Bulldogs,2643,Regular Season,Final,ESPN3,W 76-61
+Western Carolina,2717,2013,330680232,"March 09, 2013",05:30 PM PST,Charleston Cougars,232,Regular Season,Final,ESPN3,L 70-78
+Northern Iowa,2460,2007,263162460,"November 12, 2006",04:30 PM PST,Nicholls Colonels,2447,Regular Season,Final,,W 68-63
+Northern Iowa,2460,2007,263172460,"November 13, 2006",04:30 PM PST,Pepperdine Waves,2492,Regular Season,Final,,W 83-58
+Northern Iowa,2460,2007,263180264,"November 14, 2006",07:30 PM PST,Washington Huskies,264,Regular Season,Final,,L 61-70
+Northern Iowa,2460,2007,263232460,"November 19, 2006",02:05 PM PST,Milwaukee Panthers,270,Regular Season,Final,,W 69-58
+Northern Iowa,2460,2007,263282460,"November 24, 2006",05:05 PM PST,South Dakota State Jackrabbits,2571,Regular Season,Final,,W 69-56
+Northern Iowa,2460,2007,263332460,"November 29, 2006",05:05 PM PST,Iowa State Cyclones,66,Regular Season,Final,,W 70-57
+Northern Iowa,2460,2007,263362083,"December 02, 2006",10:00 AM PST,Bucknell Bison,2083,Regular Season,Final,,W 57-48
+Northern Iowa,2460,2007,263392294,"December 05, 2006",05:05 PM PST,Iowa Hawkeyes,2294,Regular Season,Final,,W 57-55
+Northern Iowa,2460,2007,263432460,"December 09, 2006",05:05 PM PST,Kansas City Roos,140,Regular Season,Final,,W 85-53
+Northern Iowa,2460,2007,263502350,"December 16, 2006",05:00 PM PST,Loyola Chicago Ramblers,2350,Regular Season,Final,,L 67-76
+Northern Iowa,2460,2007,263542460,"December 20, 2006",05:05 PM PST,Wartburg Knights,2685,Regular Season,Final,,W 83-61
+Northern Iowa,2460,2007,263612460,"December 27, 2006",06:05 PM PST,Bradley Braves,71,Regular Season,Final,,W 76-65
+Northern Iowa,2460,2007,263642724,"December 30, 2006",05:35 PM PST,Wichita State Shockers,2724,Regular Season,Final,,W 63-59
+Northern Iowa,2460,2007,270032460,"January 03, 2007",05:05 PM PST,Evansville Purple Aces,339,Regular Season,Final,,W 64-61
+Northern Iowa,2460,2007,270062460,"January 06, 2007",10:00 AM PST,Southern Illinois Salukis,79,Regular Season,Final,,W 66-61
+Northern Iowa,2460,2007,270092287,"January 09, 2007",05:05 PM PST,Illinois State Redbirds,2287,Regular Season,Final,,L 64-67
+Northern Iowa,2460,2007,270122460,"January 12, 2007",05:35 PM PST,Creighton Bluejays,156,Regular Season,Final,,L 54-62
+Northern Iowa,2460,2007,270182623,"January 18, 2007",05:05 PM PST,Missouri State Bears,2623,Regular Season,Final,,W 75-65
+Northern Iowa,2460,2007,270202460,"January 20, 2007",05:05 PM PST,Indiana State Sycamores,282,Regular Season,Final,,W 74-64
+Northern Iowa,2460,2007,270230079,"January 23, 2007",06:05 PM PST,Southern Illinois Salukis,79,Regular Season,Final,,L 54-56
+Northern Iowa,2460,2007,270272181,"January 27, 2007",05:05 PM PST,Drake Bulldogs,2181,Regular Season,Final,,L 61-74
+Northern Iowa,2460,2007,270302460,"January 30, 2007",04:05 PM PST,Wichita State Shockers,2724,Regular Season,Final,,L 61-67
+Northern Iowa,2460,2007,270340339,"February 03, 2007",05:05 PM PST,Evansville Purple Aces,339,Regular Season,Final,,W 79-71
+Northern Iowa,2460,2007,270360282,"February 05, 2007",04:05 PM PST,Indiana State Sycamores,282,Regular Season,Final,,L 46-59
+Northern Iowa,2460,2007,270392460,"February 08, 2007",05:05 PM PST,Drake Bulldogs,2181,Regular Season,Final,,L 59-67
+Northern Iowa,2460,2007,270412460,"February 10, 2007",05:05 PM PST,Missouri State Bears,2623,Regular Season,Final,,L 58-62
+Northern Iowa,2460,2007,270440156,"February 13, 2007",06:05 PM PST,Creighton Bluejays,156,Regular Season,Final,,L 55-66
+Northern Iowa,2460,2007,270482440,"February 17, 2007",03:00 PM PST,Nevada Wolf Pack,2440,Regular Season,Final,,L 64-79
+Northern Iowa,2460,2007,270510071,"February 20, 2007",05:05 PM PST,Bradley Braves,71,Regular Season,Final,,W 79-70
+Northern Iowa,2460,2007,270552460,"February 24, 2007",05:05 PM PST,Illinois State Redbirds,2287,Regular Season,Final,,W 71-66
+Northern Iowa,2460,2007,270610071,"March 02, 2007",12:35 PM PST,Bradley Braves,71,Regular Season,Final,,L 48-51
+Alcorn State,2016,2015,400591060,"November 14, 2014",07:00 PM PST,California Golden Bears,25,Regular Season,Final,PACN,L 57-91
+Alcorn State,2016,2015,400585678,"November 16, 2014",05:00 PM PST,Texas Longhorns,251,Regular Season,Final,ESPNU,L 53-85
+Alcorn State,2016,2015,400591061,"November 21, 2014",02:30 PM PST,Hampton Pirates,2261,Regular Season,Final,,L 69-82
+Alcorn State,2016,2015,400608201,"November 22, 2014",02:30 PM PST,Kennesaw State Owls,338,Regular Season,Final,,L 80-83
+Alcorn State,2016,2015,400591062,"November 24, 2014",01:00 PM PST,Dillard Blue Devils,2176,Regular Season,Final,,W 95-73
+Alcorn State,2016,2015,400591063,"December 02, 2014",05:00 PM PST,Troy Trojans,2653,Regular Season,Final,,L 51-72
+Alcorn State,2016,2015,400591064,"December 09, 2014",06:00 PM PST,Iowa Hawkeyes,2294,Regular Season,Final,ESPNEWS,L 44-67
+Alcorn State,2016,2015,400587446,"December 13, 2014",11:00 AM PST,Ohio Bobcats,195,Regular Season,Final,,L 55-66
+Alcorn State,2016,2015,400591065,"December 17, 2014",05:00 PM PST,Murray State Racers,93,Regular Season,Final,,L 56-94
+Alcorn State,2016,2015,400591066,"December 21, 2014",06:00 PM PST,UTEP Miners,2638,Regular Season,Final,,L 45-78
+Alcorn State,2016,2015,400749809,"December 22, 2014",04:00 PM PST,North Dakota State Bison,2449,Regular Season,Final,,L 50-61
+Alcorn State,2016,2015,400591067,"December 30, 2014",01:00 PM PST,Concordia College (AL) Clippers,3099,Regular Season,Final,,L 70-79
+Alcorn State,2016,2015,400591068,"January 03, 2015",03:30 PM PST,Texas Southern Tigers,2640,Regular Season,Final,,L 55-72
+Alcorn State,2016,2015,400591069,"January 05, 2015",06:00 PM PST,Prairie View A&M Panthers,2504,Regular Season,Final,,W 68-62
+Alcorn State,2016,2015,400591046,"January 10, 2015",03:30 PM PST,Jackson State Tigers,2296,Regular Season,Final,,L 54-64
+Alcorn State,2016,2015,400591070,"January 12, 2015",05:45 PM PST,Grambling Tigers,2755,Regular Season,Final,,W 72-70
+Alcorn State,2016,2015,400591071,"January 17, 2015",03:30 PM PST,Mississippi Valley State Delta Devils,2400,Regular Season,Final,,W 87-67
+Alcorn State,2016,2015,400591072,"January 19, 2015",05:45 PM PST,Arkansas-Pine Bluff Golden Lions,2029,Regular Season,Final,,L 49-54
+Alcorn State,2016,2015,400591073,"January 24, 2015",03:30 PM PST,Alabama State Hornets,2011,Regular Season,Final,,L 60-84
+Alcorn State,2016,2015,400591074,"January 26, 2015",05:50 PM PST,Alabama A&M Bulldogs,2010,Regular Season,Final,,L 66-78
+Alcorn State,2016,2015,400591026,"January 31, 2015",03:30 PM PST,Southern Jaguars,2582,Regular Season,Final,,L 56-65
+Alcorn State,2016,2015,400591052,"February 07, 2015",03:30 PM PST,Jackson State Tigers,2296,Regular Season,Final,,L 61-64
+Alcorn State,2016,2015,400591075,"February 09, 2015",05:30 PM PST,Grambling Tigers,2755,Regular Season,Final,,W 91-77
+Alcorn State,2016,2015,400591076,"February 14, 2015",02:30 PM PST,Mississippi Valley State Delta Devils,2400,Regular Season,Final,,L 60-76
+Alcorn State,2016,2015,400591077,"February 16, 2015",05:30 PM PST,Arkansas-Pine Bluff Golden Lions,2029,Regular Season,Postponed,,N/A
+Alcorn State,2016,2015,400762917,"February 17, 2015",05:55 PM PST,Arkansas-Pine Bluff Golden Lions,2029,Regular Season,Final,,L 70-74
+Alcorn State,2016,2015,400601548,"February 21, 2015",03:45 PM PST,Alabama State Hornets,2011,Regular Season,Final,,L 67-71
+Alcorn State,2016,2015,400601549,"February 23, 2015",05:05 PM PST,Alabama A&M Bulldogs,2010,Regular Season,Final,,L 69-73
+Alcorn State,2016,2015,400591033,"February 28, 2015",03:30 PM PST,Southern Jaguars,2582,Regular Season,Final,,L 63-71
+Alcorn State,2016,2015,400591078,"March 05, 2015",05:45 PM PST,Texas Southern Tigers,2640,Regular Season,Final,,L 73-94
+Alcorn State,2016,2015,400591079,"March 07, 2015",03:00 PM PST,Prairie View A&M Panthers,2504,Regular Season,Final,,L 80-83
+Alcorn State,2016,2015,400766994,"March 10, 2015",06:30 PM PDT,Grambling Tigers,2755,Regular Season,Final,,W 66-52
+Alcorn State,2016,2015,400768176,"March 11, 2015",06:30 PM PDT,Texas Southern Tigers,2640,Regular Season,Final,,L 74-95
+Pacific,279,2017,400915485,"November 11, 2016",06:00 PM PST,UCLA Bruins,26,Regular Season,Final,PACN,L 80-119
+Pacific,279,2017,400915719,"November 14, 2016",11:00 PM PST,Green Bay Phoenix,2739,Regular Season,Final,ESPN2,W 76-58
+Pacific,279,2017,400915732,"November 19, 2016",07:00 PM PST,UC Irvine Anteaters,300,Regular Season,Final,,L 65-72
+Pacific,279,2017,400915738,"November 22, 2016",07:00 PM PST,Wyoming Cowboys,2751,Regular Season,Final,,W 73-65
+Pacific,279,2017,400915751,"November 29, 2016",07:00 PM PST,Nevada Wolf Pack,2440,Regular Season,Final,,L 67-77
+Pacific,279,2017,400915757,"December 01, 2016",07:00 PM PST,Sacramento State Hornets,16,Regular Season,Final,,W 74-58
+Pacific,279,2017,400915761,"December 03, 2016",06:00 PM PST,Cal State Fullerton Titans,2239,Regular Season,Final,,L 77-78
+Pacific,279,2017,400915768,"December 08, 2016",04:00 PM PST,Massachusetts Minutemen,113,Regular Season,Final,,L 48-72
+Pacific,279,2017,400915771,"December 10, 2016",07:30 PM PST,Rider Broncs,2520,Regular Season,Final,,L 66-73
+Pacific,279,2017,400915780,"December 15, 2016",07:00 PM PST,North Carolina A&T Aggies,2448,Regular Season,Final,,W 66-57
+Pacific,279,2017,400915784,"December 17, 2016",07:00 PM PST,Fresno State Bulldogs,278,Regular Season,Final,,L 68-70
+Pacific,279,2017,400915791,"December 20, 2016",07:00 PM PST,Kennesaw State Owls,338,Regular Season,Final,,W 69-56
+Pacific,279,2017,400922525,"December 23, 2016",02:00 PM PST,Pacific Union,594,Regular Season,Final,,W 102-54
+Pacific,279,2017,400915806,"December 29, 2016",07:00 PM PST,Portland Pilots,2501,Regular Season,Final,,L 76-80
+Pacific,279,2017,400915811,"December 31, 2016",05:00 PM PST,Gonzaga Bulldogs,2250,Regular Season,Final,ESPN3,L 61-81
+Pacific,279,2017,400915814,"January 05, 2017",07:00 PM PST,San Diego Toreros,301,Regular Season,Final,,W 56-53
+Pacific,279,2017,400915819,"January 07, 2017",06:00 PM PST,BYU Cougars,252,Regular Season,Final,,L 62-91
+Pacific,279,2017,400915827,"January 12, 2017",07:00 PM PST,Pepperdine Waves,2492,Regular Season,Final,,W 79-74
+Pacific,279,2017,400915832,"January 14, 2017",08:00 PM PST,San Francisco Dons,2539,Regular Season,Final,,L 51-72
+Pacific,279,2017,400915836,"January 19, 2017",08:00 PM PST,Saint Mary's Gaels,2608,Regular Season,Final,,L 50-62
+Pacific,279,2017,400915841,"January 21, 2017",03:00 PM PST,BYU Cougars,252,Regular Season,Final,,L 47-62
+Pacific,279,2017,400915845,"January 26, 2017",07:00 PM PST,Loyola Marymount Lions,2351,Regular Season,Final,,L 73-79
+Pacific,279,2017,400915851,"January 28, 2017",01:00 PM PST,San Francisco Dons,2539,Regular Season,Final,,L 60-81
+Pacific,279,2017,400915858,"February 02, 2017",08:00 PM PST,Saint Mary's Gaels,2608,Regular Season,Final,ESPNU,L 70-74
+Pacific,279,2017,400915861,"February 04, 2017",05:00 PM PST,Pepperdine Waves,2492,Regular Season,Final,,L 72-82
+Pacific,279,2017,400915865,"February 09, 2017",07:00 PM PST,San Diego Toreros,301,Regular Season,Final,,W 61-58
+Pacific,279,2017,400915871,"February 11, 2017",07:00 PM PST,Santa Clara Broncos,2541,Regular Season,Final,,L 47-64
+Pacific,279,2017,400915875,"February 16, 2017",07:00 PM PST,Portland Pilots,2501,Regular Season,Final,,W 76-65
+Pacific,279,2017,400915879,"February 18, 2017",01:00 PM PST,Gonzaga Bulldogs,2250,Regular Season,Final,,L 61-82
+Pacific,279,2017,400915888,"February 23, 2017",07:00 PM PST,Santa Clara Broncos,2541,Regular Season,Final,,L 68-69
+Pacific,279,2017,400915892,"February 25, 2017",07:00 PM PST,Loyola Marymount Lions,2351,Regular Season,Final,,L 66-67
+Pacific,279,2017,400944510,"March 03, 2017",06:00 PM PST,Pepperdine Waves,2492,Regular Season,Final,,W 89-84
+Pacific,279,2017,400945425,"March 04, 2017",07:00 PM PST,Gonzaga Bulldogs,2250,Regular Season,Final,ESPN2,L 50-82
