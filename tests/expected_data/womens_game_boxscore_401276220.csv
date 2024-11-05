@@ -1,0 +1,23 @@
+game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,fta,oreb,dreb,reb,ast,stl,blk,to,pf,pts
+401276220,Niagara Purple Eagles,O. Mason,4399134,,True,28.0,2,7,2,7,0,0,1,2,4,2,6,1,3,0,3,3,5
+401276220,Niagara Purple Eagles,V. Pepic,4399131,,True,20.0,3,6,3,6,0,0,0,0,0,2,2,1,1,0,1,2,6
+401276220,Niagara Purple Eagles,A. Parker,4595385,,True,31.0,1,13,1,9,0,4,0,0,3,5,8,4,2,1,9,4,2
+401276220,Niagara Purple Eagles,A. Haar,4399135,,True,37.0,5,21,2,8,3,13,0,0,2,3,5,2,0,0,3,2,13
+401276220,Niagara Purple Eagles,M. Yelle,4399133,,True,36.0,7,13,5,10,2,3,2,2,6,3,9,1,3,0,6,3,18
+401276220,Niagara Purple Eagles,S. Glover,4704528,,False,9.0,1,2,1,2,0,0,1,2,0,0,0,0,1,2,1,1,3
+401276220,Niagara Purple Eagles,S. Faulcon,4595386,,False,21.0,0,2,0,2,0,0,2,2,6,1,7,1,1,1,2,3,2
+401276220,Niagara Purple Eagles,B. Jones,4704525,,False,17.0,1,3,0,1,1,2,2,2,0,1,1,2,2,0,0,0,5
+401276220,Niagara Purple Eagles,K. Grimshaw,4399136,,False,1.0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+401276220,Niagara Purple Eagles,TEAM,TOTAL,TOTAL,False,,20,68,14,46,6,22,8,10,25,19,44,12,13,4,28,18,54
+401276220,Rider Broncs,D. Moses,4282182,,True,26.0,3,5,1,1,2,4,2,2,1,4,5,1,0,1,2,2,10
+401276220,Rider Broncs,V. Toomey,4595396,,True,30.0,3,8,3,7,0,1,1,2,2,3,5,0,3,1,2,4,7
+401276220,Rider Broncs,M. Firebaugh,4704621,,True,28.0,5,12,4,9,1,3,2,2,0,3,3,4,1,0,0,1,13
+401276220,Rider Broncs,M. Hyacienth,4595394,,True,32.0,4,7,2,4,2,3,7,8,0,3,3,2,0,3,2,1,17
+401276220,Rider Broncs,A. Mobley,4399137,,True,32.0,2,4,1,3,1,1,2,2,0,1,1,5,4,2,8,2,7
+401276220,Rider Broncs,A. Ekerstedt,4704619,,False,10.0,1,2,1,2,0,0,0,0,0,2,2,0,1,1,1,1,2
+401276220,Rider Broncs,R. Toussaint,4704617,,False,9.0,3,4,3,4,0,0,0,0,0,0,0,0,0,1,0,0,6
+401276220,Rider Broncs,T. Wolak,4399138,,False,5.0,0,1,0,1,0,0,0,0,0,1,1,0,1,1,0,1,0
+401276220,Rider Broncs,L. Evans,4704620,,False,18.0,0,5,0,3,0,2,3,6,1,1,2,1,1,0,2,1,3
+401276220,Rider Broncs,M. Lynch,4704616,,False,5.0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,2,0,0
+401276220,Rider Broncs,S. DeMauro,4595395,,False,5.0,0,0,0,0,0,0,3,4,1,0,1,0,0,0,0,1,3
+401276220,Rider Broncs,TEAM,TOTAL,TOTAL,False,,21,48,15,34,6,14,20,26,7,22,29,13,12,10,20,14,68

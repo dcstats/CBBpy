@@ -1,0 +1,27 @@
+game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,fta,oreb,dreb,reb,ast,stl,blk,to,pf,pts
+400842484,Mount St. Mary's Mountaineers,S. Arthur-Williams,18395,,True,23.0,3,6,3,6,0,0,3,4,1,3,4,0,0,0,0,2,9
+400842484,Mount St. Mary's Mountaineers,S. Koutris,3143608,,True,9.0,0,2,0,0,0,2,0,0,0,2,2,1,0,0,0,0,0
+400842484,Mount St. Mary's Mountaineers,K. Dickson,3143605,,True,24.0,0,5,0,1,0,4,4,4,0,1,1,0,0,0,3,3,4
+400842484,Mount St. Mary's Mountaineers,J. Chickey,18321,,True,36.0,1,5,0,3,1,2,2,2,0,6,6,1,0,0,5,3,5
+400842484,Mount St. Mary's Mountaineers,A. Carter,17791,,True,28.0,2,11,1,5,1,6,0,0,1,4,5,2,1,1,3,2,5
+400842484,Mount St. Mary's Mountaineers,K. Kuster,3907749,,False,1.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+400842484,Mount St. Mary's Mountaineers,J. Leftwich,18370,,False,4.0,0,3,0,3,0,0,0,0,0,0,0,0,0,1,0,0,0
+400842484,Mount St. Mary's Mountaineers,K. Eisenhard,3067606,,False,7.0,2,3,2,3,0,0,1,3,1,3,4,0,0,0,1,0,5
+400842484,Mount St. Mary's Mountaineers,C. Hummell,3143607,,False,5.0,1,3,1,3,0,0,1,1,2,0,2,0,0,0,0,0,3
+400842484,Mount St. Mary's Mountaineers,J. Lawless,3907750,,False,3.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+400842484,Mount St. Mary's Mountaineers,J. Harris,3143606,,False,30.0,4,13,3,7,1,6,0,0,2,4,6,1,2,1,2,1,9
+400842484,Mount St. Mary's Mountaineers,K. Belanger-Finn,3067605,,False,12.0,0,1,0,1,0,0,0,0,0,1,1,1,0,0,2,0,0
+400842484,Mount St. Mary's Mountaineers,K. Bates,3067604,,False,18.0,1,2,1,1,0,1,0,0,0,5,5,0,0,0,0,2,2
+400842484,Mount St. Mary's Mountaineers,TEAM,TOTAL,TOTAL,False,,14,54,11,33,3,21,11,14,11,32,43,6,3,3,18,13,42
+400842484,Virginia Tech Hokies,S. Cook,2987873,,True,22.0,3,8,2,6,1,2,0,0,3,4,7,0,0,1,3,2,7
+400842484,Virginia Tech Hokies,H. Young,2984374,,True,28.0,5,10,0,3,5,7,0,0,1,5,6,0,0,1,4,1,15
+400842484,Virginia Tech Hokies,T. Campbell,17258,,True,22.0,0,4,0,4,0,0,0,0,1,1,2,2,0,3,0,2,0
+400842484,Virginia Tech Hokies,C. Hicks,3949114,,True,24.0,3,11,3,11,0,0,2,3,1,4,5,6,4,0,0,3,8
+400842484,Virginia Tech Hokies,V. Panousis,3058925,,True,29.0,5,15,3,6,2,9,0,0,0,6,6,5,1,0,0,1,12
+400842484,Virginia Tech Hokies,K. Croker,3142119,,False,4.0,0,2,0,2,0,0,0,0,0,0,0,0,0,0,0,1,0
+400842484,Virginia Tech Hokies,A. Gilmer,3949116,,False,3.0,0,2,0,2,0,0,0,0,1,1,2,0,0,0,0,1,0
+400842484,Virginia Tech Hokies,D. Powell,3142118,,False,18.0,2,4,2,4,0,0,1,4,2,0,2,0,0,1,0,4,5
+400842484,Virginia Tech Hokies,T. Nahodil,3058928,,False,8.0,1,2,1,2,0,0,0,0,1,2,3,0,0,2,0,1,2
+400842484,Virginia Tech Hokies,R. Camp,3142117,,False,19.0,1,5,0,2,1,3,0,0,0,4,4,0,0,0,1,0,3
+400842484,Virginia Tech Hokies,S. Hill,3058927,,False,23.0,1,5,1,3,0,2,5,5,1,2,3,1,0,0,0,0,7
+400842484,Virginia Tech Hokies,TEAM,TOTAL,TOTAL,False,,21,68,12,45,9,23,8,12,13,29,42,14,5,8,8,16,59
