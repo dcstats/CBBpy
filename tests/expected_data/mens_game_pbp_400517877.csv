@@ -1,0 +1,332 @@
+game_id,home_team,away_team,play_desc,home_score,away_score,half,secs_left_half,secs_left_reg,play_team,play_type,shooting_play,scoring_play,is_three,shooter,is_assisted,assist_player,shot_x,shot_y
+400517877,Arizona Wildcats,Rhode Island Rams,Jump Ball won by Arizona,0,0,1,1200,2400,Arizona Wildcats,jump ball,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson missed Three Point Jumper.,0,0,1,1188,2388,Arizona Wildcats,three point jumper,True,False,True,Nick Johnson,False,,30.0,22.0
+400517877,Arizona Wildcats,Rhode Island Rams,Jarelle Reischel Defensive Rebound.,0,0,1,1188,2388,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Jarelle Reischel Turnover.,0,0,1,1156,2356,Rhode Island Rams,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. McConnell made Layup. Assisted by Nick Johnson.,2,0,1,1150,2350,Arizona Wildcats,layup,True,True,False,T.J. McConnell,True,Nick Johnson,22.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford missed Layup.,2,0,1,1120,2320,Rhode Island Rams,layup,True,False,False,Xavier Munford,False,,29.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson Defensive Rebound.,2,0,1,1120,2320,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley missed Jumper.,2,0,1,1110,2310,Arizona Wildcats,jumper,True,False,False,Brandon Ashley,False,,21.0,6.0
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta Defensive Rebound.,2,0,1,1110,2310,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta missed Three Point Jumper.,2,0,1,1100,2300,Rhode Island Rams,three point jumper,True,False,True,Gilvydas Biruta,False,,7.0,13.0
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon Defensive Rebound.,2,0,1,1100,2300,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon made Jumper.,4,0,1,1088,2288,Arizona Wildcats,jumper,True,True,False,Aaron Gordon,False,,22.0,6.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Jarelle Reischel.,4,0,1,1088,2288,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon missed Free Throw.,4,0,1,1088,2288,Arizona Wildcats,free throw,True,False,False,Aaron Gordon,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Mike Powell Defensive Rebound.,4,0,1,1088,2288,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Ifeanyi Onyekaba Turnover.,4,0,1,1065,2265,Rhode Island Rams,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley made Layup.,6,0,1,1047,2247,Arizona Wildcats,layup,True,True,False,Brandon Ashley,False,,29.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Jarelle Reischel Turnover.,6,0,1,1041,2241,Rhode Island Rams,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. McConnell Steal.,6,0,1,1041,2241,Arizona Wildcats,steal,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson Turnover.,6,0,1,1034,2234,Arizona Wildcats,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Jarelle Reischel missed Jumper.,6,0,1,1028,2228,Rhode Island Rams,jumper,True,False,False,Jarelle Reischel,False,,26.0,6.0
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon Block.,6,0,1,1028,2228,Arizona Wildcats,block,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson Defensive Rebound.,6,0,1,1028,2228,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson missed Jumper.,6,0,1,1016,2216,Arizona Wildcats,jumper,True,False,False,Nick Johnson,False,,8.0,5.0
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford Defensive Rebound.,6,0,1,1016,2216,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford missed Three Point Jumper.,6,0,1,993,2193,Rhode Island Rams,three point jumper,True,False,True,Xavier Munford,False,,44.0,14.0
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson Defensive Rebound.,6,0,1,993,2193,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Kaleb Tarczewski missed Layup.,6,0,1,979,2179,Arizona Wildcats,layup,True,False,False,Kaleb Tarczewski,False,,29.0,0.0
+400517877,Arizona Wildcats,Rhode Island Rams,Mike Powell Defensive Rebound.,6,0,1,979,2179,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Jarelle Reischel made Layup.,6,2,1,972,2172,Rhode Island Rams,layup,True,True,False,Jarelle Reischel,False,,22.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley missed Three Point Jumper.,6,2,1,957,2157,Arizona Wildcats,three point jumper,True,False,True,Brandon Ashley,False,,30.0,23.0
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta Defensive Rebound.,6,2,1,957,2157,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Mike Powell missed Jumper.,6,2,1,940,2140,Rhode Island Rams,jumper,True,False,False,Mike Powell,False,,15.0,9.0
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon Defensive Rebound.,6,2,1,940,2140,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon missed Three Point Jumper.,6,2,1,932,2132,Arizona Wildcats,three point jumper,True,False,True,Aaron Gordon,False,,12.0,21.0
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford Defensive Rebound.,6,2,1,932,2132,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford missed Jumper.,6,2,1,905,2105,Rhode Island Rams,jumper,True,False,False,Xavier Munford,False,,30.0,11.0
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson Defensive Rebound.,6,2,1,905,2105,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon made Layup.,8,2,1,896,2096,Arizona Wildcats,layup,True,True,False,Aaron Gordon,False,,24.0,3.0
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford Turnover.,8,2,1,878,2078,Rhode Island Rams,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Official TV Timeout,8,2,1,878,2078,,tv timeout,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson missed Jumper.,8,2,1,864,2064,Arizona Wildcats,jumper,True,False,False,Nick Johnson,False,,24.0,10.0
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson Offensive Rebound.,8,2,1,864,2064,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon made Layup. Assisted by Nick Johnson.,10,2,1,856,2056,Arizona Wildcats,layup,True,True,False,Aaron Gordon,True,Nick Johnson,27.0,0.0
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta missed Jumper.,10,2,1,834,2034,Rhode Island Rams,jumper,True,False,False,Gilvydas Biruta,False,,25.0,12.0
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley Defensive Rebound.,10,2,1,834,2034,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. McConnell missed Three Point Jumper.,10,2,1,825,2025,Arizona Wildcats,three point jumper,True,False,True,T.J. McConnell,False,,18.0,24.0
+400517877,Arizona Wildcats,Rhode Island Rams,Arizona Offensive Rebound.,10,2,1,825,2025,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Jordin Mayes Turnover.,10,2,1,805,2005,Arizona Wildcats,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford Steal.,10,2,1,805,2005,Rhode Island Rams,steal,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Gabe York.,10,2,1,801,2001,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Jarelle Reischel missed Jumper.,10,2,1,787,1987,Rhode Island Rams,jumper,True,False,False,Jarelle Reischel,False,,31.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Kaleb Tarczewski Defensive Rebound.,10,2,1,787,1987,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on E.C. Matthews.,10,2,1,768,1968,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon Turnover.,10,2,1,759,1959,Arizona Wildcats,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. Buchanan Steal.,10,2,1,759,1959,Rhode Island Rams,steal,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Jarelle Reischel made Layup. Assisted by E.C. Matthews.,10,4,1,754,1954,Rhode Island Rams,layup,True,True,False,Jarelle Reischel,True,EC Matthews,27.0,0.0
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley missed Jumper.,10,4,1,734,1934,Arizona Wildcats,jumper,True,False,False,Brandon Ashley,False,,20.0,16.0
+400517877,Arizona Wildcats,Rhode Island Rams,Rhode Island Defensive Rebound.,10,4,1,734,1934,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Jordin Mayes.,10,4,1,720,1920,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Biggie Minnis made Jumper.,10,6,1,712,1912,Rhode Island Rams,jumper,True,True,False,Biggie Minnis,False,,24.0,5.0
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson Turnover.,10,6,1,696,1896,Arizona Wildcats,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Official TV Timeout,10,6,1,696,1896,,tv timeout,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Biggie Minnis missed Layup.,10,6,1,685,1885,Rhode Island Rams,layup,True,False,False,Biggie Minnis,False,,27.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Kaleb Tarczewski Block.,10,6,1,685,1885,Arizona Wildcats,block,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson Defensive Rebound.,10,6,1,685,1885,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gabe York Turnover.,10,6,1,676,1876,Arizona Wildcats,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta Steal.,10,6,1,676,1876,Rhode Island Rams,steal,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,E.C. Matthews missed Three Point Jumper.,10,6,1,670,1870,Rhode Island Rams,three point jumper,True,False,True,E.C. Matthews,False,,46.0,11.0
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley Defensive Rebound.,10,6,1,670,1870,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson made Three Point Jumper. Assisted by Kaleb Tarczewski.,13,6,1,651,1851,Arizona Wildcats,three point jumper,True,True,True,Nick Johnson,True,Kaleb Tarczewski,10.0,20.0
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. Buchanan missed Three Point Jumper.,13,6,1,617,1817,Rhode Island Rams,three point jumper,True,False,True,T.J. Buchanan,False,,48.0,4.0
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta Offensive Rebound.,13,6,1,617,1817,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Nick Johnson.,13,6,1,612,1812,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rhode Island  Timeout,13,6,1,612,1812,Rhode Island Rams,timeout,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,E.C. Matthews missed Jumper.,13,6,1,606,1806,Rhode Island Rams,jumper,True,False,False,E.C. Matthews,False,,32.0,9.0
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon Defensive Rebound.,13,6,1,606,1806,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley made Jumper. Assisted by Nick Johnson.,15,6,1,595,1795,Arizona Wildcats,jumper,True,True,False,Brandon Ashley,True,Nick Johnson,20.0,3.0
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta Turnover.,15,6,1,574,1774,Rhode Island Rams,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson Steal.,15,6,1,574,1774,Arizona Wildcats,steal,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson made Dunk.,17,6,1,568,1768,Arizona Wildcats,dunk,True,True,False,Nick Johnson,False,,24.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford made Layup. Assisted by Gilvydas Biruta.,17,8,1,550,1750,Rhode Island Rams,layup,True,True,False,Xavier Munford,True,Gilvydas Biruta,28.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Gabe York missed Three Point Jumper.,17,8,1,528,1728,Arizona Wildcats,three point jumper,True,False,True,Gabe York,False,,3.0,8.0
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon Offensive Rebound.,17,8,1,523,1723,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon missed Layup.,17,8,1,518,1718,Arizona Wildcats,layup,True,False,False,Aaron Gordon,False,,23.0,3.0
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford Defensive Rebound.,17,8,1,518,1718,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford missed Layup.,17,8,1,513,1713,Rhode Island Rams,layup,True,False,False,Xavier Munford,False,,23.0,0.0
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. McConnell Block.,17,8,1,513,1713,Arizona Wildcats,block,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Kaleb Tarczewski Defensive Rebound.,17,8,1,513,1713,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon missed Layup.,17,8,1,506,1706,Arizona Wildcats,layup,True,False,False,Aaron Gordon,False,,28.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta Block.,17,8,1,506,1706,Rhode Island Rams,block,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Jarelle Reischel Defensive Rebound.,17,8,1,506,1706,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Hassan Martin Turnover.,17,8,1,498,1698,Rhode Island Rams,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. McConnell made Layup. Assisted by Gabe York.,19,8,1,484,1684,Arizona Wildcats,layup,True,True,False,T.J. McConnell,True,Gabe York,23.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Kaleb Tarczewski.,19,8,1,445,1645,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Official TV Timeout,19,8,1,445,1645,,tv timeout,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford missed Free Throw.,19,8,1,445,1645,Rhode Island Rams,free throw,True,False,False,Xavier Munford,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rhode Island Deadball Team Rebound.,19,8,1,445,1645,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford made Free Throw.,19,9,1,445,1645,Rhode Island Rams,free throw,True,True,False,Xavier Munford,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson made Layup.,21,9,1,433,1633,Arizona Wildcats,layup,True,True,False,Rondae Hollis-Jefferson,False,,28.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Gilvydas Biruta.,21,9,1,433,1633,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson missed Free Throw.,21,9,1,433,1633,Arizona Wildcats,free throw,True,False,False,Rondae Hollis-Jefferson,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Kaleb Tarczewski Offensive Rebound.,21,9,1,433,1633,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Kaleb Tarczewski made Dunk. Assisted by T.J. McConnell.,23,9,1,416,1616,Arizona Wildcats,dunk,True,True,False,Kaleb Tarczewski,True,TJ McConnell,24.0,3.0
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford made Layup.,23,11,1,378,1578,Rhode Island Rams,layup,True,True,False,Xavier Munford,False,,23.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Kaleb Tarczewski made Jumper.,25,11,1,354,1554,Arizona Wildcats,jumper,True,True,False,Kaleb Tarczewski,False,,32.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford missed Three Point Jumper.,25,11,1,334,1534,Rhode Island Rams,three point jumper,True,False,True,Xavier Munford,False,,46.0,13.0
+400517877,Arizona Wildcats,Rhode Island Rams,Arizona Defensive Rebound.,25,11,1,334,1534,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Jarelle Reischel.,25,11,1,332,1532,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson missed Three Point Jumper.,25,11,1,313,1513,Arizona Wildcats,three point jumper,True,False,True,Nick Johnson,False,,47.0,-2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta Defensive Rebound.,25,11,1,313,1513,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,E.C. Matthews missed Jumper.,25,11,1,307,1507,Rhode Island Rams,jumper,True,False,False,E.C. Matthews,False,,30.0,10.0
+400517877,Arizona Wildcats,Rhode Island Rams,Gabe York Defensive Rebound.,25,11,1,307,1507,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gabe York missed Layup.,25,11,1,299,1499,Arizona Wildcats,layup,True,False,False,Gabe York,False,,21.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson Offensive Rebound.,25,11,1,299,1499,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson made Jumper.,27,11,1,297,1497,Arizona Wildcats,jumper,True,True,False,Rondae Hollis-Jefferson,False,,25.0,6.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on E.C. Matthews.,27,11,1,297,1497,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson missed Free Throw.,27,11,1,297,1497,Arizona Wildcats,free throw,True,False,False,Rondae Hollis-Jefferson,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford Defensive Rebound.,27,11,1,297,1497,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Ifeanyi Onyekaba missed Jumper.,27,11,1,280,1480,Rhode Island Rams,jumper,True,False,False,Ifeanyi Onyekaba,False,,18.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson Defensive Rebound.,27,11,1,280,1480,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gabe York made Layup. Assisted by Nick Johnson.,29,11,1,275,1475,Arizona Wildcats,layup,True,True,False,Gabe York,True,Nick Johnson,23.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Rhode Island  Timeout,29,11,1,273,1473,Rhode Island Rams,timeout,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rhode Island  Timeout,29,11,1,273,1473,Rhode Island Rams,timeout,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford made Jumper.,29,13,1,265,1465,Rhode Island Rams,jumper,True,True,False,Xavier Munford,False,,18.0,6.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Nick Johnson.,29,13,1,265,1465,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford made Free Throw.,29,14,1,265,1465,Rhode Island Rams,free throw,True,True,False,Xavier Munford,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon made Dunk. Assisted by Nick Johnson.,31,14,1,258,1458,Arizona Wildcats,dunk,True,True,False,Aaron Gordon,True,Nick Johnson,23.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Biggie Minnis Turnover.,31,14,1,249,1449,Rhode Island Rams,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. McConnell Steal.,31,14,1,249,1449,Arizona Wildcats,steal,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson made Layup. Assisted by Aaron Gordon.,33,14,1,237,1437,Arizona Wildcats,layup,True,True,False,Nick Johnson,True,Aaron Gordon,27.0,0.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Biggie Minnis.,33,14,1,237,1437,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Official TV Timeout,33,14,1,237,1437,,tv timeout,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson made Free Throw.,34,14,1,237,1437,Arizona Wildcats,free throw,True,True,False,Nick Johnson,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford missed Three Point Jumper.,34,14,1,222,1422,Rhode Island Rams,three point jumper,True,False,True,Xavier Munford,False,,7.0,13.0
+400517877,Arizona Wildcats,Rhode Island Rams,Mike Aaman Offensive Rebound.,34,14,1,222,1422,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Mike Aaman missed Jumper.,34,14,1,217,1417,Rhode Island Rams,jumper,True,False,False,Mike Aaman,False,,31.0,3.0
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. McConnell Defensive Rebound.,34,14,1,217,1417,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson made Three Point Jumper. Assisted by T.J. McConnell.,37,14,1,194,1394,Arizona Wildcats,three point jumper,True,True,True,Rondae Hollis-Jefferson,True,TJ McConnell,38.0,17.0
+400517877,Arizona Wildcats,Rhode Island Rams,Mike Aaman made Layup. Assisted by Biggie Minnis.,37,16,1,176,1376,Rhode Island Rams,layup,True,True,False,Mike Aaman,True,Biggie Minnis,27.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Gilvydas Biruta.,37,16,1,157,1357,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley missed Free Throw.,37,16,1,157,1357,Arizona Wildcats,free throw,True,False,False,Brandon Ashley,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Arizona Deadball Team Rebound.,37,16,1,157,1357,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley made Free Throw.,38,16,1,157,1357,Arizona Wildcats,free throw,True,True,False,Brandon Ashley,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Kaleb Tarczewski.,38,16,1,127,1327,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Biggie Minnis missed Free Throw.,38,16,1,127,1327,Rhode Island Rams,free throw,True,False,False,Biggie Minnis,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rhode Island Deadball Team Rebound.,38,16,1,127,1327,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Biggie Minnis made Free Throw.,38,17,1,127,1327,Rhode Island Rams,free throw,True,True,False,Biggie Minnis,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. McConnell Turnover.,38,17,1,116,1316,Arizona Wildcats,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Hassan Martin missed Jumper.,38,17,1,108,1308,Rhode Island Rams,jumper,True,False,False,Hassan Martin,False,,31.0,5.0
+400517877,Arizona Wildcats,Rhode Island Rams,Rhode Island Offensive Rebound.,38,17,1,108,1308,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Kaleb Tarczewski.,38,17,1,95,1295,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford made Free Throw.,38,18,1,95,1295,Rhode Island Rams,free throw,True,True,False,Xavier Munford,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford made Free Throw.,38,19,1,95,1295,Rhode Island Rams,free throw,True,True,False,Xavier Munford,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Brandon Ashley.,38,19,1,83,1283,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley Turnover.,38,19,1,83,1283,Arizona Wildcats,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Jarelle Reischel missed Three Point Jumper.,38,19,1,71,1271,Rhode Island Rams,three point jumper,True,False,True,Jarelle Reischel,False,,4.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. McConnell Defensive Rebound.,38,19,1,71,1271,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. McConnell made Three Point Jumper.,41,19,1,60,1260,Arizona Wildcats,three point jumper,True,True,True,T.J. McConnell,False,,19.0,24.0
+400517877,Arizona Wildcats,Rhode Island Rams,E.C. Matthews Turnover.,41,19,1,35,1235,Rhode Island Rams,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gabe York Steal.,41,19,1,35,1235,Arizona Wildcats,steal,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Biggie Minnis.,41,19,1,7,1207,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley made Free Throw.,42,19,1,7,1207,Arizona Wildcats,free throw,True,True,False,Brandon Ashley,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley made Free Throw.,43,19,1,7,1207,Arizona Wildcats,free throw,True,True,False,Brandon Ashley,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Arizona  Timeout,43,19,1,7,1207,Arizona Wildcats,timeout,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford missed Dunk.,43,19,1,3,1203,Rhode Island Rams,dunk,True,False,False,Xavier Munford,False,,26.0,3.0
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson Block.,43,19,1,3,1203,Arizona Wildcats,block,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. Buchanan Offensive Rebound.,43,19,1,3,1203,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,End of 1st half,43,19,1,0,1200,,end,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Jump Ball won by Rhode Island,43,19,2,1200,1200,Rhode Island Rams,jump ball,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta made Layup.,43,21,2,1186,1186,Rhode Island Rams,layup,True,True,False,Gilvydas Biruta,False,,23.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Ifeanyi Onyekaba.,43,21,2,1161,1161,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley made Dunk. Assisted by Aaron Gordon.,45,21,2,1160,1160,Arizona Wildcats,dunk,True,True,False,Brandon Ashley,True,Aaron Gordon,26.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Jarelle Reischel made Layup.,45,23,2,1137,1137,Rhode Island Rams,layup,True,True,False,Jarelle Reischel,False,,26.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley made Jumper. Assisted by T.J. McConnell.,47,23,2,1105,1105,Arizona Wildcats,jumper,True,True,False,Brandon Ashley,True,TJ McConnell,43.0,7.0
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta missed Jumper.,47,23,2,1079,1079,Rhode Island Rams,jumper,True,False,False,Gilvydas Biruta,False,,19.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley Block.,47,23,2,1079,1079,Arizona Wildcats,block,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley Defensive Rebound.,47,23,2,1079,1079,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley made Layup.,49,23,2,1066,1066,Arizona Wildcats,layup,True,True,False,Brandon Ashley,False,,23.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Jarelle Reischel missed Layup.,49,23,2,1030,1030,Rhode Island Rams,layup,True,False,False,Jarelle Reischel,False,,21.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon Defensive Rebound.,49,23,2,1030,1030,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon missed Three Point Jumper.,49,23,2,1021,1021,Arizona Wildcats,three point jumper,True,False,True,Aaron Gordon,False,,40.0,18.0
+400517877,Arizona Wildcats,Rhode Island Rams,Mike Powell Defensive Rebound.,49,23,2,1021,1021,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on T.J. McConnell.,49,23,2,1011,1011,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Mike Powell made Free Throw.,49,24,2,1011,1011,Rhode Island Rams,free throw,True,True,False,Mike Powell,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Mike Powell made Free Throw.,49,25,2,1011,1011,Rhode Island Rams,free throw,True,True,False,Mike Powell,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon missed Dunk.,49,25,2,999,999,Arizona Wildcats,dunk,True,False,False,Aaron Gordon,False,,24.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon Offensive Rebound.,49,25,2,999,999,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Ifeanyi Onyekaba.,49,25,2,995,995,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon made Free Throw.,50,25,2,995,995,Arizona Wildcats,free throw,True,True,False,Aaron Gordon,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon made Free Throw.,51,25,2,995,995,Arizona Wildcats,free throw,True,True,False,Aaron Gordon,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta missed Jumper.,51,25,2,987,987,Rhode Island Rams,jumper,True,False,False,Gilvydas Biruta,False,,23.0,7.0
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson Defensive Rebound.,51,25,2,987,987,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson made Three Point Jumper. Assisted by Kaleb Tarczewski.,54,25,2,968,968,Arizona Wildcats,three point jumper,True,True,True,Nick Johnson,True,Kaleb Tarczewski,44.0,16.0
+400517877,Arizona Wildcats,Rhode Island Rams,Mike Powell missed Three Point Jumper.,54,25,2,947,947,Rhode Island Rams,three point jumper,True,False,True,Mike Powell,False,,30.0,22.0
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson Defensive Rebound.,54,25,2,947,947,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Hassan Martin.,54,25,2,933,933,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams, Official TV Timeout,54,25,2,933,933,,tv timeout,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on E.C. Matthews.,54,25,2,920,920,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson made Free Throw.,55,25,2,920,920,Arizona Wildcats,free throw,True,True,False,Nick Johnson,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson made Free Throw.,56,25,2,920,920,Arizona Wildcats,free throw,True,True,False,Nick Johnson,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Biggie Minnis made Three Point Jumper. Assisted by E.C. Matthews.,56,28,2,906,906,Rhode Island Rams,three point jumper,True,True,True,Biggie Minnis,True,EC Matthews,47.0,0.0
+400517877,Arizona Wildcats,Rhode Island Rams,Kaleb Tarczewski made Dunk. Assisted by Nick Johnson.,58,28,2,874,874,Arizona Wildcats,dunk,True,True,False,Kaleb Tarczewski,True,Nick Johnson,23.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Biggie Minnis made Layup.,58,30,2,857,857,Rhode Island Rams,layup,True,True,False,Biggie Minnis,False,,28.0,3.0
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson missed Jumper.,58,30,2,856,856,Arizona Wildcats,jumper,True,False,False,Rondae Hollis-Jefferson,False,,30.0,8.0
+400517877,Arizona Wildcats,Rhode Island Rams,Arizona Offensive Rebound.,58,30,2,856,856,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Jarelle Reischel.,58,30,2,844,844,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson made Dunk.,60,30,2,836,836,Arizona Wildcats,dunk,True,True,False,Rondae Hollis-Jefferson,False,,23.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford missed Three Point Jumper.,60,30,2,821,821,Rhode Island Rams,three point jumper,True,False,True,Xavier Munford,False,,3.0,8.0
+400517877,Arizona Wildcats,Rhode Island Rams,Rhode Island Offensive Rebound.,60,30,2,821,821,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford made Layup.,60,32,2,811,811,Rhode Island Rams,layup,True,True,False,Xavier Munford,False,,22.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Biggie Minnis.,60,32,2,795,795,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Elliott Pitts.,60,32,2,794,794,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Elliott Pitts Turnover.,60,32,2,794,794,Arizona Wildcats,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Rondae Hollis-Jefferson.,60,32,2,779,779,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rhode Island  Timeout,60,32,2,779,779,Rhode Island Rams,timeout,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Biggie Minnis Turnover.,60,32,2,774,774,Rhode Island Rams,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gabe York missed Three Point Jumper.,60,32,2,764,764,Arizona Wildcats,three point jumper,True,False,True,Gabe York,False,,32.0,24.0
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta Defensive Rebound.,60,32,2,764,764,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford made Three Point Jumper. Assisted by Biggie Minnis.,60,35,2,747,747,Rhode Island Rams,three point jumper,True,True,True,Xavier Munford,True,Biggie Minnis,47.0,-1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Biggie Minnis.,60,35,2,737,737,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley missed Free Throw.,60,35,2,737,737,Arizona Wildcats,free throw,True,False,False,Brandon Ashley,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Arizona Deadball Team Rebound.,60,35,2,737,737,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley made Free Throw.,61,35,2,737,737,Arizona Wildcats,free throw,True,True,False,Brandon Ashley,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Rondae Hollis-Jefferson.,61,35,2,717,717,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams, Official TV Timeout,61,35,2,717,717,,tv timeout,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,E.C. Matthews missed Free Throw.,61,35,2,717,717,Rhode Island Rams,free throw,True,False,False,E.C. Matthews,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rhode Island Deadball Team Rebound.,61,35,2,717,717,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,E.C. Matthews made Free Throw.,61,36,2,717,717,Rhode Island Rams,free throw,True,True,False,E.C. Matthews,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon missed Layup.,61,36,2,682,682,Arizona Wildcats,layup,True,False,False,Aaron Gordon,False,,23.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. Buchanan Defensive Rebound.,61,36,2,682,682,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,E.C. Matthews missed Jumper.,61,36,2,674,674,Rhode Island Rams,jumper,True,False,False,E.C. Matthews,False,,30.0,4.0
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley Defensive Rebound.,61,36,2,674,674,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. McConnell Turnover.,61,36,2,652,652,Arizona Wildcats,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta Steal.,61,36,2,652,652,Rhode Island Rams,steal,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta Turnover.,61,36,2,650,650,Rhode Island Rams,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. McConnell Steal.,61,36,2,650,650,Arizona Wildcats,steal,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Kaleb Tarczewski made Dunk. Assisted by T.J. McConnell.,63,36,2,647,647,Arizona Wildcats,dunk,True,True,False,Kaleb Tarczewski,True,TJ McConnell,27.0,0.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on T.J. McConnell.,63,36,2,623,623,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford made Free Throw.,63,37,2,623,623,Rhode Island Rams,free throw,True,True,False,Xavier Munford,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford missed Free Throw.,63,37,2,623,623,Rhode Island Rams,free throw,True,False,False,Xavier Munford,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Kaleb Tarczewski Defensive Rebound.,63,37,2,623,623,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Gilvydas Biruta.,63,37,2,601,601,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Kaleb Tarczewski missed Free Throw.,63,37,2,601,601,Arizona Wildcats,free throw,True,False,False,Kaleb Tarczewski,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta Defensive Rebound.,63,37,2,601,601,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta made Jumper.,63,39,2,579,579,Rhode Island Rams,jumper,True,True,False,Gilvydas Biruta,False,,32.0,5.0
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson missed Jumper.,63,39,2,563,563,Arizona Wildcats,jumper,True,False,False,Rondae Hollis-Jefferson,False,,18.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Jarelle Reischel Defensive Rebound.,63,39,2,563,563,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. Buchanan made Jumper.,63,41,2,554,554,Rhode Island Rams,jumper,True,True,False,T.J. Buchanan,False,,36.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Kaleb Tarczewski.,63,41,2,554,554,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. Buchanan made Free Throw.,63,42,2,554,554,Rhode Island Rams,free throw,True,True,False,T.J. Buchanan,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson missed Jumper.,63,42,2,545,545,Arizona Wildcats,jumper,True,False,False,Nick Johnson,False,,24.0,8.0
+400517877,Arizona Wildcats,Rhode Island Rams,Rhode Island Defensive Rebound.,63,42,2,545,545,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Brandon Ashley.,63,42,2,526,526,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford made Free Throw.,63,43,2,526,526,Rhode Island Rams,free throw,True,True,False,Xavier Munford,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford made Free Throw.,63,44,2,526,526,Rhode Island Rams,free throw,True,True,False,Xavier Munford,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson Turnover.,63,44,2,514,514,Arizona Wildcats,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,E.C. Matthews Steal.,63,44,2,514,514,Rhode Island Rams,steal,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,E.C. Matthews missed Jumper.,63,44,2,509,509,Rhode Island Rams,jumper,True,False,False,E.C. Matthews,False,,32.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon Block.,63,44,2,509,509,Arizona Wildcats,block,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson Defensive Rebound.,63,44,2,509,509,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gabe York made Three Point Jumper. Assisted by Rondae Hollis-Jefferson.,66,44,2,501,501,Arizona Wildcats,three point jumper,True,True,True,Gabe York,True,Rondae Hollis-Jefferson,47.0,5.0
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford made Jumper.,66,46,2,484,484,Rhode Island Rams,jumper,True,True,False,Xavier Munford,False,,8.0,5.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on T.J. Buchanan.,66,46,2,459,459,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams, Official TV Timeout,66,46,2,459,459,,tv timeout,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley made Free Throw.,67,46,2,459,459,Arizona Wildcats,free throw,True,True,False,Brandon Ashley,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley made Free Throw.,68,46,2,459,459,Arizona Wildcats,free throw,True,True,False,Brandon Ashley,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford missed Three Point Jumper.,68,46,2,449,449,Rhode Island Rams,three point jumper,True,False,True,Xavier Munford,False,,12.0,20.0
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley Defensive Rebound.,68,46,2,449,449,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Brandon Ashley.,68,46,2,420,420,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley Turnover.,68,46,2,420,420,Arizona Wildcats,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta made Layup.,68,48,2,398,398,Rhode Island Rams,layup,True,True,False,Gilvydas Biruta,False,,23.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on E.C. Matthews.,68,48,2,385,385,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson made Free Throw.,69,48,2,385,385,Arizona Wildcats,free throw,True,True,False,Rondae Hollis-Jefferson,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson made Free Throw.,70,48,2,385,385,Arizona Wildcats,free throw,True,True,False,Rondae Hollis-Jefferson,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford missed Jumper.,70,48,2,374,374,Rhode Island Rams,jumper,True,False,False,Xavier Munford,False,,26.0,4.0
+400517877,Arizona Wildcats,Rhode Island Rams,Kaleb Tarczewski Block.,70,48,2,374,374,Arizona Wildcats,block,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rhode Island Offensive Rebound.,70,48,2,374,374,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Kaleb Tarczewski.,70,48,2,364,364,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,E.C. Matthews made Free Throw.,70,49,2,364,364,Rhode Island Rams,free throw,True,True,False,E.C. Matthews,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,E.C. Matthews made Free Throw.,70,50,2,364,364,Rhode Island Rams,free throw,True,True,False,E.C. Matthews,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson made Jumper.,72,50,2,335,335,Arizona Wildcats,jumper,True,True,False,Nick Johnson,False,,43.0,10.0
+400517877,Arizona Wildcats,Rhode Island Rams,Biggie Minnis Turnover.,72,50,2,322,322,Rhode Island Rams,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson made Layup.,74,50,2,298,298,Arizona Wildcats,layup,True,True,False,Nick Johnson,False,,20.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Gilvydas Biruta.,74,50,2,298,298,Rhode Island Rams,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson made Free Throw.,75,50,2,298,298,Arizona Wildcats,free throw,True,True,False,Nick Johnson,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta missed Jumper.,75,50,2,276,276,Rhode Island Rams,jumper,True,False,False,Gilvydas Biruta,False,,18.0,6.0
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson Defensive Rebound.,75,50,2,276,276,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon missed Layup.,75,50,2,263,263,Arizona Wildcats,layup,True,False,False,Aaron Gordon,False,,23.0,0.0
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon Offensive Rebound.,75,50,2,263,263,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Aaron Gordon made Two Point Tip Shot.,77,50,2,263,263,Arizona Wildcats,two point tip shot,True,True,False,Aaron Gordon,False,,25.0,1.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Aaron Gordon.,77,50,2,242,242,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Jarelle Reischel missed Free Throw.,77,50,2,242,242,Rhode Island Rams,free throw,True,False,False,Jarelle Reischel,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rhode Island Deadball Team Rebound.,77,50,2,242,242,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Jarelle Reischel missed Free Throw.,77,50,2,242,242,Rhode Island Rams,free throw,True,False,False,Jarelle Reischel,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Brandon Ashley Defensive Rebound.,77,50,2,242,242,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rondae Hollis-Jefferson made Jumper.,79,50,2,227,227,Arizona Wildcats,jumper,True,True,False,Rondae Hollis-Jefferson,False,,20.0,3.0
+400517877,Arizona Wildcats,Rhode Island Rams,Gilvydas Biruta made Jumper.,79,52,2,214,214,Rhode Island Rams,jumper,True,True,False,Gilvydas Biruta,False,,27.0,9.0
+400517877,Arizona Wildcats,Rhode Island Rams,Nick Johnson made Dunk. Assisted by T.J. McConnell.,81,52,2,197,197,Arizona Wildcats,dunk,True,True,False,Nick Johnson,True,TJ McConnell,21.0,0.0
+400517877,Arizona Wildcats,Rhode Island Rams,Arizona  Timeout,81,52,2,193,193,Arizona Wildcats,timeout,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,E.C. Matthews missed Jumper.,81,52,2,180,180,Rhode Island Rams,jumper,True,False,False,E.C. Matthews,False,,14.0,11.0
+400517877,Arizona Wildcats,Rhode Island Rams,Matt Korcheck Defensive Rebound.,81,52,2,180,180,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. McConnell Turnover.,81,52,2,170,170,Arizona Wildcats,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams, Official TV Timeout,81,52,2,170,170,,tv timeout,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Jacob Hazzard.,81,52,2,156,156,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Biggie Minnis missed Free Throw.,81,52,2,156,156,Rhode Island Rams,free throw,True,False,False,Biggie Minnis,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Rhode Island Deadball Team Rebound.,81,52,2,156,156,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Biggie Minnis made Free Throw.,81,53,2,156,156,Rhode Island Rams,free throw,True,True,False,Biggie Minnis,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Gabe York made Three Point Jumper. Assisted by Elliott Pitts.,84,53,2,146,146,Arizona Wildcats,three point jumper,True,True,True,Gabe York,True,Elliott Pitts,25.0,24.0
+400517877,Arizona Wildcats,Rhode Island Rams,Biggie Minnis missed Jumper.,84,53,2,131,131,Rhode Island Rams,jumper,True,False,False,Biggie Minnis,False,,36.0,4.0
+400517877,Arizona Wildcats,Rhode Island Rams,Matt Korcheck Block.,84,53,2,131,131,Arizona Wildcats,block,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Elliott Pitts Defensive Rebound.,84,53,2,131,131,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Zach Peters Turnover.,84,53,2,117,117,Arizona Wildcats,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford made Layup.,84,55,2,103,103,Rhode Island Rams,layup,True,True,False,Xavier Munford,False,,22.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Elliott Pitts made Three Point Jumper. Assisted by Jacob Hazzard.,87,55,2,86,86,Arizona Wildcats,three point jumper,True,True,True,Elliott Pitts,True,Jacob Hazzard,45.0,18.0
+400517877,Arizona Wildcats,Rhode Island Rams,Xavier Munford missed Layup.,87,55,2,73,73,Rhode Island Rams,layup,True,False,False,Xavier Munford,False,,28.0,0.0
+400517877,Arizona Wildcats,Rhode Island Rams,Zach Peters Defensive Rebound.,87,55,2,73,73,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Jacob Hazzard missed Layup.,87,55,2,64,64,Arizona Wildcats,layup,True,False,False,Jacob Hazzard,False,,27.0,2.0
+400517877,Arizona Wildcats,Rhode Island Rams,Biggie Minnis Defensive Rebound.,87,55,2,64,64,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Trey Mason.,87,55,2,56,56,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. Buchanan made Free Throw.,87,56,2,56,56,Rhode Island Rams,free throw,True,True,False,T.J. Buchanan,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. Buchanan missed Free Throw.,87,56,2,56,56,Rhode Island Rams,free throw,True,False,False,T.J. Buchanan,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Zach Peters Defensive Rebound.,87,56,2,56,56,Arizona Wildcats,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Trey Mason Turnover.,87,56,2,39,39,Arizona Wildcats,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. Buchanan made Layup. Assisted by Biggie Minnis.,87,58,2,35,35,Rhode Island Rams,layup,True,True,False,T.J. Buchanan,True,Biggie Minnis,27.0,0.0
+400517877,Arizona Wildcats,Rhode Island Rams,Foul on Elliott Pitts.,87,58,2,35,35,Arizona Wildcats,foul,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,T.J. Buchanan made Free Throw.,87,59,2,35,35,Rhode Island Rams,free throw,True,True,False,T.J. Buchanan,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Elliott Pitts missed Three Point Jumper.,87,59,2,16,16,Arizona Wildcats,three point jumper,True,False,True,Elliott Pitts,False,,47.0,9.0
+400517877,Arizona Wildcats,Rhode Island Rams,Biggie Minnis Defensive Rebound.,87,59,2,16,16,Rhode Island Rams,rebound,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,Matthew Butler Turnover.,87,59,2,7,7,Rhode Island Rams,turnover,False,False,False,,False,,,
+400517877,Arizona Wildcats,Rhode Island Rams,End of Game,87,59,2,0,0,,end,False,False,False,,False,,,

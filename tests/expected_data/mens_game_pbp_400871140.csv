@@ -1,0 +1,349 @@
+game_id,home_team,away_team,play_desc,home_score,away_score,half,secs_left_half,secs_left_reg,play_team,play_type,shooting_play,scoring_play,is_three,shooter,is_assisted,assist_player,shot_x,shot_y
+400871140,Memphis Tigers,Tulane Green Wave,Jump Ball won by Memphis,0,0,1,1200,2400,Memphis Tigers,jump ball,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Ryan Smith.,0,0,1,1180,2380,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Ryan Smith.,0,0,1,1162,2362,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin made Jumper.,2,0,1,1158,2358,Memphis Tigers,jumper,True,True,False,Shaq Goodwin,False,,25.0,5.0
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski Turnover.,2,0,1,1137,2337,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford Steal.,2,0,1,1137,2337,Memphis Tigers,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell missed Three Point Jumper.,2,0,1,1122,2322,Memphis Tigers,three point jumper,True,False,True,Trahson Burrell,False,,2.0,2.0
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford Offensive Rebound.,2,0,1,1122,2322,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Blake Paul.,2,0,1,1117,2317,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin made Jumper.,4,0,1,1114,2314,Memphis Tigers,jumper,True,True,False,Shaq Goodwin,False,,32.0,5.0
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney missed Layup.,4,0,1,1088,2288,Tulane Green Wave,layup,True,False,False,Louis Dabney,False,,23.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell Block.,4,0,1,1088,2288,Memphis Tigers,block,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney Offensive Rebound.,4,0,1,1088,2288,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Trahson Burrell.,4,0,1,1085,2285,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney missed Free Throw.,4,0,1,1085,2285,Tulane Green Wave,free throw,True,False,False,Louis Dabney,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Tulane Deadball Team Rebound.,4,0,1,1085,2285,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney made Free Throw.,4,1,1,1085,2285,Tulane Green Wave,free throw,True,True,False,Louis Dabney,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Ricky Tarrant Jr. missed Jumper.,4,1,1,1075,2275,Memphis Tigers,jumper,True,False,False,Ricky Tarrant Jr.,False,,30.0,10.0
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan Defensive Rebound.,4,1,1,1075,2275,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski Turnover.,4,1,1,1069,2269,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford Steal.,4,1,1,1069,2269,Memphis Tigers,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Ricky Tarrant Jr. missed Three Point Jumper.,4,1,1,1061,2261,Memphis Tigers,three point jumper,True,False,True,Ricky Tarrant Jr.,False,,29.0,23.0
+400871140,Memphis Tigers,Tulane Green Wave,Von Julien Defensive Rebound.,4,1,1,1061,2261,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney made Three Point Jumper. Assisted by Von Julien.,4,4,1,1053,2253,Tulane Green Wave,three point jumper,True,True,True,Louis Dabney,True,Von Julien,23.0,23.0
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Blake Paul.,4,4,1,1032,2232,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin missed Jumper.,4,4,1,1030,2230,Memphis Tigers,jumper,True,False,False,Shaq Goodwin,False,,26.0,8.0
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski Defensive Rebound.,4,4,1,1030,2230,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan missed Layup.,4,4,1,1002,2202,Tulane Green Wave,layup,True,False,False,Malik Morgan,False,,26.0,3.0
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Defensive Rebound.,4,4,1,1002,2202,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin Turnover.,4,4,1,992,2192,Memphis Tigers,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Von Julien missed Three Point Jumper.,4,4,1,982,2182,Tulane Green Wave,three point jumper,True,False,True,Von Julien,False,,46.0,8.0
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski Offensive Rebound.,4,4,1,982,2182,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski made Layup.,4,6,1,977,2177,Tulane Green Wave,layup,True,True,False,Dylan Osetkowski,False,,26.0,2.0
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford made Jumper.,6,6,1,963,2163,Memphis Tigers,jumper,True,True,False,Markel Crawford,False,,30.0,6.0
+400871140,Memphis Tigers,Tulane Green Wave,T.J. Oliver Turnover.,6,6,1,939,2139,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave, Official TV Timeout,6,6,1,939,2139,,tv timeout,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson missed Jumper.,6,6,1,920,2120,Memphis Tigers,jumper,True,False,False,Dedric Lawson,False,,29.0,13.0
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell Offensive Rebound.,6,6,1,920,2120,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell missed Layup.,6,6,1,915,2115,Memphis Tigers,layup,True,False,False,Trahson Burrell,False,,22.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Nick Marshall Offensive Rebound.,6,6,1,915,2115,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Nick Marshall made Layup.,8,6,1,910,2110,Memphis Tigers,layup,True,True,False,Nick Marshall,False,,26.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney missed Jumper.,8,6,1,895,2095,Tulane Green Wave,jumper,True,False,False,Louis Dabney,False,,32.0,0.0
+400871140,Memphis Tigers,Tulane Green Wave,Ricky Tarrant Jr. Defensive Rebound.,8,6,1,895,2095,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson missed Jumper.,8,6,1,879,2079,Memphis Tigers,jumper,True,False,False,Dedric Lawson,False,,15.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Nick Marshall Offensive Rebound.,8,6,1,879,2079,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Nick Marshall made Layup.,10,6,1,875,2075,Memphis Tigers,layup,True,True,False,Nick Marshall,False,,26.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski missed Jumper.,10,6,1,850,2050,Tulane Green Wave,jumper,True,False,False,Dylan Osetkowski,False,,42.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,T.J. Oliver Offensive Rebound.,10,6,1,850,2050,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney missed Jumper.,10,6,1,843,2043,Tulane Green Wave,jumper,True,False,False,Louis Dabney,False,,41.0,7.0
+400871140,Memphis Tigers,Tulane Green Wave,Tulane Offensive Rebound.,10,6,1,843,2043,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Nick Marshall.,10,6,1,838,2038,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski missed Three Point Jumper.,10,6,1,835,2035,Tulane Green Wave,three point jumper,True,False,True,Dylan Osetkowski,False,,47.0,4.0
+400871140,Memphis Tigers,Tulane Green Wave,T.J. Oliver Offensive Rebound.,10,6,1,835,2035,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan missed Three Point Jumper.,10,6,1,830,2030,Tulane Green Wave,three point jumper,True,False,True,Malik Morgan,False,,19.0,23.0
+400871140,Memphis Tigers,Tulane Green Wave,T.J. Oliver Offensive Rebound.,10,6,1,830,2030,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Nick Marshall.,10,6,1,826,2026,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,T.J. Oliver missed Free Throw.,10,6,1,826,2026,Tulane Green Wave,free throw,True,False,False,T.J. Oliver,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Tulane Deadball Team Rebound.,10,6,1,826,2026,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,T.J. Oliver made Free Throw.,10,7,1,826,2026,Tulane Green Wave,free throw,True,True,False,T.J. Oliver,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson missed Jumper.,10,7,1,815,2015,Memphis Tigers,jumper,True,False,False,Dedric Lawson,False,,28.0,5.0
+400871140,Memphis Tigers,Tulane Green Wave,Melvin Frazier Defensive Rebound.,10,7,1,815,2015,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Cameron Reynolds missed Three Point Jumper.,10,7,1,804,2004,Tulane Green Wave,three point jumper,True,False,True,Cameron Reynolds,False,,21.0,23.0
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell Defensive Rebound.,10,7,1,804,2004,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell made Layup. Assisted by Dedric Lawson.,12,7,1,790,1990,Memphis Tigers,layup,True,True,False,Trahson Burrell,True,Dedric Lawson,26.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney missed Three Point Jumper.,12,7,1,765,1965,Tulane Green Wave,three point jumper,True,False,True,Louis Dabney,False,,25.0,25.0
+400871140,Memphis Tigers,Tulane Green Wave,Cameron Reynolds Offensive Rebound.,12,7,1,765,1965,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Cameron Reynolds missed Layup.,12,7,1,761,1961,Tulane Green Wave,layup,True,False,False,Cameron Reynolds,False,,28.0,2.0
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Block.,12,7,1,761,1961,Memphis Tigers,block,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell Defensive Rebound.,12,7,1,761,1961,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Turnover.,12,7,1,744,1944,Memphis Tigers,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney Steal.,12,7,1,744,1944,Tulane Green Wave,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney made Layup. Assisted by Melvin Frazier.,12,9,1,739,1939,Tulane Green Wave,layup,True,True,False,Louis Dabney,True,Melvin Frazier,25.0,3.0
+400871140,Memphis Tigers,Tulane Green Wave,Foul on T.J. Oliver.,12,9,1,722,1922,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin missed Jumper.,12,9,1,710,1910,Memphis Tigers,jumper,True,False,False,Shaq Goodwin,False,,25.0,7.0
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney Defensive Rebound.,12,9,1,710,1910,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,T.J. Oliver missed Three Point Jumper.,12,9,1,699,1899,Tulane Green Wave,three point jumper,True,False,True,T.J. Oliver,False,,13.0,19.0
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell Defensive Rebound.,12,9,1,699,1899,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin missed Jumper.,12,9,1,684,1884,Memphis Tigers,jumper,True,False,False,Shaq Goodwin,False,,24.0,5.0
+400871140,Memphis Tigers,Tulane Green Wave,T.J. Oliver Defensive Rebound.,12,9,1,684,1884,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney Turnover.,12,9,1,661,1861,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin Steal.,12,9,1,661,1861,Memphis Tigers,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave, Official TV Timeout,12,9,1,653,1853,,tv timeout,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin missed Jumper.,12,9,1,640,1840,Memphis Tigers,jumper,True,False,False,Shaq Goodwin,False,,21.0,15.0
+400871140,Memphis Tigers,Tulane Green Wave,Melvin Frazier Defensive Rebound.,12,9,1,640,1840,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Von Julien made Jumper.,12,11,1,621,1821,Tulane Green Wave,jumper,True,True,False,Von Julien,False,,26.0,8.0
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin made Jumper. Assisted by Trahson Burrell.,14,11,1,610,1810,Memphis Tigers,jumper,True,True,False,Shaq Goodwin,True,Trahson Burrell,26.0,5.0
+400871140,Memphis Tigers,Tulane Green Wave,Cameron Reynolds missed Jumper.,14,11,1,582,1782,Tulane Green Wave,jumper,True,False,False,Cameron Reynolds,False,,20.0,4.0
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford Defensive Rebound.,14,11,1,582,1782,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson missed Three Point Jumper.,14,11,1,562,1762,Memphis Tigers,three point jumper,True,False,True,Dedric Lawson,False,,22.0,22.0
+400871140,Memphis Tigers,Tulane Green Wave,Melvin Frazier Defensive Rebound.,14,11,1,562,1762,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan Turnover.,14,11,1,552,1752,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson made Three Point Jumper. Assisted by Markel Crawford.,17,11,1,539,1739,Memphis Tigers,three point jumper,True,True,True,Dedric Lawson,True,Markel Crawford,22.0,23.0
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney missed Three Point Jumper.,17,11,1,506,1706,Tulane Green Wave,three point jumper,True,False,True,Louis Dabney,False,,10.0,16.0
+400871140,Memphis Tigers,Tulane Green Wave,Tulane Offensive Rebound.,17,11,1,506,1706,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Trahson Burrell.,17,11,1,501,1701,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Melvin Frazier missed Jumper.,17,11,1,485,1685,Tulane Green Wave,jumper,True,False,False,Melvin Frazier,False,,16.0,8.0
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Defensive Rebound.,17,11,1,485,1685,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson made Layup.,19,11,1,468,1668,Memphis Tigers,layup,True,True,False,Dedric Lawson,False,,21.0,0.0
+400871140,Memphis Tigers,Tulane Green Wave,Tulane  Timeout,19,11,1,462,1662,Tulane Green Wave,timeout,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave, Official TV Timeout,19,11,1,462,1662,,tv timeout,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Cameron Reynolds missed Three Point Jumper.,19,11,1,439,1639,Tulane Green Wave,three point jumper,True,False,True,Cameron Reynolds,False,,44.0,14.0
+400871140,Memphis Tigers,Tulane Green Wave,Ricky Tarrant Jr. Defensive Rebound.,19,11,1,439,1639,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Turnover.,19,11,1,413,1613,Memphis Tigers,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Von Julien Steal.,19,11,1,413,1613,Tulane Green Wave,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Von Julien made Layup.,19,13,1,408,1608,Tulane Green Wave,layup,True,True,False,Von Julien,False,,27.0,0.0
+400871140,Memphis Tigers,Tulane Green Wave,Ricky Tarrant Jr. missed Three Point Jumper.,19,13,1,400,1600,Memphis Tigers,three point jumper,True,False,True,Ricky Tarrant Jr.,False,,5.0,10.0
+400871140,Memphis Tigers,Tulane Green Wave,Cameron Reynolds Defensive Rebound.,19,13,1,400,1600,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski Turnover.,19,13,1,377,1577,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Ricky Tarrant Jr. Steal.,19,13,1,377,1577,Memphis Tigers,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Dylan Osetkowski.,19,13,1,363,1563,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson made Free Throw.,20,13,1,363,1563,Memphis Tigers,free throw,True,True,False,Dedric Lawson,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson made Free Throw.,21,13,1,363,1563,Memphis Tigers,free throw,True,True,False,Dedric Lawson,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Kain Harris missed Three Point Jumper.,21,13,1,342,1542,Tulane Green Wave,three point jumper,True,False,True,Kain Harris,False,,47.0,-1.0
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin Defensive Rebound.,21,13,1,342,1542,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson missed Three Point Jumper.,21,13,1,325,1525,Memphis Tigers,three point jumper,True,False,True,Dedric Lawson,False,,13.0,21.0
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney Defensive Rebound.,21,13,1,325,1525,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Von Julien missed Three Point Jumper.,21,13,1,299,1499,Tulane Green Wave,three point jumper,True,False,True,Von Julien,False,,47.0,5.0
+400871140,Memphis Tigers,Tulane Green Wave,Sam Craft Defensive Rebound.,21,13,1,299,1499,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin made Layup. Assisted by Sam Craft.,23,13,1,290,1490,Memphis Tigers,layup,True,True,False,Shaq Goodwin,True,Sam Craft,26.0,2.0
+400871140,Memphis Tigers,Tulane Green Wave,Kain Harris Turnover.,23,13,1,272,1472,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Jeremiah Martin Steal.,23,13,1,272,1472,Memphis Tigers,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford made Layup. Assisted by Jeremiah Martin.,25,13,1,265,1465,Memphis Tigers,layup,True,True,False,Markel Crawford,True,Jeremiah Martin,27.0,2.0
+400871140,Memphis Tigers,Tulane Green Wave,Tulane  Timeout,25,13,1,265,1465,Tulane Green Wave,timeout,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan missed Jumper.,25,13,1,244,1444,Tulane Green Wave,jumper,True,False,False,Malik Morgan,False,,43.0,4.0
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Defensive Rebound.,25,13,1,244,1444,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson missed Jumper.,25,13,1,213,1413,Memphis Tigers,jumper,True,False,False,Dedric Lawson,False,,35.0,-1.0
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski Defensive Rebound.,25,13,1,213,1413,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan missed Three Point Jumper.,25,13,1,188,1388,Tulane Green Wave,three point jumper,True,False,True,Malik Morgan,False,,46.0,10.0
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford Defensive Rebound.,25,13,1,188,1388,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Turnover.,25,13,1,161,1361,Memphis Tigers,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney Steal.,25,13,1,161,1361,Tulane Green Wave,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Melvin Frazier made Three Point Jumper. Assisted by Louis Dabney.,25,16,1,142,1342,Tulane Green Wave,three point jumper,True,True,True,Melvin Frazier,True,Louis Dabney,48.0,-1.0
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin Turnover.,25,16,1,129,1329,Memphis Tigers,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski Steal.,25,16,1,129,1329,Tulane Green Wave,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski made Layup.,25,18,1,124,1324,Tulane Green Wave,layup,True,True,False,Dylan Osetkowski,False,,28.0,2.0
+400871140,Memphis Tigers,Tulane Green Wave,Memphis  Timeout,25,18,1,115,1315,Memphis Tigers,timeout,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on T.J. Oliver.,25,18,1,108,1308,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Ricky Tarrant Jr. made Free Throw.,26,18,1,108,1308,Memphis Tigers,free throw,True,True,False,Ricky Tarrant Jr.,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Ricky Tarrant Jr. missed Free Throw.,26,18,1,108,1308,Memphis Tigers,free throw,True,False,False,Ricky Tarrant Jr.,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan Defensive Rebound.,26,18,1,108,1308,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,T.J. Oliver made Layup. Assisted by Malik Morgan.,26,20,1,91,1291,Tulane Green Wave,layup,True,True,False,T.J. Oliver,True,Malik Morgan,23.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin missed Layup.,26,20,1,78,1278,Memphis Tigers,layup,True,False,False,Shaq Goodwin,False,,26.0,2.0
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan Defensive Rebound.,26,20,1,78,1278,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Melvin Frazier Turnover.,26,20,1,74,1274,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Ricky Tarrant Jr. Steal.,26,20,1,74,1274,Memphis Tigers,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on T.J. Oliver.,26,20,1,65,1265,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin made Free Throw.,27,20,1,65,1265,Memphis Tigers,free throw,True,True,False,Shaq Goodwin,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin missed Free Throw.,27,20,1,65,1265,Memphis Tigers,free throw,True,False,False,Shaq Goodwin,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan Defensive Rebound.,27,20,1,65,1265,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,T.J. Oliver missed Jumper.,27,20,1,58,1258,Tulane Green Wave,jumper,True,False,False,T.J. Oliver,False,,32.0,2.0
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Defensive Rebound.,27,20,1,58,1258,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on T.J. Oliver.,27,20,1,42,1242,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Ricky Tarrant Jr. made Free Throw.,28,20,1,42,1242,Memphis Tigers,free throw,True,True,False,Ricky Tarrant Jr.,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Ricky Tarrant Jr. made Free Throw.,29,20,1,42,1242,Memphis Tigers,free throw,True,True,False,Ricky Tarrant Jr.,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski missed Jumper.,29,20,1,26,1226,Tulane Green Wave,jumper,True,False,False,Dylan Osetkowski,False,,23.0,5.0
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford Defensive Rebound.,29,20,1,26,1226,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Cameron Reynolds.,29,20,1,22,1222,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford made Free Throw.,30,20,1,22,1222,Memphis Tigers,free throw,True,True,False,Markel Crawford,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford made Free Throw.,31,20,1,22,1222,Memphis Tigers,free throw,True,True,False,Markel Crawford,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Sam Craft.,31,20,1,12,1212,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Jeremiah Martin.,31,20,1,5,1205,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan made Free Throw.,31,21,1,5,1205,Tulane Green Wave,free throw,True,True,False,Malik Morgan,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan missed Free Throw.,31,21,1,5,1205,Tulane Green Wave,free throw,True,False,False,Malik Morgan,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Tulane Deadball Team Rebound.,31,21,1,5,1205,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan made Free Throw.,31,22,1,5,1205,Tulane Green Wave,free throw,True,True,False,Malik Morgan,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford missed Three Point Jumper.,31,22,1,1,1201,Memphis Tigers,three point jumper,True,False,True,Markel Crawford,False,,47.0,-1.0
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan Defensive Rebound.,31,22,1,1,1201,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,End of 1st half,31,22,1,0,1200,,end,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Jump Ball won by Tulane,31,22,2,1200,1200,Tulane Green Wave,jump ball,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski Turnover.,31,22,2,1180,1180,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin Steal.,31,22,2,1180,1180,Memphis Tigers,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin made Layup. Assisted by Dedric Lawson.,33,22,2,1156,1156,Memphis Tigers,layup,True,True,False,Shaq Goodwin,True,Dedric Lawson,29.0,0.0
+400871140,Memphis Tigers,Tulane Green Wave,Von Julien missed Layup.,33,22,2,1139,1139,Tulane Green Wave,layup,True,False,False,Von Julien,False,,26.0,2.0
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski Offensive Rebound.,33,22,2,1139,1139,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski missed Layup.,33,22,2,1133,1133,Tulane Green Wave,layup,True,False,False,Dylan Osetkowski,False,,25.0,2.0
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford Defensive Rebound.,33,22,2,1133,1133,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford missed Three Point Jumper.,33,22,2,1128,1128,Memphis Tigers,three point jumper,True,False,True,Markel Crawford,False,,47.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Ryan Smith Defensive Rebound.,33,22,2,1128,1128,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Shaq Goodwin.,33,22,2,1125,1125,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan missed Layup.,33,22,2,1108,1108,Tulane Green Wave,layup,True,False,False,Malik Morgan,False,,26.0,2.0
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin Block.,33,22,2,1108,1108,Memphis Tigers,block,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan Offensive Rebound.,33,22,2,1108,1108,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan Turnover.,33,22,2,1097,1097,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin made Layup. Assisted by Dedric Lawson.,35,22,2,1076,1076,Memphis Tigers,layup,True,True,False,Shaq Goodwin,True,Dedric Lawson,28.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney Turnover.,35,22,2,1061,1061,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Steal.,35,22,2,1061,1061,Memphis Tigers,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford made Layup. Assisted by Ricky Tarrant Jr..,37,22,2,1052,1052,Memphis Tigers,layup,True,True,False,Markel Crawford,True,Ricky Tarrant Jr,26.0,3.0
+400871140,Memphis Tigers,Tulane Green Wave,Tulane  Timeout,37,22,2,1052,1052,Tulane Green Wave,timeout,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Ricky Tarrant Jr..,37,22,2,1026,1026,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney missed Layup.,37,22,2,1014,1014,Tulane Green Wave,layup,True,False,False,Louis Dabney,False,,27.0,0.0
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin Block.,37,22,2,1014,1014,Memphis Tigers,block,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford Defensive Rebound.,37,22,2,1014,1014,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson missed Jumper.,37,22,2,1008,1008,Memphis Tigers,jumper,True,False,False,Dedric Lawson,False,,31.0,9.0
+400871140,Memphis Tigers,Tulane Green Wave,Blake Paul Defensive Rebound.,37,22,2,1008,1008,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Shaq Goodwin.,37,22,2,1003,1003,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan made Layup.,37,24,2,982,982,Tulane Green Wave,layup,True,True,False,Malik Morgan,False,,26.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson missed Layup.,37,24,2,953,953,Memphis Tigers,layup,True,False,False,Dedric Lawson,False,,26.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Blake Paul Block.,37,24,2,953,953,Tulane Green Wave,block,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell Offensive Rebound.,37,24,2,953,953,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Shaq Goodwin made Three Point Jumper. Assisted by Dedric Lawson.,40,24,2,947,947,Memphis Tigers,three point jumper,True,True,True,Shaq Goodwin,True,Dedric Lawson,34.0,21.0
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Shaq Goodwin.,40,24,2,943,943,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave, Official TV Timeout,40,24,2,943,943,,tv timeout,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski made Free Throw.,40,25,2,943,943,Tulane Green Wave,free throw,True,True,False,Dylan Osetkowski,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski made Free Throw.,40,26,2,943,943,Tulane Green Wave,free throw,True,True,False,Dylan Osetkowski,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell missed Layup.,40,26,2,925,925,Memphis Tigers,layup,True,False,False,Trahson Burrell,False,,28.0,2.0
+400871140,Memphis Tigers,Tulane Green Wave,Blake Paul Defensive Rebound.,40,26,2,925,925,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Kain Harris missed Layup.,40,26,2,912,912,Tulane Green Wave,layup,True,False,False,Kain Harris,False,,24.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Defensive Rebound.,40,26,2,912,912,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford missed Layup.,40,26,2,905,905,Memphis Tigers,layup,True,False,False,Markel Crawford,False,,26.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford Offensive Rebound.,40,26,2,905,905,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell made Layup. Assisted by Markel Crawford.,42,26,2,897,897,Memphis Tigers,layup,True,True,False,Trahson Burrell,True,Markel Crawford,28.0,0.0
+400871140,Memphis Tigers,Tulane Green Wave,Blake Paul made Dunk. Assisted by Dylan Osetkowski.,42,28,2,882,882,Tulane Green Wave,dunk,True,True,False,Blake Paul,True,Dylan Osetkowski,25.0,2.0
+400871140,Memphis Tigers,Tulane Green Wave,Nick Marshall missed Jumper.,42,28,2,871,871,Memphis Tigers,jumper,True,False,False,Nick Marshall,False,,29.0,14.0
+400871140,Memphis Tigers,Tulane Green Wave,Kain Harris Defensive Rebound.,42,28,2,871,871,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan missed Three Point Jumper.,42,28,2,863,863,Tulane Green Wave,three point jumper,True,False,True,Malik Morgan,False,,3.0,5.0
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell Defensive Rebound.,42,28,2,863,863,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson missed Layup.,42,28,2,854,854,Memphis Tigers,layup,True,False,False,Dedric Lawson,False,,23.0,0.0
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Offensive Rebound.,42,28,2,854,854,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Blake Paul.,42,28,2,851,851,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson made Free Throw.,43,28,2,851,851,Memphis Tigers,free throw,True,True,False,Dedric Lawson,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson made Free Throw.,44,28,2,851,851,Memphis Tigers,free throw,True,True,False,Dedric Lawson,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Ricky Tarrant Jr..,44,28,2,841,841,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,T.J. Oliver made Layup.,44,30,2,836,836,Tulane Green Wave,layup,True,True,False,T.J. Oliver,False,,22.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Kain Harris.,44,30,2,827,827,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell made Free Throw.,45,30,2,827,827,Memphis Tigers,free throw,True,True,False,Trahson Burrell,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell made Free Throw.,46,30,2,827,827,Memphis Tigers,free throw,True,True,False,Trahson Burrell,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Louis Dabney.,46,30,2,819,819,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney Turnover.,46,30,2,819,819,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson made Three Point Jumper. Assisted by Ricky Tarrant Jr..,49,30,2,808,808,Memphis Tigers,three point jumper,True,True,True,Dedric Lawson,True,Ricky Tarrant Jr,37.0,20.0
+400871140,Memphis Tigers,Tulane Green Wave,Melvin Frazier missed Layup.,49,30,2,791,791,Tulane Green Wave,layup,True,False,False,Melvin Frazier,False,,22.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Tulane Offensive Rebound.,49,30,2,791,791,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Shaq Goodwin.,49,30,2,777,777,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Cameron Reynolds made Jumper.,49,32,2,773,773,Tulane Green Wave,jumper,True,True,False,Cameron Reynolds,False,,22.0,7.0
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson missed Three Point Jumper.,49,32,2,739,739,Memphis Tigers,three point jumper,True,False,True,Dedric Lawson,False,,32.0,23.0
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan Defensive Rebound.,49,32,2,739,739,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Melvin Frazier Turnover.,49,32,2,731,731,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Ricky Tarrant Jr. Steal.,49,32,2,731,731,Memphis Tigers,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Cameron Reynolds.,49,32,2,727,727,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Nick Marshall made Jumper. Assisted by Trahson Burrell.,51,32,2,712,712,Memphis Tigers,jumper,True,True,False,Nick Marshall,True,Trahson Burrell,30.0,4.0
+400871140,Memphis Tigers,Tulane Green Wave,Cameron Reynolds made Three Point Jumper. Assisted by Louis Dabney.,51,35,2,702,702,Tulane Green Wave,three point jumper,True,True,True,Cameron Reynolds,True,Louis Dabney,19.0,23.0
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Louis Dabney.,51,35,2,676,676,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave, Official TV Timeout,51,35,2,676,676,,tv timeout,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell missed Jumper.,51,35,2,668,668,Memphis Tigers,jumper,True,False,False,Trahson Burrell,False,,29.0,5.0
+400871140,Memphis Tigers,Tulane Green Wave,Blake Paul Defensive Rebound.,51,35,2,668,668,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan made Layup.,51,37,2,651,651,Tulane Green Wave,layup,True,True,False,Malik Morgan,False,,27.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Ricky Tarrant Jr. missed Jumper.,51,37,2,627,627,Memphis Tigers,jumper,True,False,False,Ricky Tarrant Jr.,False,,29.0,7.0
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Offensive Rebound.,51,37,2,627,627,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Nick Marshall made Dunk. Assisted by Trahson Burrell.,53,37,2,619,619,Memphis Tigers,dunk,True,True,False,Nick Marshall,True,Trahson Burrell,22.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney missed Layup.,53,37,2,613,613,Tulane Green Wave,layup,True,False,False,Louis Dabney,False,,22.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford Defensive Rebound.,53,37,2,613,613,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Malik Morgan.,53,37,2,605,605,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell made Jumper. Assisted by Dedric Lawson.,55,37,2,600,600,Memphis Tigers,jumper,True,True,False,Trahson Burrell,True,Dedric Lawson,23.0,5.0
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan missed Three Point Jumper.,55,37,2,581,581,Tulane Green Wave,three point jumper,True,False,True,Malik Morgan,False,,26.0,24.0
+400871140,Memphis Tigers,Tulane Green Wave,Nick Marshall Defensive Rebound.,55,37,2,581,581,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell missed Layup.,55,37,2,545,545,Memphis Tigers,layup,True,False,False,Trahson Burrell,False,,29.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Offensive Rebound.,55,37,2,545,545,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson made Layup.,57,37,2,542,542,Memphis Tigers,layup,True,True,False,Dedric Lawson,False,,23.0,2.0
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Malik Morgan.,57,37,2,542,542,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson made Free Throw.,58,37,2,542,542,Memphis Tigers,free throw,True,True,False,Dedric Lawson,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dylan Osetkowski Turnover.,58,37,2,530,530,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Steal.,58,37,2,530,530,Memphis Tigers,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson made Jumper.,60,37,2,521,521,Memphis Tigers,jumper,True,True,False,Dedric Lawson,False,,13.0,0.0
+400871140,Memphis Tigers,Tulane Green Wave,Tulane  Timeout,60,37,2,507,507,Tulane Green Wave,timeout,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan Turnover.,60,37,2,498,498,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell Steal.,60,37,2,498,498,Memphis Tigers,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford made Layup. Assisted by Trahson Burrell.,62,37,2,492,492,Memphis Tigers,layup,True,True,False,Markel Crawford,True,Trahson Burrell,26.0,3.0
+400871140,Memphis Tigers,Tulane Green Wave,Cameron Reynolds Turnover.,62,37,2,478,478,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell Steal.,62,37,2,478,478,Memphis Tigers,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson missed Jumper.,62,37,2,459,459,Memphis Tigers,jumper,True,False,False,Dedric Lawson,False,,42.0,0.0
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell Offensive Rebound.,62,37,2,459,459,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Von Julien.,62,37,2,454,454,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell made Free Throw.,63,37,2,454,454,Memphis Tigers,free throw,True,True,False,Trahson Burrell,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Trahson Burrell made Free Throw.,64,37,2,454,454,Memphis Tigers,free throw,True,True,False,Trahson Burrell,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Sam Craft.,64,37,2,441,441,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney made Free Throw.,64,38,2,441,441,Tulane Green Wave,free throw,True,True,False,Louis Dabney,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney made Free Throw.,64,39,2,441,441,Tulane Green Wave,free throw,True,True,False,Louis Dabney,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Jeremiah Martin missed Jumper.,64,39,2,439,439,Memphis Tigers,jumper,True,False,False,Jeremiah Martin,False,,26.0,6.0
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan Defensive Rebound.,64,39,2,439,439,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney missed Three Point Jumper.,64,39,2,430,430,Tulane Green Wave,three point jumper,True,False,True,Louis Dabney,False,,18.0,23.0
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford Defensive Rebound.,64,39,2,430,430,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Sam Craft missed Layup.,64,39,2,406,406,Memphis Tigers,layup,True,False,False,Sam Craft,False,,21.0,0.0
+400871140,Memphis Tigers,Tulane Green Wave,Nick Marshall Offensive Rebound.,64,39,2,406,406,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Nick Marshall missed Layup.,64,39,2,403,403,Memphis Tigers,layup,True,False,False,Nick Marshall,False,,24.0,3.0
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Offensive Rebound.,64,39,2,403,403,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dedric Lawson Turnover.,64,39,2,403,403,Memphis Tigers,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan Steal.,64,39,2,403,403,Tulane Green Wave,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Louis Dabney Turnover.,64,39,2,393,393,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Sam Craft Turnover.,64,39,2,387,387,Memphis Tigers,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan Turnover.,64,39,2,383,383,Tulane Green Wave,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Sam Craft missed Layup.,64,39,2,377,377,Memphis Tigers,layup,True,False,False,Sam Craft,False,,24.0,3.0
+400871140,Memphis Tigers,Tulane Green Wave,Malik Morgan Block.,64,39,2,377,377,Tulane Green Wave,block,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Memphis Offensive Rebound.,64,39,2,377,377,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Sam Craft made Layup. Assisted by Jeremiah Martin.,66,39,2,347,347,Memphis Tigers,layup,True,True,False,Sam Craft,True,Jeremiah Martin,22.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Nick Marshall.,66,39,2,324,324,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Kain Harris made Free Throw.,66,40,2,324,324,Tulane Green Wave,free throw,True,True,False,Kain Harris,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Kain Harris made Free Throw.,66,41,2,324,324,Tulane Green Wave,free throw,True,True,False,Kain Harris,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Craig Randall II Turnover.,66,41,2,317,317,Memphis Tigers,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Blake Paul Steal.,66,41,2,317,317,Tulane Green Wave,steal,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Blake Paul made Layup.,66,43,2,308,308,Tulane Green Wave,layup,True,True,False,Blake Paul,False,,25.0,3.0
+400871140,Memphis Tigers,Tulane Green Wave,Memphis  Timeout,66,43,2,308,308,Memphis Tigers,timeout,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Von Julien.,66,43,2,300,300,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Jeremiah Martin made Free Throw.,67,43,2,300,300,Memphis Tigers,free throw,True,True,False,Jeremiah Martin,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Jeremiah Martin made Free Throw.,68,43,2,300,300,Memphis Tigers,free throw,True,True,False,Jeremiah Martin,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Markel Crawford.,68,43,2,288,288,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Kain Harris made Free Throw.,68,44,2,288,288,Tulane Green Wave,free throw,True,True,False,Kain Harris,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Kain Harris made Free Throw.,68,45,2,288,288,Tulane Green Wave,free throw,True,True,False,Kain Harris,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Jeremiah Martin missed Layup.,68,45,2,263,263,Memphis Tigers,layup,True,False,False,Jeremiah Martin,False,,29.0,0.0
+400871140,Memphis Tigers,Tulane Green Wave,Cameron Reynolds Defensive Rebound.,68,45,2,263,263,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Melvin Frazier made Layup.,68,47,2,253,253,Tulane Green Wave,layup,True,True,False,Melvin Frazier,False,,27.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave, Official TV Timeout,68,47,2,232,232,,tv timeout,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Von Julien.,68,47,2,232,232,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Technical Foul on Jake McDowell.,68,47,2,232,232,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Jake McDowell.,68,47,2,232,232,Memphis Tigers,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Jake McDowell made Free Throw.,69,47,2,232,232,Memphis Tigers,free throw,True,True,False,Jake McDowell,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Jake McDowell made Free Throw.,70,47,2,232,232,Memphis Tigers,free throw,True,True,False,Jake McDowell,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Cameron Reynolds missed Free Throw.,70,47,2,232,232,Tulane Green Wave,free throw,True,False,False,Cameron Reynolds,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Tulane Deadball Team Rebound.,70,47,2,232,232,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Cameron Reynolds made Free Throw.,70,48,2,232,232,Tulane Green Wave,free throw,True,True,False,Cameron Reynolds,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Melvin Frazier missed Three Point Jumper.,70,48,2,228,228,Tulane Green Wave,three point jumper,True,False,True,Melvin Frazier,False,,2.0,0.0
+400871140,Memphis Tigers,Tulane Green Wave,Markel Crawford Defensive Rebound.,70,48,2,228,228,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Sam Craft missed Three Point Jumper.,70,48,2,197,197,Memphis Tigers,three point jumper,True,False,True,Sam Craft,False,,48.0,3.0
+400871140,Memphis Tigers,Tulane Green Wave,Melvin Frazier Defensive Rebound.,70,48,2,197,197,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Kain Harris missed Three Point Jumper.,70,48,2,185,185,Tulane Green Wave,three point jumper,True,False,True,Kain Harris,False,,47.0,-1.0
+400871140,Memphis Tigers,Tulane Green Wave,Nick Marshall Defensive Rebound.,70,48,2,185,185,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Nick Marshall made Jumper. Assisted by Markel Crawford.,72,48,2,157,157,Memphis Tigers,jumper,True,True,False,Nick Marshall,True,Markel Crawford,42.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Blake Paul missed Dunk.,72,48,2,147,147,Tulane Green Wave,dunk,True,False,False,Blake Paul,False,,24.0,1.0
+400871140,Memphis Tigers,Tulane Green Wave,Nick Marshall Defensive Rebound.,72,48,2,147,147,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Memphis  Timeout,72,48,2,136,136,Memphis Tigers,timeout,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Sam Craft missed Jumper.,72,48,2,111,111,Memphis Tigers,jumper,True,False,False,Sam Craft,False,,41.0,10.0
+400871140,Memphis Tigers,Tulane Green Wave,Caleb Wallingford Offensive Rebound.,72,48,2,111,111,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Melvin Frazier.,72,48,2,105,105,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Caleb Wallingford missed Free Throw.,72,48,2,105,105,Memphis Tigers,free throw,True,False,False,Caleb Wallingford,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Memphis Deadball Team Rebound.,72,48,2,105,105,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Caleb Wallingford made Free Throw.,73,48,2,105,105,Memphis Tigers,free throw,True,True,False,Caleb Wallingford,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,T.J. Oliver missed Jumper.,73,48,2,96,96,Tulane Green Wave,jumper,True,False,False,T.J. Oliver,False,,18.0,18.0
+400871140,Memphis Tigers,Tulane Green Wave,Craig Randall II Defensive Rebound.,73,48,2,96,96,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Foul on Riley Conroy.,73,48,2,73,73,Tulane Green Wave,foul,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dante Scott missed Free Throw.,73,48,2,73,73,Memphis Tigers,free throw,True,False,False,Dante Scott,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Memphis Deadball Team Rebound.,73,48,2,73,73,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dante Scott made Free Throw.,74,48,2,73,73,Memphis Tigers,free throw,True,True,False,Dante Scott,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Riley Conroy missed Three Point Jumper.,74,48,2,61,61,Tulane Green Wave,three point jumper,True,False,True,Riley Conroy,False,,3.0,6.0
+400871140,Memphis Tigers,Tulane Green Wave,Jake McDowell Defensive Rebound.,74,48,2,61,61,Memphis Tigers,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Dante Scott missed Three Point Jumper.,74,48,2,46,46,Memphis Tigers,three point jumper,True,False,True,Dante Scott,False,,5.0,9.0
+400871140,Memphis Tigers,Tulane Green Wave,Blake Paul Defensive Rebound.,74,48,2,46,46,Tulane Green Wave,rebound,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Melvin Frazier made Three Point Jumper. Assisted by Von Julien.,74,51,2,36,36,Tulane Green Wave,three point jumper,True,True,True,Melvin Frazier,True,Von Julien,39.0,16.0
+400871140,Memphis Tigers,Tulane Green Wave,Memphis  Turnover.,74,51,2,2,2,Memphis Tigers,turnover,False,False,False,,False,,,
+400871140,Memphis Tigers,Tulane Green Wave,Von Julien made Three Point Jumper.,74,54,2,1,1,Tulane Green Wave,three point jumper,True,True,True,Von Julien,False,,25.0,36.0
+400871140,Memphis Tigers,Tulane Green Wave,End of Game,74,54,2,0,0,,end,False,False,False,,False,,,
