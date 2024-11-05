@@ -1,0 +1,26 @@
+game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,fta,oreb,dreb,reb,ast,stl,blk,to,pf,pts
+400989020,New Orleans Privateers,M. Puou,4067763,,True,21.0,1,3,1,3,0,0,4,4,3,1,4,0,1,0,1,4,6
+400989020,New Orleans Privateers,T. Thibodeaux,3130713,,True,36.0,10,14,8,11,2,3,2,5,3,6,9,5,0,0,3,5,24
+400989020,New Orleans Privateers,T. Green,4279181,,True,17.0,0,4,0,3,0,1,0,0,0,2,2,1,0,0,1,3,0
+400989020,New Orleans Privateers,D. Champion,4279178,,True,21.0,4,4,4,4,0,0,3,4,0,3,3,1,2,0,0,2,11
+400989020,New Orleans Privateers,B. Robinson,4067760,,True,31.0,3,14,0,3,3,11,0,0,1,1,2,4,0,0,3,1,9
+400989020,New Orleans Privateers,S. Plaisance Jr.,3141271,,False,8.0,0,1,0,1,0,0,0,0,1,0,1,0,0,1,3,1,0
+400989020,New Orleans Privateers,E. Charles,4279185,,False,8.0,0,1,0,0,0,1,0,0,0,2,2,0,1,0,2,1,0
+400989020,New Orleans Privateers,T. Harrison,4279183,,False,5.0,0,0,0,0,0,0,0,0,0,1,1,2,0,0,1,1,0
+400989020,New Orleans Privateers,L. Berzat,4279180,,False,10.0,0,1,0,0,0,1,0,0,0,1,1,0,0,0,0,1,0
+400989020,New Orleans Privateers,D. Rosser,4279179,,False,17.0,2,3,2,3,0,0,4,6,0,3,3,1,0,0,0,1,8
+400989020,New Orleans Privateers,M. Jiles,3159512,,False,1.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+400989020,New Orleans Privateers,M. Zeno,3130711,,False,25.0,5,10,5,10,0,0,0,0,2,5,7,2,0,0,2,0,10
+400989020,New Orleans Privateers,TEAM,TOTAL,TOTAL,False,,25,55,20,38,5,17,13,19,12,25,37,16,4,1,18,21,68
+400989020,Stephen F. Austin Lumberjacks,T. Holyfield,3907339,,True,24.0,6,8,5,7,1,1,2,2,2,3,5,3,0,1,2,4,15
+400989020,Stephen F. Austin Lumberjacks,L. Gilmore III,3155483,,True,20.0,3,5,3,5,0,0,0,1,0,3,3,2,0,0,2,2,6
+400989020,Stephen F. Austin Lumberjacks,I. Canete,4067861,,True,32.0,6,13,1,5,5,8,6,8,3,3,6,2,1,1,2,2,23
+400989020,Stephen F. Austin Lumberjacks,K. Harris,4067858,,True,31.0,5,12,4,8,1,4,0,0,1,2,3,3,0,1,1,2,11
+400989020,Stephen F. Austin Lumberjacks,A. Augustin,4067857,,True,26.0,0,4,0,2,0,2,3,4,0,1,1,5,2,0,0,1,3
+400989020,Stephen F. Austin Lumberjacks,S. Nieminen,4067863,,False,4.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,3,0
+400989020,Stephen F. Austin Lumberjacks,N. Bain,3907340,,False,4.0,0,2,0,2,0,0,0,0,0,0,0,0,1,0,0,1,0
+400989020,Stephen F. Austin Lumberjacks,J. Grujic,3907343,,False,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+400989020,Stephen F. Austin Lumberjacks,J. Comeaux,4278338,,False,11.0,0,1,0,1,0,0,0,0,0,1,1,3,0,0,1,1,0
+400989020,Stephen F. Austin Lumberjacks,S. Bogues,4278337,,False,17.0,4,8,4,7,0,1,0,0,0,0,0,0,1,0,1,1,8
+400989020,Stephen F. Austin Lumberjacks,T. Charles,3130726,,False,31.0,5,7,5,6,0,1,2,3,3,6,9,0,0,1,3,4,12
+400989020,Stephen F. Austin Lumberjacks,TEAM,TOTAL,TOTAL,False,,29,60,22,43,7,17,13,18,10,21,31,18,5,4,13,21,78

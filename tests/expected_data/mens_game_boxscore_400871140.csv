@@ -1,0 +1,26 @@
+game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,fta,oreb,dreb,reb,ast,stl,blk,to,pf,pts
+400871140,Tulane Green Wave,D. Osetkowski,3155390,,True,28.0,2,6,2,5,0,1,2,2,2,2,4,1,1,0,5,1,6
+400871140,Tulane Green Wave,R. Smith,66769,,True,6.0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,2,0
+400871140,Tulane Green Wave,V. Julien,3913548,,True,27.0,3,6,2,3,1,3,0,0,0,1,1,2,1,0,0,3,7
+400871140,Tulane Green Wave,M. Morgan,61624,,True,29.0,2,9,2,5,0,4,2,3,1,7,8,1,1,1,4,2,6
+400871140,Tulane Green Wave,L. Dabney,61343,,True,28.0,2,10,1,6,1,4,3,4,1,2,3,2,2,0,4,2,8
+400871140,Tulane Green Wave,B. Paul,3913551,,False,12.0,2,3,2,3,0,0,0,0,0,4,4,0,1,1,0,3,4
+400871140,Tulane Green Wave,T.J. Oliver,3913550,,False,13.0,2,5,2,4,0,1,1,2,3,1,4,0,0,0,1,4,5
+400871140,Tulane Green Wave,K. Harris,3913547,,False,11.0,0,3,0,1,0,2,4,4,0,1,1,0,0,0,1,1,4
+400871140,Tulane Green Wave,O. Yurtseven,66768,,False,20.0,2,6,1,3,1,3,1,2,1,2,3,0,0,0,1,2,6
+400871140,Tulane Green Wave,M. Frazier Jr.,3913546,,False,24.0,3,6,1,3,2,3,0,0,0,4,4,1,0,0,2,1,8
+400871140,Tulane Green Wave,R. Conroy,3155389,,False,2.0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0
+400871140,Tulane Green Wave,TEAM,TOTAL,TOTAL,False,,18,55,13,33,5,22,13,17,10,25,35,7,6,2,18,22,54
+400871140,Memphis Tigers,D. Lawson,3907785,,True,32.0,5,16,3,11,2,5,5,5,4,5,9,5,2,1,4,0,17
+400871140,Memphis Tigers,S. Goodwin,61328,,True,21.0,7,12,6,11,1,1,1,2,0,1,1,0,2,2,2,4,16
+400871140,Memphis Tigers,R. Tarrant Jr.,56744,,True,23.0,0,4,0,2,0,2,3,4,0,2,2,2,3,0,0,2,3
+400871140,Memphis Tigers,T. Burrell,56135,,True,24.0,3,8,3,7,0,1,4,4,3,4,7,4,2,1,0,2,10
+400871140,Memphis Tigers,M. Crawford,66593,,True,35.0,4,7,4,5,0,2,2,2,2,8,10,3,2,0,0,1,10
+400871140,Memphis Tigers,N. Marshall,3907787,,False,18.0,5,7,5,7,0,0,0,0,3,3,6,0,0,0,0,3,10
+400871140,Memphis Tigers,J. McDowell,66596,,False,8.0,0,0,0,0,0,0,2,2,0,1,1,0,0,0,0,1,2
+400871140,Memphis Tigers,C. Wallingford,3947070,,False,2.0,0,0,0,0,0,0,1,2,1,0,1,0,0,0,0,0,1
+400871140,Memphis Tigers,C. Randall II,3947068,,False,3.0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0
+400871140,Memphis Tigers,D. Scott,3947067,,False,2.0,0,1,0,0,0,1,1,2,0,0,0,0,0,0,0,0,1
+400871140,Memphis Tigers,J. Martin,3907788,,False,20.0,0,2,0,2,0,0,2,2,0,0,0,2,1,0,0,1,2
+400871140,Memphis Tigers,S. Craft,3050473,,False,12.0,1,5,1,4,0,1,0,0,0,1,1,1,0,0,1,2,2
+400871140,Memphis Tigers,TEAM,TOTAL,TOTAL,False,,25,62,22,49,3,13,21,25,14,26,40,17,12,4,9,16,74

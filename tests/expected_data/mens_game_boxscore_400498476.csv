@@ -1,0 +1,26 @@
+game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,fta,oreb,dreb,reb,ast,stl,blk,to,pf,pts
+400498476,Allen University Yellow Jackets,D. Anthony,3082160,,True,22.0,2,9,0,5,2,4,2,2,2,1,3,1,0,0,3,4,8
+400498476,Allen University Yellow Jackets,C. Camon,3082161,,True,11.0,1,4,1,2,0,2,0,2,0,0,0,0,0,0,2,1,2
+400498476,Allen University Yellow Jackets,J. Pettus,3082159,,True,24.0,4,8,4,8,0,0,0,2,1,3,4,1,0,0,3,1,8
+400498476,Allen University Yellow Jackets,M. Jones,3082158,,True,23.0,1,6,1,5,0,1,2,2,1,3,4,2,1,0,3,0,4
+400498476,Allen University Yellow Jackets,S. Rivers,64742,,True,20.0,5,7,4,6,1,1,0,0,1,2,3,2,0,1,2,3,11
+400498476,Allen University Yellow Jackets,A. Truesdale,3082162,,False,6.0,1,3,0,2,1,1,0,0,0,0,0,0,0,0,0,1,3
+400498476,Allen University Yellow Jackets,D. McCord,64747,,False,26.0,3,7,3,6,0,1,0,0,0,6,6,0,1,1,4,1,6
+400498476,Allen University Yellow Jackets,T. McDuffie,64746,,False,13.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,3,0
+400498476,Allen University Yellow Jackets,J. Johnson,64744,,False,32.0,2,6,2,6,0,0,1,2,5,5,10,0,1,0,2,3,5
+400498476,Allen University Yellow Jackets,J. Crawford,60319,,False,15.0,2,3,2,3,0,0,0,0,1,3,4,0,2,0,1,5,4
+400498476,Allen University Yellow Jackets,K. Council,3082195,,False,8.0,0,3,0,3,0,0,0,0,0,1,1,0,0,0,1,2,0
+400498476,Allen University Yellow Jackets,TEAM,TOTAL,TOTAL,False,,21,56,17,46,4,10,5,10,11,24,35,6,5,2,22,24,51
+400498476,Gardner-Webb Runnin' Bulldogs,J. Hill,62703,,True,13.0,1,2,1,2,0,0,4,6,0,0,0,2,0,0,2,2,6
+400498476,Gardner-Webb Runnin' Bulldogs,M. Byron,56642,,True,11.0,2,2,2,2,0,0,0,2,0,4,4,1,0,1,1,0,4
+400498476,Gardner-Webb Runnin' Bulldogs,T. Strange,57685,,True,29.0,4,6,1,1,3,5,2,2,0,3,3,5,3,0,0,1,13
+400498476,Gardner-Webb Runnin' Bulldogs,J. Castellanos,52213,,True,24.0,2,4,0,2,2,2,4,4,0,3,3,6,1,0,1,1,10
+400498476,Gardner-Webb Runnin' Bulldogs,N. Hibbert,46004,,True,21.0,6,10,3,5,3,5,0,0,0,3,3,6,2,0,1,0,15
+400498476,Gardner-Webb Runnin' Bulldogs,D. Tuff,66569,,False,15.0,1,2,1,2,0,0,0,4,1,1,2,0,0,0,1,1,2
+400498476,Gardner-Webb Runnin' Bulldogs,T. Nelson,66568,,False,14.0,2,5,2,5,0,0,4,7,1,2,3,0,1,0,1,1,8
+400498476,Gardner-Webb Runnin' Bulldogs,C. Hensley,58436,,False,12.0,0,1,0,1,0,0,0,0,2,0,2,0,1,0,0,2,0
+400498476,Gardner-Webb Runnin' Bulldogs,A. Sweeney,62706,,False,10.0,0,5,0,2,0,3,2,2,0,1,1,0,0,0,1,1,2
+400498476,Gardner-Webb Runnin' Bulldogs,L. Stumpf,62705,,False,15.0,3,4,2,2,1,2,3,4,0,5,5,0,0,0,0,3,10
+400498476,Gardner-Webb Runnin' Bulldogs,I. Ivey,62704,,False,18.0,4,7,1,2,3,5,1,2,0,2,2,0,1,1,0,0,12
+400498476,Gardner-Webb Runnin' Bulldogs,O. Branch,62702,,False,18.0,2,3,2,2,0,1,6,6,2,2,4,0,0,1,0,0,10
+400498476,Gardner-Webb Runnin' Bulldogs,TEAM,TOTAL,TOTAL,False,,27,51,15,28,12,23,26,39,7,27,34,20,9,3,9,12,92

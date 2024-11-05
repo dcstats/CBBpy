@@ -1,0 +1,27 @@
+game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,fta,oreb,dreb,reb,ast,stl,blk,to,pf,pts
+400517877,Rhode Island Rams,G. Biruta,51340,,True,34.0,4,9,4,8,0,1,0,0,1,5,6,1,2,1,2,4,8
+400517877,Rhode Island Rams,I. Onyekaba,66405,,True,10.0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,2,0
+400517877,Rhode Island Rams,J. Reischel,56269,,True,31.0,3,7,3,6,0,1,0,2,0,3,3,0,0,0,2,3,6
+400517877,Rhode Island Rams,X. Munford,61681,,True,36.0,7,18,6,12,1,6,7,9,0,4,4,0,1,0,1,0,22
+400517877,Rhode Island Rams,M. Powell,56136,,True,16.0,0,2,0,1,0,1,2,2,0,3,3,0,0,0,0,0,2
+400517877,Rhode Island Rams,H. Martin,66404,,False,11.0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0
+400517877,Rhode Island Rams,M. Aaman,61682,,False,3.0,1,2,1,2,0,0,0,0,1,0,1,0,0,0,0,0,2
+400517877,Rhode Island Rams,M. Butler,66403,,False,1.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+400517877,Rhode Island Rams,E.C. Matthews,66402,,False,24.0,0,6,0,5,0,1,3,4,0,0,0,2,1,0,1,4,3
+400517877,Rhode Island Rams,B. Minnis,57298,,False,21.0,3,5,2,4,1,1,2,4,0,2,2,3,0,0,3,4,9
+400517877,Rhode Island Rams,T.J. Buchanan,56139,,False,13.0,2,3,2,2,0,1,3,4,1,1,2,0,1,0,0,1,7
+400517877,Rhode Island Rams,TEAM,TOTAL,TOTAL,False,,20,54,18,42,2,12,17,25,6,20,26,6,5,1,12,19,59
+400517877,Arizona Wildcats,A. Gordon,66320,,True,29.0,5,12,5,10,0,2,2,3,3,4,7,2,0,2,1,1,12
+400517877,Arizona Wildcats,B. Ashley,61548,,True,31.0,5,8,5,7,0,1,6,8,0,6,6,0,0,1,2,3,16
+400517877,Arizona Wildcats,K. Tarczewski,61552,,True,24.0,4,5,4,5,0,0,0,1,1,3,4,2,0,2,0,5,8
+400517877,Arizona Wildcats,N. Johnson,56290,,True,26.0,7,12,5,8,2,4,4,4,1,9,10,6,1,0,2,2,20
+400517877,Arizona Wildcats,T.J. McConnell,51279,,True,28.0,3,4,2,2,1,2,0,0,0,2,2,5,3,1,3,2,7
+400517877,Arizona Wildcats,R. Hollis Jefferson,66321,,False,22.0,5,7,4,6,1,1,2,4,1,1,2,1,0,1,1,2,13
+400517877,Arizona Wildcats,Z. Peters,61620,,False,3.0,0,0,0,0,0,0,0,0,0,2,2,0,0,0,1,0,0
+400517877,Arizona Wildcats,M. Korcheck,61551,,False,3.0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,0,0,0
+400517877,Arizona Wildcats,E. Pitts,66323,,False,6.0,1,2,0,0,1,2,0,0,0,1,1,1,0,0,1,2,3
+400517877,Arizona Wildcats,T. Mason,66322,,False,2.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0
+400517877,Arizona Wildcats,G. York,61553,,False,21.0,3,6,1,2,2,4,0,0,0,1,1,1,1,0,1,1,8
+400517877,Arizona Wildcats,J. Hazzard,61549,,False,3.0,0,1,0,1,0,0,0,0,0,0,0,1,0,0,0,1,0
+400517877,Arizona Wildcats,J. Mayes,51264,,False,2.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0
+400517877,Arizona Wildcats,TEAM,TOTAL,TOTAL,False,,33,57,26,41,7,16,14,20,8,30,38,19,5,8,14,21,87

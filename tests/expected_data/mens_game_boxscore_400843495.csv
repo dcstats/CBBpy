@@ -1,0 +1,21 @@
+game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,fta,oreb,dreb,reb,ast,stl,blk,to,pf,pts
+400843495,Western Kentucky Hilltoppers,J. Johnson,3132547,,True,23.0,5,9,5,9,0,0,4,6,3,5,8,0,0,0,2,2,14
+400843495,Western Kentucky Hilltoppers,B. Lawson,67507,,True,26.0,1,1,1,1,0,0,4,4,1,10,11,0,1,1,2,4,6
+400843495,Western Kentucky Hilltoppers,C. McNeal,3907670,,True,21.0,2,5,0,0,2,5,2,4,0,2,2,2,1,0,2,2,8
+400843495,Western Kentucky Hilltoppers,F. Edmond,3907667,,True,37.0,6,10,6,10,0,0,1,1,1,5,6,4,0,0,5,3,13
+400843495,Western Kentucky Hilltoppers,A. Cosby,56175,,True,33.0,4,13,2,4,2,9,11,12,0,3,3,2,1,0,3,3,21
+400843495,Western Kentucky Hilltoppers,A. Waters,3907672,,False,16.0,4,5,4,5,0,0,0,0,1,3,4,1,0,1,2,2,8
+400843495,Western Kentucky Hilltoppers,A. Rostov,62559,,False,16.0,2,3,1,2,1,1,2,2,0,4,4,0,0,1,0,3,7
+400843495,Western Kentucky Hilltoppers,N. Snipes,56576,,False,24.0,2,5,0,1,2,4,0,0,0,1,1,3,1,0,1,2,6
+400843495,Western Kentucky Hilltoppers,M. Hunter,3907669,,False,4.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+400843495,Western Kentucky Hilltoppers,TEAM,TOTAL,TOTAL,False,,26,51,19,32,7,19,24,29,7,36,43,12,4,3,18,21,83
+400843495,UTSA Roadrunners,L. O'Brien,61751,,True,34.0,0,6,0,4,0,2,4,5,0,6,6,1,2,0,1,4,4
+400843495,UTSA Roadrunners,J. Ringholt,3132533,,True,26.0,4,6,1,1,3,5,2,2,1,3,4,0,0,0,0,2,13
+400843495,UTSA Roadrunners,J.R. Harris,3919467,,True,35.0,2,7,1,2,1,5,0,0,0,1,1,0,1,1,3,4,5
+400843495,UTSA Roadrunners,R. Bowie,3132532,,True,37.0,6,16,3,9,3,7,3,4,3,2,5,3,1,1,2,4,18
+400843495,UTSA Roadrunners,C. Wilson,3132530,,True,40.0,10,16,10,15,0,1,7,9,0,2,2,7,4,0,2,0,27
+400843495,UTSA Roadrunners,A.J. Cockrell,3906738,,False,6.0,0,2,0,2,0,0,1,2,1,0,1,0,0,0,1,4,1
+400843495,UTSA Roadrunners,N. Allen,3906737,,False,10.0,1,3,1,2,0,1,0,0,0,1,1,0,1,0,0,0,2
+400843495,UTSA Roadrunners,P. Jones Jr.,62770,,False,4.0,0,3,0,3,0,0,0,0,0,0,0,0,0,1,0,1,0
+400843495,UTSA Roadrunners,A. Karrer,3132531,,False,8.0,0,0,0,0,0,0,1,2,0,1,1,0,0,0,0,1,1
+400843495,UTSA Roadrunners,TEAM,TOTAL,TOTAL,False,,23,59,16,38,7,21,18,24,5,19,24,11,9,3,9,21,71
