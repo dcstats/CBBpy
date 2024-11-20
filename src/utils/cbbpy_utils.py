@@ -301,9 +301,9 @@ def _get_game_boxscore(game_id, game_type):
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
-            # check if game was postponed
+            # check if game was postponed, cancelled, etc
             gm_status = gamepackage["gmStrp"]["status"]["desc"]
-            gsbool = gm_status == "Final"  # or (gm_status == 'In Progress')
+            gsbool = gm_status == "Final" or gm_status == 'In Progress'
             if not gsbool:
                 _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
                 return pd.DataFrame([])
@@ -375,7 +375,7 @@ def _get_game_pbp(game_id, game_type):
 
             # check if game was postponed
             gm_status = gamepackage["gmStrp"]["status"]["desc"]
-            gsbool = gm_status == "Final"  # or (gm_status == 'In Progress')
+            gsbool = gm_status == "Final" or gm_status == 'In Progress'
             if not gsbool:
                 _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
                 return pd.DataFrame([])
@@ -438,10 +438,9 @@ def _get_game_info(game_id, game_type):
 
             # check if game was postponed
             gm_status = gamepackage["gmStrp"]["status"]["desc"]
-            gsbool = gm_status == "Final"  # or (gm_status == 'In Progress')
+            gsbool = gm_status == "Final" or gm_status == 'In Progress'
             if not gsbool:
                 _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
-                return pd.DataFrame([])
 
             # get general game info
             info = gamepackage["gmInfo"]
@@ -1126,9 +1125,8 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     else:
         df["shot_x"] = np.nan
         df["shot_y"] = np.nan
-        return df
 
-    return df
+    return df.sort_values(by=[pd_type, pd_type_sec], ascending=[True, False])
 
 
 def _get_game_info_helper(info, more_info, game_id, game_type):
@@ -1140,6 +1138,7 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
     game_date = gm_date.replace(tzinfo=timezone.utc).astimezone(tz=tz("US/Pacific"))
     game_day = game_date.strftime("%B %d, %Y")
     game_time = game_date.strftime("%I:%M %p %Z")
+    gm_status = more_info["status"]["desc"]
 
     arena = info["loc"] if "loc" in info.keys() else ""
     loc = (
@@ -1187,7 +1186,7 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
 
     home_score, away_score = int(ht_info["score"]), int(at_info["score"])
 
-    home_win = True if home_score > away_score else False
+    home_win = True if home_score > away_score and gm_status == 'Final' else False
 
     is_postseason = True if more_info["seasonType"] == 3 else False
     is_conference = more_info["isConferenceGame"]
@@ -1218,6 +1217,7 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
 
     game_info_list = [
         game_id,
+        gm_status,
         home_team,
         home_id,
         home_rank,
@@ -1248,6 +1248,7 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
 
     game_info_cols = [
         "game_id",
+        "game_status",
         "home_team",
         "home_id",
         "home_rank",
