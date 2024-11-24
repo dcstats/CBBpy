@@ -167,5 +167,15 @@ def get_team_schedule(team: str, season: int = None) -> pd.DataFrame:
     return _get_team_schedule(team, season, "mens")
 
 
-def get_season_conferences(season: Union[str, int]):
+def get_season_conferences(season: Union[str, int] = None):
+    """Returns all conference names for a specified season.
+
+    Args:
+        season (int, optional): The season to return conferences for. Defaults to current season.
+
+    Returns:
+        pd.DataFrame: The conference names for a given season.
+    """
+    if season is None:
+        season = _get_current_season()
     return _get_season_conferences(season, "mens")
