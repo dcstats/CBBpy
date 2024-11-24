@@ -137,7 +137,7 @@ def test_womens_pbp():
 
 
 def test_mens_player():
-    mens_expected_df = load_expected_dataframe(DATA_PATH / f"mens_players.csv")
+    mens_expected_df = load_expected_dataframe(DATA_PATH / "mens_players.csv")
     pl_ls = mens_expected_df.player_id.tolist()
 
     mens_result_df = pd.DataFrame()
@@ -150,7 +150,7 @@ def test_mens_player():
 
 
 def test_womens_player():
-    womens_expected_df = load_expected_dataframe(DATA_PATH / f"womens_players.csv")
+    womens_expected_df = load_expected_dataframe(DATA_PATH / "womens_players.csv")
     pl_ls = womens_expected_df.player_id.tolist()
 
     womens_result_df = pd.DataFrame()
@@ -164,7 +164,7 @@ def test_womens_player():
 
 def test_mens_schedule():
     mens_result_df = pd.DataFrame()
-    mens_expected_df = load_expected_dataframe(DATA_PATH / f"mens_schedule.csv")
+    mens_expected_df = load_expected_dataframe(DATA_PATH / "mens_schedule.csv")
 
     for x in M_SCHEDULE:
         sn, nm = x
@@ -178,7 +178,7 @@ def test_mens_schedule():
 
 def test_womens_schedule():
     womens_result_df = pd.DataFrame()
-    womens_expected_df = load_expected_dataframe(DATA_PATH / f"womens_schedule.csv")
+    womens_expected_df = load_expected_dataframe(DATA_PATH / "womens_schedule.csv")
 
     for x in W_SCHEDULE:
         sn, nm = x

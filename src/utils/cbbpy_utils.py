@@ -601,6 +601,13 @@ def _get_team_schedule(team, season, game_type):
     return df
 
 
+def _get_season_conferences(season, game_type):
+    season = int(season)
+    all_tms = pd.read_csv(f'{Path(__file__).parent}/{game_type}_team_map.csv')
+    tms = all_tms[all_tms.season == season][['conference', 'conference_abb']].drop_duplicates()
+    return tms.reset_index(drop=True)
+
+
 def _parse_date(date):
     parsed = False
 
@@ -1460,7 +1467,7 @@ def _find_json_in_content(soup):
     return script_string
 
 
-def get_current_season():
+def _get_current_season():
     if datetime.today().month >= 10:
         return datetime.today().year + 1
     return datetime.today().year
