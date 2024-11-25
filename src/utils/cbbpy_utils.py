@@ -1408,7 +1408,7 @@ def _get_id_from_team(team, season, game_type):
         best_match, score, _ = process.extractOne(
             team,
             choices,
-            scorer=distance.DamerauLevenshtein.normalized_similarity,
+            scorer=distance.JaroWinkler.normalized_similarity,
             processor=utils.default_process
         )
 
