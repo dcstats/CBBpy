@@ -17,8 +17,8 @@ from utils.cbbpy_utils import (
     _get_game_info,
     _get_player_info,
     _get_team_schedule,
+    _get_conference_schedule,
     _get_current_season,
-    _get_season_conferences
 )
 
 
@@ -167,15 +167,16 @@ def get_team_schedule(team: str, season: int = None) -> pd.DataFrame:
     return _get_team_schedule(team, season, "womens")
 
 
-def get_season_conferences(season: Union[str, int] = None):
-    """Returns all conference names for a specified season.
+def get_conference_schedule(conference: str, season: Union[str, int] = None):
+    """Returns the given season's schedules for all teams in the given conference.
 
     Args:
+        conference (str): The conference to return schedules for.
         season (int, optional): The season to return conferences for. Defaults to current season.
 
     Returns:
-        pd.DataFrame: The conference names for a given season.
+        pd.DataFrame: The conference schedules.
     """
     if season is None:
         season = _get_current_season()
-    return _get_season_conferences(season, "womens")
+    return _get_conference_schedule(conference, season, "womens")

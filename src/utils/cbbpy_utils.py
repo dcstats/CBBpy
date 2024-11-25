@@ -15,7 +15,7 @@ import json
 import os
 import logging
 import warnings
-from rapidfuzz import process
+from rapidfuzz import process, distance, utils
 from pathlib import Path
 
 
@@ -601,11 +601,16 @@ def _get_team_schedule(team, season, game_type):
     return df
 
 
-def _get_season_conferences(season, game_type):
-    season = int(season)
-    all_tms = pd.read_csv(f'{Path(__file__).parent}/{game_type}_team_map.csv')
-    tms = all_tms[all_tms.season == season][['conference', 'conference_abb']].drop_duplicates()
-    return tms.reset_index(drop=True)
+def _get_conference_schedule(conference, season, game_type):
+    teams = _get_teams_from_conf(conference, season, game_type)
+
+    df = pd.DataFrame()
+
+    for team in teams:
+        sch = _get_team_schedule(team, season, game_type)
+        df = pd.concat([df, sch])
+
+    return df.reset_index(drop=True)
 
 
 def _parse_date(date):
@@ -1320,7 +1325,6 @@ def _get_player_details_helper(player_id, info, game_type):
     }])
 
 
-# TODO
 def _get_schedule_helper(jsn, team, id_, season):
     # reg season, playoffs, etc are separated
     season_types = jsn["page"]["content"]['scheduleData']['teamSchedule']
@@ -1377,26 +1381,85 @@ def _get_schedule_helper(jsn, team, id_, season):
         'game_result'
     ]
 
-    return pd.DataFrame(data, columns=cols)
+    df = pd.DataFrame(data, columns=cols)
+    df = df.sort_values(
+        by=['team', 'game_day'],
+        key=lambda x: x if x.name == 'team' else pd.to_datetime(x)
+    )
+
+    return df
+
+
+def _get_team_map(game_type):
+    data_path = Path(__file__).parent / f'{game_type}_team_map.csv'
+    return pd.read_csv(data_path)
 
 
 def _get_id_from_team(team, season, game_type):
-    current_dir = Path(__file__).parent
-    data_path = current_dir.parent / 'utils' / f'{game_type}_team_map.csv'
-    teams_map = pd.read_csv(data_path)
-    id_map = teams_map[teams_map.season == season][['id', 'location']]
+    # fetch list of teams and team IDs for given season
+    team_map_df = _get_team_map(game_type)
+    id_map = team_map_df[team_map_df.season == season][['id', 'location']]
     id_map = id_map.set_index('location')['id'].to_dict()
 
+    # if the given team is not in the list of teams, search for nearest match
     if not team.lower() in [x.lower() for x in list(id_map.keys())]:
-        choices = [x.lower() for x in list(id_map.keys())]
-        best_match, score, _ = process.extractOne(team.lower(), choices)
-        print(f'Could not find team {team}. Getting season for closest match: {best_match}')
+        choices = list(id_map.keys())
+
+        best_match, score, _ = process.extractOne(
+            team,
+            choices,
+            scorer=distance.DamerauLevenshtein.normalized_similarity,
+            processor=utils.default_process
+        )
+
+        print(f"No exact match for '{team}'. Fetching closest team match: '{best_match}'.")
+        
         team = best_match
         id_ = id_map[best_match]
     else:
         id_ = id_map[team]
 
     return id_, team
+
+
+def _get_season_conferences(season, game_type):
+    season = int(season)
+    team_map_df = _get_team_map(game_type)
+    confs_df = team_map_df[team_map_df.season == season][['conference', 'conference_abb']].drop_duplicates()
+    return confs_df.reset_index(drop=True)
+
+
+def _get_teams_from_conf(conference, season, game_type):
+    # fetch list of teams and team IDs for given season
+    team_map_df, confs_df = _get_team_map(game_type), _get_season_conferences(season, game_type)
+    abb_map = confs_df.set_index('conference_abb').conference.to_dict()
+    choices = confs_df.conference.tolist() + confs_df.conference_abb.tolist()
+
+    # if the given conference is not in the list of conferences, search for nearest match
+    if not conference.lower() in [x.lower() for x in choices]:
+        best_match, score, _ = process.extractOne(
+            conference,
+            choices,
+            scorer=distance.JaroWinkler.normalized_similarity,
+            processor=utils.default_process
+        )
+
+        # if matched abbreviation, swap for conference name
+        if best_match in abb_map:
+            best_match = abb_map[best_match]
+
+        print(f"No exact match for '{conference}'. Fetching closest conference match: '{best_match}'.")
+    else:
+        best_match = conference
+
+        # if matched abbreviation, swap for conference name
+        if best_match in abb_map:
+            best_match = abb_map[best_match]
+
+    # filter teams df to relevant conference
+    rel_team_df = team_map_df[(team_map_df.season == season) & (team_map_df.conference == best_match)]
+
+    return rel_team_df.location.tolist()
 
 
 def _get_json_from_soup(soup):
