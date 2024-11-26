@@ -25,6 +25,11 @@ Install using pip:
 pip install cbbpy
 ```
 
+Or upgrade an existing installation:
+```shell
+pip install --upgrade cbbpy
+```
+
 The men's and women's scrapers can be imported as such:
 ```python
 import cbbpy.mens_scraper as s
@@ -50,7 +55,9 @@ NOTE: game ID, as far as CBBpy is concerned, is a valid **ESPN** game ID
 
 `s.get_player_info(player_id: str)` returns a DataFrame describing the player's info from ESPN's bio page.
 
-`s.get_team_schedule(team: str, season: int = None)` returns a DataFrame of a team's schedule for a given season (defaults to the current season).
+`s.get_team_schedule(team: str, season: int = None)` returns a DataFrame of a team's schedule for a given season (defaults to the current season). If a given team does not have an exact match in the static list of teams scraped from ESPN's site, this function will scrape the schedule for the closest fuzzy-matched team (e.g. if "valpo" is provided as the team, the function will scrape the schedule for "Valparaiso").
+
+`s.get_conference_schedule(conference: str, season: int = None)` returns a DataFrame of the schedules for all teams in a given conference for a given season (defaults to the current season). If a given conference does not have an exact match in the static list of conferences scraped from ESPN's site, this function will scrape the schedules for the closest fuzzy-matched conference (e.g. if "am east" is provided as the conference, the function will scrape the schedules for "America East Conference").
 
 ## Examples
 
@@ -117,7 +124,7 @@ import cbbpy.womens_scraper as s
 s.get_team_schedule('davidson', 2022)
 ```
 
-Returns:
+Returns (partially):
 |    | team     |   team_id |   season |   game_id | game_day          | game_time    | opponent                                  |   opponent_id | season_type    | game_status   | tv_network   | game_result   |
 |---:|:---------|----------:|---------:|----------:|:------------------|:-------------|:------------------------------------------|--------------:|:---------------|:--------------|:-------------|:--------------|
 |  0 | Davidson |      2166 |     2022 | 401370995 | November 09, 2021 | 04:00 PM PST | Delaware Blue Hens                        |            48 | Regular Season | Final         | ESPN+        | W 93-71       |
@@ -125,37 +132,22 @@ Returns:
 |  2 | Davidson |      2166 |     2022 | 401365883 | November 18, 2021 | 09:00 AM PST | New Mexico State Aggies                   |           166 | Regular Season | Final         | ESPNU        | L 64-75       |
 |  3 | Davidson |      2166 |     2022 | 401377036 | November 19, 2021 | 11:30 AM PST | Pennsylvania Quakers                      |           219 | Regular Season | Final         | ESPNU        | W 72-60       |
 |  4 | Davidson |      2166 |     2022 | 401377040 | November 21, 2021 | 03:00 PM PST | East Carolina Pirates                     |           151 | Regular Season | Final         | ESPNU        | W 76-67       |
-|  5 | Davidson |      2166 |     2022 | 401370997 | November 27, 2021 | 11:00 AM PST | Robert Morris Colonials                   |          2523 | Regular Season | Final         | ESPN+        | W 88-70       |
-|  6 | Davidson |      2166 |     2022 | 401370998 | November 30, 2021 | 04:00 PM PST | Charlotte 49ers                           |          2429 | Regular Season | Final         |              | W 75-58       |
-|  7 | Davidson |      2166 |     2022 | 401370999 | December 04, 2021 | 12:00 PM PST | William & Mary Tribe                      |          2729 | Regular Season | Final         | ESPN+        | W 70-46       |
-|  8 | Davidson |      2166 |     2022 | 401371000 | December 12, 2021 | 10:00 AM PST | Northeastern Huskies                      |           111 | Regular Season | Final         |              | W 79-69       |
-|  9 | Davidson |      2166 |     2022 | 401371001 | December 18, 2021 | 10:00 AM PST | Radford Highlanders                       |          2515 | Regular Season | Final         | ESPN+        | W 74-54       |
-| 10 | Davidson |      2166 |     2022 | 401395130 | December 21, 2021 | 04:00 PM PST | Alabama Crimson Tide                      |           333 | Regular Season | Final         | SECN+        | W 79-78       |
-| 11 | Davidson |      2166 |     2022 | 401396268 | December 22, 2021 | 10:00 AM PST | Johnson & Wales (NC) Johnson & Wales (Nc) |          3169 | Regular Season | Final         | ESPN+        | W 106-64      |
-| 12 | Davidson |      2166 |     2022 | 401365755 | December 30, 2021 | 04:00 PM PST | Duquesne Dukes                            |          2184 | Regular Season | Postponed     |              | N/A           |
-| 13 | Davidson |      2166 |     2022 | 401365762 | January 02, 2022  | 11:30 AM PST | VCU Rams                                  |          2670 | Regular Season | Postponed     |              | N/A           |
-| 14 | Davidson |      2166 |     2022 | 401365770 | January 05, 2022  | 04:00 PM PST | Saint Joseph's Hawks                      |          2603 | Regular Season | Final         | ESPN+        | W 88-73       |
-| 15 | Davidson |      2166 |     2022 | 401365777 | January 08, 2022  | 11:00 AM PST | Rhode Island Rams                         |           227 | Regular Season | Final         |              | W 72-68       |
-| 16 | Davidson |      2166 |     2022 | 401365783 | January 11, 2022  | 04:00 PM PST | Massachusetts Minutemen                   |           113 | Regular Season | Final         | ESPN+        | W 77-67       |
-| 17 | Davidson |      2166 |     2022 | 401365789 | January 14, 2022  | 06:00 PM PST | Richmond Spiders                          |           257 | Regular Season | Final         | ESPNU        | W 87-84       |
-| 18 | Davidson |      2166 |     2022 | 401402046 | January 18, 2022  | 04:00 PM PST | VCU Rams                                  |          2670 | Regular Season | Final         | CBSSN        | W 63-61       |
-| 19 | Davidson |      2166 |     2022 | 401365801 | January 22, 2022  | 11:00 AM PST | Fordham Rams                              |          2230 | Regular Season | Final         | ESPN+        | W 69-66       |
-| 20 | Davidson |      2166 |     2022 | 401365805 | January 26, 2022  | 05:30 PM PST | VCU Rams                                  |          2670 | Regular Season | Final         | CBSSN        | L 68-70       |
-| 21 | Davidson |      2166 |     2022 | 401365811 | January 29, 2022  | 09:00 AM PST | La Salle Explorers                        |          2325 | Regular Season | Final         | USA Net      | W 77-69       |
-| 22 | Davidson |      2166 |     2022 | 401365817 | February 01, 2022 | 04:00 PM PST | St. Bonaventure Bonnies                   |           179 | Regular Season | Final         | CBSSN        | W 81-76       |
-| 23 | Davidson |      2166 |     2022 | 401365824 | February 05, 2022 | 11:00 AM PST | George Washington Revolutionaries         |            45 | Regular Season | Final         | ESPN+        | W 78-73       |
-| 24 | Davidson |      2166 |     2022 | 401365832 | February 09, 2022 | 04:00 PM PST | Saint Joseph's Hawks                      |          2603 | Regular Season | Final         | ESPN+        | W 73-67       |
-| 25 | Davidson |      2166 |     2022 | 401365838 | February 12, 2022 | 11:00 AM PST | Rhode Island Rams                         |           227 | Regular Season | Final         | ESPNU        | L 65-72       |
-| 26 | Davidson |      2166 |     2022 | 401408133 | February 14, 2022 | 04:00 PM PST | Duquesne Dukes                            |          2184 | Regular Season | Final         | ESPN+        | W 72-61       |
-| 27 | Davidson |      2166 |     2022 | 401365847 | February 19, 2022 | 12:30 PM PST | Saint Louis Billikens                     |           139 | Regular Season | Final         | CBSSN        | W 79-58       |
-| 28 | Davidson |      2166 |     2022 | 401365856 | February 23, 2022 | 04:00 PM PST | Duquesne Dukes                            |          2184 | Regular Season | Final         | ESPN+        | W 74-50       |
-| 29 | Davidson |      2166 |     2022 | 401365861 | February 26, 2022 | 11:30 AM PST | Fordham Rams                              |          2230 | Regular Season | Final         | ESPN+        | W 66-45       |
-| 30 | Davidson |      2166 |     2022 | 401365868 | March 02, 2022    | 04:00 PM PST | George Mason Patriots                     |          2244 | Regular Season | Final         | ESPN+        | W 73-62       |
-| 31 | Davidson |      2166 |     2022 | 401365874 | March 05, 2022    | 09:30 AM PST | Dayton Flyers                             |          2168 | Regular Season | Final         | USA Net      | L 76-82       |
-| 32 | Davidson |      2166 |     2022 | 401403377 | March 11, 2022    | 09:00 AM PST | Fordham Rams                              |          2230 | Regular Season | Final         | USA Net      | W 74-56       |
-| 33 | Davidson |      2166 |     2022 | 401403381 | March 12, 2022    | 10:00 AM PST | Saint Louis Billikens                     |           139 | Regular Season | Final         | CBSSN        | W 84-69       |
-| 34 | Davidson |      2166 |     2022 | 401403383 | March 13, 2022    | 10:00 AM PDT | Richmond Spiders                          |           257 | Regular Season | Final         | CBS          | L 62-64       |
-| 35 | Davidson |      2166 |     2022 | 401408593 | March 18, 2022    | 06:37 PM PDT | Michigan State Spartans                   |           127 | Postseason     | Final         | CBS          | L 73-74       |
+
+Function call:
+
+```python
+import cbbpy.mens_scraper as s
+s.get_conference_schedule('ovc', 2015)
+```
+
+Returns (showing the middle of the output):
+|    | team             |   team_id |   season |   game_id | game_day          | game_time    | opponent                   |   opponent_id | season_type    | game_status   | tv_network   | game_result   |
+|---:|:-----------------|----------:|---------:|----------:|:------------------|:-------------|:---------------------------|--------------:|:---------------|:--------------|:-------------|:--------------|
+| 30 | Belmont          |      2057 |     2015 | 400766521 | March 06, 2015    | 07:15 PM PST | Eastern Kentucky Colonels  |          2198 | Regular Season | Final         | ESPNU        | W 53-52       |
+| 31 | Belmont          |      2057 |     2015 | 400766705 | March 07, 2015    | 04:00 PM PST | Murray State Racers        |            93 | Regular Season | Final         | ESPN2        | W 88-87       |
+| 32 | Belmont          |      2057 |     2015 | 400785349 | March 20, 2015    | 12:30 PM PDT | Virginia Cavaliers         |           258 | Postseason     | Final         | truTV        | L 67-79       |
+| 33 | Eastern Kentucky |      2198 |     2015 | 400596308 | November 14, 2014 | 04:00 PM PST | Savannah State Tigers      |          2542 | Regular Season | Final         |              | W 76-53       |
+| 34 | Eastern Kentucky |      2198 |     2015 | 400596315 | November 18, 2014 | 04:00 PM PST | Kentucky Christian Knights |          3077 | Regular Season | Final         |              | W 115-35      |
 
 
 

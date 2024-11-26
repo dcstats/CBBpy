@@ -162,7 +162,7 @@ def test_womens_player():
     pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
 
 
-def test_mens_schedule():
+def test_mens_team_schedule():
     mens_result_df = pd.DataFrame()
     mens_expected_df = load_expected_dataframe(DATA_PATH / "mens_schedule.csv")
 
@@ -176,7 +176,7 @@ def test_mens_schedule():
     pd.testing.assert_frame_equal(mens_result_df, mens_expected_df)
 
 
-def test_womens_schedule():
+def test_womens_team_schedule():
     womens_result_df = pd.DataFrame()
     womens_expected_df = load_expected_dataframe(DATA_PATH / "womens_schedule.csv")
 
@@ -188,6 +188,16 @@ def test_womens_schedule():
     womens_result_df.reset_index(inplace=True, drop=True)
 
     pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
+
+
+# TODO
+def test_mens_conference_schedule():
+    pass
+
+
+# TODO
+def test_womens_conference_schedule():
+    pass
 
 
 def test_mens_range():
