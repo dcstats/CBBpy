@@ -29,7 +29,7 @@ W_GAMES = [
     401091038,
     401387091
 ]
-M_SCHEDULE = [
+M_TEAM_SCHEDULE = [
     (2014, "UC Davis"),
     (2019, "Minnesota"),
     (2008, "Saint Peter's"),
@@ -41,7 +41,7 @@ M_SCHEDULE = [
     (2015, "Alcorn State"),
     (2017, "Pacific")
 ]
-W_SCHEDULE = [
+W_TEAM_SCHEDULE = [
     (2019, "Detroit Mercy"),
     (2014, "TCU"),
     (2020, "Iowa State"),
@@ -52,6 +52,20 @@ W_SCHEDULE = [
     (2021, "Illinois"),
     (2016, "Morehead State"),
     (2021, "Cal Poly")
+]
+M_CONF_SCHEDULE = [
+    (2006, "Division I Independents"),
+    (2021, "Patriot League"),
+    (2020, "Sun Belt Conference"),
+    (2017, "Pac-12 Conference"),
+    (2016, "Big Sky Conference"),
+]
+W_CONF_SCHEDULE = [
+    (2024, "Northeast Conference"),
+    (2013, "Big Ten Conference"),
+    (2019, "Big Ten Conference"),
+    (2022, "Southeastern Conference"),
+    (2019, "West Coast Conference"),
 ]
 DATA_PATH = Path(__file__).parent / 'expected_data'
 
@@ -164,9 +178,9 @@ def test_womens_player():
 
 def test_mens_team_schedule():
     mens_result_df = pd.DataFrame()
-    mens_expected_df = load_expected_dataframe(DATA_PATH / "mens_schedule.csv")
+    mens_expected_df = load_expected_dataframe(DATA_PATH / "mens_team_schedule.csv")
 
-    for x in M_SCHEDULE:
+    for x in M_TEAM_SCHEDULE:
         sn, nm = x
         d = ms.get_team_schedule(nm, sn)
         mens_result_df = pd.concat([mens_result_df, d])
@@ -178,9 +192,9 @@ def test_mens_team_schedule():
 
 def test_womens_team_schedule():
     womens_result_df = pd.DataFrame()
-    womens_expected_df = load_expected_dataframe(DATA_PATH / "womens_schedule.csv")
+    womens_expected_df = load_expected_dataframe(DATA_PATH / "womens_team_schedule.csv")
 
-    for x in W_SCHEDULE:
+    for x in W_TEAM_SCHEDULE:
         sn, nm = x
         d = ws.get_team_schedule(nm, sn)
         womens_result_df = pd.concat([womens_result_df, d])
@@ -190,14 +204,32 @@ def test_womens_team_schedule():
     pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
 
 
-# TODO
 def test_mens_conference_schedule():
-    pass
+    mens_result_df = pd.DataFrame()
+    mens_expected_df = load_expected_dataframe(DATA_PATH / "mens_conference_schedule.csv")
+
+    for x in M_CONF_SCHEDULE:
+        sn, cf = x
+        d = ms.get_conference_schedule(cf, sn)
+        mens_result_df = pd.concat([mens_result_df, d])
+
+    mens_result_df.reset_index(inplace=True, drop=True)
+
+    pd.testing.assert_frame_equal(mens_result_df, mens_expected_df)
 
 
-# TODO
 def test_womens_conference_schedule():
-    pass
+    womens_result_df = pd.DataFrame()
+    womens_expected_df = load_expected_dataframe(DATA_PATH / "womens_conference_schedule.csv")
+
+    for x in W_CONF_SCHEDULE:
+        sn, cf = x
+        d = ws.get_conference_schedule(cf, sn)
+        womens_result_df = pd.concat([womens_result_df, d])
+
+    womens_result_df.reset_index(inplace=True, drop=True)
+
+    pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
 
 
 def test_mens_range():
