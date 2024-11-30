@@ -1,4 +1,3 @@
-import sys
 from bs4 import BeautifulSoup as bs
 import requests as r
 import pandas as pd
@@ -17,6 +16,8 @@ import logging
 import warnings
 from rapidfuzz import process, distance, utils
 from pathlib import Path
+from platformdirs import user_log_dir
+from importlib.metadata import version
 
 
 warnings.filterwarnings('ignore', category=UserWarning)
@@ -100,8 +101,18 @@ STATUS_OK = 200
 WOMEN_HALF_RULE_CHANGE_DATE = parser.parse("2015-05-01")
 
 
-logging.basicConfig(stream=sys.stdout, level=logging.WARNING)
-_log = logging.getLogger(__name__)
+# logging setup
+log_dir = user_log_dir(appname="CBBpy", appauthor="Daniel Cowan", version=version("cbbpy"))
+os.makedirs(log_dir, exist_ok=True)
+log_file = os.path.join(log_dir, "CBBpy.log")
+
+file_handler = logging.FileHandler(log_file)
+formatter = logging.Formatter('%(asctime)s | %(name)s | %(levelname)s: %(message)s')
+file_handler.setFormatter(formatter)
+
+_log = logging.getLogger("CBBpy")
+_log.setLevel(logging.WARNING)
+_log.addHandler(file_handler)
 
 
 # pnf_ will keep track of games w/ page not found errors
@@ -121,17 +132,17 @@ def _get_game(game_id, game_type, info, box, pbp):
     game_info_df = boxscore_df = pbp_df = pd.DataFrame([])
 
     if game_id in pnf_:
-        _log.error(f'"{time.ctime()}": {game_id} - Game Info: Page not found error')
+        _log.error(f'{game_id} - Game Info: Page not found error')
     elif info:
         game_info_df = _get_game_info(game_id, game_type)
 
     if game_id in pnf_:
-        _log.error(f'"{time.ctime()}": {game_id} - Boxscore: Page not found error')
+        _log.error(f'{game_id} - Boxscore: Page not found error')
     elif box:
         boxscore_df = _get_game_boxscore(game_id, game_type)
 
     if game_id in pnf_:
-        _log.error(f'"{time.ctime()}": {game_id} - PBP: Page not found error')
+        _log.error(f'{game_id} - PBP: Page not found error')
     elif pbp:
         pbp_df = _get_game_pbp(game_id, game_type)
 
@@ -163,10 +174,7 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
         for i in t:
             date = date_range[i]
             game_ids = _get_game_ids(date, game_type)
-            t.set_description(
-                f"Scraping {len(game_ids)} games on {date.strftime('%D')}",
-                refresh=False,
-            )
+            t.set_description(f"Scraping {len(game_ids)} games on {date.strftime('%D')}")
 
             if len(game_ids) > 0:
                 result = Parallel(n_jobs=cpus)(
@@ -199,6 +207,8 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
         ascending=False,
         kind='mergesort'
     ).reset_index(drop=True)
+
+    print(f"Log file is located at {log_file}")
 
     return (game_info_df, game_boxscore_df, game_pbp_df)
 
@@ -252,23 +262,23 @@ def _get_game_ids(date, game_type):
                 if soup is not None:
                     if "Page not found." in soup.text:
                         _log.error(
-                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: Page not found error'
+                            f'{date.strftime("%D")} - IDs: Page not found error'
                         )
                     elif "Page error" in soup.text:
                         _log.error(
-                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: Page error'
+                            f'{date.strftime("%D")} - IDs: Page error'
                         )
                     elif scoreboard is None:
                         _log.error(
-                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: JSON not found on page.'
+                            f'{date.strftime("%D")} - IDs: JSON not found on page.'
                         )
                     else:
                         _log.error(
-                            f'"{time.ctime()}": {date.strftime("%D")} - IDs: {ex}\n{traceback.format_exc()}'
+                            f'{date.strftime("%D")} - IDs: {ex}\n{traceback.format_exc()}'
                         )
                 else:
                     _log.error(
-                        f'"{time.ctime()}": {date.strftime("%D")} - IDs: GET error\n{ex}\n{traceback.format_exc()}'
+                        f'{date.strftime("%D")} - IDs: GET error\n{ex}\n{traceback.format_exc()}'
                     )
                 return pd.DataFrame([])
             else:
@@ -305,7 +315,7 @@ def _get_game_boxscore(game_id, game_type):
             gm_status = gamepackage["gmStrp"]["status"]["desc"]
             gsbool = gm_status == "Final" or gm_status == 'In Progress'
             if not gsbool:
-                _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
+                _log.warning(f'{game_id} - {gm_status}')
                 return pd.DataFrame([])
 
             boxscore = gamepackage["bxscr"]
@@ -315,7 +325,7 @@ def _get_game_boxscore(game_id, game_type):
         except Exception as ex:
             if soup is not None:
                 if "No Box Score Available" in soup.text:
-                    _log.warning(f'"{time.ctime()}": {game_id} - No boxscore available')
+                    _log.warning(f'{game_id} - No boxscore available')
                     return pd.DataFrame([])
 
             if i + 1 == ATTEMPTS:
@@ -323,24 +333,24 @@ def _get_game_boxscore(game_id, game_type):
                 if soup is not None:
                     if "Page not found." in soup.text:
                         _log.error(
-                            f'"{time.ctime()}": {game_id} - Boxscore: Page not found error'
+                            f'{game_id} - Boxscore: Page not found error'
                         )
                         pnf_.append(game_id)
                     elif "Page error" in soup.text:
                         _log.error(
-                            f'"{time.ctime()}": {game_id} - Boxscore: Page error'
+                            f'{game_id} - Boxscore: Page error'
                         )
                     elif gamepackage is None:
                         _log.error(
-                            f'"{time.ctime()}": {game_id} - Boxscore: Game JSON not found on page.'
+                            f'{game_id} - Boxscore: Game JSON not found on page.'
                         )
                     else:
                         _log.error(
-                            f'"{time.ctime()}": {game_id} - Boxscore: {ex}\n{traceback.format_exc()}'
+                            f'{game_id} - Boxscore: {ex}\n{traceback.format_exc()}'
                         )
                 else:
                     _log.error(
-                        f'"{time.ctime()}": {game_id} - Boxscore: GET error\n{ex}\n{traceback.format_exc()}'
+                        f'{game_id} - Boxscore: GET error\n{ex}\n{traceback.format_exc()}'
                     )
                 return pd.DataFrame([])
             else:
@@ -377,7 +387,7 @@ def _get_game_pbp(game_id, game_type):
             gm_status = gamepackage["gmStrp"]["status"]["desc"]
             gsbool = gm_status == "Final" or gm_status == 'In Progress'
             if not gsbool:
-                _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
+                _log.warning(f'{game_id} - {gm_status}')
                 return pd.DataFrame([])
 
             df = _get_game_pbp_helper(gamepackage, game_id, game_type)
@@ -388,22 +398,22 @@ def _get_game_pbp(game_id, game_type):
                 if soup is not None:
                     if "Page not found." in soup.text:
                         _log.error(
-                            f'"{time.ctime()}": {game_id} - PBP: Page not found error'
+                            f'{game_id} - PBP: Page not found error'
                         )
                         pnf_.append(game_id)
                     elif "Page error" in soup.text:
-                        _log.error(f'"{time.ctime()}": {game_id} - PBP: Page error')
+                        _log.error(f'{game_id} - PBP: Page error')
                     elif gamepackage is None:
                         _log.error(
-                            f'"{time.ctime()}": {game_id} - PBP: Game JSON not found on page.'
+                            f'{game_id} - PBP: Game JSON not found on page.'
                         )
                     else:
                         _log.error(
-                            f'"{time.ctime()}": {game_id} - PBP: {ex}\n{traceback.format_exc()}'
+                            f'{game_id} - PBP: {ex}\n{traceback.format_exc()}'
                         )
                 else:
                     _log.error(
-                        f'"{time.ctime()}": {game_id} - PBP: GET error\n{ex}\n{traceback.format_exc()}'
+                        f'{game_id} - PBP: GET error\n{ex}\n{traceback.format_exc()}'
                     )
                 return pd.DataFrame([])
             else:
@@ -440,7 +450,7 @@ def _get_game_info(game_id, game_type):
             gm_status = gamepackage["gmStrp"]["status"]["desc"]
             gsbool = gm_status == "Final" or gm_status == 'In Progress'
             if not gsbool:
-                _log.warning(f'"{time.ctime()}": {game_id} - {gm_status}')
+                _log.warning(f'{game_id} - {gm_status}')
 
             # get general game info
             info = gamepackage["gmInfo"]
@@ -456,24 +466,24 @@ def _get_game_info(game_id, game_type):
                 if soup is not None:
                     if "Page not found." in soup.text:
                         _log.error(
-                            f'"{time.ctime()}": {game_id} - Game Info: Page not found error'
+                            f'{game_id} - Game Info: Page not found error'
                         )
                         pnf_.append(game_id)
                     elif "Page error" in soup.text:
                         _log.error(
-                            f'"{time.ctime()}": {game_id} - Game Info: Page error'
+                            f'{game_id} - Game Info: Page error'
                         )
                     elif gamepackage is None:
                         _log.error(
-                            f'"{time.ctime()}": {game_id} - Game Info: Game JSON not found on page.'
+                            f'{game_id} - Game Info: Game JSON not found on page.'
                         )
                     else:
                         _log.error(
-                            f'"{time.ctime()}": {game_id} - Game Info: {ex}\n{traceback.format_exc()}'
+                            f'{game_id} - Game Info: {ex}\n{traceback.format_exc()}'
                         )
                 else:
                     _log.error(
-                        f'"{time.ctime()}": {game_id} - Game Info: GET error\n{ex}\n{traceback.format_exc()}'
+                        f'{game_id} - Game Info: GET error\n{ex}\n{traceback.format_exc()}'
                     )
                 return pd.DataFrame([])
             else:
@@ -512,7 +522,7 @@ def _get_player_info(player_id, game_type):
         except Exception as ex:
             if "Page not found." in soup.text:
                 _log.error(
-                    f'"{time.ctime()}": {player_id} - Player: Page not found error'
+                    f'{player_id} - Player: Page not found error'
                 )
                 break
 
@@ -521,19 +531,19 @@ def _get_player_info(player_id, game_type):
                 if soup is not None:
                     if "Page error" in soup.text:
                         _log.error(
-                            f'"{time.ctime()}": {player_id} - Player: Page error'
+                            f'{player_id} - Player: Page error'
                         )
                     elif raw_player is None:
                         _log.error(
-                            f'"{time.ctime()}": {player_id} - Player: Player JSON not found on page.'
+                            f'{player_id} - Player: Player JSON not found on page.'
                         )
                     else:
                         _log.error(
-                            f'"{time.ctime()}": {player_id} - Player: {ex}\n{traceback.format_exc()}'
+                            f'{player_id} - Player: {ex}\n{traceback.format_exc()}'
                         )
                 else:
                     _log.error(
-                        f'"{time.ctime()}": {player_id} - Player: GET error\n{ex}\n{traceback.format_exc()}'
+                        f'{player_id} - Player: GET error\n{ex}\n{traceback.format_exc()}'
                     )
                 return pd.DataFrame([])
             else:
@@ -575,19 +585,19 @@ def _get_team_schedule(team, season, game_type):
                 if soup is not None:
                     if "Page not found." in soup.text:
                         _log.error(
-                            f'"{time.ctime()}": {team} - Schedule: Page not found error'
+                            f'{team} - Schedule: Page not found error'
                         )
                     elif "Page error" in soup.text:
                         _log.error(
-                            f'"{time.ctime()}": {team} - Schedule: Page error'
+                            f'{team} - Schedule: Page error'
                         )
                     else:
                         _log.error(
-                            f'"{time.ctime()}": {team} - Schedule: {ex}\n{traceback.format_exc()}'
+                            f'{team} - Schedule: {ex}\n{traceback.format_exc()}'
                         )
                 else:
                     _log.error(
-                        f'"{time.ctime()}": {team} - Schedule: GET error\n{ex}\n{traceback.format_exc()}'
+                        f'{team} - Schedule: GET error\n{ex}\n{traceback.format_exc()}'
                     )
                 return pd.DataFrame([])
             else:
@@ -883,7 +893,7 @@ def _get_game_boxscore_helper(boxscore, game_id):
     df = pd.concat([tm1_df, tm2_df])
 
     if len(df) <= 0:
-        _log.warning(f'"{time.ctime()}": {game_id} - No boxscore available')
+        _log.warning(f'{game_id} - No boxscore available')
         return pd.DataFrame([])
 
     # SPLIT UP THE FG FIELDS
@@ -933,7 +943,7 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
 
     # check if PBP exists
     if len(all_plays) <= 0:
-        _log.warning(f'"{time.ctime()}": {game_id} - No PBP available')
+        _log.warning(f'{game_id} - No PBP available')
         return pd.DataFrame([])
 
     descs = [x["text"] if "text" in x.keys() else "" for x in all_plays]
@@ -1125,11 +1135,11 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
             not (len(shot_info["shot_y"]) == len(df))
         ):
             _log.warning(
-                f'"{time.ctime()}": {game_id} - Shot data length does not match PBP data'
+                f'{game_id} - Shot data length does not match PBP data'
             )
             df["shot_x"] = np.nan
             df["shot_y"] = np.nan
-            return df
+            return df.sort_values(by=[pd_type, pd_type_sec], ascending=[True, False])
 
         df["shot_x"] = shot_info["shot_x"]
         df["shot_y"] = shot_info["shot_y"]
@@ -1224,7 +1234,7 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
         assert h_ot == a_ot
         num_ots = h_ot
     else:
-        _log.warning(f'"{time.ctime()}": {game_id} - No score info available')
+        _log.warning(f'{game_id} - No score info available')
         num_ots = -1
 
     game_info_list = [
