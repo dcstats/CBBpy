@@ -1397,7 +1397,7 @@ def _get_schedule_helper(jsn, team, id_, season):
         key=lambda x: x if x.name == 'team' else pd.to_datetime(x)
     )
 
-    return df
+    return df.reset_index(drop=True)
 
 
 def _get_team_map(game_type):
@@ -1410,9 +1410,10 @@ def _get_id_from_team(team, season, game_type):
     team_map_df = _get_team_map(game_type)
     id_map = team_map_df[team_map_df.season == season][['id', 'location']]
     id_map = id_map.set_index('location')['id'].to_dict()
+    lowercase_map = {x.lower(): x for x in id_map.keys()}
 
     # if the given team is not in the list of teams, search for nearest match
-    if not team.lower() in [x.lower() for x in list(id_map.keys())]:
+    if not team.lower() in lowercase_map:
         choices = list(id_map.keys())
 
         best_match, score, _ = process.extractOne(
@@ -1424,12 +1425,12 @@ def _get_id_from_team(team, season, game_type):
 
         print(f"No exact match for '{team}'. Fetching closest team match: '{best_match}'.")
         
-        team = best_match
         id_ = id_map[best_match]
     else:
-        id_ = id_map[team]
+        best_match = lowercase_map[team.lower()]
+        id_ = id_map[best_match]
 
-    return id_, team
+    return id_, best_match
 
 
 def _get_season_conferences(season, game_type):
@@ -1444,9 +1445,10 @@ def _get_teams_from_conf(conference, season, game_type):
     team_map_df, confs_df = _get_team_map(game_type), _get_season_conferences(season, game_type)
     abb_map = confs_df.set_index('conference_abb').conference.to_dict()
     choices = confs_df.conference.tolist() + confs_df.conference_abb.tolist()
+    lowercase_map = {x.lower(): x for x in choices}
 
     # if the given conference is not in the list of conferences, search for nearest match
-    if not conference.lower() in [x.lower() for x in choices]:
+    if not conference.lower() in lowercase_map:
         best_match, score, _ = process.extractOne(
             conference,
             choices,
@@ -1460,7 +1462,7 @@ def _get_teams_from_conf(conference, season, game_type):
 
         print(f"No exact match for '{conference}'. Fetching closest conference match: '{best_match}'.")
     else:
-        best_match = conference
+        best_match = lowercase_map[conference.lower()]
 
         # if matched abbreviation, swap for conference name
         if best_match in abb_map:
