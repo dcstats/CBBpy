@@ -99,6 +99,7 @@ WINDOW_STRING = "window['__espnfitt__']="
 JSON_REGEX = r"window\[\'__espnfitt__\'\]={(.*)};"
 STATUS_OK = 200
 WOMEN_HALF_RULE_CHANGE_DATE = parser.parse("2015-05-01")
+GOOD_GAME_STATUSES = ['In Progress', 'Final']
 
 
 # logging setup
@@ -313,7 +314,7 @@ def _get_game_boxscore(game_id, game_type):
 
             # check if game was postponed, cancelled, etc
             gm_status = gamepackage["gmStrp"]["status"]["desc"]
-            gsbool = gm_status == "Final" or gm_status == 'In Progress'
+            gsbool = gm_status in GOOD_GAME_STATUSES
             if not gsbool:
                 _log.warning(f'{game_id} - {gm_status}')
                 return pd.DataFrame([])
@@ -385,7 +386,7 @@ def _get_game_pbp(game_id, game_type):
 
             # check if game was postponed
             gm_status = gamepackage["gmStrp"]["status"]["desc"]
-            gsbool = gm_status == "Final" or gm_status == 'In Progress'
+            gsbool = gm_status in GOOD_GAME_STATUSES
             if not gsbool:
                 _log.warning(f'{game_id} - {gm_status}')
                 return pd.DataFrame([])
@@ -448,7 +449,7 @@ def _get_game_info(game_id, game_type):
 
             # check if game was postponed
             gm_status = gamepackage["gmStrp"]["status"]["desc"]
-            gsbool = gm_status == "Final" or gm_status == 'In Progress'
+            gsbool = gm_status in GOOD_GAME_STATUSES
             if not gsbool:
                 _log.warning(f'{game_id} - {gm_status}')
 
