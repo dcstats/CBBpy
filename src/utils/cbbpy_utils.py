@@ -130,6 +130,7 @@ class InvalidDateRangeError(Exception):
 
 
 def _get_game(game_id, game_type, info, box, pbp):
+    game_id = str(game_id)
     game_info_df = boxscore_df = pbp_df = pd.DataFrame([])
 
     if game_id in pnf_:
@@ -217,8 +218,6 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
             kind='mergesort'
         ).reset_index(drop=True)
 
-    print(f"Log file is located at {log_file}")
-
     return (game_info_df, game_boxscore_df, game_pbp_df)
 
 
@@ -278,7 +277,39 @@ def _get_games_team(team, season, game_type, info, box, pbp):
             kind='mergesort'
         ).reset_index(drop=True)
 
-    print(f"Log file is located at {log_file}")
+    # print(f"Log file is located at {log_file}")
+
+    return (game_info_df, game_boxscore_df, game_pbp_df)
+
+
+def _get_games_conference(conference, season, game_type, info, box, pbp):
+    teams = _get_teams_from_conf(conference, season, game_type)
+    result = [_get_games_team(x, season, game_type, info, box, pbp) for x in teams]
+
+    # sort returned dataframes to ensure consistency between runs
+    game_info_df = pd.concat([x[0] for x in result])
+    if info:
+        game_info_df = game_info_df.sort_values(
+            by=['game_day', 'game_time', 'game_id'], 
+            key=lambda col: pd.to_datetime(col.str.replace(r' P[SD]T', '', 
+                                                        regex=True)) if col.name != 'game_id' else col
+        ).reset_index(drop=True)
+
+    game_boxscore_df = pd.concat([x[1] for x in result])
+    if box:
+        game_boxscore_df = game_boxscore_df.sort_values(
+            by=['game_id', 'team'], 
+            ascending=False, 
+            kind='mergesort'
+        ).reset_index(drop=True)
+
+    game_pbp_df = pd.concat([x[2] for x in result])
+    if pbp:
+        game_pbp_df = game_pbp_df.sort_values(
+            by=['game_id'],
+            ascending=False,
+            kind='mergesort'
+        ).reset_index(drop=True)
 
     return (game_info_df, game_boxscore_df, game_pbp_df)
 
@@ -345,6 +376,7 @@ def _get_game_ids(date, game_type):
 
 def _get_game_boxscore(game_id, game_type):
     soup = None
+    game_id = str(game_id)
 
     if game_type == "mens":
         pre_url = MENS_BOXSCORE_URL
@@ -417,6 +449,7 @@ def _get_game_boxscore(game_id, game_type):
 
 def _get_game_pbp(game_id, game_type):
     soup = None
+    game_id = str(game_id)
 
     if game_type == "mens":
         pre_url = MENS_PBP_URL
@@ -480,6 +513,7 @@ def _get_game_pbp(game_id, game_type):
 
 def _get_game_info(game_id, game_type):
     soup = None
+    game_id = str(game_id)
 
     if game_type == "mens":
         pre_url = MENS_GAME_URL
@@ -1371,7 +1405,7 @@ def _get_player_details_helper(player_id, info, game_type):
     team = more_details['college'].get('displayName', '') if prof else more_details['team'].get('displayName', '')
 
     return pd.DataFrame.from_records([{
-        'player_id': player_id,
+        'player_id': str(player_id),
         'first_name': details.get('fNm'),
         'last_name': details.get('lNm'),
         'jersey_number': 'N/A' if prof else details.get('dspNum', '').replace('#', ''),
@@ -1458,6 +1492,7 @@ def _get_team_map(game_type):
 
 def _get_id_from_team(team, season, game_type):
     # fetch list of teams and team IDs for given season
+    season = int(season)
     team_map_df = _get_team_map(game_type)
     id_map = team_map_df[team_map_df.season == season][['id', 'location']]
     id_map = id_map.set_index('location')['id'].to_dict()
@@ -1493,6 +1528,7 @@ def _get_season_conferences(season, game_type):
 
 def _get_teams_from_conf(conference, season, game_type):
     # fetch list of teams and team IDs for given season
+    season = int(season)
     team_map_df, confs_df = _get_team_map(game_type), _get_season_conferences(season, game_type)
     abb_map = confs_df.set_index('conference_abb').conference.to_dict()
     choices = confs_df.conference.tolist() + confs_df.conference_abb.tolist()

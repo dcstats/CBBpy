@@ -24,7 +24,7 @@ from utils.cbbpy_utils import (
 
 
 def get_game(
-    game_id: str,
+    game_id: Union[str, int],
     info: bool = True,
     box: bool = True,
     pbp: bool = True,
@@ -32,7 +32,7 @@ def get_game(
     """A function that scrapes all game info (metadata, boxscore, play-by-play).
 
     Parameters:
-        game_id (str): The game's ESPN game ID
+        game_id (str | int): The game's ESPN game ID
         info (bool, optional): Whether the game metadata is to be scraped. Defaults to True.
         box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
         pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
@@ -141,11 +141,11 @@ def get_game_ids(date: Union[str, datetime]) -> list:
     return _get_game_ids(date, "womens")
 
 
-def get_game_boxscore(game_id: str) -> pd.DataFrame:
+def get_game_boxscore(game_id: Union[str, int]) -> pd.DataFrame:
     """Scrapes each team's boxscore for a given game.
 
     Parameters:
-        game_id (str): The game's ESPN game ID.
+        game_id (str | int): The game's ESPN game ID.
 
     Returns:
         pd.DataFrame: The boxscores of both teams, combined into one table.
@@ -153,11 +153,11 @@ def get_game_boxscore(game_id: str) -> pd.DataFrame:
     return _get_game_boxscore(game_id, "womens")
 
 
-def get_game_pbp(game_id: str) -> pd.DataFrame:
+def get_game_pbp(game_id: Union[str, int]) -> pd.DataFrame:
     """Scrapes a game's play-by-play data.
 
     Parameters:
-        game_id (str): The game's ESPN game ID.
+        game_id (str | int): The game's ESPN game ID.
 
     Returns:
         pd.DataFrame: The game's play-by-play information, with a row for each play.
@@ -165,11 +165,11 @@ def get_game_pbp(game_id: str) -> pd.DataFrame:
     return _get_game_pbp(game_id, "womens")
 
 
-def get_game_info(game_id: str) -> pd.DataFrame:
+def get_game_info(game_id: Union[str, int]) -> pd.DataFrame:
     """Scrapes game metadata from the ESPN game page.
 
     Args:
-        game_id (str): The game's ESPN game ID.
+        game_id (str | int): The game's ESPN game ID.
 
     Returns:
         pd.DataFrame: The game's metadata scraped from the game page.
@@ -177,11 +177,11 @@ def get_game_info(game_id: str) -> pd.DataFrame:
     return _get_game_info(game_id, "womens")
 
 
-def get_player_info(player_id: str) -> pd.DataFrame:
+def get_player_info(player_id: Union[int, str]) -> pd.DataFrame:
     """Scrapes player details from her bio page for a given player ID.
 
     Args:
-        player_id (str): The player's ESPN player ID.
+        player_id (int | str): The player's ESPN player ID.
 
     Returns:
         pd.DataFrame: The given player's details.

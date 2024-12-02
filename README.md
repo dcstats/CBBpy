@@ -39,13 +39,13 @@ import cbbpy.womens_scraper as s
 ## Functions available in CBBpy
 NOTE: game ID, as far as CBBpy is concerned, is a valid **ESPN** game ID
 
-`s.get_game_info(game_id: str)` grabs all the metadata (game date, time, score, teams, referees, etc) for a particular game.
+`s.get_game_info(game_id: Union[str, int])` grabs all the metadata (game date, time, score, teams, referees, etc) for a particular game.
 
-`s.get_game_boxscore(game_id: str)` returns a pandas DataFrame with each player's stats for a particular game.
+`s.get_game_boxscore(game_id: Union[str, int])` returns a pandas DataFrame with each player's stats for a particular game.
 
-`s.get_game_pbp(game_id: str)` scrapes the play-by-play tables for a game and returns a pandas DataFrame, with each entry representing a play made during the game.
+`s.get_game_pbp(game_id: Union[str, int])` scrapes the play-by-play tables for a game and returns a pandas DataFrame, with each entry representing a play made during the game.
 
-`s.get_game(game_id: str, info: bool = True, box: bool = True, pbp: bool = True)` gets *all* information about a game (game info, boxscore, PBP) and returns a tuple of results `(game_info, boxscore, pbp)`. `info, box, pbp` are booleans which users can set to `False` if there is any information they wish not to scrape. For example, `box = False` would return an empty DataFrame for the boxscore info, while scraping PBP and metadata info normally.
+`s.get_game(game_id: Union[str, int], info: bool = True, box: bool = True, pbp: bool = True)` gets *all* information about a game (game info, boxscore, PBP) and returns a tuple of results `(game_info, boxscore, pbp)`. `info, box, pbp` are booleans which users can set to `False` if there is any information they wish not to scrape. For example, `box = False` would return an empty DataFrame for the boxscore info, while scraping PBP and metadata info normally.
 
 `s.get_games_season(season: Union[int, str], info: bool = True, box: bool = True, pbp: bool = True)` scrapes all game information for all finished or in progress games in a particular season. As an example, to scrape games for the 2020-21 season, call `get_games_season(2021)`. Returns a tuple of 3 DataFrames, similar to `get_game`. See `get_game` for an explanation of booleans `info, box, pbp`.
 
