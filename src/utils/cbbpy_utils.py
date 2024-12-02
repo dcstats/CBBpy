@@ -151,9 +151,11 @@ def _get_game(game_id, game_type, info, box, pbp):
 
 
 def _get_games_range(start_date, end_date, game_type, info, box, pbp):
-    sd = _parse_date(start_date)
-    ed = _parse_date(end_date)
-    date_range = pd.date_range(sd, ed)
+    if isinstance(start_date, str):
+        start_date = _parse_date(start_date)
+    if isinstance(end_date, str):
+        end_date = _parse_date(end_date)
+    date_range = pd.date_range(start_date, end_date)
     len_scrape = len(date_range)
     all_data = []
     cpus = os.cpu_count() - 1
@@ -161,10 +163,10 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
     if len_scrape < 1:
         raise InvalidDateRangeError("The start date must be sooner than the end date.")
 
-    if sd > datetime.today():
+    if start_date > datetime.today():
         raise InvalidDateRangeError("The start date must not be in the future.")
 
-    if ed > datetime.today():
+    if end_date > datetime.today():
         raise InvalidDateRangeError("The end date must not be in the future.")
 
     bar_format = (
@@ -191,23 +193,29 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
         return ()
 
     # sort returned dataframes to ensure consistency between runs
-    game_info_df = pd.concat([game[0] for day in all_data for game in day]).sort_values(
-        by=['game_day', 'game_time', 'game_id'], 
-        key=lambda col: pd.to_datetime(col.str.replace(r' P[SD]T', '', 
-                                                       regex=True)) if col.name != 'game_id' else col
-    ).reset_index(drop=True)
+    game_info_df = pd.concat([game[0] for day in all_data for game in day])
+    if info:
+        game_info_df = game_info_df.sort_values(
+            by=['game_day', 'game_time', 'game_id'], 
+            key=lambda col: pd.to_datetime(col.str.replace(r' P[SD]T', '', 
+                                                        regex=True)) if col.name != 'game_id' else col
+        ).reset_index(drop=True)
 
-    game_boxscore_df = pd.concat([game[1] for day in all_data for game in day]).sort_values(
-        by=['game_id', 'team'], 
-        ascending=False, 
-        kind='mergesort'
-    ).reset_index(drop=True)
+    game_boxscore_df = pd.concat([game[1] for day in all_data for game in day])
+    if box:
+        game_boxscore_df = game_boxscore_df.sort_values(
+            by=['game_id', 'team'], 
+            ascending=False, 
+            kind='mergesort'
+        ).reset_index(drop=True)
 
-    game_pbp_df = pd.concat([game[2] for day in all_data for game in day]).sort_values(
-        by=['game_id'],
-        ascending=False,
-        kind='mergesort'
-    ).reset_index(drop=True)
+    game_pbp_df = pd.concat([game[2] for day in all_data for game in day])
+    if pbp:
+        game_pbp_df = game_pbp_df.sort_values(
+            by=['game_id'],
+            ascending=False,
+            kind='mergesort'
+        ).reset_index(drop=True)
 
     print(f"Log file is located at {log_file}")
 
@@ -233,6 +241,48 @@ def _get_games_season(season, game_type, info, box, pbp):
     return info
 
 
+def _get_games_team(team, season, game_type, info, box, pbp):
+    cpus = os.cpu_count() - 1
+    schedule_df = _get_team_schedule(team, season, game_type)
+    game_ids = list(schedule_df[schedule_df.game_status.isin(GOOD_GAME_STATUSES)].game_id)
+
+    print(f'Scraping {len(game_ids)} games for {schedule_df.team.iloc[0]}')
+
+    result = Parallel(n_jobs=cpus)(
+        delayed(_get_game)(gid, game_type, info, box, pbp)
+        for gid in game_ids
+    )
+
+    # sort returned dataframes to ensure consistency between runs
+    game_info_df = pd.concat([x[0] for x in result])
+    if info:
+        game_info_df = game_info_df.sort_values(
+            by=['game_day', 'game_time', 'game_id'], 
+            key=lambda col: pd.to_datetime(col.str.replace(r' P[SD]T', '', 
+                                                        regex=True)) if col.name != 'game_id' else col
+        ).reset_index(drop=True)
+
+    game_boxscore_df = pd.concat([x[1] for x in result])
+    if box:
+        game_boxscore_df = game_boxscore_df.sort_values(
+            by=['game_id', 'team'], 
+            ascending=False, 
+            kind='mergesort'
+        ).reset_index(drop=True)
+
+    game_pbp_df = pd.concat([x[2] for x in result])
+    if pbp:
+        game_pbp_df = game_pbp_df.sort_values(
+            by=['game_id'],
+            ascending=False,
+            kind='mergesort'
+        ).reset_index(drop=True)
+
+    print(f"Log file is located at {log_file}")
+
+    return (game_info_df, game_boxscore_df, game_pbp_df)
+
+
 def _get_game_ids(date, game_type):
     soup = None
 
@@ -241,7 +291,7 @@ def _get_game_ids(date, game_type):
     else:
         pre_url = WOMENS_SCOREBOARD_URL
 
-    if type(date) == str:
+    if isinstance(date, str):
         date = _parse_date(date)
 
     for i in range(ATTEMPTS):

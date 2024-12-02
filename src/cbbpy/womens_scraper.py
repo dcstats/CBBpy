@@ -19,11 +19,15 @@ from utils.cbbpy_utils import (
     _get_team_schedule,
     _get_conference_schedule,
     _get_current_season,
+    _get_games_team,
 )
 
 
 def get_game(
-    game_id: str, info: bool = True, box: bool = True, pbp: bool = True
+    game_id: str,
+    info: bool = True,
+    box: bool = True,
+    pbp: bool = True,
 ) -> tuple:
     """A function that scrapes all game info (metadata, boxscore, play-by-play).
 
@@ -44,8 +48,8 @@ def get_game(
 
 
 def get_games_range(
-    start_date: str,
-    end_date: str,
+    start_date: Union[str, datetime],
+    end_date: Union[str, datetime],
     info: bool = True,
     box: bool = True,
     pbp: bool = True,
@@ -53,8 +57,8 @@ def get_games_range(
     """A function that scrapes a game information between a given range of dates.
 
     Parameters:
-        start_date (str): The first day of games to scrape.
-        end_date (str): The last day of games to scrape (inclusive).
+        start_date (str | datetime): The first day of games to scrape.
+        end_date (str | datetime): The last day of games to scrape (inclusive).
         info (bool, optional): Whether the game metadata is to be scraped. Defaults to True.
         box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
         pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
@@ -70,12 +74,15 @@ def get_games_range(
 
 
 def get_games_season(
-    season: int, info: bool = True, box: bool = True, pbp: bool = True
+    season: Union[str, int],
+    info: bool = True,
+    box: bool = True,
+    pbp: bool = True,
 ) -> tuple:
     """Scrapes desired game information (metadata, boxscore, play-by-play) for every game of a given season.
 
     Parameters:
-        season (int): The season to be scraped. 
+        season (str | int): The season to be scraped. 
             NOTE: season takes the form of the four-digit representation of the later year of the season. 
             So, as an example, the 2021-22 season is referred to by the integer 2022.
         info (bool, optional): Whether the game metadata is to be scraped. Defaults to True.
@@ -90,6 +97,36 @@ def get_games_season(
         - pd.DataFrame: The game's play-by-play.
     """
     return _get_games_season(season, "womens", info, box, pbp)
+
+
+def get_games_team(
+    team: str, 
+    season: Union[str, int] = None, 
+    info: bool = True, 
+    box: bool = True, 
+    pbp: bool = True,
+):
+    """Scrapes desired game information (metadata, boxscore, play-by-play) for every game of a given team and season.
+
+    Parameters:
+        team (str): The team whose games will be scraped.
+        season (str | int, optional): The season to be scraped. 
+            NOTE: season takes the form of the four-digit representation of the later year of the season. 
+            So, as an example, the 2021-22 season is referred to by the integer 2022.
+        info (bool, optional): Whether the game metadata is to be scraped. Defaults to True.
+        box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
+        pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
+
+    Returns:
+        a tuple containing
+
+        - pd.DataFrame: The team's games metadata.\n
+        - pd.DataFrame: The team's season boxscores (both teams combined).\n
+        - pd.DataFrame: The team's season play-by-plays.
+    """
+    if season is None:
+        season = _get_current_season()
+    return _get_games_team(team, season, "womens", info, box, pbp)
 
 
 def get_game_ids(date: Union[str, datetime]) -> list:
@@ -152,12 +189,12 @@ def get_player_info(player_id: str) -> pd.DataFrame:
     return _get_player_info(player_id, "womens")
 
 
-def get_team_schedule(team: str, season: int = None) -> pd.DataFrame:
+def get_team_schedule(team: str, season: Union[str, int] = None) -> pd.DataFrame:
     """Scrapes a given team's schedule for a specified season.
 
     Args:
         team (str): The name of the team to be scraped.
-        season (int, optional): The season to be scraped. Defaults to current season.
+        season (str | int, optional): The season to be scraped. Defaults to current season.
 
     Returns:
         pd.DataFrame: The given team's schedule for the year.
