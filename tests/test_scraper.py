@@ -108,46 +108,23 @@ def load_expected_dataframe(file_path):
     return pd.read_csv(file_path, converters=dtypes)
 
 
-def test_mens_info():
-    for g in M_GAMES:
-        mens_expected_df = load_expected_dataframe(DATA_PATH / f"mens_game_info_{g}.csv")
-        mens_result_df = ms.get_game_info(str(g))
-        pd.testing.assert_frame_equal(mens_result_df, mens_expected_df)
+@pytest.mark.parametrize("func, ex_path, games", [
+    (ms.get_game_info, "mens_game_info", M_GAMES),
+    (ms.get_game_boxscore, "mens_game_boxscore", M_GAMES),
+    (ms.get_game_pbp, "mens_game_pbp", M_GAMES),
+    (ws.get_game_info, "womens_game_info", W_GAMES),
+    (ws.get_game_boxscore, "womens_game_boxscore", W_GAMES),
+    (ws.get_game_pbp, "womens_game_pbp", W_GAMES),
+])
+def test_game_data(func, ex_path, games):
+    expected_df = load_expected_dataframe(DATA_PATH / f"{ex_path}.csv")
+    result_df = pd.DataFrame()
 
-
-def test_womens_info():
-    for g in W_GAMES:
-        womens_expected_df = load_expected_dataframe(DATA_PATH / f"womens_game_info_{g}.csv")
-        womens_result_df = ws.get_game_info(str(g))
-        pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
-
-
-def test_mens_boxscore():
-    for g in M_GAMES:
-        mens_expected_df = load_expected_dataframe(DATA_PATH / f"mens_game_boxscore_{g}.csv")
-        mens_result_df = ms.get_game_boxscore(str(g))
-        pd.testing.assert_frame_equal(mens_result_df, mens_expected_df)
-
-
-def test_womens_boxscore():
-    for g in W_GAMES:
-        womens_expected_df = load_expected_dataframe(DATA_PATH / f"womens_game_boxscore_{g}.csv")
-        womens_result_df = ws.get_game_boxscore(str(g))
-        pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
-
-
-def test_mens_pbp():
-    for g in M_GAMES:
-        mens_expected_df = load_expected_dataframe(DATA_PATH / f"mens_game_pbp_{g}.csv")
-        mens_result_df = ms.get_game_pbp(str(g))
-        pd.testing.assert_frame_equal(mens_result_df, mens_expected_df)
-
-
-def test_womens_pbp():
-    for g in W_GAMES:
-        womens_expected_df = load_expected_dataframe(DATA_PATH / f"womens_game_pbp_{g}.csv")
-        womens_result_df = ws.get_game_pbp(str(g))
-        pd.testing.assert_frame_equal(womens_result_df, womens_expected_df)
+    for g in games:
+        d = func(str(g))
+        result_df = pd.concat([result_df, d], ignore_index=True)
+    
+    pd.testing.assert_frame_equal(result_df, expected_df)
 
 
 def test_mens_player():
