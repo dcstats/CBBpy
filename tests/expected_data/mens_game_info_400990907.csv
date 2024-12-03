@@ -1,2 +1,0 @@
-game_id,home_team,home_id,home_rank,home_record,home_score,away_team,away_id,away_rank,away_record,away_score,home_win,num_ots,is_conference,is_neutral,is_postseason,tournament,game_day,game_time,game_loc,arena,arena_capacity,attendance,tv_network,referee_1,referee_2,referee_3
-400990907,Belmont Bruins,2057,,4-3,66,Lipscomb Bisons,288,,4-2,74,False,0,False,False,False,,"November 27, 2017",04:30 PM PST,"Nashville, TN",Curb Event Center Arena,,2754,,Tim Gattis,Bert Smith,Todd Austin

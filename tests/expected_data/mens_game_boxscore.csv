@@ -1,0 +1,240 @@
+game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,fta,oreb,dreb,reb,ast,stl,blk,to,pf,pts
+400843495,Western Kentucky Hilltoppers,J. Johnson,3132547,,True,23.0,5,9,5,9,0,0,4,6,3,5,8,0,0,0,2,2,14
+400843495,Western Kentucky Hilltoppers,B. Lawson,67507,,True,26.0,1,1,1,1,0,0,4,4,1,10,11,0,1,1,2,4,6
+400843495,Western Kentucky Hilltoppers,C. McNeal,3907670,,True,21.0,2,5,0,0,2,5,2,4,0,2,2,2,1,0,2,2,8
+400843495,Western Kentucky Hilltoppers,F. Edmond,3907667,,True,37.0,6,10,6,10,0,0,1,1,1,5,6,4,0,0,5,3,13
+400843495,Western Kentucky Hilltoppers,A. Cosby,56175,,True,33.0,4,13,2,4,2,9,11,12,0,3,3,2,1,0,3,3,21
+400843495,Western Kentucky Hilltoppers,A. Waters,3907672,,False,16.0,4,5,4,5,0,0,0,0,1,3,4,1,0,1,2,2,8
+400843495,Western Kentucky Hilltoppers,A. Rostov,62559,,False,16.0,2,3,1,2,1,1,2,2,0,4,4,0,0,1,0,3,7
+400843495,Western Kentucky Hilltoppers,N. Snipes,56576,,False,24.0,2,5,0,1,2,4,0,0,0,1,1,3,1,0,1,2,6
+400843495,Western Kentucky Hilltoppers,M. Hunter,3907669,,False,4.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+400843495,Western Kentucky Hilltoppers,TEAM,TOTAL,TOTAL,False,,26,51,19,32,7,19,24,29,7,36,43,12,4,3,18,21,83
+400843495,UTSA Roadrunners,L. O'Brien,61751,,True,34.0,0,6,0,4,0,2,4,5,0,6,6,1,2,0,1,4,4
+400843495,UTSA Roadrunners,J. Ringholt,3132533,,True,26.0,4,6,1,1,3,5,2,2,1,3,4,0,0,0,0,2,13
+400843495,UTSA Roadrunners,J.R. Harris,3919467,,True,35.0,2,7,1,2,1,5,0,0,0,1,1,0,1,1,3,4,5
+400843495,UTSA Roadrunners,R. Bowie,3132532,,True,37.0,6,16,3,9,3,7,3,4,3,2,5,3,1,1,2,4,18
+400843495,UTSA Roadrunners,C. Wilson,3132530,,True,40.0,10,16,10,15,0,1,7,9,0,2,2,7,4,0,2,0,27
+400843495,UTSA Roadrunners,A.J. Cockrell,3906738,,False,6.0,0,2,0,2,0,0,1,2,1,0,1,0,0,0,1,4,1
+400843495,UTSA Roadrunners,N. Allen,3906737,,False,10.0,1,3,1,2,0,1,0,0,0,1,1,0,1,0,0,0,2
+400843495,UTSA Roadrunners,P. Jones Jr.,62770,,False,4.0,0,3,0,3,0,0,0,0,0,0,0,0,0,1,0,1,0
+400843495,UTSA Roadrunners,A. Karrer,3132531,,False,8.0,0,0,0,0,0,0,1,2,0,1,1,0,0,0,0,1,1
+400843495,UTSA Roadrunners,TEAM,TOTAL,TOTAL,False,,23,59,16,38,7,21,18,24,5,19,24,11,9,3,9,21,71
+401082698,UAB Blazers,W. Butler,4397728,,True,23.0,1,1,1,1,0,0,4,4,0,3,3,0,1,0,0,4,6
+401082698,UAB Blazers,L. Sullivan,3132486,,True,23.0,2,4,2,4,0,0,4,4,2,0,2,1,0,0,0,1,8
+401082698,UAB Blazers,T. Lovan,4397726,,True,18.0,2,7,2,7,0,0,2,3,3,3,6,0,1,0,2,4,6
+401082698,UAB Blazers,Z. Bryant,4279103,,True,34.0,3,13,3,10,0,3,3,5,1,3,4,4,2,0,6,2,9
+401082698,UAB Blazers,J. Perry,3913199,,True,20.0,1,9,1,5,0,4,0,0,0,0,0,0,0,0,1,1,2
+401082698,UAB Blazers,T. Pearson,4397727,,False,8.0,0,2,0,1,0,1,2,2,0,1,1,0,0,0,0,0,2
+401082698,UAB Blazers,M. Gueye,4279106,,False,23.0,2,3,2,3,0,0,2,2,1,2,3,0,0,1,1,5,6
+401082698,UAB Blazers,T. Scott-Grayson,4397725,,False,25.0,5,11,3,7,2,4,4,5,1,1,2,0,4,0,2,3,16
+401082698,UAB Blazers,L. Hurtado Jr.,4279105,,False,4.0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0
+401082698,UAB Blazers,A. McCoy,4279104,,False,2.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+401082698,UAB Blazers,J. Bell,4067436,,False,20.0,3,8,3,6,0,2,2,3,1,0,1,1,1,0,2,1,8
+401082698,UAB Blazers,TEAM,TOTAL,TOTAL,False,,19,58,17,44,2,14,23,28,12,18,30,6,9,1,15,21,63
+401082698,Florida State Seminoles,C. Koumadje,3907824,,True,22.0,6,8,6,8,0,0,0,0,3,6,9,0,0,3,3,2,12
+401082698,Florida State Seminoles,M. Walker,4277854,,True,23.0,1,6,0,3,1,3,2,2,0,3,3,3,0,0,2,3,5
+401082698,Florida State Seminoles,P. Savoy,4065657,,True,19.0,3,7,1,1,2,6,2,2,0,3,3,1,1,1,2,4,10
+401082698,Florida State Seminoles,T. Forrest,4065656,,True,30.0,1,2,1,2,0,0,3,3,0,11,11,3,0,0,6,1,5
+401082698,Florida State Seminoles,T. Mann,3907823,,True,26.0,5,5,4,4,1,1,6,7,1,0,1,3,0,0,2,1,17
+401082698,Florida State Seminoles,R. Gray,4277850,,False,8.0,2,3,2,3,0,0,2,3,0,0,0,0,1,0,0,2,6
+401082698,Florida State Seminoles,M. Kabengele,4065660,,False,18.0,3,8,3,8,0,0,4,4,2,1,3,0,1,0,1,2,10
+401082698,Florida State Seminoles,D. Vassell,4395630,,False,15.0,3,5,1,3,2,2,1,2,1,2,3,1,2,0,0,1,9
+401082698,Florida State Seminoles,W. Wilkes,4277855,,False,6.0,1,2,1,1,0,1,0,0,1,0,1,0,0,0,0,1,2
+401082698,Florida State Seminoles,A. Polite,4277852,,False,11.0,0,2,0,0,0,2,0,0,0,1,1,0,0,0,0,2,0
+401082698,Florida State Seminoles,D. Nichols,3918723,,False,22.0,1,5,1,2,0,3,3,3,0,2,2,1,2,1,2,3,5
+401082698,Florida State Seminoles,TEAM,TOTAL,TOTAL,False,,26,53,20,35,6,18,23,26,9,29,38,12,7,5,18,22,81
+400517877,Rhode Island Rams,G. Biruta,51340,,True,34.0,4,9,4,8,0,1,0,0,1,5,6,1,2,1,2,4,8
+400517877,Rhode Island Rams,I. Onyekaba,66405,,True,10.0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,2,0
+400517877,Rhode Island Rams,J. Reischel,56269,,True,31.0,3,7,3,6,0,1,0,2,0,3,3,0,0,0,2,3,6
+400517877,Rhode Island Rams,X. Munford,61681,,True,36.0,7,18,6,12,1,6,7,9,0,4,4,0,1,0,1,0,22
+400517877,Rhode Island Rams,M. Powell,56136,,True,16.0,0,2,0,1,0,1,2,2,0,3,3,0,0,0,0,0,2
+400517877,Rhode Island Rams,H. Martin,66404,,False,11.0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0
+400517877,Rhode Island Rams,M. Aaman,61682,,False,3.0,1,2,1,2,0,0,0,0,1,0,1,0,0,0,0,0,2
+400517877,Rhode Island Rams,M. Butler,66403,,False,1.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+400517877,Rhode Island Rams,E.C. Matthews,66402,,False,24.0,0,6,0,5,0,1,3,4,0,0,0,2,1,0,1,4,3
+400517877,Rhode Island Rams,B. Minnis,57298,,False,21.0,3,5,2,4,1,1,2,4,0,2,2,3,0,0,3,4,9
+400517877,Rhode Island Rams,T.J. Buchanan,56139,,False,13.0,2,3,2,2,0,1,3,4,1,1,2,0,1,0,0,1,7
+400517877,Rhode Island Rams,TEAM,TOTAL,TOTAL,False,,20,54,18,42,2,12,17,25,6,20,26,6,5,1,12,19,59
+400517877,Arizona Wildcats,A. Gordon,66320,,True,29.0,5,12,5,10,0,2,2,3,3,4,7,2,0,2,1,1,12
+400517877,Arizona Wildcats,B. Ashley,61548,,True,31.0,5,8,5,7,0,1,6,8,0,6,6,0,0,1,2,3,16
+400517877,Arizona Wildcats,K. Tarczewski,61552,,True,24.0,4,5,4,5,0,0,0,1,1,3,4,2,0,2,0,5,8
+400517877,Arizona Wildcats,N. Johnson,56290,,True,26.0,7,12,5,8,2,4,4,4,1,9,10,6,1,0,2,2,20
+400517877,Arizona Wildcats,T.J. McConnell,51279,,True,28.0,3,4,2,2,1,2,0,0,0,2,2,5,3,1,3,2,7
+400517877,Arizona Wildcats,R. Hollis Jefferson,66321,,False,22.0,5,7,4,6,1,1,2,4,1,1,2,1,0,1,1,2,13
+400517877,Arizona Wildcats,Z. Peters,61620,,False,3.0,0,0,0,0,0,0,0,0,0,2,2,0,0,0,1,0,0
+400517877,Arizona Wildcats,M. Korcheck,61551,,False,3.0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,0,0,0
+400517877,Arizona Wildcats,E. Pitts,66323,,False,6.0,1,2,0,0,1,2,0,0,0,1,1,1,0,0,1,2,3
+400517877,Arizona Wildcats,T. Mason,66322,,False,2.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0
+400517877,Arizona Wildcats,G. York,61553,,False,21.0,3,6,1,2,2,4,0,0,0,1,1,1,1,0,1,1,8
+400517877,Arizona Wildcats,J. Hazzard,61549,,False,3.0,0,1,0,1,0,0,0,0,0,0,0,1,0,0,0,1,0
+400517877,Arizona Wildcats,J. Mayes,51264,,False,2.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0
+400517877,Arizona Wildcats,TEAM,TOTAL,TOTAL,False,,33,57,26,41,7,16,14,20,8,30,38,19,5,8,14,21,87
+400919646,Charleston Cougars,J. Brantley,3912292,,True,31.0,6,10,4,7,2,3,4,4,2,5,7,0,1,1,2,3,18
+400919646,Charleston Cougars,N. Harris,3129936,,True,33.0,2,4,2,4,0,0,0,0,2,6,8,0,0,2,2,1,4
+400919646,Charleston Cougars,G. Riller,3912295,,True,19.0,2,9,1,5,1,4,0,0,0,1,1,0,0,0,2,2,5
+400919646,Charleston Cougars,C. Johnson,3129937,,True,33.0,3,7,3,4,0,3,0,1,2,2,4,2,0,0,1,2,6
+400919646,Charleston Cougars,J. Chealey,67154,,True,34.0,2,10,1,5,1,5,1,1,0,2,2,4,2,0,1,4,6
+400919646,Charleston Cougars,J. McManus,4067220,,False,7.0,0,3,0,1,0,2,0,0,1,1,2,0,0,0,0,0,0
+400919646,Charleston Cougars,C. Goodwin,4067218,,False,9.0,1,2,1,1,0,1,0,0,0,3,3,0,0,0,1,2,2
+400919646,Charleston Cougars,E. Bailey,3129934,,False,10.0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,1,2,0
+400919646,Charleston Cougars,M. Pointer,3912294,,False,24.0,3,8,3,5,0,3,0,0,1,0,1,2,1,0,2,2,6
+400919646,Charleston Cougars,TEAM,TOTAL,TOTAL,False,,19,54,15,32,4,22,5,6,9,21,30,9,4,3,14,18,47
+400919646,Villanova Wildcats,E. Paschall,3133817,,True,20.0,3,9,3,6,0,3,2,3,2,3,5,3,1,1,1,1,8
+400919646,Villanova Wildcats,D. Reynolds,66174,,True,21.0,2,5,2,5,0,0,2,3,0,4,4,0,0,1,2,0,6
+400919646,Villanova Wildcats,M. Bridges,3147657,,True,34.0,3,5,3,3,0,2,2,2,2,3,5,3,1,0,0,2,8
+400919646,Villanova Wildcats,J. Brunson,3934672,,True,24.0,2,6,2,5,0,1,3,4,0,0,0,3,0,0,0,1,7
+400919646,Villanova Wildcats,J. Hart,66173,,True,35.0,4,7,2,4,2,3,3,4,2,9,11,1,0,0,4,2,13
+400919646,Villanova Wildcats,D. Painter,4065840,,False,5.0,1,1,1,1,0,0,1,2,0,0,0,0,0,0,0,1,3
+400919646,Villanova Wildcats,T. Leibig,4065837,,False,3.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+400919646,Villanova Wildcats,K. Jenkins,66172,,False,28.0,4,7,2,3,2,4,1,2,0,2,2,3,0,0,1,2,11
+400919646,Villanova Wildcats,D. Grace,4065839,,False,1.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+400919646,Villanova Wildcats,D. DiVincenzo,3934673,,False,29.0,2,8,1,4,1,4,2,4,1,3,4,0,4,1,1,0,7
+400919646,Villanova Wildcats,TEAM,TOTAL,TOTAL,False,,21,48,16,31,5,17,16,24,9,26,35,13,6,3,9,9,63
+400990907,Lipscomb Bisons,E. Pepper,3913182,,True,26.0,4,5,2,3,2,2,0,0,1,5,6,2,0,0,1,2,10
+400990907,Lipscomb Bisons,R. Marberry,3155712,,True,29.0,9,13,9,13,0,0,0,2,3,5,8,1,0,1,2,2,18
+400990907,Lipscomb Bisons,K. Cooper,4067179,,True,29.0,3,10,3,10,0,0,4,7,0,4,4,6,4,1,4,1,10
+400990907,Lipscomb Bisons,M. Buckland,4067177,,True,35.0,2,6,0,3,2,3,0,0,0,8,8,2,2,2,1,1,6
+400990907,Lipscomb Bisons,G. Mathews,3913180,,True,35.0,6,14,2,6,4,8,6,6,0,6,6,1,0,0,0,2,22
+400990907,Lipscomb Bisons,M. Rose,3906809,,False,16.0,0,3,0,0,0,3,0,0,0,1,1,2,0,1,1,2,0
+400990907,Lipscomb Bisons,G. Brammeier,3130519,,False,6.0,0,1,0,1,0,0,0,0,0,1,1,0,0,0,1,3,0
+400990907,Lipscomb Bisons,G. Jones,4278444,,False,8.0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,1,3
+400990907,Lipscomb Bisons,A. Fleming,3935012,,False,3.0,1,2,0,0,1,2,0,0,0,1,1,0,0,0,3,1,3
+400990907,Lipscomb Bisons,A. Korn,3130518,,False,13.0,1,2,1,1,0,1,0,0,0,3,3,1,0,0,0,1,2
+400990907,Lipscomb Bisons,TEAM,TOTAL,TOTAL,False,,27,57,17,37,10,20,10,15,5,34,39,15,6,5,13,16,74
+400990907,Belmont Bruins,M. Mercer,3138505,,True,8.0,0,5,0,4,0,1,2,4,1,2,3,1,1,0,0,1,2
+400990907,Belmont Bruins,A. Egekeze,3138504,,True,33.0,4,10,3,6,1,4,4,4,0,5,5,1,2,0,2,3,13
+400990907,Belmont Bruins,D. Windler,3906786,,True,35.0,4,10,3,5,1,5,4,6,4,7,11,1,1,0,3,3,13
+400990907,Belmont Bruins,K. McClain,3906785,,True,34.0,1,6,0,2,1,4,2,4,0,4,4,4,1,1,1,1,5
+400990907,Belmont Bruins,A. Luke,66869,,True,29.0,4,8,1,1,3,7,0,0,0,2,2,5,0,0,5,2,11
+400990907,Belmont Bruins,S. Adelsperger,3906781,,False,13.0,3,6,3,6,0,0,0,0,1,2,3,0,0,0,0,1,6
+400990907,Belmont Bruins,T. Hadden,66867,,False,2.0,0,1,0,1,0,0,0,0,0,0,0,0,0,1,1,1,0
+400990907,Belmont Bruins,N. Hopkins,4067151,,False,29.0,5,9,1,1,4,8,0,0,2,3,5,1,1,0,0,4,14
+400990907,Belmont Bruins,M. Benkert,3906782,,False,6.0,0,4,0,1,0,3,0,0,0,0,0,0,1,0,1,0,0
+400990907,Belmont Bruins,B. Sampson,66870,,False,11.0,0,1,0,0,0,1,2,2,0,0,0,0,0,0,0,0,2
+400990907,Belmont Bruins,TEAM,TOTAL,TOTAL,False,,21,60,11,27,10,33,14,20,9,28,37,13,7,2,13,16,66
+400498476,Allen University Yellow Jackets,D. Anthony,3082160,,True,22.0,2,9,0,5,2,4,2,2,2,1,3,1,0,0,3,4,8
+400498476,Allen University Yellow Jackets,C. Camon,3082161,,True,11.0,1,4,1,2,0,2,0,2,0,0,0,0,0,0,2,1,2
+400498476,Allen University Yellow Jackets,J. Pettus,3082159,,True,24.0,4,8,4,8,0,0,0,2,1,3,4,1,0,0,3,1,8
+400498476,Allen University Yellow Jackets,M. Jones,3082158,,True,23.0,1,6,1,5,0,1,2,2,1,3,4,2,1,0,3,0,4
+400498476,Allen University Yellow Jackets,S. Rivers,64742,,True,20.0,5,7,4,6,1,1,0,0,1,2,3,2,0,1,2,3,11
+400498476,Allen University Yellow Jackets,A. Truesdale,3082162,,False,6.0,1,3,0,2,1,1,0,0,0,0,0,0,0,0,0,1,3
+400498476,Allen University Yellow Jackets,D. McCord,64747,,False,26.0,3,7,3,6,0,1,0,0,0,6,6,0,1,1,4,1,6
+400498476,Allen University Yellow Jackets,T. McDuffie,64746,,False,13.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,3,0
+400498476,Allen University Yellow Jackets,J. Johnson,64744,,False,32.0,2,6,2,6,0,0,1,2,5,5,10,0,1,0,2,3,5
+400498476,Allen University Yellow Jackets,J. Crawford,60319,,False,15.0,2,3,2,3,0,0,0,0,1,3,4,0,2,0,1,5,4
+400498476,Allen University Yellow Jackets,K. Council,3082195,,False,8.0,0,3,0,3,0,0,0,0,0,1,1,0,0,0,1,2,0
+400498476,Allen University Yellow Jackets,TEAM,TOTAL,TOTAL,False,,21,56,17,46,4,10,5,10,11,24,35,6,5,2,22,24,51
+400498476,Gardner-Webb Runnin' Bulldogs,J. Hill,62703,,True,13.0,1,2,1,2,0,0,4,6,0,0,0,2,0,0,2,2,6
+400498476,Gardner-Webb Runnin' Bulldogs,M. Byron,56642,,True,11.0,2,2,2,2,0,0,0,2,0,4,4,1,0,1,1,0,4
+400498476,Gardner-Webb Runnin' Bulldogs,T. Strange,57685,,True,29.0,4,6,1,1,3,5,2,2,0,3,3,5,3,0,0,1,13
+400498476,Gardner-Webb Runnin' Bulldogs,J. Castellanos,52213,,True,24.0,2,4,0,2,2,2,4,4,0,3,3,6,1,0,1,1,10
+400498476,Gardner-Webb Runnin' Bulldogs,N. Hibbert,46004,,True,21.0,6,10,3,5,3,5,0,0,0,3,3,6,2,0,1,0,15
+400498476,Gardner-Webb Runnin' Bulldogs,D. Tuff,66569,,False,15.0,1,2,1,2,0,0,0,4,1,1,2,0,0,0,1,1,2
+400498476,Gardner-Webb Runnin' Bulldogs,T. Nelson,66568,,False,14.0,2,5,2,5,0,0,4,7,1,2,3,0,1,0,1,1,8
+400498476,Gardner-Webb Runnin' Bulldogs,C. Hensley,58436,,False,12.0,0,1,0,1,0,0,0,0,2,0,2,0,1,0,0,2,0
+400498476,Gardner-Webb Runnin' Bulldogs,A. Sweeney,62706,,False,10.0,0,5,0,2,0,3,2,2,0,1,1,0,0,0,1,1,2
+400498476,Gardner-Webb Runnin' Bulldogs,L. Stumpf,62705,,False,15.0,3,4,2,2,1,2,3,4,0,5,5,0,0,0,0,3,10
+400498476,Gardner-Webb Runnin' Bulldogs,I. Ivey,62704,,False,18.0,4,7,1,2,3,5,1,2,0,2,2,0,1,1,0,0,12
+400498476,Gardner-Webb Runnin' Bulldogs,O. Branch,62702,,False,18.0,2,3,2,2,0,1,6,6,2,2,4,0,0,1,0,0,10
+400498476,Gardner-Webb Runnin' Bulldogs,TEAM,TOTAL,TOTAL,False,,27,51,15,28,12,23,26,39,7,27,34,20,9,3,9,12,92
+401581583,Louisiana Ragin' Cajuns,J. Charles,4708075,,True,34.0,5,11,1,4,4,7,2,2,5,5,10,3,0,0,0,2,16
+401581583,Louisiana Ragin' Cajuns,H. Kitenge,4593883,,True,27.0,4,4,4,4,0,0,2,2,3,4,7,2,2,0,1,3,10
+401581583,Louisiana Ragin' Cajuns,K. Julien,4397659,,True,23.0,5,12,1,5,4,7,0,0,0,2,2,0,2,1,1,4,14
+401581583,Louisiana Ragin' Cajuns,T. Fulks,4704078,,True,17.0,1,2,1,2,0,0,1,2,0,0,0,3,0,0,2,3,3
+401581583,Louisiana Ragin' Cajuns,K. Garnett,4702106,,True,32.0,8,16,4,6,4,10,0,0,1,3,4,3,0,0,1,0,20
+401581583,Louisiana Ragin' Cajuns,K. Ratliff,5107218,,False,14.0,1,1,1,1,0,0,0,0,1,1,2,1,0,1,0,3,2
+401581583,Louisiana Ragin' Cajuns,B. Hardy,5176556,,False,7.0,0,1,0,0,0,1,0,0,0,1,1,1,0,0,0,1,0
+401581583,Louisiana Ragin' Cajuns,B. Butler,5176554,,False,20.0,8,13,4,7,4,6,0,0,1,2,3,2,1,1,0,3,20
+401581583,Louisiana Ragin' Cajuns,L. Fields,5176553,,False,1.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+401581583,Louisiana Ragin' Cajuns,M. Thomas,4702105,,False,23.0,2,8,0,2,2,6,1,2,1,0,1,5,0,0,2,0,7
+401581583,Louisiana Ragin' Cajuns,TEAM,TOTAL,TOTAL,False,,34,68,16,31,18,37,6,8,12,19,31,20,5,3,8,19,92
+401581583,Long Beach State Beach,A. Traore,4897670,,True,36.0,7,10,7,10,0,0,4,7,2,6,8,4,0,1,2,3,18
+401581583,Long Beach State Beach,L. Traore,4897052,,True,33.0,6,13,6,13,0,0,1,2,3,7,10,1,0,1,3,2,13
+401581583,Long Beach State Beach,J. Jones,4611534,,True,26.0,1,6,1,2,0,4,2,2,0,1,1,2,2,0,0,2,4
+401581583,Long Beach State Beach,M. Tsohonis,4592438,,True,30.0,5,11,3,8,2,3,0,0,2,0,2,3,2,0,3,2,12
+401581583,Long Beach State Beach,I. Silva,4433614,,True,14.0,2,4,2,4,0,0,0,0,1,2,3,1,0,0,0,2,4
+401581583,Long Beach State Beach,C. Polynice,5107193,,False,3.0,1,1,1,1,0,0,1,2,0,0,0,1,1,0,0,0,3
+401581583,Long Beach State Beach,J. Yan,4410862,,False,2.0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0
+401581583,Long Beach State Beach,V. Lewis,5177684,,False,5.0,2,2,1,1,1,1,0,0,0,1,1,1,0,0,1,0,5
+401581583,Long Beach State Beach,E. Djordjevic,5177683,,False,5.0,1,1,1,1,0,0,0,0,0,1,1,0,0,0,0,0,2
+401581583,Long Beach State Beach,J. Hart Jr.,5107192,,False,5.0,1,1,1,1,0,0,1,2,0,0,0,1,0,0,0,1,3
+401581583,Long Beach State Beach,AJ George,4897668,,False,20.0,4,7,4,7,0,0,2,2,1,1,2,1,0,2,0,0,10
+401581583,Long Beach State Beach,M. Thompson,4432127,,False,21.0,3,5,1,2,2,3,0,0,0,1,1,3,0,0,1,0,8
+401581583,Long Beach State Beach,TEAM,TOTAL,TOTAL,False,,33,61,28,50,5,11,11,17,12,23,35,18,5,4,11,12,82
+400871140,Tulane Green Wave,D. Osetkowski,3155390,,True,28.0,2,6,2,5,0,1,2,2,2,2,4,1,1,0,5,1,6
+400871140,Tulane Green Wave,R. Smith,66769,,True,6.0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,2,0
+400871140,Tulane Green Wave,V. Julien,3913548,,True,27.0,3,6,2,3,1,3,0,0,0,1,1,2,1,0,0,3,7
+400871140,Tulane Green Wave,M. Morgan,61624,,True,29.0,2,9,2,5,0,4,2,3,1,7,8,1,1,1,4,2,6
+400871140,Tulane Green Wave,L. Dabney,61343,,True,28.0,2,10,1,6,1,4,3,4,1,2,3,2,2,0,4,2,8
+400871140,Tulane Green Wave,B. Paul,3913551,,False,12.0,2,3,2,3,0,0,0,0,0,4,4,0,1,1,0,3,4
+400871140,Tulane Green Wave,T.J. Oliver,3913550,,False,13.0,2,5,2,4,0,1,1,2,3,1,4,0,0,0,1,4,5
+400871140,Tulane Green Wave,K. Harris,3913547,,False,11.0,0,3,0,1,0,2,4,4,0,1,1,0,0,0,1,1,4
+400871140,Tulane Green Wave,O. Yurtseven,66768,,False,20.0,2,6,1,3,1,3,1,2,1,2,3,0,0,0,1,2,6
+400871140,Tulane Green Wave,M. Frazier Jr.,3913546,,False,24.0,3,6,1,3,2,3,0,0,0,4,4,1,0,0,2,1,8
+400871140,Tulane Green Wave,R. Conroy,3155389,,False,2.0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0
+400871140,Tulane Green Wave,TEAM,TOTAL,TOTAL,False,,18,55,13,33,5,22,13,17,10,25,35,7,6,2,18,22,54
+400871140,Memphis Tigers,D. Lawson,3907785,,True,32.0,5,16,3,11,2,5,5,5,4,5,9,5,2,1,4,0,17
+400871140,Memphis Tigers,S. Goodwin,61328,,True,21.0,7,12,6,11,1,1,1,2,0,1,1,0,2,2,2,4,16
+400871140,Memphis Tigers,R. Tarrant Jr.,56744,,True,23.0,0,4,0,2,0,2,3,4,0,2,2,2,3,0,0,2,3
+400871140,Memphis Tigers,T. Burrell,56135,,True,24.0,3,8,3,7,0,1,4,4,3,4,7,4,2,1,0,2,10
+400871140,Memphis Tigers,M. Crawford,66593,,True,35.0,4,7,4,5,0,2,2,2,2,8,10,3,2,0,0,1,10
+400871140,Memphis Tigers,N. Marshall,3907787,,False,18.0,5,7,5,7,0,0,0,0,3,3,6,0,0,0,0,3,10
+400871140,Memphis Tigers,J. McDowell,66596,,False,8.0,0,0,0,0,0,0,2,2,0,1,1,0,0,0,0,1,2
+400871140,Memphis Tigers,C. Wallingford,3947070,,False,2.0,0,0,0,0,0,0,1,2,1,0,1,0,0,0,0,0,1
+400871140,Memphis Tigers,C. Randall II,3947068,,False,3.0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0
+400871140,Memphis Tigers,D. Scott,3947067,,False,2.0,0,1,0,0,0,1,1,2,0,0,0,0,0,0,0,0,1
+400871140,Memphis Tigers,J. Martin,3907788,,False,20.0,0,2,0,2,0,0,2,2,0,0,0,2,1,0,0,1,2
+400871140,Memphis Tigers,S. Craft,3050473,,False,12.0,1,5,1,4,0,1,0,0,0,1,1,1,0,0,1,2,2
+400871140,Memphis Tigers,TEAM,TOTAL,TOTAL,False,,25,62,22,49,3,13,21,25,14,26,40,17,12,4,9,16,74
+401597830,Washington and Lee Generals,R. DiSibio,5180833,,True,27.0,3,10,2,7,1,3,10,12,2,5,7,1,0,0,4,3,17
+401597830,Washington and Lee Generals,J. d'Entremont,5180826,,True,27.0,8,12,6,10,2,2,0,0,1,2,3,2,1,2,1,2,18
+401597830,Washington and Lee Generals,C. Ryan,5180823,,True,18.0,1,2,1,2,0,0,2,2,1,0,1,2,0,0,1,4,4
+401597830,Washington and Lee Generals,D. Harrell,5180824,,True,27.0,4,12,3,9,1,3,0,0,2,0,2,1,1,0,1,3,9
+401597830,Washington and Lee Generals,J. Loughlin,5180821,,True,20.0,1,3,0,1,1,2,0,0,0,5,5,2,0,0,0,1,3
+401597830,Washington and Lee Generals,P. Neuenhaus,5180832,,False,18.0,1,5,1,4,0,1,2,2,0,2,2,0,0,0,0,2,4
+401597830,Washington and Lee Generals,C. Dummett,5180829,,False,6.0,0,1,0,0,0,1,0,0,0,1,1,0,0,0,0,1,0
+401597830,Washington and Lee Generals,A. Fanny,5180825,,False,9.0,0,1,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0
+401597830,Washington and Lee Generals,A.J. Thomas,5180819,,False,11.0,2,3,1,2,1,1,0,0,0,0,0,0,0,0,0,1,5
+401597830,Washington and Lee Generals,I. Bhadouria,5180830,,False,16.0,1,3,0,0,1,3,0,0,0,2,2,0,0,0,0,3,3
+401597830,Washington and Lee Generals,C. Roberton,5180827,,False,17.0,0,2,0,2,0,0,0,0,0,0,0,1,0,0,3,4,0
+401597830,Washington and Lee Generals,T. Feigin,5180820,,False,4.0,0,1,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0
+401597830,Washington and Lee Generals,TEAM,TOTAL,TOTAL,False,,21,55,14,37,7,18,14,16,7,24,31,9,2,2,11,24,63
+401597830,Davidson Wildcats,R. Bailey,5105865,,True,21.0,3,6,2,3,1,3,3,4,3,6,9,0,1,0,0,4,10
+401597830,Davidson Wildcats,D. Skogman,4593409,,True,22.0,6,8,6,6,0,2,1,2,6,2,8,1,0,0,1,2,13
+401597830,Davidson Wildcats,A. Brizzi,4684022,,True,26.0,4,12,3,5,1,7,6,6,0,3,3,3,1,1,0,0,15
+401597830,Davidson Wildcats,C. Kochera,4585606,,True,18.0,2,4,1,1,1,3,0,0,0,2,2,0,0,0,0,0,5
+401597830,Davidson Wildcats,G. Huffman,4432522,,True,28.0,4,10,3,8,1,2,3,3,0,7,7,4,2,1,1,1,12
+401597830,Davidson Wildcats,R. Schulte,5174571,,False,2.0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0
+401597830,Davidson Wildcats,B. Durkin,5174568,,False,23.0,4,8,1,2,3,6,2,2,0,1,1,2,0,0,0,0,13
+401597830,Davidson Wildcats,S. Logan,5105866,,False,21.0,0,3,0,3,0,0,1,4,4,2,6,2,2,2,2,3,1
+401597830,Davidson Wildcats,H. Adam,5174570,,False,12.0,1,3,1,1,0,2,1,1,1,1,2,1,0,0,1,2,3
+401597830,Davidson Wildcats,M. Loughnane,5174569,,False,3.0,1,2,0,0,1,2,0,0,0,0,0,0,0,0,0,0,3
+401597830,Davidson Wildcats,R. Ghedini,5105868,,False,2.0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,0,0,0
+401597830,Davidson Wildcats,A. Spadone,5105867,,False,12.0,3,8,1,1,2,7,1,2,1,0,1,0,0,0,0,3,9
+401597830,Davidson Wildcats,J. Moss,4810226,,False,10.0,1,3,1,1,0,2,0,0,0,2,2,0,1,0,1,0,2
+401597830,Davidson Wildcats,TEAM,TOTAL,TOTAL,False,,29,67,19,31,10,36,18,24,18,28,46,14,7,5,6,15,86
+400989020,New Orleans Privateers,M. Puou,4067763,,True,21.0,1,3,1,3,0,0,4,4,3,1,4,0,1,0,1,4,6
+400989020,New Orleans Privateers,T. Thibodeaux,3130713,,True,36.0,10,14,8,11,2,3,2,5,3,6,9,5,0,0,3,5,24
+400989020,New Orleans Privateers,T. Green,4279181,,True,17.0,0,4,0,3,0,1,0,0,0,2,2,1,0,0,1,3,0
+400989020,New Orleans Privateers,D. Champion,4279178,,True,21.0,4,4,4,4,0,0,3,4,0,3,3,1,2,0,0,2,11
+400989020,New Orleans Privateers,B. Robinson,4067760,,True,31.0,3,14,0,3,3,11,0,0,1,1,2,4,0,0,3,1,9
+400989020,New Orleans Privateers,S. Plaisance Jr.,3141271,,False,8.0,0,1,0,1,0,0,0,0,1,0,1,0,0,1,3,1,0
+400989020,New Orleans Privateers,E. Charles,4279185,,False,8.0,0,1,0,0,0,1,0,0,0,2,2,0,1,0,2,1,0
+400989020,New Orleans Privateers,T. Harrison,4279183,,False,5.0,0,0,0,0,0,0,0,0,0,1,1,2,0,0,1,1,0
+400989020,New Orleans Privateers,L. Berzat,4279180,,False,10.0,0,1,0,0,0,1,0,0,0,1,1,0,0,0,0,1,0
+400989020,New Orleans Privateers,D. Rosser,4279179,,False,17.0,2,3,2,3,0,0,4,6,0,3,3,1,0,0,0,1,8
+400989020,New Orleans Privateers,M. Jiles,3159512,,False,1.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+400989020,New Orleans Privateers,M. Zeno,3130711,,False,25.0,5,10,5,10,0,0,0,0,2,5,7,2,0,0,2,0,10
+400989020,New Orleans Privateers,TEAM,TOTAL,TOTAL,False,,25,55,20,38,5,17,13,19,12,25,37,16,4,1,18,21,68
+400989020,Stephen F. Austin Lumberjacks,T. Holyfield,3907339,,True,24.0,6,8,5,7,1,1,2,2,2,3,5,3,0,1,2,4,15
+400989020,Stephen F. Austin Lumberjacks,L. Gilmore III,3155483,,True,20.0,3,5,3,5,0,0,0,1,0,3,3,2,0,0,2,2,6
+400989020,Stephen F. Austin Lumberjacks,I. Canete,4067861,,True,32.0,6,13,1,5,5,8,6,8,3,3,6,2,1,1,2,2,23
+400989020,Stephen F. Austin Lumberjacks,K. Harris,4067858,,True,31.0,5,12,4,8,1,4,0,0,1,2,3,3,0,1,1,2,11
+400989020,Stephen F. Austin Lumberjacks,A. Augustin,4067857,,True,26.0,0,4,0,2,0,2,3,4,0,1,1,5,2,0,0,1,3
+400989020,Stephen F. Austin Lumberjacks,S. Nieminen,4067863,,False,4.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,3,0
+400989020,Stephen F. Austin Lumberjacks,N. Bain,3907340,,False,4.0,0,2,0,2,0,0,0,0,0,0,0,0,1,0,0,1,0
+400989020,Stephen F. Austin Lumberjacks,J. Grujic,3907343,,False,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+400989020,Stephen F. Austin Lumberjacks,J. Comeaux,4278338,,False,11.0,0,1,0,1,0,0,0,0,0,1,1,3,0,0,1,1,0
+400989020,Stephen F. Austin Lumberjacks,S. Bogues,4278337,,False,17.0,4,8,4,7,0,1,0,0,0,0,0,0,1,0,1,1,8
+400989020,Stephen F. Austin Lumberjacks,T. Charles,3130726,,False,31.0,5,7,5,6,0,1,2,3,3,6,9,0,0,1,3,4,12
+400989020,Stephen F. Austin Lumberjacks,TEAM,TOTAL,TOTAL,False,,29,60,22,43,7,17,13,18,10,21,31,18,5,4,13,21,78

@@ -1,0 +1,223 @@
+game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,fta,oreb,dreb,reb,ast,stl,blk,to,pf,pts
+400842484,Mount St. Mary's Mountaineers,S. Arthur-Williams,18395,,True,23.0,3,6,3,6,0,0,3,4,1,3,4,0,0,0,0,2,9
+400842484,Mount St. Mary's Mountaineers,S. Koutris,3143608,,True,9.0,0,2,0,0,0,2,0,0,0,2,2,1,0,0,0,0,0
+400842484,Mount St. Mary's Mountaineers,K. Dickson,3143605,,True,24.0,0,5,0,1,0,4,4,4,0,1,1,0,0,0,3,3,4
+400842484,Mount St. Mary's Mountaineers,J. Chickey,18321,,True,36.0,1,5,0,3,1,2,2,2,0,6,6,1,0,0,5,3,5
+400842484,Mount St. Mary's Mountaineers,A. Carter,17791,,True,28.0,2,11,1,5,1,6,0,0,1,4,5,2,1,1,3,2,5
+400842484,Mount St. Mary's Mountaineers,K. Kuster,3907749,,False,1.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+400842484,Mount St. Mary's Mountaineers,J. Leftwich,18370,,False,4.0,0,3,0,3,0,0,0,0,0,0,0,0,0,1,0,0,0
+400842484,Mount St. Mary's Mountaineers,K. Eisenhard,3067606,,False,7.0,2,3,2,3,0,0,1,3,1,3,4,0,0,0,1,0,5
+400842484,Mount St. Mary's Mountaineers,C. Hummell,3143607,,False,5.0,1,3,1,3,0,0,1,1,2,0,2,0,0,0,0,0,3
+400842484,Mount St. Mary's Mountaineers,J. Lawless,3907750,,False,3.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+400842484,Mount St. Mary's Mountaineers,J. Harris,3143606,,False,30.0,4,13,3,7,1,6,0,0,2,4,6,1,2,1,2,1,9
+400842484,Mount St. Mary's Mountaineers,K. Belanger-Finn,3067605,,False,12.0,0,1,0,1,0,0,0,0,0,1,1,1,0,0,2,0,0
+400842484,Mount St. Mary's Mountaineers,K. Bates,3067604,,False,18.0,1,2,1,1,0,1,0,0,0,5,5,0,0,0,0,2,2
+400842484,Mount St. Mary's Mountaineers,TEAM,TOTAL,TOTAL,False,,14,54,11,33,3,21,11,14,11,32,43,6,3,3,18,13,42
+400842484,Virginia Tech Hokies,S. Cook,2987873,,True,22.0,3,8,2,6,1,2,0,0,3,4,7,0,0,1,3,2,7
+400842484,Virginia Tech Hokies,H. Young,2984374,,True,28.0,5,10,0,3,5,7,0,0,1,5,6,0,0,1,4,1,15
+400842484,Virginia Tech Hokies,T. Campbell,17258,,True,22.0,0,4,0,4,0,0,0,0,1,1,2,2,0,3,0,2,0
+400842484,Virginia Tech Hokies,C. Hicks,3949114,,True,24.0,3,11,3,11,0,0,2,3,1,4,5,6,4,0,0,3,8
+400842484,Virginia Tech Hokies,V. Panousis,3058925,,True,29.0,5,15,3,6,2,9,0,0,0,6,6,5,1,0,0,1,12
+400842484,Virginia Tech Hokies,K. Croker,3142119,,False,4.0,0,2,0,2,0,0,0,0,0,0,0,0,0,0,0,1,0
+400842484,Virginia Tech Hokies,A. Gilmer,3949116,,False,3.0,0,2,0,2,0,0,0,0,1,1,2,0,0,0,0,1,0
+400842484,Virginia Tech Hokies,D. Powell,3142118,,False,18.0,2,4,2,4,0,0,1,4,2,0,2,0,0,1,0,4,5
+400842484,Virginia Tech Hokies,T. Nahodil,3058928,,False,8.0,1,2,1,2,0,0,0,0,1,2,3,0,0,2,0,1,2
+400842484,Virginia Tech Hokies,R. Camp,3142117,,False,19.0,1,5,0,2,1,3,0,0,0,4,4,0,0,0,1,0,3
+400842484,Virginia Tech Hokies,S. Hill,3058927,,False,23.0,1,5,1,3,0,2,5,5,1,2,3,1,0,0,0,0,7
+400842484,Virginia Tech Hokies,TEAM,TOTAL,TOTAL,False,,21,68,12,45,9,23,8,12,13,29,42,14,5,8,8,16,59
+401276220,Niagara Purple Eagles,O. Mason,4399134,,True,28.0,2,7,2,7,0,0,1,2,4,2,6,1,3,0,3,3,5
+401276220,Niagara Purple Eagles,V. Pepic,4399131,,True,20.0,3,6,3,6,0,0,0,0,0,2,2,1,1,0,1,2,6
+401276220,Niagara Purple Eagles,A. Parker,4595385,,True,31.0,1,13,1,9,0,4,0,0,3,5,8,4,2,1,9,4,2
+401276220,Niagara Purple Eagles,A. Haar,4399135,,True,37.0,5,21,2,8,3,13,0,0,2,3,5,2,0,0,3,2,13
+401276220,Niagara Purple Eagles,M. Yelle,4399133,,True,36.0,7,13,5,10,2,3,2,2,6,3,9,1,3,0,6,3,18
+401276220,Niagara Purple Eagles,S. Glover,4704528,,False,9.0,1,2,1,2,0,0,1,2,0,0,0,0,1,2,1,1,3
+401276220,Niagara Purple Eagles,S. Faulcon,4595386,,False,21.0,0,2,0,2,0,0,2,2,6,1,7,1,1,1,2,3,2
+401276220,Niagara Purple Eagles,B. Jones,4704525,,False,17.0,1,3,0,1,1,2,2,2,0,1,1,2,2,0,0,0,5
+401276220,Niagara Purple Eagles,K. Grimshaw,4399136,,False,1.0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+401276220,Niagara Purple Eagles,TEAM,TOTAL,TOTAL,False,,20,68,14,46,6,22,8,10,25,19,44,12,13,4,28,18,54
+401276220,Rider Broncs,D. Moses,4282182,,True,26.0,3,5,1,1,2,4,2,2,1,4,5,1,0,1,2,2,10
+401276220,Rider Broncs,V. Toomey,4595396,,True,30.0,3,8,3,7,0,1,1,2,2,3,5,0,3,1,2,4,7
+401276220,Rider Broncs,M. Firebaugh,4704621,,True,28.0,5,12,4,9,1,3,2,2,0,3,3,4,1,0,0,1,13
+401276220,Rider Broncs,M. Hyacienth,4595394,,True,32.0,4,7,2,4,2,3,7,8,0,3,3,2,0,3,2,1,17
+401276220,Rider Broncs,A. Mobley,4399137,,True,32.0,2,4,1,3,1,1,2,2,0,1,1,5,4,2,8,2,7
+401276220,Rider Broncs,A. Ekerstedt,4704619,,False,10.0,1,2,1,2,0,0,0,0,0,2,2,0,1,1,1,1,2
+401276220,Rider Broncs,R. Toussaint,4704617,,False,9.0,3,4,3,4,0,0,0,0,0,0,0,0,0,1,0,0,6
+401276220,Rider Broncs,T. Wolak,4399138,,False,5.0,0,1,0,1,0,0,0,0,0,1,1,0,1,1,0,1,0
+401276220,Rider Broncs,L. Evans,4704620,,False,18.0,0,5,0,3,0,2,3,6,1,1,2,1,1,0,2,1,3
+401276220,Rider Broncs,M. Lynch,4704616,,False,5.0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,2,0,0
+401276220,Rider Broncs,S. DeMauro,4595395,,False,5.0,0,0,0,0,0,0,3,4,1,0,1,0,0,0,0,1,3
+401276220,Rider Broncs,TEAM,TOTAL,TOTAL,False,,21,48,15,34,6,14,20,26,7,22,29,13,12,10,20,14,68
+401166919,Wisconsin Badgers,I. Lewis,4398957,,True,33.0,3,11,3,11,0,0,3,5,2,6,8,1,2,0,5,1,9
+401166919,Wisconsin Badgers,A. Laszewski,4068087,,True,14.0,3,5,3,5,0,0,0,0,0,0,0,0,1,0,0,3,6
+401166919,Wisconsin Badgers,S. Hilliard,4433348,,True,30.0,2,6,2,6,0,0,1,2,3,1,4,1,0,0,1,1,5
+401166919,Wisconsin Badgers,N. Beverley,4281273,,True,31.0,2,8,1,5,1,3,2,2,0,2,2,4,3,0,1,2,7
+401166919,Wisconsin Badgers,K. Van Leeuwen,4068086,,True,22.0,0,4,0,2,0,2,0,0,2,2,4,1,2,0,3,3,0
+401166919,Wisconsin Badgers,T. Stauffacher,4433686,,False,3.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+401166919,Wisconsin Badgers,S. Mathiason,4408371,,False,1.0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0
+401166919,Wisconsin Badgers,K. Crowley,4281274,,False,1.0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,3
+401166919,Wisconsin Badgers,C. Fredrickson,4068089,,False,14.0,1,5,0,3,1,2,0,0,0,2,2,1,0,0,0,2,3
+401166919,Wisconsin Badgers,S. Stapleton,4433364,,False,16.0,2,4,2,4,0,0,0,2,0,2,2,0,1,2,1,3,4
+401166919,Wisconsin Badgers,J. Pospisilova,4595387,,False,24.0,2,5,0,1,2,4,0,0,0,2,2,1,1,1,2,1,6
+401166919,Wisconsin Badgers,D. Bragg,4398955,,False,3.0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0
+401166919,Wisconsin Badgers,A. Luehring,4282452,,False,1.0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0
+401166919,Wisconsin Badgers,S. Gilreath,4068085,,False,7.0,0,3,0,0,0,3,0,0,0,0,0,1,0,0,0,0,0
+401166919,Wisconsin Badgers,TEAM,TOTAL,TOTAL,False,,16,52,11,37,5,15,6,13,8,22,30,11,10,3,16,17,43
+401166919,Rutgers Scarlet Knights,M. Gilles,4281275,,True,29.0,5,10,2,5,3,5,0,0,3,5,8,2,2,1,3,4,13
+401166919,Rutgers Scarlet Knights,T. Mack,4281276,,True,31.0,3,8,3,7,0,1,3,3,1,8,9,2,1,1,2,2,9
+401166919,Rutgers Scarlet Knights,J. Wallace,4068077,,True,29.0,5,8,5,8,0,0,2,4,2,3,5,0,0,1,3,4,12
+401166919,Rutgers Scarlet Knights,A. Guirantes,4068178,,True,39.0,5,13,3,8,2,5,14,14,1,5,6,2,2,1,2,0,26
+401166919,Rutgers Scarlet Knights,K. Sanders,3919474,,True,33.0,0,4,0,3,0,1,0,0,1,5,6,7,3,0,4,3,0
+401166919,Rutgers Scarlet Knights,T. Singleton,4398951,,False,12.0,1,2,1,2,0,0,1,2,2,1,3,0,0,1,0,0,3
+401166919,Rutgers Scarlet Knights,M. Davenport,4433290,,False,4.0,0,2,0,2,0,0,0,0,2,0,2,0,0,0,0,2,0
+401166919,Rutgers Scarlet Knights,Z. Broughton,4398949,,False,16.0,0,4,0,2,0,2,0,0,1,1,2,3,1,0,0,1,0
+401166919,Rutgers Scarlet Knights,D. Migliore,4068584,,False,7.0,0,1,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0
+401166919,Rutgers Scarlet Knights,TEAM,TOTAL,TOTAL,False,,19,52,14,37,5,15,20,23,13,30,43,16,9,5,14,16,63
+400905162,Baylor Bears,N. Davis,3054091,,True,16.0,3,8,3,8,0,0,2,3,2,3,5,0,0,1,2,0,8
+400905162,Baylor Bears,K. Brown,3916514,,True,22.0,6,8,6,8,0,0,4,6,5,6,11,0,0,1,2,2,16
+400905162,Baylor Bears,K. Wallace,3156318,,True,26.0,1,5,1,5,0,0,4,4,1,2,3,4,1,0,4,3,6
+400905162,Baylor Bears,A. Jones,17800,,True,33.0,7,20,4,13,3,7,4,4,2,4,6,3,1,0,2,2,21
+400905162,Baylor Bears,A. Prince,17639,,True,32.0,6,10,5,8,1,2,0,0,2,5,7,1,3,0,0,1,13
+400905162,Baylor Bears,L. Cox,4066563,,False,17.0,3,8,2,7,1,1,2,2,2,3,5,3,0,1,0,5,9
+400905162,Baylor Bears,B. Mompremier,3916517,,False,17.0,5,9,5,9,0,0,2,2,4,4,8,0,0,2,1,0,12
+400905162,Baylor Bears,D. Cohen,3133226,,False,9.0,1,1,1,1,0,0,0,0,1,5,6,0,0,0,0,2,2
+400905162,Baylor Bears,K. Cave,3054090,,False,8.0,0,3,0,3,0,0,0,0,1,1,2,0,1,1,0,0,0
+400905162,Baylor Bears,J. Landrum,4066564,,False,4.0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0
+400905162,Baylor Bears,N. Chou,4066562,,False,16.0,2,5,2,3,0,2,0,0,0,2,2,1,0,0,0,1,4
+400905162,Baylor Bears,TEAM,TOTAL,TOTAL,False,,34,77,29,65,5,12,18,21,22,38,60,14,6,6,11,16,91
+400905162,West Virginia Mountaineers,T. Muldrow,3066473,,True,38.0,6,11,4,8,2,3,2,2,0,7,7,1,1,2,1,2,16
+400905162,West Virginia Mountaineers,L. Montgomery,18671,,True,35.0,4,10,4,10,0,0,3,5,2,2,4,1,0,4,0,2,11
+400905162,West Virginia Mountaineers,K. Pardee,3910737,,True,18.0,1,4,0,2,1,2,0,0,1,1,2,0,1,0,1,1,3
+400905162,West Virginia Mountaineers,T. Martin,3910735,,True,36.0,2,14,0,11,2,3,5,6,0,2,2,2,2,0,1,0,11
+400905162,West Virginia Mountaineers,C. Ray,3142021,,True,38.0,3,14,3,9,0,5,3,4,1,5,6,8,1,0,4,4,9
+400905162,West Virginia Mountaineers,K. King,4068207,,False,12.0,2,6,2,6,0,0,0,2,1,3,4,0,0,0,4,1,4
+400905162,West Virginia Mountaineers,D. Rhodes,3910738,,False,5.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+400905162,West Virginia Mountaineers,A. Martin,3910736,,False,16.0,1,2,1,2,0,0,0,2,1,0,1,0,1,0,0,3,2
+400905162,West Virginia Mountaineers,B. Thomas,4068210,,False,2.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+400905162,West Virginia Mountaineers,TEAM,TOTAL,TOTAL,False,,19,61,14,48,5,13,13,21,7,23,30,12,6,6,11,15,56
+401487896,Saint Mary's Gaels,A. Bamberger,4433035,,True,30.0,5,10,5,9,0,1,3,4,1,5,6,3,0,1,2,2,13
+401487896,Saint Mary's Gaels,T. Dalton,4703841,,True,17.0,4,6,2,3,2,3,0,0,1,3,4,2,0,0,3,2,10
+401487896,Saint Mary's Gaels,L. Hanafin,4703840,,True,21.0,2,4,2,3,0,1,0,0,2,3,5,0,1,2,2,2,4
+401487896,Saint Mary's Gaels,T. Wedin,4400497,,True,27.0,8,17,3,4,5,13,0,0,0,3,3,2,0,0,4,2,21
+401487896,Saint Mary's Gaels,C. Steele,4400198,,True,29.0,1,2,1,1,0,1,9,10,0,1,1,4,1,0,5,1,11
+401487896,Saint Mary's Gaels,A. Garrison,4899394,,False,12.0,2,5,2,5,0,0,0,0,1,2,3,1,0,0,0,3,4
+401487896,Saint Mary's Gaels,A. Wedin,4899393,,False,4.0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,0
+401487896,Saint Mary's Gaels,M. Mastora,4899391,,False,24.0,2,4,1,2,1,2,3,4,0,2,2,5,0,0,1,3,8
+401487896,Saint Mary's Gaels,H. Rapp,4712115,,False,20.0,5,8,4,7,1,1,2,2,4,4,8,2,0,1,3,2,13
+401487896,Saint Mary's Gaels,J. Kirisome,4400618,,False,16.0,2,2,2,2,0,0,0,0,1,2,3,5,1,1,4,1,4
+401487896,Saint Mary's Gaels,TEAM,TOTAL,TOTAL,False,,31,58,22,36,9,22,17,20,11,31,42,24,3,5,25,19,88
+401487896,California Baptist Lancers,K. Barrington,4704904,,True,20.0,2,9,1,3,1,6,0,0,2,1,3,3,0,0,2,2,5
+401487896,California Baptist Lancers,T. San Antonio,4900098,,True,23.0,7,10,7,8,0,2,3,4,4,0,4,5,2,0,0,5,17
+401487896,California Baptist Lancers,T. Neale,4598110,,True,17.0,1,6,0,4,1,2,1,2,0,3,3,0,2,0,0,0,4
+401487896,California Baptist Lancers,L. Finau,4398760,,True,26.0,6,9,6,6,0,3,3,3,0,4,4,3,2,0,1,2,15
+401487896,California Baptist Lancers,B. Klaman,4281618,,True,27.0,4,12,0,1,4,11,1,1,0,3,3,2,1,0,2,3,13
+401487896,California Baptist Lancers,G. Schmidt,5107946,,False,17.0,1,4,1,1,0,3,2,3,1,0,1,1,0,0,7,4,4
+401487896,California Baptist Lancers,S. Lange,5107945,,False,8.0,0,2,0,2,0,0,0,0,0,2,2,0,0,2,0,0,0
+401487896,California Baptist Lancers,F. Barros,5107944,,False,13.0,2,7,0,1,2,6,0,0,1,0,1,1,1,0,0,4,6
+401487896,California Baptist Lancers,C. Webb,4595208,,False,20.0,3,6,1,4,2,2,4,6,2,2,4,1,4,0,1,3,12
+401487896,California Baptist Lancers,N. Calhoun,4595198,,False,29.0,1,4,1,2,0,2,3,4,1,1,2,3,1,0,2,2,5
+401487896,California Baptist Lancers,TEAM,TOTAL,TOTAL,False,,27,69,17,32,10,37,17,23,14,18,32,19,13,2,15,25,81
+401486000,Fairfield Stags,A. Hernangomez,4399117,,True,27.0,0,1,0,1,0,0,0,0,1,1,2,4,0,0,4,1,0
+401486000,Fairfield Stags,C. Cavanaugh,4281780,,True,40.0,13,22,12,21,1,1,3,4,3,3,6,4,0,0,1,1,30
+401486000,Fairfield Stags,J. Brown,4704429,,True,31.0,6,14,5,9,1,5,5,11,3,12,15,3,3,0,2,4,18
+401486000,Fairfield Stags,M. Rubino,4704428,,True,19.0,1,4,0,2,1,2,0,0,0,2,2,2,0,0,2,3,3
+401486000,Fairfield Stags,I. Nicoletti Leite,4398584,,True,42.0,7,18,4,12,3,6,3,4,0,7,7,3,1,0,2,1,20
+401486000,Fairfield Stags,L. Beach,4899782,,False,35.0,2,4,2,3,0,1,1,2,1,8,9,0,0,0,2,1,5
+401486000,Fairfield Stags,M. Daleba,4704430,,False,8.0,1,4,1,4,0,0,0,0,0,1,1,1,0,0,0,1,2
+401486000,Fairfield Stags,B. Tatarian,4899783,,False,14.0,2,2,2,2,0,0,0,0,1,3,4,0,0,0,1,2,4
+401486000,Fairfield Stags,A. Eng,4899781,,False,3.0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0
+401486000,Fairfield Stags,M. Martin,4595363,,False,6.0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0
+401486000,Fairfield Stags,TEAM,TOTAL,TOTAL,False,,32,70,26,54,6,16,12,21,9,38,47,18,4,0,14,14,82
+401486000,Fordham Rams,M. Jonassen,4399050,,True,32.0,3,3,2,2,1,1,2,2,3,3,6,0,1,1,1,4,9
+401486000,Fordham Rams,K. Downey,4399048,,True,33.0,9,19,2,7,7,12,0,0,1,16,17,2,1,4,4,1,25
+401486000,Fordham Rams,S. Karpell,4594767,,True,36.0,4,8,3,6,1,2,0,1,0,1,1,4,0,0,2,4,9
+401486000,Fordham Rams,A. DeWolfe,4594765,,True,45.0,4,21,3,10,1,11,0,0,0,1,1,6,3,1,4,4,9
+401486000,Fordham Rams,A. Dingle,4399322,,True,39.0,8,23,5,14,3,9,2,2,2,3,5,5,2,0,2,4,21
+401486000,Fordham Rams,J. Dapaa,4399593,,False,24.0,1,2,1,2,0,0,0,0,1,6,7,2,1,1,0,1,2
+401486000,Fordham Rams,M. Flood,4703743,,False,16.0,0,3,0,2,0,1,0,2,1,2,3,1,1,0,0,0,0
+401486000,Fordham Rams,TEAM,TOTAL,TOTAL,False,,29,79,16,43,13,36,4,7,8,32,40,20,9,7,13,18,75
+400993766,Northwestern Wildcats,B. Hopkins,4068050,,True,39.0,0,2,0,2,0,0,1,2,1,4,5,2,1,0,3,2,1
+400993766,Northwestern Wildcats,P. Kunaiyi-Akpanah,3926411,,True,32.0,10,21,10,21,0,0,3,6,8,6,14,0,0,1,1,0,23
+400993766,Northwestern Wildcats,J. Hamilton,4281239,,True,28.0,3,9,1,5,2,4,1,2,1,0,1,2,2,0,4,3,9
+400993766,Northwestern Wildcats,L. Pulliam,4281237,,True,38.0,6,15,6,14,0,1,3,4,2,2,4,3,0,1,1,1,15
+400993766,Northwestern Wildcats,B. Galernik,4068052,,True,28.0,0,4,0,3,0,1,0,0,0,0,0,1,0,0,4,0,0
+400993766,Northwestern Wildcats,A. Wolf,4068051,,False,25.0,2,6,2,6,0,0,0,1,2,4,6,3,1,0,1,1,4
+400993766,Northwestern Wildcats,O. Hamilton,3054621,,False,8.0,1,4,1,4,0,0,0,0,0,1,1,0,1,0,1,1,2
+400993766,Northwestern Wildcats,B. Pikiell,4281238,,False,2.0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0
+400993766,Northwestern Wildcats,TEAM,TOTAL,TOTAL,False,,22,62,20,56,2,6,8,15,18,19,37,11,5,2,19,8,54
+400993766,Ohio State Buckeyes,S. Mavunga,3058900,,True,22.0,7,9,7,9,0,0,0,0,2,5,7,1,4,1,5,4,14
+400993766,Ohio State Buckeyes,K. Mitchell,3142191,,True,36.0,9,16,6,10,3,6,1,1,0,0,0,3,1,0,2,2,22
+400993766,Ohio State Buckeyes,A. Doss,3142188,,True,30.0,3,9,3,6,0,3,1,1,0,4,4,6,2,0,1,1,7
+400993766,Ohio State Buckeyes,S. Calhoun,3142009,,True,25.0,5,7,1,1,4,6,0,0,0,1,1,3,0,1,2,0,14
+400993766,Ohio State Buckeyes,L. Harper,3056639,,True,28.0,7,12,6,10,1,2,0,0,1,5,6,4,2,0,1,0,15
+400993766,Ohio State Buckeyes,S. Jayaraman,4281235,,False,2.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+400993766,Ohio State Buckeyes,M. Waterman,3142192,,False,23.0,2,2,2,2,0,0,1,2,2,2,4,1,0,3,1,4,5
+400993766,Ohio State Buckeyes,A. Hart,3142189,,False,19.0,3,4,3,4,0,0,0,1,1,1,2,1,0,1,1,0,6
+400993766,Ohio State Buckeyes,J. Caretti,4068057,,False,13.0,2,4,2,4,0,0,1,1,0,4,4,0,1,0,0,1,5
+400993766,Ohio State Buckeyes,K. Cronin,3918383,,False,2.0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0
+400993766,Ohio State Buckeyes,TEAM,TOTAL,TOTAL,False,,38,63,30,46,8,17,4,6,7,24,31,20,10,7,13,13,88
+303442739,Southeast Missouri State Redhawks,B. Harriel,14216,,True,0.0,1,2,1,1,0,1,0,0,0,2,2,1,0,1,1,3,2
+303442739,Southeast Missouri State Redhawks,C. Shiffer,14215,,True,0.0,0,2,0,2,0,0,0,0,0,3,3,2,0,4,4,2,0
+303442739,Southeast Missouri State Redhawks,J. Davis,14227,,True,0.0,3,9,1,5,2,4,0,0,0,2,2,1,0,0,0,0,8
+303442739,Southeast Missouri State Redhawks,K. Evans,14218,,True,0.0,2,4,1,1,1,3,0,0,0,1,1,1,1,0,4,2,5
+303442739,Southeast Missouri State Redhawks,B. Beck,11349,,True,0.0,3,4,1,1,2,3,0,0,0,2,2,3,3,0,4,1,8
+303442739,Southeast Missouri State Redhawks,TEAM,TOTAL,TOTAL,False,,16,44,10,21,6,23,2,2,3,25,28,10,5,6,0,20,40
+303442739,Green Bay Phoenix,K. Tetschlag,9352,,True,0.0,2,4,2,4,0,0,7,9,4,2,6,4,3,0,2,2,11
+303442739,Green Bay Phoenix,C. Hoewisch,9351,,True,0.0,5,8,3,6,2,2,4,4,2,3,5,0,1,0,3,0,16
+303442739,Green Bay Phoenix,S. Eichler,12725,,True,0.0,2,7,1,4,1,3,0,1,0,2,2,6,1,0,1,1,5
+303442739,Green Bay Phoenix,J. Wojta,10581,,True,0.0,4,10,4,9,0,1,4,5,2,2,4,4,7,1,2,2,12
+303442739,Green Bay Phoenix,A. Ritchie,12726,,True,0.0,4,10,3,6,1,4,0,0,0,1,1,2,2,2,0,2,9
+303442739,Green Bay Phoenix,TEAM,TOTAL,TOTAL,False,,23,55,16,38,7,17,21,27,9,19,28,21,17,5,0,11,74
+401091038,Drake Bulldogs,B. Jonas,3142792,,True,13.0,4,8,4,7,0,1,0,1,4,0,4,1,0,1,0,1,8
+401091038,Drake Bulldogs,M. Petersen,4282208,,True,20.0,1,3,0,0,1,3,0,0,0,1,1,1,0,0,0,0,3
+401091038,Drake Bulldogs,B. Hittner,4068464,,True,28.0,5,9,2,6,3,3,10,12,1,3,4,3,2,0,1,2,23
+401091038,Drake Bulldogs,S. Bachrodt,3907683,,True,30.0,3,7,1,3,2,4,0,0,2,7,9,3,2,0,4,3,8
+401091038,Drake Bulldogs,M. Dean,3142790,,True,21.0,2,6,1,3,1,3,2,2,1,3,4,2,1,0,2,0,7
+401091038,Drake Bulldogs,A. Wooldridge,4399376,,False,4.0,1,1,0,0,1,1,0,0,0,0,0,1,0,0,0,1,3
+401091038,Drake Bulldogs,M. Burich,3907703,,False,9.0,1,2,0,0,1,2,0,0,1,1,2,0,1,0,1,2,3
+401091038,Drake Bulldogs,S. Rhine,3907686,,False,25.0,5,14,2,8,3,6,4,4,1,12,13,1,1,2,2,1,17
+401091038,Drake Bulldogs,H. Fuller,4282209,,False,13.0,1,1,1,1,0,0,0,0,2,0,2,2,1,0,1,2,2
+401091038,Drake Bulldogs,B. Rose,4068465,,False,15.0,2,4,2,2,0,2,2,2,0,1,1,2,1,0,2,0,6
+401091038,Drake Bulldogs,N. Miller,3907685,,False,22.0,2,4,1,1,1,3,0,0,0,0,0,4,0,0,1,1,5
+401091038,Drake Bulldogs,TEAM,TOTAL,TOTAL,False,,27,59,14,31,13,28,18,21,12,31,43,20,9,3,14,13,85
+401091038,Creighton Bluejays,G. Griglione,4281360,,True,7.0,1,1,1,1,0,0,0,0,1,0,1,0,1,0,0,0,2
+401091038,Creighton Bluejays,A. Faber,3938938,,True,39.0,5,16,4,8,1,8,0,0,2,4,6,3,2,2,3,3,11
+401091038,Creighton Bluejays,T. Carda,4281362,,True,34.0,8,16,4,6,4,10,0,0,1,2,3,4,0,0,0,2,20
+401091038,Creighton Bluejays,T. Rembao,4281361,,True,29.0,3,6,2,4,1,2,2,5,2,2,4,4,3,0,2,1,9
+401091038,Creighton Bluejays,B. Kissinger,3142124,,True,11.0,1,7,1,2,0,5,0,0,0,2,2,3,0,0,1,1,2
+401091038,Creighton Bluejays,M. Turner,3923594,,False,10.0,2,3,2,2,0,1,0,0,0,2,2,1,0,0,3,2,4
+401091038,Creighton Bluejays,P. Brotzki,4399333,,False,25.0,4,7,1,3,3,4,0,0,4,5,9,3,0,0,3,2,11
+401091038,Creighton Bluejays,C. Dworak,4399332,,False,8.0,0,3,0,0,0,3,0,0,0,1,1,0,0,0,1,1,0
+401091038,Creighton Bluejays,R. Saunders,4399331,,False,19.0,0,1,0,0,0,1,2,2,2,2,4,1,0,0,1,5,2
+401091038,Creighton Bluejays,O. Elger,3938936,,False,18.0,2,6,0,0,2,6,2,3,0,0,0,2,0,0,1,3,8
+401091038,Creighton Bluejays,TEAM,TOTAL,TOTAL,False,,26,66,15,26,11,40,6,10,13,22,35,21,6,2,15,20,69
+401387091,Union (KY) Bulldogs,M. Himes,4906336,,True,15.0,6,9,6,9,0,0,0,0,2,0,2,1,0,1,0,4,12
+401387091,Union (KY) Bulldogs,B. Hammonds,4906330,,True,24.0,5,13,5,11,0,2,6,6,5,7,12,4,0,0,6,3,16
+401387091,Union (KY) Bulldogs,G. Jervis,4906331,,True,26.0,1,7,0,0,1,7,0,0,0,1,1,1,0,0,5,4,3
+401387091,Union (KY) Bulldogs,S. Newland,4906325,,True,26.0,2,6,2,4,0,2,2,2,1,1,2,0,2,0,3,2,6
+401387091,Union (KY) Bulldogs,L. Linton,4906323,,True,25.0,0,7,0,5,0,2,0,0,5,6,11,3,1,0,5,1,0
+401387091,Union (KY) Bulldogs,H. Brock,4906335,,False,12.0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0
+401387091,Union (KY) Bulldogs,J. Crist,4906332,,False,5.0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,2,5,0
+401387091,Union (KY) Bulldogs,R. King,4906338,,False,15.0,1,2,1,2,0,0,1,3,3,1,4,0,0,1,2,4,3
+401387091,Union (KY) Bulldogs,S. Fox,4906337,,False,6.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+401387091,Union (KY) Bulldogs,A. Voll,4906334,,False,5.0,1,2,0,1,1,1,0,0,0,0,0,0,0,0,0,0,3
+401387091,Union (KY) Bulldogs,M. Blakley,4906333,,False,6.0,0,3,0,2,0,1,0,0,0,0,0,0,0,0,0,1,0
+401387091,Union (KY) Bulldogs,A. Smith,4906329,,False,6.0,0,2,0,0,0,2,0,0,1,0,1,1,0,0,2,0,0
+401387091,Union (KY) Bulldogs,M. Cox,4906328,,False,6.0,2,5,1,1,1,4,0,0,0,1,1,0,0,0,1,0,5
+401387091,Union (KY) Bulldogs,B. Davis,4906327,,False,10.0,1,3,0,1,1,2,2,2,0,0,0,0,0,0,6,1,5
+401387091,Union (KY) Bulldogs,M. Taylor,4906326,,False,6.0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,0
+401387091,Union (KY) Bulldogs,C. Uphoff,4906324,,False,7.0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,3,0,0
+401387091,Union (KY) Bulldogs,TEAM,TOTAL,TOTAL,False,,19,60,15,37,4,23,11,13,19,19,38,12,3,3,37,28,53
+401387091,Eastern Kentucky Colonels,J. Johnson,4282607,,True,21.0,9,17,8,15,1,2,7,7,3,1,4,1,2,0,2,3,26
+401387091,Eastern Kentucky Colonels,A. Recanati,4705072,,True,25.0,9,13,9,12,0,1,1,3,1,4,5,6,5,0,0,3,19
+401387091,Eastern Kentucky Colonels,A. Collett,4704580,,True,20.0,1,5,0,2,1,3,0,0,0,0,0,1,2,0,1,0,3
+401387091,Eastern Kentucky Colonels,A. Kirkwood,4595834,,True,20.0,5,7,5,7,0,0,0,0,3,3,6,2,3,3,0,1,10
+401387091,Eastern Kentucky Colonels,B. Bass,4282431,,True,17.0,3,5,3,4,0,1,2,4,1,3,4,0,1,0,0,0,8
+401387091,Eastern Kentucky Colonels,A. Jordan,4595771,,False,6.0,1,1,1,1,0,0,1,1,0,2,2,1,1,2,0,1,3
+401387091,Eastern Kentucky Colonels,E. Hacker,4595770,,False,15.0,2,3,1,1,1,2,0,0,0,1,1,2,3,0,1,2,5
+401387091,Eastern Kentucky Colonels,B. Fox,4595283,,False,16.0,4,4,4,4,0,0,4,4,0,1,1,1,0,0,0,2,12
+401387091,Eastern Kentucky Colonels,I. Green,4067989,,False,11.0,1,4,1,4,0,0,0,0,1,0,1,0,0,0,1,0,2
+401387091,Eastern Kentucky Colonels,K. Lacy,4898925,,False,14.0,2,7,2,3,0,4,2,2,0,1,1,2,1,0,2,0,6
+401387091,Eastern Kentucky Colonels,B. Crittendon,4898923,,False,11.0,3,3,2,2,1,1,1,2,0,1,1,1,1,0,0,3,8
+401387091,Eastern Kentucky Colonels,K. Freeman,4898922,,False,18.0,3,5,3,4,0,1,5,5,1,1,2,2,3,0,3,1,11
+401387091,Eastern Kentucky Colonels,A. Khlopkova,4595244,,False,6.0,3,3,2,2,1,1,0,0,0,1,1,2,0,1,0,1,7
+401387091,Eastern Kentucky Colonels,TEAM,TOTAL,TOTAL,False,,46,77,41,61,5,16,23,28,13,23,36,21,22,6,10,17,120
