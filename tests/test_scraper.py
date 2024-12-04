@@ -67,10 +67,15 @@ W_CONF_SCHEDULE = [
     (2022, "Southeastern Conference"),
     (2019, "West Coast Conference"),
 ]
-CONF_SEASONS = [
+M_CONF_SEASONS = [
     ('acc', 2017),
     ('a10', 2022),
     ('maac', 2019),
+]
+W_CONF_SEASONS = [
+    ('big east', 2018),
+    ('mountain west', 2021),
+    ('patriot', 2023),
 ]
 DATA_PATH = Path(__file__).parent / 'expected_data'
 
@@ -197,10 +202,10 @@ def test_season(func):
 
 
 @pytest.mark.parametrize("func, game_type", [
-    (ms.get_games_conference, "mens"),
-    (ws.get_games_conference, "womens"),
+    (ms.get_games_conference, "mens", M_CONF_SEASONS),
+    (ws.get_games_conference, "womens", W_CONF_SEASONS),
 ])
-def test_conference_games(func, game_type):
+def test_conference_games(func, game_type, data):
     expected_info_df = load_expected_dataframe(DATA_PATH / f"{game_type}_conference_info.csv")
     expected_boxscore_df = load_expected_dataframe(DATA_PATH / f"{game_type}_conference_boxscore.csv")
     expected_pbp_df = load_expected_dataframe(DATA_PATH / f"{game_type}_conference_pbp.csv")
@@ -208,7 +213,7 @@ def test_conference_games(func, game_type):
     result_box = pd.DataFrame()
     result_pbp = pd.DataFrame()
     
-    for conf, season in CONF_SEASONS:
+    for conf, season in data:
         info, box, pbp = func(conf, season)
         result_info = pd.concat([result_info, info], ignore_index=True)
         result_box = pd.concat([result_box, box], ignore_index=True)

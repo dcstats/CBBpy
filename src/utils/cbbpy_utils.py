@@ -76,7 +76,7 @@ WOMENS_BOXSCORE_URL = (
 )
 WOMENS_PBP_URL = "https://www.espn.com/womens-college-basketball/playbyplay/_/gameId/{}"
 WOMENS_PLAYER_URL = "https://www.espn.com/womens-college-basketball/player/_/id/{}"
-WOMENS_SCHEDULE_URL = "https://www.espn.com/mens-college-basketball/team/schedule/_/id/{}/season/{}"
+WOMENS_SCHEDULE_URL = "https://www.espn.com/womens-college-basketball/team/schedule/_/id/{}/season/{}"
 NON_SHOT_TYPES = [
     "TV Timeout",
     "Jump Ball",
