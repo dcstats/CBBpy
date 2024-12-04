@@ -20,6 +20,7 @@ from utils.cbbpy_utils import (
     _get_conference_schedule,
     _get_current_season,
     _get_games_team,
+    _get_games_conference,
 )
 
 
@@ -127,6 +128,36 @@ def get_games_team(
     if season is None:
         season = _get_current_season()
     return _get_games_team(team, season, "womens", info, box, pbp)
+
+
+def get_games_conference(
+    conference: str,
+    season: Union[str, int] = None,
+    info: bool = True,
+    box: bool = True,
+    pbp: bool = True,
+):
+    """Scrapes desired game information (metadata, boxscore, play-by-play) for every game for every team for a given conference and season.
+
+    Parameters:
+        conference (str): The conference whose teams will have their games scraped.
+        season (str | int, optional): The season to be scraped. 
+            NOTE: season takes the form of the four-digit representation of the later year of the season. 
+            So, as an example, the 2021-22 season is referred to by the integer 2022.
+        info (bool, optional): Whether the game metadata is to be scraped. Defaults to True.
+        box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
+        pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
+
+    Returns:
+        a tuple containing
+
+        - pd.DataFrame: The conference's teams' games metadata.\n
+        - pd.DataFrame: The conference's teams' season boxscores (both teams combined).\n
+        - pd.DataFrame: The conference's teams' season play-by-plays.
+    """
+    if season is None:
+        season = _get_current_season()
+    return _get_games_conference(conference, season, "mens", info, box, pbp)
 
 
 def get_game_ids(date: Union[str, datetime]) -> list:
