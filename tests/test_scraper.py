@@ -109,7 +109,7 @@ dtypes = {
     'referee_2': converter,
     'referee_3': converter,
     'game_result': converter,
-    'home_spread': converter,
+    'home_point_spread': converter,
     'height': converter,
     'weight': converter,
     'birthplace': converter,
