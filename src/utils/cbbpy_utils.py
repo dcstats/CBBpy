@@ -1256,9 +1256,9 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
     info = gamepackage["gmInfo"]
     more_info = gamepackage["gmStrp"]
 
-    attendance = int(info["attnd"]) if "attnd" in info.keys() else np.nan
-    capacity = int(info["cpcty"]) if "cpcty" in info.keys() else np.nan
-    network = info["cvrg"] if "cvrg" in info.keys() else ""
+    attendance = float(info.get("attnd", np.nan))
+    capacity = float(info.get("cpcty", np.nan))
+    network = info.get("cvrg", "")
 
     gm_date = parser.parse(info["dtTm"])
     game_date = gm_date.replace(tzinfo=timezone.utc).astimezone(tz=tz("US/Pacific"))
@@ -1266,14 +1266,14 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
     game_time = game_date.strftime("%I:%M %p %Z")
     gm_status = more_info["status"]["desc"]
 
-    arena = info["loc"] if "loc" in info.keys() else ""
+    arena = info.get("loc", "")
     loc = (
         info["locAddr"]["city"] + ", " + info["locAddr"]["state"]
         if "locAddr" in info.keys()
         else ""
     )
 
-    tot_refs = info["refs"] if "refs" in info.keys() else {}
+    tot_refs = info.get("refs", {})
     ref_1 = tot_refs[0]["dspNm"] if len(tot_refs) > 0 else ""
     ref_2 = tot_refs[1]["dspNm"] if len(tot_refs) > 1 else ""
     ref_3 = tot_refs[2]["dspNm"] if len(tot_refs) > 2 else ""
@@ -1300,8 +1300,8 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
         at = away_team.lower().replace(" ", "-")
         away_id = "nd-" + re.sub(r"[^0-9a-zA-Z-]", "", at)
 
-    home_rank = ht_info["rank"] if "rank" in ht_info.keys() else np.nan
-    away_rank = at_info["rank"] if "rank" in at_info.keys() else np.nan
+    home_rank = ht_info.get("rank", np.nan)
+    away_rank = at_info.get("rank", np.nan)
 
     home_record = (
         ht_info["records"][0]["displayValue"] if len(ht_info["records"]) > 0 else ""
@@ -1310,7 +1310,7 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
         at_info["records"][0]["displayValue"] if len(at_info["records"]) > 0 else ""
     )
 
-    home_score, away_score = int(ht_info["score"]), int(at_info["score"])
+    home_score, away_score = int(ht_info.get("score", 0)), int(at_info.get("score", 0))
 
     home_win = True if home_score > away_score and gm_status == 'Final' else False
 
@@ -1322,7 +1322,7 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
     else:
         is_neutral = False
 
-    tournament = more_info["nte"] if "nte" in more_info.keys() else ""
+    tournament = more_info.get("nte", "")
 
     if ("linescores" in ht_info) and ("linescores" in at_info):
         # men, and women before the 15-16 season, use halves
