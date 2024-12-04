@@ -42,7 +42,8 @@ dependencies = [
   'joblib>=1.2.0',
   'beautifulsoup4>=4.11.0',
   'requests>=2.27.0',
-  'rapidfuzz>=3.9.7',
+  'rapidfuzz>=3.4.0',
+  'platformdirs>=4.0.0',
 ]
 requires-python = ">=3.7"
 
