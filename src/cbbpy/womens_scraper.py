@@ -76,7 +76,7 @@ def get_games_range(
 
 
 def get_games_season(
-    season: Union[str, int],
+    season: Union[str, int] = None,
     info: bool = True,
     box: bool = True,
     pbp: bool = True,
@@ -98,6 +98,8 @@ def get_games_season(
         - pd.DataFrame: The game's boxscore (both teams combined).\n
         - pd.DataFrame: The game's play-by-play.
     """
+    if season is None:
+        season = _get_current_season()
     return _get_games_season(season, "womens", info, box, pbp)
 
 
