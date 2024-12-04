@@ -558,13 +558,7 @@ def _get_game_info(game_id, game_type):
             if not gsbool:
                 _log.warning(f'{game_id} - {gm_status}')
 
-            # get general game info
-            info = gamepackage["gmInfo"]
-
-            # get team info
-            more_info = gamepackage["gmStrp"]
-
-            df = _get_game_info_helper(info, more_info, game_id, game_type)
+            df = _get_game_info_helper(gamepackage, game_id, game_type)
 
         except Exception as ex:
             if i + 1 == ATTEMPTS:
@@ -1258,7 +1252,10 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     return df.sort_values(by=[pd_type, pd_type_sec], ascending=[True, False])
 
 
-def _get_game_info_helper(info, more_info, game_id, game_type):
+def _get_game_info_helper(gamepackage, game_id, game_type):
+    info = gamepackage["gmInfo"]
+    more_info = gamepackage["gmStrp"]
+
     attendance = int(info["attnd"]) if "attnd" in info.keys() else np.nan
     capacity = int(info["cpcty"]) if "cpcty" in info.keys() else np.nan
     network = info["cvrg"] if "cvrg" in info.keys() else ""
@@ -1344,6 +1341,11 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
         _log.warning(f'{game_id} - No score info available')
         num_ots = -1
 
+    try:
+        home_spread = gamepackage['gameOdds']['odds'][-1]['pointSpread']['primary']
+    except:
+        home_spread = ''
+
     game_info_list = [
         game_id,
         gm_status,
@@ -1357,6 +1359,7 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
         away_rank,
         away_record,
         away_score,
+        home_spread,
         home_win,
         num_ots,
         is_conference,
@@ -1388,6 +1391,7 @@ def _get_game_info_helper(info, more_info, game_id, game_type):
         "away_rank",
         "away_record",
         "away_score",
+        "home_point_spread",
         "home_win",
         "num_ots",
         "is_conference",
