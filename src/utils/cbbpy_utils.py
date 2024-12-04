@@ -18,6 +18,7 @@ from rapidfuzz import process, distance, utils
 from pathlib import Path
 from platformdirs import user_log_dir
 from importlib.metadata import version
+from functools import wraps
 
 
 warnings.filterwarnings('ignore', category=UserWarning)
@@ -116,6 +117,22 @@ _log.setLevel(logging.WARNING)
 _log.addHandler(file_handler)
 
 
+_call_depth = [0]
+
+def print_log_file_location(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        _call_depth[0] += 1  # Increment call depth
+        try:
+            result = func(*args, **kwargs)
+            return result
+        finally:
+            _call_depth[0] -= 1  # Decrement call depth
+            if _call_depth[0] == 0:
+                print(f"Log file is located at {log_file}")
+    return wrapper
+
+
 # pnf_ will keep track of games w/ page not found errors
 # if game has error, don't run the other scrape functions to save time
 pnf_ = []
@@ -151,6 +168,7 @@ def _get_game(game_id, game_type, info, box, pbp):
     return (game_info_df, boxscore_df, pbp_df)
 
 
+@print_log_file_location
 def _get_games_range(start_date, end_date, game_type, info, box, pbp):
     if isinstance(start_date, str):
         start_date = _parse_date(start_date)
@@ -221,6 +239,7 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
     return (game_info_df, game_boxscore_df, game_pbp_df)
 
 
+@print_log_file_location
 def _get_games_season(season, game_type, info, box, pbp):
     season_start_date = f"{season-1}-11-01"
     season_end_date = f"{season}-05-01"
@@ -240,6 +259,7 @@ def _get_games_season(season, game_type, info, box, pbp):
     return info
 
 
+@print_log_file_location
 def _get_games_team(team, season, game_type, info, box, pbp):
     cpus = os.cpu_count() - 1
     schedule_df = _get_team_schedule(team, season, game_type)
@@ -282,8 +302,9 @@ def _get_games_team(team, season, game_type, info, box, pbp):
     return (game_info_df, game_boxscore_df, game_pbp_df)
 
 
+@print_log_file_location
 def _get_games_conference(conference, season, game_type, info, box, pbp):
-    teams = _get_teams_from_conf(conference, season, game_type)
+    teams = _get_teams_from_conference(conference, season, game_type)
     result = [_get_games_team(x, season, game_type, info, box, pbp) for x in teams]
 
     # sort returned dataframes to ensure consistency between runs
@@ -696,8 +717,9 @@ def _get_team_schedule(team, season, game_type):
     return df
 
 
+@print_log_file_location
 def _get_conference_schedule(conference, season, game_type):
-    teams = _get_teams_from_conf(conference, season, game_type)
+    teams = _get_teams_from_conference(conference, season, game_type)
 
     df = pd.DataFrame()
 
@@ -1526,7 +1548,7 @@ def _get_season_conferences(season, game_type):
     return confs_df.reset_index(drop=True)
 
 
-def _get_teams_from_conf(conference, season, game_type):
+def _get_teams_from_conference(conference, season, game_type):
     # fetch list of teams and team IDs for given season
     season = int(season)
     team_map_df, confs_df = _get_team_map(game_type), _get_season_conferences(season, game_type)

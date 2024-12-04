@@ -6,7 +6,7 @@ Author: Daniel Cowan
 
 from datetime import datetime
 import pandas as pd
-from typing import Union
+from typing import Union, Tuple
 from utils.cbbpy_utils import (
     _get_game,
     _get_games_range,
@@ -16,11 +16,12 @@ from utils.cbbpy_utils import (
     _get_game_pbp,
     _get_game_info,
     _get_player_info,
+    _get_teams_from_conference,
     _get_team_schedule,
     _get_conference_schedule,
-    _get_current_season,
     _get_games_team,
     _get_games_conference,
+    _get_current_season,
 )
 
 
@@ -29,7 +30,7 @@ def get_game(
     info: bool = True,
     box: bool = True,
     pbp: bool = True,
-) -> tuple:
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """A function that scrapes all game info (metadata, boxscore, play-by-play).
 
     Parameters:
@@ -54,7 +55,7 @@ def get_games_range(
     info: bool = True,
     box: bool = True,
     pbp: bool = True,
-) -> tuple:
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """A function that scrapes a game information between a given range of dates.
 
     Parameters:
@@ -79,7 +80,7 @@ def get_games_season(
     info: bool = True,
     box: bool = True,
     pbp: bool = True,
-) -> tuple:
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Scrapes desired game information (metadata, boxscore, play-by-play) for every game of a given season.
 
     Parameters:
@@ -106,7 +107,7 @@ def get_games_team(
     info: bool = True, 
     box: bool = True, 
     pbp: bool = True,
-):
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Scrapes desired game information (metadata, boxscore, play-by-play) for every game of a given team and season.
 
     Parameters:
@@ -136,7 +137,7 @@ def get_games_conference(
     info: bool = True,
     box: bool = True,
     pbp: bool = True,
-):
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Scrapes desired game information (metadata, boxscore, play-by-play) for every game for every team for a given conference and season.
 
     Parameters:
@@ -208,7 +209,7 @@ def get_game_info(game_id: Union[str, int]) -> pd.DataFrame:
     return _get_game_info(game_id, "mens")
 
 
-def get_player_info(player_id: Union[int, str]) -> pd.DataFrame:
+def get_player_info(player_id: Union[str, int]) -> pd.DataFrame:
     """Scrapes player details from his bio page for a given player ID.
 
     Args:
@@ -220,12 +221,31 @@ def get_player_info(player_id: Union[int, str]) -> pd.DataFrame:
     return _get_player_info(player_id, "mens")
 
 
+def get_teams_from_conference(conference: str, season: Union[str, int] = None) -> list:
+    """Fetches the list of teams from the given conference during a given season.
+
+    Args:
+        conference (str): The conference to be fetched.
+        season (str | int): The relevant season. Defaults to current season.
+            NOTE: season takes the form of the four-digit representation of the later year of the season. 
+            So, as an example, the 2021-22 season is referred to by the integer 2022.
+
+    Returns:
+        list: The teams in the given conference.
+    """
+    if season is None:
+        season = _get_current_season()
+    return _get_teams_from_conference(conference, season, "mens")
+
+
 def get_team_schedule(team: str, season: Union[str, int] = None) -> pd.DataFrame:
     """Scrapes a given team's schedule for a specified season.
 
     Args:
         team (str): The name of the team to be scraped.
         season (str | int, optional): The season to be scraped. Defaults to current season.
+            NOTE: season takes the form of the four-digit representation of the later year of the season. 
+            So, as an example, the 2021-22 season is referred to by the integer 2022.
 
     Returns:
         pd.DataFrame: The given team's schedule for the year.
@@ -235,12 +255,14 @@ def get_team_schedule(team: str, season: Union[str, int] = None) -> pd.DataFrame
     return _get_team_schedule(team, season, "mens")
 
 
-def get_conference_schedule(conference: str, season: Union[str, int] = None):
+def get_conference_schedule(conference: str, season: Union[str, int] = None) -> pd.DataFrame:
     """Returns the given season's schedules for all teams in the given conference.
 
     Args:
         conference (str): The conference to return schedules for.
         season (int, optional): The season to return conferences for. Defaults to current season.
+            NOTE: season takes the form of the four-digit representation of the later year of the season. 
+            So, as an example, the 2021-22 season is referred to by the integer 2022.
 
     Returns:
         pd.DataFrame: The conference schedules.
