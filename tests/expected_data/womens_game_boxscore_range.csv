@@ -22,7 +22,7 @@ game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,f
 401424853,UCLA Bruins,J. Penn,4281259,,True,34.0,6,16,5,8,1,8,4,4,0,3,3,3,2,0,1,2,17
 401424853,UCLA Bruins,N. Chou,4066562,,True,21.0,0,5,0,4,0,1,0,0,0,3,3,1,4,0,0,0,0
 401424853,UCLA Bruins,I. Anstey,4599500,,False,10.0,1,1,1,1,0,0,0,2,1,2,3,0,0,1,0,1,2
-401424853,UCLA Bruins,Dugalic,4433411,,False,28.0,5,8,4,6,1,2,1,2,5,2,7,2,0,0,2,3,12
+401424853,UCLA Bruins,A. Dugalic,4433411,,False,28.0,5,8,4,6,1,2,1,2,5,2,7,2,0,0,2,3,12
 401424853,UCLA Bruins,D. Darius,4711802,,False,5.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 401424853,UCLA Bruins,C. Brown,4595911,,False,23.0,0,1,0,1,0,0,0,0,2,0,2,3,1,0,0,3,0
 401424853,UCLA Bruins,TEAM,TOTAL,TOTAL,False,,25,63,20,41,5,22,19,25,10,27,37,17,10,3,6,15,74
@@ -251,7 +251,7 @@ game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,f
 401424116,UCLA Bruins,J. Penn,4281259,,True,48.0,6,18,4,10,2,8,0,0,0,3,3,3,1,0,2,3,14
 401424116,UCLA Bruins,N. Chou,4066562,,True,44.0,5,9,3,5,2,4,1,1,0,1,1,1,5,1,0,0,13
 401424116,UCLA Bruins,I. Anstey,4599500,,False,10.0,2,6,2,6,0,0,0,0,2,1,3,0,1,0,1,3,4
-401424116,UCLA Bruins,Dugalic,4433411,,False,10.0,0,5,0,3,0,2,1,2,0,1,1,1,1,0,1,5,1
+401424116,UCLA Bruins,A. Dugalic,4433411,,False,10.0,0,5,0,3,0,2,1,2,0,1,1,1,1,0,1,5,1
 401424116,UCLA Bruins,D. Darius,4711802,,False,14.0,1,2,1,2,0,0,0,2,2,5,7,0,0,0,0,1,2
 401424116,UCLA Bruins,K. Owens,4282172,,False,3.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0
 401424116,UCLA Bruins,C. Horvat,4282171,,False,26.0,3,10,3,9,0,1,2,3,3,2,5,1,1,1,2,3,8
@@ -262,7 +262,7 @@ game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,f
 401423737,UCLA Bruins,J. Penn,4281259,,True,21.0,2,6,1,3,1,3,2,2,1,3,4,0,1,0,0,0,7
 401423737,UCLA Bruins,N. Chou,4066562,,True,29.0,1,6,1,3,0,3,2,2,1,2,3,4,1,2,1,2,4
 401423737,UCLA Bruins,I. Anstey,4599500,,False,14.0,0,2,0,2,0,0,1,2,0,1,1,1,0,0,3,4,1
-401423737,UCLA Bruins,Dugalic,4433411,,False,21.0,5,9,4,8,1,1,0,1,0,7,7,1,2,3,3,2,11
+401423737,UCLA Bruins,A. Dugalic,4433411,,False,21.0,5,9,4,8,1,1,0,1,0,7,7,1,2,3,3,2,11
 401423737,UCLA Bruins,D. Darius,4711802,,False,13.0,0,1,0,1,0,0,0,0,0,3,3,0,1,0,3,4,0
 401423737,UCLA Bruins,C. Horvat,4282171,,False,19.0,3,5,3,5,0,0,2,3,4,3,7,0,0,1,1,1,8
 401423737,UCLA Bruins,TEAM,TOTAL,TOTAL,False,,24,51,20,40,4,11,9,12,9,30,39,11,7,10,16,15,61
@@ -667,7 +667,7 @@ game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,f
 401422718,UCLA Bruins,C. Osborne,4433293,,True,35.0,3,12,3,9,0,3,0,0,3,3,6,4,1,0,4,1,6
 401422718,UCLA Bruins,J. Penn,4281259,,True,27.0,2,5,1,2,1,3,0,0,0,3,3,1,1,0,1,1,5
 401422718,UCLA Bruins,N. Chou,4066562,,True,33.0,6,9,1,2,5,7,2,2,0,3,3,1,0,3,2,0,19
-401422718,UCLA Bruins,Dugalic,4433411,,False,17.0,4,6,4,6,0,0,0,0,2,2,4,0,2,1,1,2,8
+401422718,UCLA Bruins,A. Dugalic,4433411,,False,17.0,4,6,4,6,0,0,0,0,2,2,4,0,2,1,1,2,8
 401422718,UCLA Bruins,I. Thomas,4281072,,False,25.0,4,8,4,7,0,1,5,5,4,8,12,3,2,0,4,3,13
 401422718,UCLA Bruins,D. Darius,4711802,,False,15.0,2,4,2,3,0,1,0,1,0,2,2,1,1,1,0,0,4
 401422718,UCLA Bruins,K. Owens,4282172,,False,11.0,0,4,0,4,0,0,0,0,0,2,2,1,0,0,0,1,0
@@ -1634,7 +1634,7 @@ game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,f
 401415938,UCLA Bruins,J. Penn,4281259,,True,30.0,3,8,2,4,1,4,0,0,3,1,4,1,0,2,0,3,7
 401415938,UCLA Bruins,N. Chou,4066562,,True,25.0,2,7,2,4,0,3,1,2,0,1,1,0,2,0,2,1,5
 401415938,UCLA Bruins,I. Anstey,4599500,,False,8.0,0,1,0,1,0,0,0,2,0,1,1,1,1,0,1,1,0
-401415938,UCLA Bruins,Dugalic,4433411,,False,12.0,3,7,3,7,0,0,0,3,2,0,2,0,3,1,3,3,6
+401415938,UCLA Bruins,A. Dugalic,4433411,,False,12.0,3,7,3,7,0,0,0,3,2,0,2,0,3,1,3,3,6
 401415938,UCLA Bruins,D. Darius,4711802,,False,4.0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,0,1,0
 401415938,UCLA Bruins,C. Brown,4595911,,False,25.0,2,3,2,3,0,0,0,0,0,2,2,1,3,0,0,4,4
 401415938,UCLA Bruins,K. Owens,4282172,,False,6.0,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,2,0
@@ -5972,7 +5972,7 @@ game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,f
 401402657,UCLA Bruins,J. Penn,4281259,,True,35.0,7,17,3,10,4,7,0,0,0,2,2,0,1,0,0,1,18
 401402657,UCLA Bruins,N. Chou,4066562,,True,22.0,2,9,0,3,2,6,0,0,0,0,0,1,1,0,0,2,6
 401402657,UCLA Bruins,I. Anstey,4599500,,False,6.0,1,3,1,3,0,0,0,0,0,1,1,0,0,0,0,2,2
-401402657,UCLA Bruins,Dugalic,4433411,,False,23.0,2,5,2,4,0,1,2,3,1,3,4,4,0,0,0,0,6
+401402657,UCLA Bruins,A. Dugalic,4433411,,False,23.0,2,5,2,4,0,1,2,3,1,3,4,4,0,0,0,0,6
 401402657,UCLA Bruins,C. Brown,4595911,,False,11.0,0,1,0,1,0,0,0,0,3,1,4,2,0,0,0,1,0
 401402657,UCLA Bruins,K. Owens,4282172,,False,5.0,1,2,1,2,0,0,0,0,3,2,5,0,0,0,1,2,2
 401402657,UCLA Bruins,TEAM,TOTAL,TOTAL,False,,24,67,14,43,10,24,2,4,13,22,35,16,5,0,5,14,60
@@ -6072,7 +6072,7 @@ game_id,team,player,player_id,position,starter,min,fgm,fga,2pm,2pa,3pm,3pa,ftm,f
 401402653,UCLA Bruins,J. Penn,4281259,,True,30.0,5,13,4,8,1,5,0,0,1,6,7,2,0,0,2,1,11
 401402653,UCLA Bruins,N. Chou,4066562,,True,31.0,2,6,2,4,0,2,5,5,0,3,3,0,2,0,3,3,9
 401402653,UCLA Bruins,I. Anstey,4599500,,False,8.0,0,1,0,1,0,0,0,0,0,1,1,0,1,0,1,1,0
-401402653,UCLA Bruins,Dugalic,4433411,,False,21.0,5,10,3,8,2,2,1,2,4,8,12,1,1,1,1,5,13
+401402653,UCLA Bruins,A. Dugalic,4433411,,False,21.0,5,10,3,8,2,2,1,2,4,8,12,1,1,1,1,5,13
 401402653,UCLA Bruins,E. Sigal,4398838,,False,1.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 401402653,UCLA Bruins,C. Brown,4595911,,False,14.0,0,1,0,1,0,0,0,0,1,1,2,0,0,0,0,3,0
 401402653,UCLA Bruins,K. Owens,4282172,,False,6.0,0,1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0

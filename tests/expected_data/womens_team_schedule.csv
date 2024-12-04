@@ -1,36 +1,36 @@
 team,team_id,season,game_id,game_day,game_time,opponent,opponent_id,season_type,game_status,tv_network,game_result
-Detroit Mercy,2174,2019,401087435,"November 06, 2018",04:00 PM PST,Western Michigan Broncos,2711,Regular Season,Final,ESPN3,L 76-89
-Detroit Mercy,2174,2019,401084647,"November 09, 2018",04:00 PM PST,Temple Owls,218,Regular Season,Final,ESPN3,L 67-83
+Detroit Mercy,2174,2019,401087435,"November 06, 2018",04:00 PM PST,Western Michigan Broncos,2711,Regular Season,Final,,L 76-89
+Detroit Mercy,2174,2019,401084647,"November 09, 2018",04:00 PM PST,Temple Owls,218,Regular Season,Final,,L 67-83
 Detroit Mercy,2174,2019,401083194,"November 12, 2018",03:30 PM PST,Butler Bulldogs,2086,Regular Season,Final,FS1,L 63-84
 Detroit Mercy,2174,2019,401087059,"November 15, 2018",07:00 PM PST,California Golden Bears,25,Regular Season,Canceled,PACN,N/A
-Detroit Mercy,2174,2019,401088490,"November 19, 2018",04:30 PM PST,Loyola Maryland Greyhounds,2352,Regular Season,Final,ESPN+,W 91-63
+Detroit Mercy,2174,2019,401088490,"November 19, 2018",04:30 PM PST,Loyola Maryland Greyhounds,2352,Regular Season,Final,,W 91-63
 Detroit Mercy,2174,2019,401100217,"November 20, 2018",04:40 PM PST,Bowling Green Falcons,189,Regular Season,Final,,W 82-67
-Detroit Mercy,2174,2019,401088491,"November 24, 2018",11:00 AM PST,Eastern Michigan Eagles,2199,Regular Season,Final,ESPN+,W 78-74
-Detroit Mercy,2174,2019,401088492,"November 28, 2018",04:00 PM PST,Kent State Golden Flashes,2309,Regular Season,Final,ESPN3,L 72-76
-Detroit Mercy,2174,2019,401083997,"December 01, 2018",02:00 PM PST,Akron Zips,2006,Regular Season,Final,ESPN3,L 59-71
-Detroit Mercy,2174,2019,401085599,"December 04, 2018",04:00 PM PST,Dayton Flyers,2168,Regular Season,Final,ESPN+,L 59-98
-Detroit Mercy,2174,2019,401087418,"December 05, 2018",04:00 PM PST,Toledo Rockets,2649,Regular Season,Final,ESPN3,L 57-101
-Detroit Mercy,2174,2019,401087401,"December 15, 2018",10:00 AM PST,Ohio Bobcats,195,Regular Season,Final,ESPN+,L 61-63
+Detroit Mercy,2174,2019,401088491,"November 24, 2018",11:00 AM PST,Eastern Michigan Eagles,2199,Regular Season,Final,,W 78-74
+Detroit Mercy,2174,2019,401088492,"November 28, 2018",04:00 PM PST,Kent State Golden Flashes,2309,Regular Season,Final,,L 72-76
+Detroit Mercy,2174,2019,401083997,"December 01, 2018",02:00 PM PST,Akron Zips,2006,Regular Season,Final,,L 59-71
+Detroit Mercy,2174,2019,401085599,"December 04, 2018",04:00 PM PST,Dayton Flyers,2168,Regular Season,Final,,L 59-98
+Detroit Mercy,2174,2019,401087418,"December 05, 2018",04:00 PM PST,Toledo Rockets,2649,Regular Season,Final,,L 57-101
+Detroit Mercy,2174,2019,401087401,"December 15, 2018",10:00 AM PST,Ohio Bobcats,195,Regular Season,Final,,L 61-63
 Detroit Mercy,2174,2019,401083369,"December 21, 2018",04:00 PM PST,Xavier Musketeers,2752,Regular Season,Final,FS2,L 55-69
-Detroit Mercy,2174,2019,401088493,"December 28, 2018",11:00 AM PST,Youngstown State Penguins,2754,Regular Season,Final,ESPN+,W 78-66
-Detroit Mercy,2174,2019,401088473,"December 30, 2018",04:00 PM PST,Cleveland State Vikings,325,Regular Season,Final,ESPN+,W 73-61
-Detroit Mercy,2174,2019,401088494,"January 03, 2019",04:00 PM PST,Wright State Raiders,2750,Regular Season,Final,ESPN+,W 79-58
-Detroit Mercy,2174,2019,401088495,"January 05, 2019",10:00 AM PST,Northern Kentucky Norse,94,Regular Season,Final,ESPN+,L 73-95
-Detroit Mercy,2174,2019,401088496,"January 10, 2019",04:00 PM PST,Green Bay Phoenix,2739,Regular Season,Final,ESPN+,W 101-83
-Detroit Mercy,2174,2019,401088497,"January 12, 2019",10:00 AM PST,Milwaukee Panthers,270,Regular Season,Final,ESPN+,W 93-84
-Detroit Mercy,2174,2019,401088498,"January 19, 2019",11:00 AM PST,Oakland Golden Grizzlies,2473,Regular Season,Final,ESPN+,L 73-79
-Detroit Mercy,2174,2019,401088499,"January 24, 2019",05:00 PM PST,UIC Flames,82,Regular Season,Final,ESPN+,L 67-79
-Detroit Mercy,2174,2019,401088500,"January 26, 2019",10:00 AM PST,IU Indianapolis Jaguars,85,Regular Season,Final,ESPN+,L 65-80
-Detroit Mercy,2174,2019,401088481,"January 31, 2019",04:00 PM PST,Cleveland State Vikings,325,Regular Season,Final,ESPN+,W 78-64
-Detroit Mercy,2174,2019,401088501,"February 02, 2019",10:00 AM PST,Youngstown State Penguins,2754,Regular Season,Final,ESPN3,L 70-72
-Detroit Mercy,2174,2019,401088502,"February 07, 2019",04:00 PM PST,Northern Kentucky Norse,94,Regular Season,Final,ESPN+,L 65-97
-Detroit Mercy,2174,2019,401088503,"February 09, 2019",04:00 PM PST,Wright State Raiders,2750,Regular Season,Final,ESPN+,L 60-83
-Detroit Mercy,2174,2019,401088504,"February 14, 2019",05:00 PM PST,Milwaukee Panthers,270,Regular Season,Final,ESPN+,W 90-84
-Detroit Mercy,2174,2019,401088505,"February 16, 2019",10:00 AM PST,Green Bay Phoenix,2739,Regular Season,Final,ESPN3,L 73-82
-Detroit Mercy,2174,2019,401088506,"February 23, 2019",12:00 PM PST,Oakland Golden Grizzlies,2473,Regular Season,Final,ESPN3,L 75-95
-Detroit Mercy,2174,2019,401088507,"February 28, 2019",05:00 PM PST,IU Indianapolis Jaguars,85,Regular Season,Final,ESPN+,W 87-85
-Detroit Mercy,2174,2019,401088508,"March 02, 2019",01:00 PM PST,UIC Flames,82,Regular Season,Final,ESPN+,L 71-80
-Detroit Mercy,2174,2019,401121812,"March 06, 2019",04:00 PM PST,Northern Kentucky Norse,94,Regular Season,Final,ESPN+,L 88-99
+Detroit Mercy,2174,2019,401088493,"December 28, 2018",11:00 AM PST,Youngstown State Penguins,2754,Regular Season,Final,,W 78-66
+Detroit Mercy,2174,2019,401088473,"December 30, 2018",04:00 PM PST,Cleveland State Vikings,325,Regular Season,Final,,W 73-61
+Detroit Mercy,2174,2019,401088494,"January 03, 2019",04:00 PM PST,Wright State Raiders,2750,Regular Season,Final,,W 79-58
+Detroit Mercy,2174,2019,401088495,"January 05, 2019",10:00 AM PST,Northern Kentucky Norse,94,Regular Season,Final,,L 73-95
+Detroit Mercy,2174,2019,401088496,"January 10, 2019",04:00 PM PST,Green Bay Phoenix,2739,Regular Season,Final,,W 101-83
+Detroit Mercy,2174,2019,401088497,"January 12, 2019",10:00 AM PST,Milwaukee Panthers,270,Regular Season,Final,,W 93-84
+Detroit Mercy,2174,2019,401088498,"January 19, 2019",11:00 AM PST,Oakland Golden Grizzlies,2473,Regular Season,Final,,L 73-79
+Detroit Mercy,2174,2019,401088499,"January 24, 2019",05:00 PM PST,UIC Flames,82,Regular Season,Final,,L 67-79
+Detroit Mercy,2174,2019,401088500,"January 26, 2019",10:00 AM PST,IU Indianapolis Jaguars,85,Regular Season,Final,,L 65-80
+Detroit Mercy,2174,2019,401088481,"January 31, 2019",04:00 PM PST,Cleveland State Vikings,325,Regular Season,Final,,W 78-64
+Detroit Mercy,2174,2019,401088501,"February 02, 2019",10:00 AM PST,Youngstown State Penguins,2754,Regular Season,Final,,L 70-72
+Detroit Mercy,2174,2019,401088502,"February 07, 2019",04:00 PM PST,Northern Kentucky Norse,94,Regular Season,Final,,L 65-97
+Detroit Mercy,2174,2019,401088503,"February 09, 2019",04:00 PM PST,Wright State Raiders,2750,Regular Season,Final,,L 60-83
+Detroit Mercy,2174,2019,401088504,"February 14, 2019",05:00 PM PST,Milwaukee Panthers,270,Regular Season,Final,,W 90-84
+Detroit Mercy,2174,2019,401088505,"February 16, 2019",10:00 AM PST,Green Bay Phoenix,2739,Regular Season,Final,,L 73-82
+Detroit Mercy,2174,2019,401088506,"February 23, 2019",12:00 PM PST,Oakland Golden Grizzlies,2473,Regular Season,Final,,L 75-95
+Detroit Mercy,2174,2019,401088507,"February 28, 2019",05:00 PM PST,IU Indianapolis Jaguars,85,Regular Season,Final,,W 87-85
+Detroit Mercy,2174,2019,401088508,"March 02, 2019",01:00 PM PST,UIC Flames,82,Regular Season,Final,,L 71-80
+Detroit Mercy,2174,2019,401121812,"March 06, 2019",04:00 PM PST,Northern Kentucky Norse,94,Regular Season,Final,,L 88-99
 TCU,2628,2014,400496839,"November 08, 2013",04:30 PM PST,SMU Mustangs,2567,Regular Season,Final,,L 61-69
 TCU,2628,2014,400498247,"November 12, 2013",05:00 PM PST,Longwood Lancers,2344,Regular Season,Final,,L 79-82
 TCU,2628,2014,400498259,"November 19, 2013",05:00 PM PST,Abilene Christian Wildcats,2000,Regular Season,Final,,W 71-64
@@ -61,7 +61,7 @@ TCU,2628,2014,400498407,"February 24, 2014",04:00 PM PST,Oklahoma State Cowboys,
 TCU,2628,2014,400498416,"March 01, 2014",10:30 AM PST,West Virginia Mountaineers,277,Regular Season,Final,ROOT,L 59-81
 TCU,2628,2014,400498421,"March 05, 2014",05:00 PM PST,Texas Longhorns,251,Regular Season,Final,LHN,L 54-66
 TCU,2628,2014,400498425,"March 08, 2014",01:00 PM PST,Oklahoma Sooners,201,Regular Season,Final,ESPN3,L 67-97
-TCU,2628,2014,400543750,"March 12, 2014",06:42 PM PDT,Baylor Bears,239,Regular Season,Final,ESPN3,L 68-76
+TCU,2628,2014,400543750,"March 12, 2014",06:42 PM PDT,Baylor Bears,239,Regular Season,Final,,L 68-76
 Iowa State,66,2020,401169594,"November 05, 2019",05:00 PM PST,Mississippi Valley State Delta Devils,2400,Regular Season,Final,,W 110-74
 Iowa State,66,2020,401169605,"November 09, 2019",01:30 PM PST,Oregon State Beavers,204,Regular Season,Final,,L 74-80
 Iowa State,66,2020,401169607,"November 12, 2019",05:00 PM PST,Northern Illinois Huskies,2459,Regular Season,Final,,W 70-52
@@ -75,11 +75,11 @@ Iowa State,66,2020,401169653,"December 12, 2019",05:00 PM PST,Iowa Hawkeyes,2294
 Iowa State,66,2020,401169667,"December 22, 2019",10:00 AM PST,Purdue Fort Wayne Mastodons,2870,Regular Season,Final,,W 89-59
 Iowa State,66,2020,401169677,"December 31, 2019",04:00 PM PST,Florida A&M Rattlers,50,Regular Season,Final,,L 68-70
 Iowa State,66,2020,401169680,"January 04, 2020",03:00 PM PST,TCU Horned Frogs,2628,Regular Season,Final,ESPNU,L 79-81
-Iowa State,66,2020,401169686,"January 08, 2020",05:00 PM PST,Kansas Jayhawks,2305,Regular Season,Final,ESPN+,L 53-79
+Iowa State,66,2020,401169686,"January 08, 2020",05:00 PM PST,Kansas Jayhawks,2305,Regular Season,Final,,L 53-79
 Iowa State,66,2020,401169691,"January 11, 2020",05:00 PM PST,Oklahoma Sooners,201,Regular Season,Final,ESPN2,W 81-68
-Iowa State,66,2020,401169697,"January 15, 2020",05:00 PM PST,Baylor Bears,239,Regular Season,Final,ESPN+,L 55-68
+Iowa State,66,2020,401169697,"January 15, 2020",05:00 PM PST,Baylor Bears,239,Regular Season,Final,,L 55-68
 Iowa State,66,2020,401169701,"January 18, 2020",01:00 PM PST,Texas Tech Red Raiders,2641,Regular Season,Final,ESPNU,L 52-72
-Iowa State,66,2020,401169707,"January 21, 2020",05:00 PM PST,Oklahoma State Cowboys,197,Regular Season,Final,ESPN+,W 89-82
+Iowa State,66,2020,401169707,"January 21, 2020",05:00 PM PST,Oklahoma State Cowboys,197,Regular Season,Final,,W 89-82
 Iowa State,66,2020,401169708,"January 25, 2020",09:00 AM PST,Auburn Tigers,2,Regular Season,Final,ESPNU,L 76-80
 Iowa State,66,2020,401169720,"January 29, 2020",06:00 PM PST,Baylor Bears,239,Regular Season,Final,ESPNU,L 53-67
 Iowa State,66,2020,401169727,"February 01, 2020",11:00 AM PST,Texas Longhorns,251,Regular Season,Final,LHN,L 68-72
@@ -92,7 +92,7 @@ Iowa State,66,2020,401169757,"February 22, 2020",03:00 PM PST,Texas Tech Red Rai
 Iowa State,66,2020,401169760,"February 25, 2020",04:00 PM PST,TCU Horned Frogs,2628,Regular Season,Final,ESPNU,W 65-59
 Iowa State,66,2020,401169766,"February 29, 2020",01:00 PM PST,Oklahoma State Cowboys,197,Regular Season,Final,ESPNU,L 61-73
 Iowa State,66,2020,401169770,"March 03, 2020",06:00 PM PST,West Virginia Mountaineers,277,Regular Season,Final,ESPNU,L 71-77
-Iowa State,66,2020,401169777,"March 07, 2020",01:00 PM PST,Kansas State Wildcats,2306,Regular Season,Final,ESPN+,L 63-79
+Iowa State,66,2020,401169777,"March 07, 2020",01:00 PM PST,Kansas State Wildcats,2306,Regular Season,Final,,L 63-79
 Iowa State,66,2020,401211469,"March 11, 2020",04:00 PM PDT,Oklahoma State Cowboys,197,Regular Season,Final,ESPNU,L 71-72
 Arizona,12,2013,323160012,"November 11, 2012",03:00 PM PST,Charleston Southern Buccaneers,2127,Regular Season,Final,PACN,W 82-73
 Arizona,12,2013,323200012,"November 15, 2012",07:00 PM PST,UTEP Miners,2638,Regular Season,Final,FOXNET,W 72-51
@@ -148,20 +148,20 @@ Sam Houston,2534,2016,400820370,"January 09, 2016",02:30 PM PST,New Orleans Priv
 Sam Houston,2534,2016,400823417,"January 11, 2016",04:30 PM PST,SE Louisiana Lions,2545,Regular Season,Final,,W 70-63
 Sam Houston,2534,2016,400847093,"January 16, 2016",01:00 PM PST,McNeese Cowboys,2377,Regular Season,Final,,L 68-72
 Sam Houston,2534,2016,400847112,"January 18, 2016",04:30 PM PST,Nicholls Colonels,2447,Regular Season,Final,,W 87-76
-Sam Houston,2534,2016,400845014,"January 23, 2016",04:25 PM PST,Stephen F. Austin Lumberjacks,2617,Regular Season,Final,ESPN3,L 64-76
+Sam Houston,2534,2016,400845014,"January 23, 2016",04:25 PM PST,Stephen F. Austin Lumberjacks,2617,Regular Season,Final,,L 64-76
 Sam Houston,2534,2016,400847060,"January 25, 2016",04:00 PM PST,Abilene Christian Wildcats,2000,Regular Season,Final,,W 72-51
 Sam Houston,2534,2016,400841671,"January 30, 2016",05:00 PM PST,Houston Christian Huskies,2277,Regular Season,Final,,L 69-70
-Sam Houston,2534,2016,400847085,"February 01, 2016",05:00 PM PST,Lamar Cardinals,2320,Regular Season,Final,ESPN3,W 69-66
+Sam Houston,2534,2016,400847085,"February 01, 2016",05:00 PM PST,Lamar Cardinals,2320,Regular Season,Final,,W 69-66
 Sam Houston,2534,2016,400847113,"February 06, 2016",05:30 PM PST,Texas A&M-Corpus Christi Islanders,357,Regular Season,Final,,L 48-51
 Sam Houston,2534,2016,400841675,"February 13, 2016",02:30 PM PST,Houston Christian Huskies,2277,Regular Season,Final,,W 80-68
 Sam Houston,2534,2016,400847063,"February 15, 2016",05:30 PM PST,Abilene Christian Wildcats,2000,Regular Season,Final,,W 84-71
 Sam Houston,2534,2016,400847072,"February 20, 2016",02:30 PM PST,Central Arkansas Bears,2110,Regular Season,Final,,W 105-75
-Sam Houston,2534,2016,400847114,"February 27, 2016",05:00 PM PST,Texas A&M-Corpus Christi Islanders,357,Regular Season,Final,ESPN3,L 70-75
+Sam Houston,2534,2016,400847114,"February 27, 2016",05:00 PM PST,Texas A&M-Corpus Christi Islanders,357,Regular Season,Final,,L 70-75
 Sam Houston,2534,2016,400847074,"February 29, 2016",05:00 PM PST,Central Arkansas Bears,2110,Regular Season,Final,,W 83-73
 Sam Houston,2534,2016,400847088,"March 03, 2016",04:30 PM PST,Lamar Cardinals,2320,Regular Season,Final,,W 94-76
-Sam Houston,2534,2016,400845022,"March 05, 2016",05:00 PM PST,Stephen F. Austin Lumberjacks,2617,Regular Season,Final,ESPN3,L 64-85
-Sam Houston,2534,2016,400870746,"March 10, 2016",05:30 PM PST,Nicholls Colonels,2447,Regular Season,Final,ESPN3,W 60-59
-Sam Houston,2534,2016,400870829,"March 11, 2016",05:30 PM PST,Texas A&M-Corpus Christi Islanders,357,Regular Season,Final,ESPN3,L 76-79
+Sam Houston,2534,2016,400845022,"March 05, 2016",05:00 PM PST,Stephen F. Austin Lumberjacks,2617,Regular Season,Final,,L 64-85
+Sam Houston,2534,2016,400870746,"March 10, 2016",05:30 PM PST,Nicholls Colonels,2447,Regular Season,Final,,W 60-59
+Sam Houston,2534,2016,400870829,"March 11, 2016",05:30 PM PST,Texas A&M-Corpus Christi Islanders,357,Regular Season,Final,,L 76-79
 Sam Houston,2534,2016,400871489,"March 14, 2016",04:30 PM PDT,Jackson State Tigers,2296,Postseason,Final,,L 77-81
 Troy,2653,2013,323140344,"November 09, 2012",05:00 PM PST,Mississippi State Bulldogs,344,Regular Season,Final,,W 56-53
 Troy,2653,2013,323170245,"November 12, 2012",05:00 PM PST,Texas A&M Aggies,245,Regular Season,Final,,L 65-83
@@ -267,18 +267,18 @@ Illinois,356,2021,401296293,"March 14, 2021",12:30 PM PDT,Ohio State Buckeyes,19
 Illinois,356,2021,401310904,"March 19, 2021",10:15 AM PDT,Drexel Dragons,2182,Postseason,Final,TBS,W 78-49
 Illinois,356,2021,401310888,"March 21, 2021",09:10 AM PDT,Loyola Chicago Ramblers,2350,Postseason,Final,CBS,L 58-71
 Morehead State,2413,2016,400845559,"November 13, 2015",04:45 PM PST,Cincinnati Christian Eagles,3093,Regular Season,Final,,W 87-51
-Morehead State,2413,2016,400814190,"November 16, 2015",05:00 PM PST,Illinois State Redbirds,2287,Regular Season,Final,ESPN3,L 66-67
-Morehead State,2413,2016,400843552,"November 21, 2015",04:00 PM PST,Northern Kentucky Norse,94,Regular Season,Final,ESPN3,W 64-56
+Morehead State,2413,2016,400814190,"November 16, 2015",05:00 PM PST,Illinois State Redbirds,2287,Regular Season,Final,,L 66-67
+Morehead State,2413,2016,400843552,"November 21, 2015",04:00 PM PST,Northern Kentucky Norse,94,Regular Season,Final,,W 64-56
 Morehead State,2413,2016,400841696,"November 24, 2015",04:00 PM PST,Marshall Thundering Herd,276,Regular Season,Final,,W 85-61
 Morehead State,2413,2016,400841727,"November 28, 2015",01:00 PM PST,Southern Miss Golden Eagles,2572,Regular Season,Final,,W 61-46
 Morehead State,2413,2016,400835659,"December 02, 2015",05:00 PM PST,Saint Louis Billikens,139,Regular Season,Final,,W 60-46
 Morehead State,2413,2016,400839281,"December 05, 2015",04:00 PM PST,Indiana Hoosiers,84,Regular Season,Final,BTN,L 59-92
-Morehead State,2413,2016,400830803,"December 13, 2015",01:00 PM PST,Pittsburgh Panthers,221,Regular Season,Final,ESPN3,L 62-72
+Morehead State,2413,2016,400830803,"December 13, 2015",01:00 PM PST,Pittsburgh Panthers,221,Regular Season,Final,,L 62-72
 Morehead State,2413,2016,400830805,"December 17, 2015",06:05 PM PST,Eastern Washington Eagles,331,Regular Season,Postponed,,N/A
 Morehead State,2413,2016,400830867,"December 20, 2015",01:00 PM PST,Western Carolina Catamounts,2717,Regular Season,Final,,W 60-52
 Morehead State,2413,2016,400830868,"December 23, 2015",10:00 AM PST,Davidson Wildcats,2166,Regular Season,Final,,L 77-81
 Morehead State,2413,2016,400843522,"December 28, 2015",04:00 PM PST,Green Bay Phoenix,2739,Regular Season,Final,,L 72-78
-Morehead State,2413,2016,400844939,"December 30, 2015",04:00 PM PST,East Tennessee State Buccaneers,2193,Regular Season,Final,ESPN3,L 72-75
+Morehead State,2413,2016,400844939,"December 30, 2015",04:00 PM PST,East Tennessee State Buccaneers,2193,Regular Season,Final,,L 72-75
 Morehead State,2413,2016,400845560,"January 02, 2016",12:00 PM PST,Murray State Racers,93,Regular Season,Final,CBSSN,L 57-62
 Morehead State,2413,2016,400845561,"January 07, 2016",03:00 PM PST,Southeast Missouri State Redhawks,2546,Regular Season,Final,,W 96-69
 Morehead State,2413,2016,400845562,"January 09, 2016",03:00 PM PST,UT Martin Skyhawks,2630,Regular Season,Final,,W 64-58
@@ -317,12 +317,12 @@ Cal Poly,13,2021,401252684,"December 27, 2020",07:00 PM PST,Hawai'i Rainbow Warr
 Cal Poly,13,2021,401252689,"December 28, 2020",08:59 PM PST,Hawai'i Rainbow Warriors,62,Regular Season,Canceled,,N/A
 Cal Poly,13,2021,401252698,"December 31, 2020",09:00 PM PST,UC San Diego Tritons,28,Regular Season,Canceled,,N/A
 Cal Poly,13,2021,401252703,"January 02, 2021",04:00 PM PST,UC San Diego Tritons,28,Regular Season,Canceled,,N/A
-Cal Poly,13,2021,401252704,"January 08, 2021",07:00 PM PST,Cal State Bakersfield Roadrunners,2934,Regular Season,Final,ESPN3,L 49-62
-Cal Poly,13,2021,401252709,"January 09, 2021",07:00 PM PST,Cal State Bakersfield Roadrunners,2934,Regular Season,Final,ESPN3,L 50-65
+Cal Poly,13,2021,401252704,"January 08, 2021",07:00 PM PST,Cal State Bakersfield Roadrunners,2934,Regular Season,Final,,L 49-62
+Cal Poly,13,2021,401252709,"January 09, 2021",07:00 PM PST,Cal State Bakersfield Roadrunners,2934,Regular Season,Final,,L 50-65
 Cal Poly,13,2021,401252717,"January 15, 2021",04:00 PM PST,UC Riverside Highlanders,27,Regular Season,Final,,L 51-86
 Cal Poly,13,2021,401252722,"January 16, 2021",04:00 PM PST,UC Riverside Highlanders,27,Regular Season,Final,,L 53-70
-Cal Poly,13,2021,401252724,"January 22, 2021",04:00 PM PST,UC Irvine Anteaters,300,Regular Season,Final,ESPN3,L 49-68
-Cal Poly,13,2021,401252729,"January 23, 2021",04:00 PM PST,UC Irvine Anteaters,300,Regular Season,Final,ESPN3,L 44-67
+Cal Poly,13,2021,401252724,"January 22, 2021",04:00 PM PST,UC Irvine Anteaters,300,Regular Season,Final,,L 49-68
+Cal Poly,13,2021,401252729,"January 23, 2021",04:00 PM PST,UC Irvine Anteaters,300,Regular Season,Final,,L 44-67
 Cal Poly,13,2021,401281685,"January 29, 2021",04:00 PM PST,Cal State Northridge Matadors,2463,Regular Season,Final,,W 76-70
 Cal Poly,13,2021,401281686,"January 30, 2021",04:00 PM PST,Cal State Northridge Matadors,2463,Regular Season,Final,,L 51-64
 Cal Poly,13,2021,401284860,"February 05, 2021",08:59 PM PST,Hawai'i Rainbow Warriors,62,Regular Season,Final,,L 68-84
@@ -333,7 +333,7 @@ Cal Poly,13,2021,401252764,"February 19, 2021",04:00 PM PST,Long Beach State Bea
 Cal Poly,13,2021,401252769,"February 20, 2021",04:00 PM PST,Long Beach State Beach,299,Regular Season,Final,,L 69-74
 Cal Poly,13,2021,401252776,"February 26, 2021",02:00 PM PST,UC Davis Aggies,302,Regular Season,Final,,L 61-69
 Cal Poly,13,2021,401252781,"February 27, 2021",02:00 PM PST,UC Davis Aggies,302,Regular Season,Final,,L 66-68
-Cal Poly,13,2021,401252784,"March 05, 2021",05:00 PM PST,UC Santa Barbara Gauchos,2540,Regular Season,Final,ESPN3,L 57-71
-Cal Poly,13,2021,401252789,"March 06, 2021",05:00 PM PST,UC Santa Barbara Gauchos,2540,Regular Season,Final,ESPN3,L 54-70
-Cal Poly,13,2021,401286955,"March 09, 2021",06:00 PM PST,Cal State Fullerton Titans,2239,Regular Season,Final,ESPN3,W 87-82
-Cal Poly,13,2021,401286959,"March 11, 2021",05:00 PM PST,UC Irvine Anteaters,300,Regular Season,Final,ESPN3,L 51-58
+Cal Poly,13,2021,401252784,"March 05, 2021",05:00 PM PST,UC Santa Barbara Gauchos,2540,Regular Season,Final,,L 57-71
+Cal Poly,13,2021,401252789,"March 06, 2021",05:00 PM PST,UC Santa Barbara Gauchos,2540,Regular Season,Final,,L 54-70
+Cal Poly,13,2021,401286955,"March 09, 2021",06:00 PM PST,Cal State Fullerton Titans,2239,Regular Season,Final,,W 87-82
+Cal Poly,13,2021,401286959,"March 11, 2021",05:00 PM PST,UC Irvine Anteaters,300,Regular Season,Final,,L 51-58

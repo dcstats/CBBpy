@@ -17,7 +17,7 @@ player_id,first_name,last_name,jersey_number,pos,status,team,experience,height,w
 52350,Marvin,Fitzgerald,34 ,,Inactive,North Carolina Central Eagles,Sophomore,"6' 5""",215 lbs,"Milwaukee, WI",1990-03-11
 4897551,Noah,Reynolds,21,,Active,TCU Horned Frogs,Senior,"6' 3""",200 lbs,"Peoria, IL",
 61190,James,Farr,2,,Inactive,Xavier Musketeers,Senior,"6' 10""",247 lbs,"Evanston, IL",1992-11-02
-4278565,Jahvon,Blair,0,,Inactive,Georgetown Hoyas,Senior,"6' 4""",190 lbs,"Brampton, ON",1998-03-27
+4278565,Jahvon,Blair,0,,Inactive,Georgetown Hoyas,--,"6' 4""",190 lbs,"Brampton, ON",1998-03-27
 61806,Glenn,Robinson III,N/A,,Inactive,Michigan Wolverines,NBA,"6' 6""",222 lbs,"Saint John, IN",1994-01-08
 5176737,Tayton,Conerway,12,,Active,Troy Trojans,Senior,"6' 3""",186 lbs,"Burleson, TX",
 45561,Chris,Gaston,33 ,,Inactive,Fordham Rams,Senior,"6' 7""",231 lbs,"Palisades Park, NJ",1989-04-20
