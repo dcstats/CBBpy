@@ -44,6 +44,7 @@ dependencies = [
   'requests>=2.27.0',
   'rapidfuzz>=3.4.0',
   'platformdirs>=4.0.0',
+  'importlib-metadata>=7.0.0',
 ]
 requires-python = ">=3.7"
 
