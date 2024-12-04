@@ -201,7 +201,7 @@ def test_season(func):
         func(future_season)
 
 
-@pytest.mark.parametrize("func, game_type", [
+@pytest.mark.parametrize("func, game_type, data", [
     (ms.get_games_conference, "mens", M_CONF_SEASONS),
     (ws.get_games_conference, "womens", W_CONF_SEASONS),
 ])
