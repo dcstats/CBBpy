@@ -1,0 +1,151 @@
+player_id,first_name,last_name,jersey_number,pos,status,team,experience,height,weight,birthplace,date_of_birth
+4433093,Ville,Tahvanainen,23,,Inactive,Bradley Braves,Senior,"6' 4""",210 lbs,"Helsinki, Finland",
+4431684,Trayce,Jackson-Davis,N/A,,Active,Indiana Hoosiers,NBA,"6' 9""",245 lbs,"Greenwood, IN",2000-02-22
+5177650,Shay,Davis,0,,Inactive,Western Illinois Leathernecks,Junior,"6' 0""",,"Orlando, FL",
+53043,Joey,Asbury,52,,Inactive,Oakland Golden Grizzlies,Senior,"6' 7""",205 lbs,"Warren, MI",1991-12-13
+3924900,Keith,Stone,4,,Inactive,Miami Hurricanes,Senior,"6' 8""",244 lbs,"Deerfield Beach, FL",
+61481,Joe,De Ciman,10,,Inactive,Colorado State Rams,Senior,"6' 6""",201 lbs,"Regina, SK",1994-03-30
+3948761,Zac,DiSalvo,15,,Inactive,Buffalo Bulls,Freshman,"5' 11""",165 lbs,"Rochester, NY",
+51885,Jon,Taylor,42 ,,Inactive,St. Francis (PA) Red Flash,Senior,"6' 6""",197 lbs,"Bowie, MD",1990-10-09
+4398177,Bryan,Urrutia,13,,Inactive,Maryland Eastern Shore Hawks,Senior,"6' 1""",206 lbs,"Chihuahua, Mexico",
+4066654,Steven,Beo,12,,Inactive,Eastern Washington Eagles,Junior,"6' 3""",180 lbs,"Richland, WA",
+5114231,Shahid,Muhammad,4,,Active,Massachusetts Minutemen,Junior,"6' 10""",205 lbs,"Queens, NY",
+4897476,Brandon,Weatherspoon,23,,Inactive,Florida Atlantic Owls,Senior,"6' 4""",186 lbs,"Canton, MS",
+52128,Shay,Shine,11 ,,Inactive,High Point Panthers,Senior,"6' 2""",195 lbs,"Arcadia, FL",1989-11-12
+4067621,Payten,Ricks,5,,Inactive,Abilene Christian Wildcats,Senior,"6' 2""",190 lbs,"Wichita, KS",
+3138551,Marcus,Wallace,1,,Inactive,Arkansas-Fort Smith Lions,Senior,"6' 1""",185 lbs,"Little Rock, AR",
+52350,Marvin,Fitzgerald,34 ,,Inactive,North Carolina Central Eagles,Sophomore,"6' 5""",215 lbs,"Milwaukee, WI",1990-03-11
+4897551,Noah,Reynolds,21,,Active,TCU Horned Frogs,Senior,"6' 3""",200 lbs,"Peoria, IL",
+61190,James,Farr,2,,Inactive,Xavier Musketeers,Senior,"6' 10""",247 lbs,"Evanston, IL",1992-11-02
+4278565,Jahvon,Blair,0,,Inactive,Georgetown Hoyas,--,"6' 4""",190 lbs,"Brampton, ON",1998-03-27
+61806,Glenn,Robinson III,N/A,,Inactive,Michigan Wolverines,NBA,"6' 6""",222 lbs,"Saint John, IN",1994-01-08
+5176737,Tayton,Conerway,12,,Active,Troy Trojans,Senior,"6' 3""",186 lbs,"Burleson, TX",
+45561,Chris,Gaston,33 ,,Inactive,Fordham Rams,Senior,"6' 7""",231 lbs,"Palisades Park, NJ",1989-04-20
+4592673,Ben,Olesen,5,,Inactive,Washington State Cougars,Senior,"6' 0""",160 lbs,"Mill Creek, WA",
+3156148,Aaron,Menzies,41,,Inactive,Saint Mary's Gaels,Senior,"7' 3""",265 lbs,"Manchester, England",
+4432161,Greg,Brown III,N/A,,Free Agent,Texas Longhorns,NBA,"6' 7""",206 lbs,"Austin, TX",2001-09-01
+36144,Nathan,Walkup,45 ,,Inactive,Texas A&M Aggies,Senior,"6' 7""",210 lbs,"Houston, TX",1988-10-20
+51868,Jack,Foley,21,,Inactive,South Dakota Coyotes,Junior,"6' 0""",160 lbs,"Centerville, SD",1992-02-17
+52471,Shamile,Jeffers,12 ,,Inactive,Jacksonville Dolphins,Senior,"6' 7""",233 lbs,,
+4065751,DJ,Mitchell,0,,Inactive,Santa Clara Broncos,Senior,"6' 8""",215 lbs,"Fresno, CA",
+58727,Yemi,Makanjuola,12,,Inactive,SIU Edwardsville Cougars,Senior,"6' 8""",250 lbs,"Lagos, Nigeria",1992-10-22
+4707481,Michael,Imariagbe,33,,Active,Wright State Raiders,Senior,"6' 7""",220 lbs,"Houston, TX",
+4067905,Deven,Dorsett,5,,Inactive,Maryland Eastern Shore Hawks,Sophomore,"6' 6""",190 lbs,"Lithonia, GA",
+4703602,Jameson,Richardson,21,,Inactive,Abilene Christian Wildcats,Sophomore,"6' 8""",230 lbs,"Duke, OK",
+61702,Rosco,Allen,25,,Inactive,Stanford Cardinal,Senior,"6' 9""",215 lbs,"Budapest, Hungary",1993-05-05
+3136495,Ricky,Doyle,15,,Inactive,Florida Gulf Coast Eagles,Senior,"6' 10""",240 lbs,"Cape Coral, FL",1996-05-31
+3155385,Jakub,Petras,32,,Inactive,Stony Brook Seawolves,Senior,"6' 11""",272 lbs,"Rajec, Slovakia",
+4703172,Marques,Watson,24,,Inactive,Manhattan Jaspers,Senior,"6' 5""",190 lbs,"Brooklyn, NY",
+61988,C.J.,Gettys,34,,Inactive,Rutgers Scarlet Knights,Senior,"7' 0""",280 lbs,"Columbus, OH",
+46941,Green,Hill,12,,Active,Alabama A&M Bulldogs,Senior,"5' 10""",175 lbs,"Aransas Pass, TX",1991-06-20
+4411563,Tanner,Taylor,35,,Inactive,Oklahoma State Cowboys,Junior,"6' 1""",170 lbs,"Emporia, KS",
+56719,Prince,Obasi,,,Inactive,Seattle U Redhawks,Senior,"6' 3""",205 lbs,"Reseda, CA",
+3924893,Michael,Klebon,22,,Inactive,St. Francis (PA) Red Flash,Senior,"6' 2""",175 lbs,"Paxinos, PA",
+51030,Jason,Morris,14,,Inactive,Georgia Tech Yellow Jackets,Senior,"6' 5""",231 lbs,"Augusta, GA",1991-08-26
+41191,Cameron,Witt,5  ,,Inactive,Valparaiso Beacons,Junior,"6' 9""",215 lbs,Australia,1989-09-28
+4593907,Chris,Efretuei,0,,Inactive,UL Monroe Warhawks,Senior,"7' 1""",260 lbs,"Abuja, Nigeria",
+5175393,Rockwell,Reynolds,13,,Inactive,Northern Arizona Lumberjacks,Freshman,"6' 9""",,"Dana Point, CA",
+3138266,Landon,Russell,30,,Inactive,Yale Bulldogs,Junior,"6' 2""",180 lbs,"Fort Worth, TX",
+3922053,Cameron,Walker,21,,Inactive,Stanford Cardinal,Junior,"6' 7""",200 lbs,"Santa Maria, CA",
+4038827,Evan,Hinson,0,,Inactive,Austin Peay Governors,Senior,"6' 4""",235 lbs,"Deltona, FL",
+5176260,Pavle,Stosic,1,,Active,Utah State Aggies,Sophomore,"6' 9""",215 lbs,"Nis, Serbia",
+56165,Jeremy,Jones,,,Inactive,Kansas State Wildcats,Senior,"6' 2""",166 lbs,"Chicago, IL",1989-09-17
+4702785,Jahmyl,Telfort,11,,Active,Butler Bulldogs,Senior,"6' 7""",225 lbs,"Montreal, PQ",
+5175673,Jonah,Pierce,15,,Active,Presbyterian Blue Hose,Senior,"6' 9""",220 lbs,"Sanford, FL",
+45941,Alex,Eppensteiner,,,Inactive,Cincinnati Bearcats,Senior,"6' 4""",190 lbs,"Cincinnati, OH",1990-12-26
+4931008,Andrew,Bitrous,,,Inactive,Portland Pilots,Freshman,,,,
+4683956,Carlos,Stewart Jr.,10,,Active,Santa Clara Broncos,Senior,"6' 1""",195 lbs,"Baton Rouge, LA",
+36553,D.J.,Kennedy,N/A,,Active,St. John's Red Storm,NBA,"6' 6""",215 lbs,"Pittsburgh, PA",1989-11-05
+3906816,Tyler,Jackson,50,,Inactive,San Francisco State Gators,Sophomore,"7' 2""",280 lbs,"Naperville, IL",
+43038,Cameron,Moore,22 ,,Inactive,UAB Blazers,Senior,"6' 10""",230 lbs,"San Antonio, TX",1990-11-12
+4396974,Marlon,Taylor,N/A,,Inactive,LSU Tigers,NBA,"6' 5""",209 lbs,"Mount Vernon, NY",1997-08-16
+5107613,Grant,Strong,11,,Active,Tennessee Tech Golden Eagles,Sophomore,"6' 6""",185 lbs,"Celina, TN",
+67578,Jordan,Smith,3,,Inactive,South Carolina State Bulldogs,Sophomore,"6' 3""",190 lbs,"Palmetto, FL",
+4702133,Mario,Fantina,13,,Inactive,Arkansas State Red Wolves,Freshman,"6' 4""",192 lbs,"Sveti Filip i Jakov, Croatia",
+4067808,Marlin,Davis,5,,Inactive,Texas State Bobcats,Senior,"6' 2""",165 lbs,"Houston, TX",
+4902627,David,Shriver,35,,Inactive,VCU Rams,Senior,"6' 6""",220 lbs,"Philippi, WV",2000-07-19
+4705377,Javontae,Hopkins,14,,Inactive,Prairie View A&M Panthers,Senior,"6' 0""",165 lbs,"Houston, TX",
+46188,Isaiah,Armwood,32,,Inactive,George Washington Revolutionaries,Senior,"6' 9""",208 lbs,"Baltimore, MD",1990-12-28
+51648,Will,Bartlett,3  ,,Inactive,Yale Bulldogs,Junior,"6' 7""",210 lbs,"New York, NY",
+56721,Deshaun,Sunderhaus,11,,Inactive,Seattle U Redhawks,Senior,"6' 9""",215 lbs,"Conyers, GA",
+4703571,Josiah,Fulcher,2,,Inactive,North Alabama Lions,Junior,"6' 4""",195 lbs,"Lima, OH",
+57488,Ryan,Van Pelt,50,,Inactive,Weber State Wildcats,Freshman,"6' 11""",220 lbs,"Lindon, UT",
+62103,Troy,Davine,0,,Inactive,Vermont Catamounts,Sophomore,"6' 3""",185 lbs,"Rutland, VT",1993-05-24
+4067297,Jan,Svandrlik,20,,Inactive,Iona Gaels,Senior,"6' 7""",210 lbs,"Plzen, Czech Republic",
+56280,Hooper,Vint,23,,Inactive,UTEP Miners,Senior,"6' 11""",235 lbs,"Van Buren, AR",1992-09-03
+4277933,Wesley,Harris,4,,Inactive,Tennessee State Tigers,Senior,"6' 9""",200 lbs,"Jackson, MS",
+4593718,Deonte,Billups,15,,Inactive,Purdue Fort Wayne Mastodons,Senior,"6' 4""",200 lbs,"Moline, IL",
+4283400,Jay,Reed,31,,Inactive,Centenary (LA) Gentlemen,Sophomore,"6' 4""",170 lbs,"Dallas, TX",
+45578,Talib,Zanna,N/A,,Inactive,Pittsburgh Panthers,NBA,"6' 9""",230 lbs,Nigeria,1990-10-01
+5174652,Blake,Muschalek,21,,Active,Auburn Tigers,Sophomore,"6' 3""",190 lbs,"Dallas, TX",
+56695,Sam,Thompson,N/A,,Inactive,Ohio State Buckeyes,NBA,"6' 7""",200 lbs,"Chicago, IL",1992-11-11
+4592847,Alejandro,Ralat,21,,Inactive,Florida Atlantic Owls,Junior,"6' 0""",160 lbs,"San Juan, Puerto Rico",
+45973,Brandon,Paul,N/A,,Inactive,Illinois Fighting Illini,NBA,"6' 4""",200 lbs,"Gurnee, IL",1991-04-30
+4398416,Marquise,Mosley,2,,Inactive,California Baptist Lancers,Junior,"5' 9""",170 lbs,"Pasadena, CA",
+60292,David,Bruce,30,,Inactive,Hampton Pirates,Junior,"6' 10""",235 lbs,"Linden, NJ",1990-11-01
+43039,David,Diakite,15 ,,Inactive,UCF Knights,Sophomore,"6' 6""",215 lbs,"Washington, DC",
+4888720,Jack,Scott,9,,Active,Princeton Tigers,Junior,"6' 6""",210 lbs,"Pelican Island, NJ",
+4066219,Tommy,Corchiani,20,,Inactive,South Carolina Gamecocks,Sophomore,"6' 3""",180 lbs,"Raleigh, NC",
+67254,Stan,Mays,,,Inactive,Northwestern State Demons,Junior,"6' 2""",190 lbs,"Baton Rouge, LA",1994-10-21
+4397619,Callum,McRae,25,,Inactive,Sacramento State Hornets,Senior,"7' 1""",280 lbs,"Palmerston North, New Zealand",
+4410893,Caleb,Cline,1,,Inactive,South Dakota Coyotes,Junior,"6' 3""",,"Le Mars, IA",
+3948619,Brandon,Jordan,10,,Inactive,Savannah State Tigers,Senior,"6' 7""",200 lbs,"Savannah, GA",
+3129909,Harold,McBride,4,,Inactive,Gardner-Webb Runnin' Bulldogs,Senior,"6' 0""",175 lbs,"Bronx, NY",
+4703408,Dante,Gonzales,13,,Active,University of The Southwest Mustangs,Junior,"6' 4""",170 lbs,"Gilbert, AZ",
+4431854,Justin,Winston,35,,Inactive,Coppin State Eagles,Senior,"6' 8""",220 lbs,"West Orange, NJ",
+5107898,Kanon,Gipson,23,,Inactive,Missouri State Bears,Freshman,"6' 3""",160 lbs,"Rogersville, MO",
+4066604,Ryan,Swan,34,,Inactive,Air Force Falcons,Senior,"6' 8""",240 lbs,"Aurora, CO",
+46532,Jamar,Wertz,21,,Inactive,UMBC Retrievers,Senior,"6' 4""",195 lbs,"Suffolk, VA",1989-11-16
+56348,Tim,Dixon,5,,Inactive,Georgia Bulldogs,Junior,"6' 10""",230 lbs,"Columbus, GA",1991-11-04
+4395673,Jalen,Carey,5,,Inactive,Rhode Island Rams,Junior,"6' 3""",186 lbs,"Harlem, NY",
+51629,Ken,Brown,10 ,,Inactive,Philander Smith Panthers,Senior,"6' 1""",155 lbs,,
+37343,Gerald,Colds,11 ,,Inactive,Drexel Dragons,Senior,"6' 1""",180 lbs,"New York, NY",
+3152101,Brian,Wright,15,,Inactive,UC Riverside Highlanders,Freshman,"6' 3""",170 lbs,"Carson, CA",
+57817,Emmanuel,Tselentakis,24,,Inactive,NJIT Highlanders,Senior,"6' 5""",205 lbs,"Thessaloniki, Greece",1993-05-24
+4067711,Jack,Stensgard,1,,Inactive,South Dakota Coyotes,Sophomore,"6' 3""",180 lbs,"Inver Grove Heights, MN",
+4067232,Steven,Santa Ana,22,,Inactive,Elon Phoenix,Senior,"6' 4""",190 lbs,"Charlotte, NC",
+4065663,Josh,Okogie,N/A,,Active,Georgia Tech Yellow Jackets,NBA,"6' 4""",213 lbs,"Lagos, Nigeria",1998-09-01
+3912853,Davon,Dillard,,,Inactive,Shaw Bears,Junior,"6' 5""",215 lbs,"Gary, IN",
+3159015,Kamau,Faines,13,,Inactive,Davidson Wildcats,Junior,"6' 2""",200 lbs,"Chicago, IL",
+3134497,Kavell,Bigby-Williams,N/A,,Inactive,LSU Tigers,NBA,"6' 9""",249 lbs,"London, England",1995-10-07
+3155536,Thomas,Welsh,N/A,,Inactive,UCLA Bruins,NBA,"7' 0""",255 lbs,"Torrance, CA",1996-02-03
+3138496,Assane,Diop,1,,Inactive,Austin Peay Governors,Senior,"6' 8""",217 lbs,"Dakar, Senegal",
+3153963,Micah,Seaborn,10,,Inactive,Monmouth Hawks,Junior,"6' 5""",195 lbs,"Fort Worth, TX",
+4067896,Nate,Garvey,3,,Inactive,Howard Bison,Senior,"6' 3""",180 lbs,"Nanuet, NY",
+4897281,Gavin,McGrath,12,,Inactive,North Dakota Fighting Hawks,Freshman,"6' 10""",205 lbs,"Onalaska, WI",
+5106698,Quentin,Livingston,12,,Inactive,Hampton Pirates,Sophomore,"6' 4""",185 lbs,"Suffolk, VA",
+4897710,Tyler,Gill,2,,Inactive,Towson Tigers,Freshman,"5' 11""",170 lbs,"Raleigh, NC",
+3949228,Max,Tinsley,14,,Inactive,Pacific Tigers,Junior,"6' 2""",170 lbs,"Porter Ranch, CA",
+41105,Amir,Celestin,N/A,,Active,Campbell Fighting Camels,NBA,"6' 1""",185 lbs,"Miami, FL",1990-07-18
+4592884,Hugo,Ferreira,17,,Inactive,Bryant Bulldogs,Senior,"6' 1""",195 lbs,"Vila Nova de Gaia, Portugal",
+60997,Ryan,Staten,-1,,Inactive,San Diego State Aztecs,--,"6' 2""",190 lbs,"San Pablo, CA",1992-01-21
+3907296,ZaQwaun,Matthews,5,,Inactive,Sam Houston Bearkats,Junior,"6' 4""",185 lbs,"Charlotte, NC",
+3129954,Andre,Walker,44,,Inactive,Hofstra Pride,Junior,"6' 10""",230 lbs,"Gaithersburg, MD",
+5108098,Johnnie,Walter,3,,Active,Pennsylvania Quakers,Junior,"6' 10""",215 lbs,"Agoura Hills, CA",
+4067916,Stanley,Davis,0,,Inactive,Morgan State Bears,Senior,"6' 5""",204 lbs,"Chester, PA",
+66942,Iverson,Fleming,3,,Inactive,Long Island University Sharks,Senior,"6' 1""",160 lbs,"North Brunswick, NJ",
+4593833,Curtis,Haywood II,0,,Inactive,Tulsa Golden Hurricane,Senior,"6' 5""",198 lbs,"Oklahoma City, OK",
+3907431,Auston,Evans,12,,Inactive,Lafayette Leopards,Senior,"6' 5""",191 lbs,"McKinney, TX",
+4066233,Frankie,Hughes,3,,Inactive,San Diego Toreros,Junior,"6' 4""",195 lbs,"Cleveland, OH",
+57447,Derrell,Taylor,2,,Inactive,Jackson State Tigers,Senior,"6' 6""",200 lbs,"Morton, MS",1992-07-22
+4280050,Hugh,Baxter,1,,Inactive,UC San Diego Tritons,Senior,"6' 8""",210 lbs,"Melbourne, VIC",
+46607,Austin,Witter,31 ,,Inactive,North Carolina A&T Aggies,Senior,"6' 8""",195 lbs,"Princeton Junction, NJ",1991-05-23
+4700858,Davante,Robinson,13,,Active,North Park Vikings,Junior,"6' 2""",195 lbs,"Oklahoma City, OK",
+5105571,Henri,Veesaar,13,,Active,Arizona Wildcats,Sophomore,"7' 0""",225 lbs,"Tallin, Estonia",
+67287,LaDarrien,Williams,1,,Inactive,Abilene Christian Wildcats,Senior,"6' 0""",180 lbs,"Austin, TX",1992-09-02
+51625,Mael,Amenyedzi,45,,Active,Drury Panthers,Senior,"6' 6""",210 lbs,France,1991-02-23
+4066390,Jeriah,Horne,N/A,,Inactive,Tulsa Golden Hurricane,NBA,"6' 7""",220 lbs,"Overland Park, KS",1998-04-09
+66651,Antravious,Simmons,32,,Inactive,Florida Gulf Coast Eagles,Senior,"6' 9""",250 lbs,"Miami, FL",1995-10-10
+4067913,Randy,Miller Jr.,21,,Inactive,Mount St. Mary's Mountaineers,Freshman,"6' 3""",190 lbs,"Odenton, MD",
+4067784,Chris,Clerkley,14,,Inactive,Georgia State Panthers,Senior,"6' 8""",240 lbs,"Perry, GA",
+4284084,D.J.,Jackson,4,,Active,Auburn-Montgomery Senators,Junior,"6' 4""",220 lbs,"Moscow, TN",
+52286,Chris,Burke,22,,Inactive,Saint Peter's Peacocks,Senior,"6' 4""",185 lbs,"Willingboro, NJ",1989-12-20
+4397614,Dragan,Elkaz,0,,Inactive,UC Riverside Highlanders,Senior,"6' 5""",205 lbs,"Green Valley, NSW",
+57214,Gordon,Ball,31,,Inactive,Texas State Bobcats,Senior,"6' 8""",240 lbs,"Houston, TX",
+3138494,Cameron,Gottfried,15,,Inactive,Cal State Northridge Matadors,Senior,"6' 3""",180 lbs,"Raleigh, NC",
+3089424,Rob,Cross,12,,Inactive,Vanderbilt Commodores,Senior,"6' 0""",195 lbs,"Chappaqua, NY",1992-09-24
+51751,Brandon,Dawson,24,,Inactive,Columbus State Cougars,Senior,"6' 7""",225 lbs,"Atlanta, GA",1992-01-01
+36068,Omondi,Amoke,21 ,,Inactive,Cal State Fullerton Titans,Senior,"6' 7""",225 lbs,"Oxnard, CA",1989-06-03
+4278050,Darious,Hall,4,,Inactive,Central Arkansas Bears,Junior,"6' 7""",205 lbs,"Little Rock, AR",
+41970,Bo,Holston,34 ,,Inactive,Anderson (SC) Trojans,Senior,"6' 5""",210 lbs,"Olney, MD",1990-09-09
+42248,Emerson,Kampen,30 ,,Inactive,Butler Bulldogs,Junior,"6' 8""",201 lbs,"Muncie, IN",1989-07-28
