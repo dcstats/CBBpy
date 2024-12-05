@@ -92,6 +92,7 @@ dtypes = {
     'player_id': str,
     'jersey_number': str,
     'pos': str,
+    'attendance': float,
     'starter': lambda x: x.lower() == 'true',
     'tournament': converter,
     'tv_network': converter,
