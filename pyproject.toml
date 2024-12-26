@@ -48,6 +48,12 @@ dependencies = [
 
 requires-python = ">=3.9"
 
+[tool.setuptools.packages.find]
+include = ["cbbpy", "cbbpy.utils"]
+
+[tool.setuptools.package-data]
+"packagename.utils" = ["*.csv"]
+
 [tool.setuptools.dynamic]
 version = {attr = "cbbpy.__version__"}
 
