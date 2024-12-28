@@ -9,11 +9,17 @@ name = "CBBpy"
 dynamic = ["version"]
 description = 'A Python-based web scraper for NCAA basketball.'
 readme = "README.md"
-authors = [{ name = "Daniel Cowan", email = "dnlcowan37@gmail.com" }]
-license = { file = "LICENSE" }
+authors = [{ name = "Daniel Cowan"}, {email = "dnlcowan37@gmail.com"}]
+license = { text = "Apache-2.0" }
 classifiers = [
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 keywords = [
   "college", 
@@ -45,23 +51,18 @@ dependencies = [
   'rapidfuzz>=3.9.0',
   'platformdirs>=4.0.0',
 ]
-
 requires-python = ">=3.9"
 
+[project.urls]
+homepage = "https://github.com/dcstats/CBBpy/"
+issues = "https://github.com/dcstats/CBBpy/issues"
+
 [tool.setuptools.packages.find]
+where = ["src"]
 include = ["cbbpy", "cbbpy.utils"]
 
 [tool.setuptools.package-data]
-"packagename.utils" = ["*.csv"]
+"cbbpy.utils" = ["*.csv"]
 
 [tool.setuptools.dynamic]
 version = {attr = "cbbpy.__version__"}
-
-# [project.optional-dependencies]
-# dev = ["black", "bumpver", "isort", "pip-tools", "pytest"]
-
-[project.urls]
-Homepage = "https://github.com/dcstats/CBBpy/"
-
-# [project.scripts]
-# realpython = "reader.__main__:main"
