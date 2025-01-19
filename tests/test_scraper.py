@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 from pathlib import Path
-from utils.cbbpy_utils import InvalidDateRangeError
+from cbbpy.utils.cbbpy_utils import InvalidDateRangeError
 from cbbpy import mens_scraper as ms, womens_scraper as ws
 
 
