@@ -7,7 +7,7 @@ Author: Daniel Cowan
 from datetime import datetime
 import pandas as pd
 from typing import Union, Tuple
-from utils.cbbpy_utils import (
+from cbbpy.utils.cbbpy_utils import (
     _get_game,
     _get_games_range,
     _get_games_season,
