@@ -1315,7 +1315,10 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
     home_win = True if home_score > away_score and gm_status == 'Final' else False
 
     is_postseason = True if more_info["seasonType"] == 3 else False
-    is_conference = more_info["isConferenceGame"]
+    # records -> 'type' = 'conf', 'summary' = '0-0'
+    # TODO: fix for in-progress games which are first of conference play
+    vs_conf = [x for x in more_info['tms'][0]['records'] if x['type'] == 'vsconf']
+    is_conference = True if len(vs_conf) > 0 and vs_conf[0]['summary'] != '0-0' else False
 
     if "neutralSite" in more_info:
         is_neutral = True
@@ -1324,6 +1327,7 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
 
     tournament = more_info.get("nte", "")
 
+    # use number of entries in scoreline to determine number of OTs
     if ("linescores" in ht_info) and ("linescores" in at_info):
         # men, and women before the 15-16 season, use halves
         if (
