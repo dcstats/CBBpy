@@ -1137,7 +1137,7 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
 
     # FIND SHOOTERS
     shooting_play = [
-        True if x in (y.lower() for y in SHOT_TYPES) else False for x in p_types
+        True if x in (y.lower() for y in SHOT_TYPES) or sc_play[i] else False for i,x in enumerate(p_types)
     ]
 
     scorers = [x[0].split(" made ")[0] if x[1] else "" for x in zip(descs, sc_play)]
@@ -1188,10 +1188,10 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     if is_shotchart:
         chart = gamepackage["shtChrt"]["plays"]
 
-        shotteams = [x["homeAway"] for x in chart]
-        shotdescs = [x["text"] for x in chart]
-        xs = [50 - int(x["coordinate"]["x"]) for x in chart]
-        ys = [int(x["coordinate"]["y"]) for x in chart]
+        shotteams = [x.get('homeAway', '') for x in chart]
+        shotdescs = [x.get('text', '') for x in chart]
+        xs = [50-int((x.get('coordinate') or {}).get('x', -100)) for x in chart]
+        ys = [int((x.get('coordinate') or {}).get('y', -100)) for x in chart]
 
         shot_data = {"team": shotteams, "play_desc": shotdescs, "x": xs, "y": ys}
 
