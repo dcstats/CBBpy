@@ -1047,6 +1047,7 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         _log.warning(f'{game_id} - No PBP available')
         return pd.DataFrame([])
 
+    play_ids = [str(x.get('id', '')) for x in all_plays]
     descs = [x["text"] if "text" in x.keys() else "" for x in all_plays]
     teams = [
         (
@@ -1161,6 +1162,7 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     is_three = ["three point" in x.lower() for x in descs]
 
     data = {
+        "id": play_ids,
         "game_id": game_id,
         "home_team": home_team,
         "away_team": away_team,
@@ -1188,66 +1190,32 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     if is_shotchart:
         chart = gamepackage["shtChrt"]["plays"]
 
-        shotteams = [x.get('homeAway', '') for x in chart]
-        shotdescs = [x.get('text', '') for x in chart]
+        ids = [str(x.get('id', '')) for x in chart]
+        # shotteams = [x.get('homeAway', '') for x in chart]
+        # shotdescs = [x.get('text', '') for x in chart]
         xs = [50-int((x.get('coordinate') or {}).get('x', -100)) for x in chart]
         ys = [int((x.get('coordinate') or {}).get('y', -100)) for x in chart]
 
-        shot_data = {"team": shotteams, "play_desc": shotdescs, "x": xs, "y": ys}
+        shot_data = {
+            "id": ids,
+            # "team": shotteams,
+            # "play_desc": shotdescs,
+            "x": xs,
+            "y": ys
+        }
 
         shot_df = pd.DataFrame(shot_data)
 
-        # shot matching
-        shot_info = {
-            "shot_x": [],
-            "shot_y": [],
-        }
-        shot_count = 0
+        # match shot data to pbp data
+        df_merged = df.merge(shot_df, left_on='id', right_on='id', how='left', suffixes=('', '_shot'))
 
-        for play, isshot in zip(df.play_desc, df.shooting_play):
-            if shot_count >= len(shot_df):
-                shot_info["shot_x"].append(np.nan)
-                shot_info["shot_y"].append(np.nan)
-                continue
+        if len(shot_df[~shot_df['id'].isin(df_merged['id'])]) > 0:
+            _log.warning(f'{game_id} - Some shot data could not be matched to PBP data')
 
-            if not isshot:
-                shot_info["shot_x"].append(np.nan)
-                shot_info["shot_y"].append(np.nan)
-                continue
+        df_merged.drop(columns=['id'], inplace=True)
+        df_merged.rename(columns={'x': 'shot_x', 'y': 'shot_y'}, inplace=True)
 
-            if "free throw" in play.lower():
-                shot_info["shot_x"].append(np.nan)
-                shot_info["shot_y"].append(np.nan)
-                shot_count += 1
-                continue
-
-            shot_play = shot_df.play_desc.iloc[shot_count]
-
-            if play == shot_play:
-                shot_info["shot_x"].append(shot_df.x.iloc[shot_count])
-                shot_info["shot_y"].append(shot_df.y.iloc[shot_count])
-                shot_count += 1
-            else:
-                shot_info["shot_x"].append(np.nan)
-                shot_info["shot_y"].append(np.nan)
-
-        # make sure that length of shot data matches number of shots in PBP data
-        if (not (len(shot_info["shot_x"]) == len(df))) or (
-            not (len(shot_info["shot_y"]) == len(df))
-        ):
-            _log.warning(
-                f'{game_id} - Shot data length does not match PBP data'
-            )
-            df["shot_x"] = np.nan
-            df["shot_y"] = np.nan
-            return df.sort_values(by=[pd_type, pd_type_sec], ascending=[True, False])
-
-        df["shot_x"] = shot_info["shot_x"]
-        df["shot_y"] = shot_info["shot_y"]
-
-    else:
-        df["shot_x"] = np.nan
-        df["shot_y"] = np.nan
+        df = df_merged.copy(deep=True)
 
     return df.sort_values(by=[pd_type, pd_type_sec], ascending=[True, False])
 
