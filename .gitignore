@@ -11,3 +11,4 @@ build/
 dist/
 *.log
 *.xlsx
+.vscode/
