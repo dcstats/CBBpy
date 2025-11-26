@@ -1247,7 +1247,8 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
     ref_3 = tot_refs[2]["dspNm"] if len(tot_refs) > 2 else ""
 
     teams = more_info["tms"]
-    ht_info, at_info = teams[0], teams[1]
+    ht_info = next(team for team in teams if team['isHome'])
+    at_info = next(team for team in teams if not team['isHome'])
 
     home_team, away_team = ht_info["displayName"], at_info["displayName"]
 
