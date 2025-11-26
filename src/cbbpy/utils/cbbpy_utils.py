@@ -1286,7 +1286,7 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
     is_postseason = True if more_info["seasonType"] == 3 else False
 
     # TODO: fix for in-progress games which are first of conference play
-    vs_conf = [x for x in more_info['tms'][0]['records'] if x['type'] == 'vsconf']
+    vs_conf = [x for y in more_info['tms'] for x in y['records'] if x['type'] == 'vsconf']
     # is a conference game if both teams have a vsconf record and neither is 0-0
     is_conference = True if len(vs_conf) == 2 and any(x['summary'] != '0-0' for x in vs_conf) else False
 
