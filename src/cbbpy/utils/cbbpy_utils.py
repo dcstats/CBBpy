@@ -1502,15 +1502,29 @@ def _get_id_from_team(team, season, game_type):
     if not team.lower() in lowercase_map:
         choices = list(id_map.keys())
 
-        best_match, score, _ = process.extractOne(
+        if not choices:
+            available = sorted(team_map_df.season.unique())
+            raise ValueError(
+                f"No team data available for the {season} season. "
+                f"Available seasons: {available[-5:]}"
+            )
+
+        result = process.extractOne(
             team,
             choices,
             scorer=distance.JaroWinkler.normalized_similarity,
             processor=utils.default_process
         )
 
+        if result is None:
+            raise ValueError(
+                f"Could not find a match for '{team}' in the {season} season."
+            )
+
+        best_match, score, _ = result
+
         print(f"No exact match for '{team}'. Fetching closest team match: '{best_match}'.")
-        
+
         id_ = id_map[best_match]
     else:
         best_match = lowercase_map[team.lower()]
@@ -1536,12 +1550,26 @@ def _get_teams_from_conference(conference, season, game_type):
 
     # if the given conference is not in the list of conferences, search for nearest match
     if not conference.lower() in lowercase_map:
-        best_match, score, _ = process.extractOne(
+        if not choices:
+            available = sorted(team_map_df[team_map_df.season.notna()].season.unique())
+            raise ValueError(
+                f"No conference data available for the {season} season. "
+                f"Available seasons: {available[-5:]}"
+            )
+
+        result = process.extractOne(
             conference,
             choices,
             scorer=distance.JaroWinkler.normalized_similarity,
             processor=utils.default_process
         )
+
+        if result is None:
+            raise ValueError(
+                f"Could not find a match for '{conference}' in the {season} season."
+            )
+
+        best_match, score, _ = result
 
         # if matched abbreviation, swap for conference name
         if best_match in abb_map:
