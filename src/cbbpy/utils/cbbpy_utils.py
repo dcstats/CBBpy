@@ -1496,18 +1496,22 @@ def _get_id_from_team(team, season, game_type):
     team_map_df = _get_team_map(game_type)
     id_map = team_map_df[team_map_df.season == season][['id', 'location']]
     id_map = id_map.set_index('location')['id'].to_dict()
+
+    # if no teams found for the requested season, fall back to the latest available season
+    if not id_map:
+        available = sorted(team_map_df.season.unique())
+        if not available:
+            raise ValueError("Team map is empty — no seasons available.")
+        fallback = int(available[-1])
+        print(f"No team data for {season} season. Falling back to {fallback}.")
+        id_map = team_map_df[team_map_df.season == fallback][['id', 'location']]
+        id_map = id_map.set_index('location')['id'].to_dict()
+
     lowercase_map = {x.lower(): x for x in id_map.keys()}
 
     # if the given team is not in the list of teams, search for nearest match
     if not team.lower() in lowercase_map:
         choices = list(id_map.keys())
-
-        if not choices:
-            available = sorted(team_map_df.season.unique())
-            raise ValueError(
-                f"No team data available for the {season} season. "
-                f"Available seasons: {available[-5:]}"
-            )
 
         result = process.extractOne(
             team,
@@ -1537,6 +1541,16 @@ def _get_season_conferences(season, game_type):
     season = int(season)
     team_map_df = _get_team_map(game_type)
     confs_df = team_map_df[team_map_df.season == season][['conference', 'conference_abb']].drop_duplicates()
+
+    # fall back to latest available season if requested season has no data
+    if confs_df.empty:
+        available = sorted(team_map_df.season.unique())
+        if not available:
+            return confs_df.reset_index(drop=True)
+        fallback = int(available[-1])
+        print(f"No conference data for {season} season. Falling back to {fallback}.")
+        confs_df = team_map_df[team_map_df.season == fallback][['conference', 'conference_abb']].drop_duplicates()
+
     return confs_df.reset_index(drop=True)
 
 
@@ -1550,13 +1564,6 @@ def _get_teams_from_conference(conference, season, game_type):
 
     # if the given conference is not in the list of conferences, search for nearest match
     if not conference.lower() in lowercase_map:
-        if not choices:
-            available = sorted(team_map_df[team_map_df.season.notna()].season.unique())
-            raise ValueError(
-                f"No conference data available for the {season} season. "
-                f"Available seasons: {available[-5:]}"
-            )
-
         result = process.extractOne(
             conference,
             choices,
@@ -1583,8 +1590,11 @@ def _get_teams_from_conference(conference, season, game_type):
         if best_match in abb_map:
             best_match = abb_map[best_match]
 
-    # filter teams df to relevant conference
+    # filter teams df to relevant conference — use fallback season if needed
     rel_team_df = team_map_df[(team_map_df.season == season) & (team_map_df.conference == best_match)]
+    if rel_team_df.empty:
+        fallback = int(sorted(team_map_df.season.unique())[-1])
+        rel_team_df = team_map_df[(team_map_df.season == fallback) & (team_map_df.conference == best_match)]
 
     return rel_team_df.location.tolist()
 

@@ -203,6 +203,28 @@ def test_season(func):
         func(future_season)
 
 
+@pytest.mark.parametrize("func", [ms.get_team_schedule, ws.get_team_schedule])
+def test_team_lookup_fallback_future_season(func):
+    """Team lookup should fall back to latest season when requested season has no data."""
+    result = func("UConn", 3000)
+    # Fallback resolves the team ID without crashing — schedule will be empty since
+    # there are no games in season 3000, but the important thing is no TypeError.
+    assert isinstance(result, pd.DataFrame)
+
+
+@pytest.mark.parametrize("scraper, team, season, expected_id", [
+    (ms, "UConn", 2026, 41),
+    (ms, "UConn", 2025, 41),
+    (ws, "UConn", 2026, 41),
+    (ws, "UConn", 2025, 41),
+])
+def test_team_lookup_returns_correct_id(scraper, team, season, expected_id):
+    """Team lookup should return the correct ESPN team ID."""
+    sched = scraper.get_team_schedule(team, season)
+    assert not sched.empty, f"Schedule for {team} {season} should not be empty"
+    assert sched.team_id.iloc[0] == expected_id
+
+
 @pytest.mark.parametrize("func, game_type, data", [
     (ms.get_games_conference, "mens", M_CONF_SEASONS),
     (ws.get_games_conference, "womens", W_CONF_SEASONS),
