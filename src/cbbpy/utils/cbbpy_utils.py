@@ -1036,11 +1036,11 @@ def _get_game_boxscore_helper(boxscore, game_id):
 
 def _get_game_pbp_helper(gamepackage, game_id, game_type):
     pbp = gamepackage["pbp"]
-    home_team = pbp["tms"]["home"]["displayName"]
-    away_team = pbp["tms"]["away"]["displayName"]
+    home_team = pbp["tms"]["home"]["nm"]
+    away_team = pbp["tms"]["away"]["nm"]
     game_date = parser.parse(gamepackage["gmInfo"]["dtTm"])
 
-    all_plays = [play for period in pbp["playGrps"] for play in period]
+    all_plays = pbp["plays"]
 
     # check if PBP exists
     if len(all_plays) <= 0:
