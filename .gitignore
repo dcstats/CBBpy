@@ -6,9 +6,11 @@ testing/
 __pycache__/
 .DS_Store
 *.gz
+!tests/fixtures/pages/*.html.gz
 *.whl
 build/
 dist/
 *.log
 *.xlsx
 .vscode/
+.claude/
