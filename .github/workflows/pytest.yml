@@ -5,11 +5,16 @@ on:
     branches: [master]
     paths:
       - 'src/**'
+      - 'tests/**'
+      - 'pyproject.toml'
+      - '.github/workflows/pytest.yml'
 
 jobs:
-  test:
+  # Deterministic tests against recorded ESPN pages — no network. A failure
+  # here means the code changed behavior. Runs on every supported Python.
+  offline:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     strategy:
       matrix:
         python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
@@ -24,21 +29,57 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-
+
       - name: Install package in editable mode
         run: |
           pip install --upgrade pip
           pip install -e .
 
-      - name: Install testing and linting tools
-        run: pip install pytest flake8 mypy
+      - name: Install testing tools
+        run: pip install pytest pyarrow
+
+      - name: Run offline tests
+        run: pytest tests/ -m "not live"
+
+  # Live invariant tests against real ESPN — verifies the scraper still works
+  # against today's site. Single Python version: cross-version parsing
+  # differences are already covered by the offline matrix, and one job keeps
+  # ESPN request volume (and flake odds) down.
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
 
       - name: Cache pip dependencies
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+          key: ${{ runner.os }}-pip-3.12-${{ hashFiles('**/pyproject.toml') }}
           restore-keys: |
-            ${{ runner.os }}-pip-
+            ${{ runner.os }}-pip-3.12-
 
-      - name: Run pytest
-        run: pytest tests/
+      - name: Install package in editable mode
+        run: |
+          pip install --upgrade pip
+          pip install -e .
+
+      - name: Install testing tools
+        run: pip install pytest pyarrow
+
+      - name: Run live tests
+        run: pytest tests/ -m live

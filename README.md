@@ -16,7 +16,7 @@ CBBpy requires Python >= 3.9 as well as the following packages:
 * lxml>=4.9.0
 * joblib>=1.0.0
 * beautifulsoup4>=4.11.0
-* requests>=2.27.0
+* curl_cffi>=0.10.0
 * rapidfuzz>=3.9.0
 * platformdirs>=4.0.0
 

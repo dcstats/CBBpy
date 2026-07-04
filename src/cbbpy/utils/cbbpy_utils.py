@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup as bs
-import requests as r
+from curl_cffi import requests as r
 import pandas as pd
 import numpy as np
 from datetime import datetime, timezone
@@ -30,26 +30,6 @@ DATE_PARSES = [
     "%Y/%m/%d",
     "%m-%d-%Y",
     "%m/%d/%Y",
-]
-USER_AGENTS = [
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 "
-    + "(KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36",
 ]
 REFERERS = [
     "https://google.com/",
@@ -349,12 +329,11 @@ def _get_game_ids(date, game_type):
     for i in range(ATTEMPTS):
         try:
             header = {
-                "User-Agent": str(np.random.choice(USER_AGENTS)),
                 "Referer": str(np.random.choice(REFERERS)),
             }
             d = date.strftime("%Y%m%d")
             url = pre_url.format(d)
-            page = r.get(url, headers=header)
+            page = r.get(url, headers=header, impersonate="chrome")
             soup = bs(page.content, "lxml")
             scoreboard = _get_scoreboard_from_soup(soup)
             ids = [x["id"] for x in scoreboard]
@@ -407,11 +386,10 @@ def _get_game_boxscore(game_id, game_type):
     for i in range(ATTEMPTS):
         try:
             header = {
-                "User-Agent": str(np.random.choice(USER_AGENTS)),
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
-            page = r.get(url, headers=header)
+            page = r.get(url, headers=header, impersonate="chrome")
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
@@ -480,11 +458,10 @@ def _get_game_pbp(game_id, game_type):
     for i in range(ATTEMPTS):
         try:
             header = {
-                "User-Agent": str(np.random.choice(USER_AGENTS)),
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
-            page = r.get(url, headers=header)
+            page = r.get(url, headers=header, impersonate="chrome")
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
@@ -544,11 +521,10 @@ def _get_game_info(game_id, game_type):
     for i in range(ATTEMPTS):
         try:
             header = {
-                "User-Agent": str(np.random.choice(USER_AGENTS)),
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
-            page = r.get(url, headers=header)
+            page = r.get(url, headers=header, impersonate="chrome")
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
@@ -609,18 +585,17 @@ def _get_player_info(player_id, game_type):
     for i in range(ATTEMPTS):
         try:
             header = {
-                "User-Agent": str(np.random.choice(USER_AGENTS)),
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(player_id)
-            page = r.get(url, headers=header)
+            page = r.get(url, headers=header, impersonate="chrome")
             soup = bs(page.content, "lxml")
             raw_player = _get_player_from_soup(soup)
 
             df = _get_player_details_helper(player_id, raw_player, game_type)
 
         except Exception as ex:
-            if "Page not found." in soup.text:
+            if soup is not None and "Page not found." in soup.text:
                 _log.error(
                     f'{player_id} - Player: Page not found error'
                 )
@@ -670,11 +645,10 @@ def _get_team_schedule(team, season, game_type):
     for i in range(ATTEMPTS):
         try:
             header = {
-                "User-Agent": str(np.random.choice(USER_AGENTS)),
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(team_id, season)
-            page = r.get(url, headers=header)
+            page = r.get(url, headers=header, impersonate="chrome")
             soup = bs(page.content, "lxml")
             jsn = _get_json_from_soup(soup)
             df = _get_schedule_helper(jsn, team_name, team_id, season)
@@ -1058,10 +1032,10 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         for x in all_plays
     ]
     hscores = [
-        int(x["homeScore"]) if "homeScore" in x.keys() else np.nan for x in all_plays
+        int(x["hmScr"]) if "hmScr" in x.keys() else np.nan for x in all_plays
     ]
     ascores = [
-        int(x["awayScore"]) if "awayScore" in x.keys() else np.nan for x in all_plays
+        int(x["awScr"]) if "awScr" in x.keys() else np.nan for x in all_plays
     ]
     periods = [
         int(x["period"]["number"]) if "period" in x.keys() else np.nan
