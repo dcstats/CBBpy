@@ -14,3 +14,4 @@ dist/
 *.xlsx
 .vscode/
 .claude/
+.pytest_cache/
