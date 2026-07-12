@@ -48,6 +48,35 @@ jobs:
       - name: Run offline tests
         run: pytest tests/ -m "not live"
 
+  # Same offline suite, but with every dependency installed at the minimum
+  # version pyproject.toml claims to support (uv resolves the floors directly
+  # from the metadata, so there's no separate pin list to keep in sync). A
+  # failure here means a declared floor is dishonest — raise it rather than
+  # working around it. Python 3.9 because the floors must hold on the oldest
+  # supported interpreter; pytest/pyarrow are installed separately at their
+  # latest versions since lowest-direct would otherwise pick ancient ones.
+  offline-min-versions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install package with lowest supported dependency versions
+        run: |
+          uv venv
+          uv pip install --resolution lowest-direct -e .
+          uv pip install pytest pyarrow
+
+      - name: Run offline tests
+        run: uv run --no-project pytest tests/ -m "not live"
+
   # Live invariant tests against real ESPN — verifies the scraper still works
   # against today's site. Single Python version: cross-version parsing
   # differences are already covered by the offline matrix, and one job keeps
