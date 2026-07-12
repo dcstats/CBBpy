@@ -13,7 +13,11 @@ import pandas as pd
 import pytest
 
 from cbbpy import mens_scraper as ms, womens_scraper as ws
-from cbbpy.utils.cbbpy_utils import InvalidDateRangeError
+from cbbpy.utils.cbbpy_utils import (
+    InvalidDateRangeError,
+    _get_id_from_team,
+    _get_team_map,
+)
 
 from tests.conftest import (
     PLAYERS,
@@ -262,6 +266,53 @@ def test_teams_from_conference_offline():
         "DePaul", "Marquette", "Villanova", "Creighton", "St. John's",
         "Georgetown", "Seton Hall", "Butler", "Xavier", "Providence",
     ]
+
+
+def test_team_map_season_fallback():
+    # no fixtures needed: reads the bundled team-map CSVs only
+    assert _get_id_from_team("UConn", 2025, "mens") == (41, "UConn")
+    # a season past the map falls back to the latest available season
+    # instead of crashing on an empty candidate list
+    latest = int(_get_team_map("mens").season.max())
+    assert _get_id_from_team("UConn", latest + 1, "mens") == (41, "UConn")
+    assert ms.get_teams_from_conference("ACC", latest + 1) == ms.get_teams_from_conference(
+        "ACC", latest
+    )
+
+
+@pytest.mark.parametrize("gender", ["mens", "womens"])
+def test_team_map_conference_abbs(gender):
+    # guards the static CSVs against ESPN abbreviation drift when a new
+    # season is appended (see update_team_map.py's normalization step)
+    df = _get_team_map(gender)
+    seasons = sorted(df.season.unique())
+
+    # a conference keeps its abbreviation across the two most recent seasons
+    prev, last = seasons[-2], seasons[-1]
+    maps = {
+        s: df[df.season == s][["conference", "conference_abb"]]
+        .drop_duplicates()
+        .set_index("conference")
+        .conference_abb.to_dict()
+        for s in (prev, last)
+    }
+    drift = {
+        c: (maps[prev][c], maps[last][c])
+        for c in maps[prev].keys() & maps[last].keys()
+        if maps[prev][c] != maps[last][c]
+    }
+    assert not drift, f"conference abbs drifted between {prev} and {last}: {drift}"
+
+    # within a season, no abbreviation is shared by two conferences (case-
+    # insensitive, since lookups lowercase); 2021 is grandfathered — ESPN
+    # split conferences into divisions that year (Patriot 'South' vs SoCon 'south')
+    for season, grp in df.groupby("season"):
+        if season == 2021:
+            continue
+        pairs = grp[["conference", "conference_abb"]].drop_duplicates()
+        n_confs = pairs.groupby(pairs.conference_abb.str.lower()).conference.nunique()
+        clashes = n_confs[n_confs > 1]
+        assert clashes.empty, f"{season}: abb shared by multiple conferences: {list(clashes.index)}"
 
 
 @pytest.mark.parametrize("func", [ms.get_games_season, ws.get_games_season])

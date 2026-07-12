@@ -1650,10 +1650,22 @@ def _get_team_map(game_type):
     return pd.read_csv(data_path)
 
 
+def _resolve_map_season(team_map_df, season):
+    # the team map is static; when the requested season isn't in it yet
+    # (e.g. a new season before the CSVs are updated), fall back to the
+    # latest available season since most teams/conferences don't change YOY
+    if (team_map_df.season == season).any():
+        return season
+    fallback = int(team_map_df.season.max())
+    print(f"No team map data for the {season} season. Falling back to {fallback}.")
+    return fallback
+
+
 def _get_id_from_team(team, season, game_type):
     # fetch list of teams and team IDs for given season
     season = int(season)
     team_map_df = _get_team_map(game_type)
+    season = _resolve_map_season(team_map_df, season)
     id_map = team_map_df[team_map_df.season == season][['id', 'location']]
     id_map = id_map.set_index('location')['id'].to_dict()
     lowercase_map = {x.lower(): x for x in id_map.keys()}
@@ -1682,6 +1694,7 @@ def _get_id_from_team(team, season, game_type):
 def _get_season_conferences(season, game_type):
     season = int(season)
     team_map_df = _get_team_map(game_type)
+    season = _resolve_map_season(team_map_df, season)
     confs_df = team_map_df[team_map_df.season == season][['conference', 'conference_abb']].drop_duplicates()
     return confs_df.reset_index(drop=True)
 
@@ -1689,7 +1702,9 @@ def _get_season_conferences(season, game_type):
 def _get_teams_from_conference(conference, season, game_type):
     # fetch list of teams and team IDs for given season
     season = int(season)
-    team_map_df, confs_df = _get_team_map(game_type), _get_season_conferences(season, game_type)
+    team_map_df = _get_team_map(game_type)
+    season = _resolve_map_season(team_map_df, season)
+    confs_df = _get_season_conferences(season, game_type)
     abb_map = confs_df.set_index('conference_abb').conference.to_dict()
     choices = confs_df.conference.tolist() + confs_df.conference_abb.tolist()
     lowercase_map = {x.lower(): x for x in choices}
