@@ -373,6 +373,8 @@ def _get_game_ids(date, game_type, source="api"):
         return espn_api._get_game_ids_api(date, game_type)
 
     soup = None
+    scoreboard = None
+    ids = []
 
     if game_type == "mens":
         pre_url = MENS_SCOREBOARD_URL
@@ -438,6 +440,7 @@ def _get_game_boxscore(game_id, game_type, source="api"):
         return espn_api._get_game_boxscore_api(game_id, game_type)
 
     soup = None
+    gamepackage = None
     game_id = str(game_id)
 
     if game_type == "mens":
@@ -538,6 +541,7 @@ def _get_game_pbp(game_id, game_type, source="api"):
         return espn_api._get_game_pbp_api(game_id, game_type)
 
     soup = None
+    gamepackage = None
     game_id = str(game_id)
 
     if game_type == "mens":
@@ -611,6 +615,7 @@ def _get_game_info(game_id, game_type, source="api"):
         return espn_api._get_game_info_api(game_id, game_type)
 
     soup = None
+    gamepackage = None
     game_id = str(game_id)
 
     if game_type == "mens":
@@ -675,7 +680,8 @@ def _get_game_info(game_id, game_type, source="api"):
 
 def _get_player_info(player_id, game_type):
     soup = None
-    df = None
+    raw_player = None
+    df = pd.DataFrame([])
 
     if game_type == "mens":
         pre_url = MENS_PLAYER_URL
@@ -699,7 +705,7 @@ def _get_player_info(player_id, game_type):
                 _log.error(
                     f'{player_id} - Player: Page not found error'
                 )
-                break
+                return pd.DataFrame([])
 
             if i + 1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
