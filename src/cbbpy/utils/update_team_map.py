@@ -34,10 +34,16 @@ CSV_DIR = Path(__file__).resolve().parent
 REQUEST_TIMEOUT = 30
 
 
-def _get_json(url):
-    page = r.get(url, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
-    page.raise_for_status()
-    return page.json()
+def _get_json(url, attempts=3):
+    # first query of an uncached season can take ESPN >15s, so retry timeouts
+    for i in range(attempts):
+        try:
+            page = r.get(url, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
+            page.raise_for_status()
+            return page.json()
+        except Exception:
+            if i + 1 == attempts:
+                raise
 
 
 def get_conference_lookup(sport: str) -> dict:
