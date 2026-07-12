@@ -1742,63 +1742,44 @@ def _get_teams_from_conference(conference, season, game_type):
     return rel_team_df.location.tolist()
 
 
-def _get_json_from_soup(soup):
+def _parse_espn_json(soup):
     script_string = _find_json_in_content(soup)
 
     if script_string == "":
         return None
 
     pattern = re.compile(JSON_REGEX)
-    found = re.search(pattern, script_string).group(1)
-    js = "{" + found + "}"
-    jsn = json.loads(js)
+    match = re.search(pattern, script_string)
+    if match is None:
+        return None
 
-    return jsn
+    js = "{" + match.group(1) + "}"
+    return json.loads(js)
+
+
+def _get_json_from_soup(soup):
+    return _parse_espn_json(soup)
 
 
 def _get_gamepackage_from_soup(soup):
-    script_string = _find_json_in_content(soup)
-
-    if script_string == "":
+    jsn = _parse_espn_json(soup)
+    if jsn is None:
         return None
-
-    pattern = re.compile(JSON_REGEX)
-    found = re.search(pattern, script_string).group(1)
-    js = "{" + found + "}"
-    jsn = json.loads(js)
-    gamepackage = jsn["page"]["content"]["gamepackage"]
-
-    return gamepackage
+    return jsn["page"]["content"]["gamepackage"]
 
 
 def _get_player_from_soup(soup):
-    script_string = _find_json_in_content(soup)
-
-    if script_string == "":
+    jsn = _parse_espn_json(soup)
+    if jsn is None:
         return None
-
-    pattern = re.compile(JSON_REGEX)
-    found = re.search(pattern, script_string).group(1)
-    js = "{" + found + "}"
-    jsn = json.loads(js)
-    player = jsn["page"]["content"]["player"]
-
-    return player
+    return jsn["page"]["content"]["player"]
 
 
 def _get_scoreboard_from_soup(soup):
-    script_string = _find_json_in_content(soup)
-
-    if script_string == "":
+    jsn = _parse_espn_json(soup)
+    if jsn is None:
         return None
-
-    pattern = re.compile(JSON_REGEX)
-    found = re.search(pattern, script_string).group(1)
-    js = "{" + found + "}"
-    jsn = json.loads(js)
-    scoreboard = jsn["page"]["content"]["scoreboard"]["evts"]
-
-    return scoreboard
+    return jsn["page"]["content"]["scoreboard"]["evts"]
 
 
 def _find_json_in_content(soup):
