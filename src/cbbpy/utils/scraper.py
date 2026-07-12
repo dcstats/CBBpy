@@ -35,6 +35,7 @@ class GameScraper:
         info: bool = True,
         box: bool = True,
         pbp: bool = True,
+        source: str = "api",
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """A function that scrapes all game info (metadata, boxscore, play-by-play).
 
@@ -43,6 +44,7 @@ class GameScraper:
             info (bool, optional): Whether the game metadata is to be scraped. Defaults to True.
             box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
             pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
+            source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
 
         Returns:
             a tuple containing
@@ -51,7 +53,7 @@ class GameScraper:
             - pd.DataFrame: The game's boxscore (both teams combined).\n
             - pd.DataFrame: The game's play-by-play.
         """
-        return _get_game(game_id, self._game_type, info, box, pbp)
+        return _get_game(game_id, self._game_type, info, box, pbp, source)
 
     def get_games_range(
         self,
@@ -60,6 +62,7 @@ class GameScraper:
         info: bool = True,
         box: bool = True,
         pbp: bool = True,
+        source: str = "api",
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """A function that scrapes a game information between a given range of dates.
 
@@ -69,6 +72,7 @@ class GameScraper:
             info (bool, optional): Whether the game metadata is to be scraped. Defaults to True.
             box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
             pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
+            source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
 
         Returns:
             a tuple containing
@@ -77,7 +81,7 @@ class GameScraper:
             - pd.DataFrame: The game's boxscore (both teams combined).\n
             - pd.DataFrame: The game's play-by-play.
         """
-        return _get_games_range(start_date, end_date, self._game_type, info, box, pbp)
+        return _get_games_range(start_date, end_date, self._game_type, info, box, pbp, source)
 
     def get_games_season(
         self,
@@ -85,6 +89,7 @@ class GameScraper:
         info: bool = True,
         box: bool = True,
         pbp: bool = True,
+        source: str = "api",
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Scrapes desired game information (metadata, boxscore, play-by-play) for every game of a given season.
 
@@ -95,6 +100,7 @@ class GameScraper:
             info (bool, optional): Whether the game metadata is to be scraped. Defaults to True.
             box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
             pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
+            source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
 
         Returns:
             a tuple containing
@@ -105,7 +111,7 @@ class GameScraper:
         """
         if season is None:
             season = _get_current_season()
-        return _get_games_season(season, self._game_type, info, box, pbp)
+        return _get_games_season(season, self._game_type, info, box, pbp, source)
 
     def get_games_team(
         self,
@@ -114,6 +120,7 @@ class GameScraper:
         info: bool = True,
         box: bool = True,
         pbp: bool = True,
+        source: str = "api",
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Scrapes desired game information (metadata, boxscore, play-by-play) for every game of a given team and season.
 
@@ -125,6 +132,7 @@ class GameScraper:
             info (bool, optional): Whether the game metadata is to be scraped. Defaults to True.
             box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
             pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
+            source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
 
         Returns:
             a tuple containing
@@ -135,7 +143,7 @@ class GameScraper:
         """
         if season is None:
             season = _get_current_season()
-        return _get_games_team(team, season, self._game_type, info, box, pbp)
+        return _get_games_team(team, season, self._game_type, info, box, pbp, source)
 
     def get_games_conference(
         self,
@@ -144,6 +152,7 @@ class GameScraper:
         info: bool = True,
         box: bool = True,
         pbp: bool = True,
+        source: str = "api",
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Scrapes desired game information (metadata, boxscore, play-by-play) for every game for every team for a given conference and season.
 
@@ -155,6 +164,7 @@ class GameScraper:
             info (bool, optional): Whether the game metadata is to be scraped. Defaults to True.
             box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
             pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
+            source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
 
         Returns:
             a tuple containing
@@ -165,51 +175,55 @@ class GameScraper:
         """
         if season is None:
             season = _get_current_season()
-        return _get_games_conference(conference, season, self._game_type, info, box, pbp)
+        return _get_games_conference(conference, season, self._game_type, info, box, pbp, source)
 
-    def get_game_ids(self, date: Union[str, datetime]) -> list:
+    def get_game_ids(self, date: Union[str, datetime], source: str = "api") -> list:
         """Scrapes all game IDs for a given date.
 
         Parameters:
             date (str | datetime): The date of the games to be scraped.
+            source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
 
         Returns:
             list: The ESPN game IDs for each game played on the given date.
         """
-        return _get_game_ids(date, self._game_type)
+        return _get_game_ids(date, self._game_type, source)
 
-    def get_game_boxscore(self, game_id: Union[str, int]) -> pd.DataFrame:
+    def get_game_boxscore(self, game_id: Union[str, int], source: str = "api") -> pd.DataFrame:
         """Scrapes each team's boxscore for a given game.
 
         Parameters:
             game_id (str | int): The game's ESPN game ID.
+            source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
 
         Returns:
             pd.DataFrame: The boxscores of both teams, combined into one table.
         """
-        return _get_game_boxscore(game_id, self._game_type)
+        return _get_game_boxscore(game_id, self._game_type, source)
 
-    def get_game_pbp(self, game_id: Union[str, int]) -> pd.DataFrame:
+    def get_game_pbp(self, game_id: Union[str, int], source: str = "api") -> pd.DataFrame:
         """Scrapes a game's play-by-play data.
 
         Parameters:
             game_id (str | int): The game's ESPN game ID.
+            source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
 
         Returns:
             pd.DataFrame: The game's play-by-play information, with a row for each play.
         """
-        return _get_game_pbp(game_id, self._game_type)
+        return _get_game_pbp(game_id, self._game_type, source)
 
-    def get_game_info(self, game_id: Union[str, int]) -> pd.DataFrame:
+    def get_game_info(self, game_id: Union[str, int], source: str = "api") -> pd.DataFrame:
         """Scrapes game metadata from the ESPN game page.
 
         Args:
             game_id (str | int): The game's ESPN game ID.
+            source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
 
         Returns:
             pd.DataFrame: The game's metadata scraped from the game page.
         """
-        return _get_game_info(game_id, self._game_type)
+        return _get_game_info(game_id, self._game_type, source)
 
     def get_player_info(self, player_id: Union[str, int]) -> pd.DataFrame:
         """Scrapes player details from the player's bio page for a given player ID.

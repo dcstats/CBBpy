@@ -76,6 +76,8 @@ SHOT_TYPES = [
     "Layup",
     "Dunk",
 ]
+# AWS WAF challenges Chromium TLS fingerprints as of July 2026; Safari passes
+IMPERSONATE = "safari"
 WINDOW_STRING = "window['__espnfitt__']="
 JSON_REGEX = r"window\[\'__espnfitt__\'\]={(.*)};"
 STATUS_OK = 200
@@ -126,30 +128,67 @@ class InvalidDateRangeError(Exception):
     pass
 
 
-def _get_game(game_id, game_type, info, box, pbp):
+def _validate_source(source):
+    if source not in ("api", "html"):
+        raise ValueError(f"source must be 'api' or 'html', got {source!r}")
+
+
+def _get_game(game_id, game_type, info, box, pbp, source="api"):
+    _validate_source(source)
     game_id = str(game_id)
     game_info_df = boxscore_df = pbp_df = pd.DataFrame([])
+
+    if source == "api":
+        from cbbpy.utils import espn_api
+
+        # one summary request serves info + boxscore + pbp for the game
+        summary = (
+            espn_api._fetch_summary(game_id, game_type)
+            if (info or box or pbp) and game_id not in pnf_
+            else None
+        )
+
+        if info:
+            if game_id in pnf_ or summary is None:
+                _log.error(f'{game_id} - Game Info: Page not found error')
+            else:
+                game_info_df = espn_api._get_game_info_api(game_id, game_type, summary)
+
+        if box:
+            if game_id in pnf_ or summary is None:
+                _log.error(f'{game_id} - Boxscore: Page not found error')
+            else:
+                boxscore_df = espn_api._get_game_boxscore_api(game_id, game_type, summary)
+
+        if pbp:
+            if game_id in pnf_ or summary is None:
+                _log.error(f'{game_id} - PBP: Page not found error')
+            else:
+                pbp_df = espn_api._get_game_pbp_api(game_id, game_type, summary)
+
+        return (game_info_df, boxscore_df, pbp_df)
 
     if game_id in pnf_:
         _log.error(f'{game_id} - Game Info: Page not found error')
     elif info:
-        game_info_df = _get_game_info(game_id, game_type)
+        game_info_df = _get_game_info(game_id, game_type, source)
 
     if game_id in pnf_:
         _log.error(f'{game_id} - Boxscore: Page not found error')
     elif box:
-        boxscore_df = _get_game_boxscore(game_id, game_type)
+        boxscore_df = _get_game_boxscore(game_id, game_type, source)
 
     if game_id in pnf_:
         _log.error(f'{game_id} - PBP: Page not found error')
     elif pbp:
-        pbp_df = _get_game_pbp(game_id, game_type)
+        pbp_df = _get_game_pbp(game_id, game_type, source)
 
     return (game_info_df, boxscore_df, pbp_df)
 
 
 @print_log_file_location
-def _get_games_range(start_date, end_date, game_type, info, box, pbp):
+def _get_games_range(start_date, end_date, game_type, info, box, pbp, source="api"):
+    _validate_source(source)
     if isinstance(start_date, str):
         start_date = _parse_date(start_date)
     if isinstance(end_date, str):
@@ -175,12 +214,12 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
     with trange(len_scrape, bar_format=bar_format) as t:
         for i in t:
             date = date_range[i]
-            game_ids = _get_game_ids(date, game_type)
+            game_ids = _get_game_ids(date, game_type, source)
             t.set_description(f"Scraping {len(game_ids)} games on {date.strftime('%D')}")
 
             if len(game_ids) > 0:
                 result = Parallel(n_jobs=cpus)(
-                    delayed(_get_game)(gid, game_type, info, box, pbp)
+                    delayed(_get_game)(gid, game_type, info, box, pbp, source)
                     for gid in game_ids
                 )
                 all_data.append(result)
@@ -220,7 +259,8 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
 
 
 @print_log_file_location
-def _get_games_season(season, game_type, info, box, pbp):
+def _get_games_season(season, game_type, info, box, pbp, source="api"):
+    _validate_source(source)
     season_start_date = f"{season-1}-11-01"
     season_end_date = f"{season}-05-01"
 
@@ -233,14 +273,15 @@ def _get_games_season(season, game_type, info, box, pbp):
         season_end_date = datetime.today().strftime("%Y-%m-%d")
 
     info = _get_games_range(
-        season_start_date, season_end_date, game_type, info, box, pbp
+        season_start_date, season_end_date, game_type, info, box, pbp, source
     )
 
     return info
 
 
 @print_log_file_location
-def _get_games_team(team, season, game_type, info, box, pbp):
+def _get_games_team(team, season, game_type, info, box, pbp, source="api"):
+    _validate_source(source)
     cpus = os.cpu_count() - 1
     schedule_df = _get_team_schedule(team, season, game_type)
     game_ids = list(schedule_df[schedule_df.game_status.isin(GOOD_GAME_STATUSES)].game_id)
@@ -248,7 +289,7 @@ def _get_games_team(team, season, game_type, info, box, pbp):
     print(f'Scraping {len(game_ids)} games for {schedule_df.team.iloc[0]}')
 
     result = Parallel(n_jobs=cpus)(
-        delayed(_get_game)(gid, game_type, info, box, pbp)
+        delayed(_get_game)(gid, game_type, info, box, pbp, source)
         for gid in game_ids
     )
 
@@ -283,9 +324,10 @@ def _get_games_team(team, season, game_type, info, box, pbp):
 
 
 @print_log_file_location
-def _get_games_conference(conference, season, game_type, info, box, pbp):
+def _get_games_conference(conference, season, game_type, info, box, pbp, source="api"):
+    _validate_source(source)
     teams = _get_teams_from_conference(conference, season, game_type)
-    result = [_get_games_team(x, season, game_type, info, box, pbp) for x in teams]
+    result = [_get_games_team(x, season, game_type, info, box, pbp, source) for x in teams]
 
     # sort returned dataframes to ensure consistency between runs
     game_info_df = pd.concat([x[0] for x in result])
@@ -315,7 +357,13 @@ def _get_games_conference(conference, season, game_type, info, box, pbp):
     return (game_info_df, game_boxscore_df, game_pbp_df)
 
 
-def _get_game_ids(date, game_type):
+def _get_game_ids(date, game_type, source="api"):
+    _validate_source(source)
+    if source == "api":
+        from cbbpy.utils import espn_api
+
+        return espn_api._get_game_ids_api(date, game_type)
+
     soup = None
 
     if game_type == "mens":
@@ -333,7 +381,7 @@ def _get_game_ids(date, game_type):
             }
             d = date.strftime("%Y%m%d")
             url = pre_url.format(d)
-            page = r.get(url, headers=header, impersonate="chrome")
+            page = r.get(url, headers=header, impersonate=IMPERSONATE)
             soup = bs(page.content, "lxml")
             scoreboard = _get_scoreboard_from_soup(soup)
             ids = [x["id"] for x in scoreboard]
@@ -374,7 +422,13 @@ def _get_game_ids(date, game_type):
     return ids
 
 
-def _get_game_boxscore(game_id, game_type):
+def _get_game_boxscore(game_id, game_type, source="api"):
+    _validate_source(source)
+    if source == "api":
+        from cbbpy.utils import espn_api
+
+        return espn_api._get_game_boxscore_api(game_id, game_type)
+
     soup = None
     game_id = str(game_id)
 
@@ -389,7 +443,7 @@ def _get_game_boxscore(game_id, game_type):
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
-            page = r.get(url, headers=header, impersonate="chrome")
+            page = r.get(url, headers=header, impersonate=IMPERSONATE)
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
@@ -446,7 +500,13 @@ def _get_game_boxscore(game_id, game_type):
     return df.reset_index(drop=True)
 
 
-def _get_game_pbp(game_id, game_type):
+def _get_game_pbp(game_id, game_type, source="api"):
+    _validate_source(source)
+    if source == "api":
+        from cbbpy.utils import espn_api
+
+        return espn_api._get_game_pbp_api(game_id, game_type)
+
     soup = None
     game_id = str(game_id)
 
@@ -461,7 +521,7 @@ def _get_game_pbp(game_id, game_type):
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
-            page = r.get(url, headers=header, impersonate="chrome")
+            page = r.get(url, headers=header, impersonate=IMPERSONATE)
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
@@ -509,7 +569,13 @@ def _get_game_pbp(game_id, game_type):
     return df.reset_index(drop=True)
 
 
-def _get_game_info(game_id, game_type):
+def _get_game_info(game_id, game_type, source="api"):
+    _validate_source(source)
+    if source == "api":
+        from cbbpy.utils import espn_api
+
+        return espn_api._get_game_info_api(game_id, game_type)
+
     soup = None
     game_id = str(game_id)
 
@@ -524,7 +590,7 @@ def _get_game_info(game_id, game_type):
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
-            page = r.get(url, headers=header, impersonate="chrome")
+            page = r.get(url, headers=header, impersonate=IMPERSONATE)
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
@@ -588,7 +654,7 @@ def _get_player_info(player_id, game_type):
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(player_id)
-            page = r.get(url, headers=header, impersonate="chrome")
+            page = r.get(url, headers=header, impersonate=IMPERSONATE)
             soup = bs(page.content, "lxml")
             raw_player = _get_player_from_soup(soup)
 
@@ -648,7 +714,7 @@ def _get_team_schedule(team, season, game_type):
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(team_id, season)
-            page = r.get(url, headers=header, impersonate="chrome")
+            page = r.get(url, headers=header, impersonate=IMPERSONATE)
             soup = bs(page.content, "lxml")
             jsn = _get_json_from_soup(soup)
             df = _get_schedule_helper(jsn, team_name, team_id, season)
@@ -1135,6 +1201,40 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
 
     is_three = ["three point" in x.lower() for x in descs]
 
+    # STRUCTURED FIELDS FROM ESPN JSON (may be absent, esp. in older games)
+    player_ids = [str((x.get("athlete") or {}).get("id", "")) for x in all_plays]
+    assist_player_ids = [
+        next(
+            (
+                str(p.get("id", ""))
+                for p in (x.get("participants") or [])
+                if p.get("description") == "AST"
+            ),
+            "",
+        )
+        for x in all_plays
+    ]
+    espn_play_types = [(x.get("type") or {}).get("txt", "") for x in all_plays]
+    espn_play_type_ids = [str((x.get("type") or {}).get("id", "")) for x in all_plays]
+
+    # play-level shot coordinates (sole source when no shot chart, else fallback)
+    play_shot_xs = []
+    play_shot_ys = []
+    for x, is_shot in zip(all_plays, shooting_play):
+        coord = x.get("coordinate") or {}
+        if not is_shot or "x" not in coord or "y" not in coord:
+            play_shot_xs.append(np.nan)
+            play_shot_ys.append(np.nan)
+            continue
+        cx = int(coord["x"])
+        cy = int(coord["y"])
+        if cx < 0 or cy < 0:
+            play_shot_xs.append(np.nan)
+            play_shot_ys.append(np.nan)
+        else:
+            play_shot_xs.append(50 - cx)
+            play_shot_ys.append(cy)
+
     data = {
         "id": play_ids,
         "game_id": game_id,
@@ -1154,6 +1254,12 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         "shooter": shooters,
         "is_assisted": is_assisted,
         "assist_player": assisted_pls,
+        "player_id": player_ids,
+        "assist_player_id": assist_player_ids,
+        "espn_play_type": espn_play_types,
+        "espn_play_type_id": espn_play_type_ids,
+        "shot_x": play_shot_xs,
+        "shot_y": play_shot_ys,
     }
 
     df = pd.DataFrame(data)
@@ -1186,10 +1292,11 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         if len(shot_df[~shot_df['id'].isin(df_merged['id'])]) > 0:
             _log.warning(f'{game_id} - Some shot data could not be matched to PBP data')
 
-        df_merged.drop(columns=['id'], inplace=True)
-        df_merged.rename(columns={'x': 'shot_x', 'y': 'shot_y'}, inplace=True)
+        # chart coordinates take precedence; keep play-level coords as fallback
+        df['shot_x'] = df_merged['x'].where(df_merged['x'].notna(), df['shot_x'])
+        df['shot_y'] = df_merged['y'].where(df_merged['y'].notna(), df['shot_y'])
 
-        df = df_merged.copy(deep=True)
+        df.drop(columns=['id'], inplace=True)
 
     return df.sort_values(by=[pd_type, pd_type_sec], ascending=[True, False])
 
