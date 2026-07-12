@@ -980,12 +980,20 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         for x in all_plays
     ]
 
-    time_splits = [
-        x["clock"]["displayValue"].split(":") if "clock" in x.keys() else ""
-        for x in all_plays
-    ]
-    minutes = [int(x[0]) for x in time_splits]
-    seconds = [int(x[1]) for x in time_splits]
+    # a missing or malformed clock (no colon, non-numeric) degrades to 0:00
+    # for that play instead of crashing the whole game's parse
+    def _clock_parts(play):
+        parts = (play.get("clock") or {}).get("displayValue", "").split(":")
+        if len(parts) != 2:
+            return 0, 0
+        try:
+            return int(float(parts[0])), int(float(parts[1]))
+        except ValueError:
+            return 0, 0
+
+    clock_parts = [_clock_parts(x) for x in all_plays]
+    minutes = [m for m, _ in clock_parts]
+    seconds = [s for _, s in clock_parts]
     min_to_sec = [x * 60 for x in minutes]
     pd_secs_left = [x + y for x, y in zip(min_to_sec, seconds)]
 

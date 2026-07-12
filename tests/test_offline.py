@@ -15,6 +15,7 @@ import pytest
 from cbbpy import mens_scraper as ms, womens_scraper as ws
 from cbbpy.utils.cbbpy_utils import (
     InvalidDateRangeError,
+    _get_game_pbp_helper,
     _get_id_from_team,
     _get_team_map,
 )
@@ -322,6 +323,38 @@ def test_season_future_raises(func):
         InvalidDateRangeError, match="The start date must not be in the future."
     ):
         func(3000)
+
+
+def test_pbp_malformed_clock_does_not_crash():
+    # no fixtures needed: a play with no clock, and one with a colon-less
+    # clock, degrade to 0:00 instead of killing the whole game's parse (#82)
+    gamepackage = {
+        "pbp": {
+            "tms": {"home": {"nm": "Home U"}, "away": {"nm": "Away U"}},
+            "plays": [
+                {"id": 1, "text": "Foul on Someone.", "period": {"number": 1}},
+                {
+                    "id": 2,
+                    "text": "Someone made Jumper.",
+                    "clock": {"displayValue": "35.5"},
+                    "period": {"number": 2},
+                },
+                {
+                    "id": 3,
+                    "text": "Someone made Layup.",
+                    "clock": {"displayValue": "12:34"},
+                    "period": {"number": 2},
+                },
+            ],
+        },
+        "gmInfo": {"dtTm": "2024-01-15T00:00Z"},
+        "win_prob": {},
+    }
+    df = _get_game_pbp_helper(gamepackage, "0", "mens")
+    assert len(df) == 3
+    assert df.set_index("id").loc["1", "secs_left_half"] == 0
+    assert df.set_index("id").loc["2", "secs_left_half"] == 0
+    assert df.set_index("id").loc["3", "secs_left_half"] == 12 * 60 + 34
 
 
 @pytest.mark.parametrize("source", ["html", "api"])
