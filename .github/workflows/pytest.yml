@@ -22,15 +22,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml') }}
@@ -43,7 +43,12 @@ jobs:
           pip install -e .
 
       - name: Install testing tools
-        run: pip install pytest pyarrow
+        run: pip install pytest pyarrow flake8
+
+      # Errors only (syntax errors + undefined names) — catches latent
+      # NameErrors in branches the tests may not reach
+      - name: Lint with flake8
+        run: flake8 src/ --max-line-length=120 --count --select=E9,F63,F7,F82 --show-source --statistics
 
       - name: Run offline tests
         run: pytest tests/ -m "not live"
@@ -61,7 +66,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v5
@@ -87,15 +92,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
       - name: Cache pip dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-3.12-${{ hashFiles('**/pyproject.toml') }}
