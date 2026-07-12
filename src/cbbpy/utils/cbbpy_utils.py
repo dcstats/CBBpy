@@ -825,251 +825,69 @@ def _parse_date(date):
     return date
 
 
+def _build_player_rows(players, team_name, game_id, labels, is_starter):
+    cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
+        x.lower() for x in labels
+    ]
+    if len(players) == 0:
+        return pd.DataFrame(columns=cols)
+
+    stat_dict = {
+        labels[i].lower(): [players[j]["stats"][i] for j in range(len(players))]
+        for i in range(len(labels))
+    }
+    positions = [x["athlt"].get("pos", "") for x in players]
+    # uid works for both transports: HTML embeds "s:40~l:41~a:<id>", the API
+    # adapter passes the bare athlete id (no colons)
+    ids = [
+        x["athlt"]["uid"].split(":")[-1] if "uid" in x["athlt"] else ""
+        for x in players
+    ]
+    names = [x["athlt"].get("shrtNm", "") for x in players]
+
+    df = pd.DataFrame(stat_dict)
+    df.insert(0, "starter", is_starter)
+    df.insert(0, "position", positions)
+    df.insert(0, "player_id", ids)
+    df.insert(0, "player", names)
+    df.insert(0, "team", team_name)
+    df.insert(0, "game_id", game_id)
+    return df
+
+
+def _build_totals_row(totals, team_name, game_id, labels):
+    cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
+        x.lower() for x in labels
+    ]
+    if len(totals) == 0:
+        return pd.DataFrame(columns=cols)
+
+    tot_dict = {labels[i].lower(): [totals[i]] for i in range(len(labels))}
+    df = pd.DataFrame(tot_dict)
+    df.insert(0, "starter", False)
+    df.insert(0, "position", "TOTAL")
+    df.insert(0, "player_id", "TOTAL")
+    df.insert(0, "player", "TEAM")
+    df.insert(0, "team", team_name)
+    df.insert(0, "game_id", game_id)
+    return df
+
+
+def _build_team_df(stats, team_name, game_id, labels):
+    return pd.concat([
+        _build_player_rows(stats[0]["athlts"], team_name, game_id, labels, True),
+        _build_player_rows(stats[1]["athlts"], team_name, game_id, labels, False),
+        _build_totals_row(stats[2]["ttls"], team_name, game_id, labels),
+    ])
+
+
 def _get_game_boxscore_helper(boxscore, game_id):
     tm1, tm2 = boxscore[0], boxscore[1]
     tm1_name, tm2_name = tm1["tm"]["dspNm"], tm2["tm"]["dspNm"]
-    tm1_stats, tm2_stats = tm1["stats"], tm2["stats"]
+    labels = tm1["stats"][0]["lbls"]
 
-    labels = tm1_stats[0]["lbls"]
-
-    tm1_starters, tm1_bench, tm1_totals = (
-        tm1_stats[0]["athlts"],
-        tm1_stats[1]["athlts"],
-        tm1_stats[2]["ttls"],
-    )
-    tm2_starters, tm2_bench, tm2_totals = (
-        tm2_stats[0]["athlts"],
-        tm2_stats[1]["athlts"],
-        tm2_stats[2]["ttls"],
-    )
-
-    # starters' stats
-    if len(tm1_starters) > 0:
-        tm1_st_dict = {
-            labels[i].lower(): [
-                tm1_starters[j]["stats"][i] for j in range(len(tm1_starters))
-            ]
-            for i in range(len(labels))
-        }
-
-        tm1_st_pos = [
-            (
-                tm1_starters[i]["athlt"]["pos"]
-                if "pos" in tm1_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_starters))
-        ]
-        tm1_st_id = [
-            (
-                tm1_starters[i]["athlt"]["uid"].split(":")[-1]
-                if "uid" in tm1_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_starters))
-        ]
-        tm1_st_nm = [
-            (
-                tm1_starters[i]["athlt"]["shrtNm"]
-                if "shrtNm" in tm1_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_starters))
-        ]
-
-        tm1_st_df = pd.DataFrame(tm1_st_dict)
-        tm1_st_df.insert(0, "starter", True)
-        tm1_st_df.insert(0, "position", tm1_st_pos)
-        tm1_st_df.insert(0, "player_id", tm1_st_id)
-        tm1_st_df.insert(0, "player", tm1_st_nm)
-        tm1_st_df.insert(0, "team", tm1_name)
-        tm1_st_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm1_st_df = pd.DataFrame(columns=cols)
-
-    # bench players' stats
-    if len(tm1_bench) > 0:
-        tm1_bn_dict = {
-            labels[i].lower(): [tm1_bench[j]["stats"][i] for j in range(len(tm1_bench))]
-            for i in range(len(labels))
-        }
-
-        tm1_bn_pos = [
-            (
-                tm1_bench[i]["athlt"]["pos"]
-                if "pos" in tm1_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_bench))
-        ]
-        tm1_bn_id = [
-            (
-                tm1_bench[i]["athlt"]["uid"].split(":")[-1]
-                if "uid" in tm1_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_bench))
-        ]
-        tm1_bn_nm = [
-            (
-                tm1_bench[i]["athlt"]["shrtNm"]
-                if "shrtNm" in tm1_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_bench))
-        ]
-
-        tm1_bn_df = pd.DataFrame(tm1_bn_dict)
-        tm1_bn_df.insert(0, "starter", False)
-        tm1_bn_df.insert(0, "position", tm1_bn_pos)
-        tm1_bn_df.insert(0, "player_id", tm1_bn_id)
-        tm1_bn_df.insert(0, "player", tm1_bn_nm)
-        tm1_bn_df.insert(0, "team", tm1_name)
-        tm1_bn_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm1_bn_df = pd.DataFrame(columns=cols)
-
-    # team totals
-    if len(tm1_totals) > 0:
-        tm1_tot_dict = {labels[i].lower(): [tm1_totals[i]] for i in range(len(labels))}
-
-        tm1_tot_df = pd.DataFrame(tm1_tot_dict)
-        tm1_tot_df.insert(0, "starter", False)
-        tm1_tot_df.insert(0, "position", "TOTAL")
-        tm1_tot_df.insert(0, "player_id", "TOTAL")
-        tm1_tot_df.insert(0, "player", "TEAM")
-        tm1_tot_df.insert(0, "team", tm1_name)
-        tm1_tot_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm1_tot_df = pd.DataFrame(columns=cols)
-
-    tm1_df = pd.concat([tm1_st_df, tm1_bn_df, tm1_tot_df])
-
-    # starters' stats
-    if len(tm2_starters) > 0:
-        tm2_st_dict = {
-            labels[i].lower(): [
-                tm2_starters[j]["stats"][i] for j in range(len(tm2_starters))
-            ]
-            for i in range(len(labels))
-        }
-
-        tm2_st_pos = [
-            (
-                tm2_starters[i]["athlt"]["pos"]
-                if "pos" in tm2_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_starters))
-        ]
-        tm2_st_id = [
-            (
-                tm2_starters[i]["athlt"]["uid"].split(":")[-1]
-                if "uid" in tm2_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_starters))
-        ]
-        tm2_st_nm = [
-            (
-                tm2_starters[i]["athlt"]["shrtNm"]
-                if "shrtNm" in tm2_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_starters))
-        ]
-
-        tm2_st_df = pd.DataFrame(tm2_st_dict)
-        tm2_st_df.insert(0, "starter", True)
-        tm2_st_df.insert(0, "position", tm2_st_pos)
-        tm2_st_df.insert(0, "player_id", tm2_st_id)
-        tm2_st_df.insert(0, "player", tm2_st_nm)
-        tm2_st_df.insert(0, "team", tm2_name)
-        tm2_st_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm2_st_df = pd.DataFrame(columns=cols)
-
-    # bench players' stats
-    if len(tm2_bench) > 0:
-        tm2_bn_dict = {
-            labels[i].lower(): [tm2_bench[j]["stats"][i] for j in range(len(tm2_bench))]
-            for i in range(len(labels))
-        }
-
-        tm2_bn_pos = [
-            (
-                tm2_bench[i]["athlt"]["pos"]
-                if "pos" in tm2_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_bench))
-        ]
-        tm2_bn_id = [
-            (
-                tm2_bench[i]["athlt"]["uid"].split(":")[-1]
-                if "uid" in tm2_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_bench))
-        ]
-        tm2_bn_nm = [
-            (
-                tm2_bench[i]["athlt"]["shrtNm"]
-                if "shrtNm" in tm2_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_bench))
-        ]
-
-        tm2_bn_df = pd.DataFrame(tm2_bn_dict)
-        tm2_bn_df.insert(0, "starter", False)
-        tm2_bn_df.insert(0, "position", tm2_bn_pos)
-        tm2_bn_df.insert(0, "player_id", tm2_bn_id)
-        tm2_bn_df.insert(0, "player", tm2_bn_nm)
-        tm2_bn_df.insert(0, "team", tm2_name)
-        tm2_bn_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm2_bn_df = pd.DataFrame(columns=cols)
-
-    # team totals
-    if len(tm2_totals) > 0:
-        tm2_tot_dict = {labels[i].lower(): [tm2_totals[i]] for i in range(len(labels))}
-
-        tm2_tot_df = pd.DataFrame(tm2_tot_dict)
-        tm2_tot_df.insert(0, "starter", False)
-        tm2_tot_df.insert(0, "position", "TOTAL")
-        tm2_tot_df.insert(0, "player_id", "TOTAL")
-        tm2_tot_df.insert(0, "player", "TEAM")
-        tm2_tot_df.insert(0, "team", tm2_name)
-        tm2_tot_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm2_tot_df = pd.DataFrame(columns=cols)
-
-    tm2_df = pd.concat([tm2_st_df, tm2_bn_df, tm2_tot_df])
+    tm1_df = _build_team_df(tm1["stats"], tm1_name, game_id, labels)
+    tm2_df = _build_team_df(tm2["stats"], tm2_name, game_id, labels)
 
     df = pd.concat([tm1_df, tm2_df])
 
