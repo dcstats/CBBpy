@@ -173,7 +173,7 @@ def _get_game_ids_api(date, game_type):
                 cu._log.error(
                     f'{date.strftime("%D")} - IDs (API): {ex}\n{traceback.format_exc()}'
                 )
-                return pd.DataFrame([])
+                return []
             else:
                 time.sleep(np.random.uniform(low=1, high=3))
                 continue

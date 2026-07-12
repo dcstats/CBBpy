@@ -324,6 +324,23 @@ def test_season_future_raises(func):
         func(3000)
 
 
+@pytest.mark.parametrize("source", ["html", "api"])
+def test_game_ids_failure_returns_list(offline_espn, source):
+    # a persistent fetch failure returns the documented type (a list),
+    # not an empty DataFrame (#83)
+    ids = ms.get_game_ids("1999-01-01", source=source)
+    assert ids == []
+    offline_espn.misses.clear()
+
+
+def test_games_team_failed_schedule_returns_empty(offline_espn):
+    # a failed schedule fetch returns three empty DataFrames instead of
+    # raising AttributeError on the empty schedule (#83)
+    info, box, pbp = ms.get_games_team("UConn", 1999)
+    assert info.empty and box.empty and pbp.empty
+    offline_espn.misses.clear()
+
+
 def test_missing_fixture_fails_loudly(offline_espn):
     # an unrecorded URL must register as a miss instead of silently retrying;
     # the scraper still returns its empty-DataFrame fallback

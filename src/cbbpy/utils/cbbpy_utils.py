@@ -204,7 +204,7 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp, source="ap
     date_range = pd.date_range(start_date, end_date)
     len_scrape = len(date_range)
     all_data = []
-    cpus = os.cpu_count() - 1
+    cpus = (os.cpu_count() or 2) - 1
 
     if len_scrape < 1:
         raise InvalidDateRangeError("The start date must be sooner than the end date.")
@@ -236,7 +236,7 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp, source="ap
                 t.set_description(f"No games on {date.strftime('%D')}", refresh=False)
 
     if not len(all_data) > 0:
-        return ()
+        return (pd.DataFrame(), pd.DataFrame(), pd.DataFrame())
 
     # sort returned dataframes to ensure consistency between runs
     game_info_df = pd.concat([game[0] for day in all_data for game in day])
@@ -290,11 +290,19 @@ def _get_games_season(season, game_type, info, box, pbp, source="api"):
 @print_log_file_location
 def _get_games_team(team, season, game_type, info, box, pbp, source="api"):
     _validate_source(source)
-    cpus = os.cpu_count() - 1
+    cpus = (os.cpu_count() or 2) - 1
     schedule_df = _get_team_schedule(team, season, game_type)
+
+    if schedule_df.empty:
+        _log.error(f'{team} - Schedule unavailable, cannot scrape games')
+        return (pd.DataFrame(), pd.DataFrame(), pd.DataFrame())
+
     game_ids = list(schedule_df[schedule_df.game_status.isin(GOOD_GAME_STATUSES)].game_id)
 
     print(f'Scraping {len(game_ids)} games for {schedule_df.team.iloc[0]}')
+
+    if not game_ids:
+        return (pd.DataFrame(), pd.DataFrame(), pd.DataFrame())
 
     result = Parallel(n_jobs=cpus)(
         delayed(_get_game)(gid, game_type, info, box, pbp, source)
@@ -420,7 +428,7 @@ def _get_game_ids(date, game_type, source="api"):
                     _log.error(
                         f'{date.strftime("%D")} - IDs: GET error\n{ex}\n{traceback.format_exc()}'
                     )
-                return pd.DataFrame([])
+                return []
             else:
                 # try again with a random sleep
                 time.sleep(np.random.uniform(low=1, high=3))
