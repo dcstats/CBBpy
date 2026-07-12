@@ -186,7 +186,12 @@ def test_pbp_source_parity(offline_espn, gender):
         # athlete/participant data for many games; the API supplies it for every
         # play. Require agreement wherever HTML has a value, and API coverage at
         # least as good as HTML.
-        coverage_cols = ["player_id", "assist_player_id", "shot_x", "shot_y"]
+        id_coverage_cols = ["player_id", "assist_player_id"]
+        # name columns: same coverage story, but the two sources spell the name
+        # differently (HTML embed athlete.name vs API boxscore displayName for
+        # the same player_id), so only coverage is comparable, not the value.
+        name_coverage_cols = ["player_name", "assist_player"]
+        coverage_cols = id_coverage_cols + name_coverage_cols + ["shot_x", "shot_y"]
         exact = [
             c
             for c in common
@@ -196,7 +201,7 @@ def test_pbp_source_parity(offline_espn, gender):
             api[exact], html[exact], check_dtype=False, obj=f"{gid} pbp"
         )
 
-        for col in ("player_id", "assist_player_id"):
+        for col in id_coverage_cols:
             html_present = html[col].astype(str).str.len() > 0
             assert (
                 api[col].astype(str)[html_present]
@@ -204,6 +209,11 @@ def test_pbp_source_parity(offline_espn, gender):
             ).all(), f"{gid}: {col} disagrees where HTML has a value"
             api_cov = (api[col].astype(str).str.len() > 0).sum()
             assert api_cov >= html_present.sum(), f"{gid}: {col} API coverage regressed"
+
+        for col in name_coverage_cols:
+            html_cov = (html[col].astype(str).str.len() > 0).sum()
+            api_cov = (api[col].astype(str).str.len() > 0).sum()
+            assert api_cov >= html_cov, f"{gid}: {col} API coverage regressed"
 
         # shot coordinates: coverage is era/source-dependent (HTML shot chart vs
         # API play coordinates); compare only where both sources have a value.

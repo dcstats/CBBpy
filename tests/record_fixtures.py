@@ -208,9 +208,9 @@ def build_snapshots():
         print(f"Building {gender} snapshots...")
         sc = SCRAPERS[gender]
 
-        info = pd.concat([sc.get_game_info(g) for g in games[gender]], ignore_index=True)
-        box = pd.concat([sc.get_game_boxscore(g) for g in games[gender]], ignore_index=True)
-        pbp = pd.concat([sc.get_game_pbp(g) for g in games[gender]], ignore_index=True)
+        info = pd.concat([sc.get_game_info(g, source="html") for g in games[gender]], ignore_index=True)
+        box = pd.concat([sc.get_game_boxscore(g, source="html") for g in games[gender]], ignore_index=True)
+        pbp = pd.concat([sc.get_game_pbp(g, source="html") for g in games[gender]], ignore_index=True)
         save(info, f"{gender}_game_info")
         save(box, f"{gender}_game_boxscore")
         save(pbp, f"{gender}_game_pbp")
@@ -225,7 +225,7 @@ def build_snapshots():
         save(sched, f"{gender}_team_schedule")
 
         d = SCOREBOARD_DATES[gender]
-        r_info, r_box, r_pbp = sc.get_games_range(d, d)
+        r_info, r_box, r_pbp = sc.get_games_range(d, d, source="html")
         save(r_info, f"{gender}_range_info")
         save(r_box, f"{gender}_range_boxscore")
         save(r_pbp, f"{gender}_range_pbp")

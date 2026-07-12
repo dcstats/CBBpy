@@ -41,9 +41,9 @@ BOXSCORE_REQUIRED_COLS = {
 }
 PBP_REQUIRED_COLS = {
     "game_id", "home_team", "away_team", "play_desc", "home_score", "away_score",
-    "secs_left_reg", "play_team", "play_type", "shooting_play", "scoring_play",
-    "is_three", "shooter", "is_assisted", "assist_player",
-    "player_id", "assist_player_id", "espn_play_type", "espn_play_type_id",
+    "secs_left_reg", "play_team", "play_type", "play_type_id", "shooting_play",
+    "scoring_play", "is_three", "player_name", "is_assisted", "assist_player",
+    "player_id", "assist_player_id",
     "shot_x", "shot_y",
 }
 PLAYER_REQUIRED_COLS = {
@@ -238,7 +238,7 @@ def test_live_game_pbp(gender, source):
         h, a = f.get("pbp_final", (f["home"], f["away"]))
         assert int(df.home_score.max()) == h and int(df.away_score.max()) == a
         assert_row_count_close(len(df), f["pbp_rows"])
-        # derived fields (is_three, shooter, assist_player) are intentionally
+        # derived fields (is_three, player_name, assist_player) are intentionally
         # not value-checked: they come from fragile string parsing of ESPN text
 
 
