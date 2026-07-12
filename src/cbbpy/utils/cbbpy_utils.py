@@ -508,6 +508,28 @@ def _get_game_boxscore(game_id, game_type, source="api"):
     return df.reset_index(drop=True)
 
 
+def _get_win_prob_html(game_id, game_type):
+    """Fetch the game page's win-probability block (absent from the PBP page).
+
+    Returns {play_id: home_win_prob in [0,1]}, or {} on failure / when ESPN has
+    no win-prob data. ESPN stores the AWAY win pct on a 0-100 scale, so flip and
+    rescale to a home probability.
+    """
+    pre_url = MENS_GAME_URL if game_type == "mens" else WOMENS_GAME_URL
+    try:
+        header = {"Referer": str(np.random.choice(REFERERS))}
+        page = r.get(pre_url.format(game_id), headers=header, impersonate=IMPERSONATE)
+        gamepackage = _get_gamepackage_from_soup(bs(page.content, "lxml"))
+        pts = (gamepackage.get("wnPrb") or {}).get("pts") or {}
+    except Exception as ex:
+        _log.warning(f'{game_id} - PBP: win probability fetch failed, leaving home_win_prob empty\n{ex}')
+        return {}
+
+    return {
+        str(k): (100 - v["a"]) / 100 for k, v in pts.items() if "a" in v
+    }
+
+
 def _get_game_pbp(game_id, game_type, source="api"):
     _validate_source(source)
     if source == "api":
@@ -539,6 +561,10 @@ def _get_game_pbp(game_id, game_type, source="api"):
             if not gsbool:
                 _log.warning(f'{game_id} - {gm_status}')
                 return pd.DataFrame([])
+
+            # win probability lives on the game page, not the PBP page, so fetch
+            # it separately (best-effort; leaves home_win_prob NaN on failure)
+            gamepackage["win_prob"] = _get_win_prob_html(game_id, game_type)
 
             df = _get_game_pbp_helper(gamepackage, game_id, game_type)
 
@@ -1271,6 +1297,12 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
             play_shot_xs.append(50 - cx)
             play_shot_ys.append(cy)
 
+    # home win probability [0,1] per play, keyed by play id; both sources feed a
+    # pre-normalized {play_id: home_prob} map (API from summary["winprobability"],
+    # HTML from the game page's wnPrb block), NaN where a play has no win-prob point
+    wp_map = gamepackage.get("win_prob") or {}
+    home_win_prob = [wp_map.get(pid, np.nan) for pid in play_ids]
+
     data = {
         "id": play_ids,
         "game_id": game_id,
@@ -1295,6 +1327,7 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         "assist_player_id": assist_player_ids,
         "shot_x": play_shot_xs,
         "shot_y": play_shot_ys,
+        "home_win_prob": home_win_prob,
     }
 
     df = pd.DataFrame(data)
@@ -1330,8 +1363,6 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         # chart coordinates take precedence; keep play-level coords as fallback
         df['shot_x'] = df_merged['x'].where(df_merged['x'].notna(), df['shot_x'])
         df['shot_y'] = df_merged['y'].where(df_merged['y'].notna(), df['shot_y'])
-
-        df.drop(columns=['id'], inplace=True)
 
     return df.sort_values(by=[pd_type, pd_type_sec], ascending=[True, False])
 
@@ -1436,6 +1467,13 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
     except:
         home_spread = ''
 
+    # over/under and moneylines: the archived HTML embed carries no gameOdds, so
+    # these stay NaN for recorded games (the API path fills them from pickcenter;
+    # all three are on the parity exclusion list)
+    over_under = np.nan
+    home_ml = np.nan
+    away_ml = np.nan
+
     game_info_list = [
         game_id,
         gm_status,
@@ -1466,6 +1504,9 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
         ref_1,
         ref_2,
         ref_3,
+        over_under,
+        home_ml,
+        away_ml,
     ]
 
     game_info_cols = [
@@ -1498,6 +1539,9 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
         "referee_1",
         "referee_2",
         "referee_3",
+        "over_under",
+        "home_moneyline",
+        "away_moneyline",
     ]
 
     return pd.DataFrame([game_info_list], columns=game_info_cols)

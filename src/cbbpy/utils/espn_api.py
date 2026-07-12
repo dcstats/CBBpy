@@ -277,9 +277,13 @@ def _parse_game_info(summary, game_id, game_type):
     broadcasts = comp.get("broadcasts") or []
     network = broadcasts[0]["media"]["shortName"] if broadcasts else ""
 
-    # pickcenter carries a real spread but the HTML path leaves this blank on
-    # archived games; keep the sources identical and let the parity test exclude
-    home_spread = ""
+    # odds come from a single pickcenter entry (consensus provider preferred);
+    # older archived games carry no pickcenter, leaving these empty/NaN
+    pc = _select_pickcenter(summary)
+    home_spread = _home_spread(pc) if pc is not None else ""
+    over_under = _pc_float(pc, "overUnder") if pc is not None else np.nan
+    home_ml = _pc_moneyline(pc, "homeTeamOdds") if pc is not None else np.nan
+    away_ml = _pc_moneyline(pc, "awayTeamOdds") if pc is not None else np.nan
 
     game_info_list = [
         game_id,
@@ -311,6 +315,9 @@ def _parse_game_info(summary, game_id, game_type):
         ref_1,
         ref_2,
         ref_3,
+        over_under,
+        home_ml,
+        away_ml,
     ]
 
     game_info_cols = [
@@ -343,9 +350,47 @@ def _parse_game_info(summary, game_id, game_type):
         "referee_1",
         "referee_2",
         "referee_3",
+        "over_under",
+        "home_moneyline",
+        "away_moneyline",
     ]
 
     return pd.DataFrame([game_info_list], columns=game_info_cols)
+
+
+def _select_pickcenter(summary):
+    """Return one pickcenter entry: the 'consensus' provider if present, else the first."""
+    pc = summary.get("pickcenter") or []
+    if not pc:
+        return None
+    for entry in pc:
+        if (entry.get("provider") or {}).get("name") == "consensus":
+            return entry
+    return pc[0]
+
+
+def _home_spread(pc):
+    """Home-relative point spread as a signed string (favorite negative), e.g. "-5.5".
+
+    ESPN's pickcenter ``spread`` is favorite-relative (always negative); flip it
+    when the home team is the underdog. Matches the HTML path's string column.
+    """
+    spread = pc.get("spread")
+    if spread is None:
+        return ""
+    home_fav = ((pc.get("homeTeamOdds") or {}).get("favorite")) is True
+    val = spread if home_fav else -spread
+    return f"{val:+g}"
+
+
+def _pc_float(pc, key):
+    val = pc.get(key)
+    return float(val) if val is not None else np.nan
+
+
+def _pc_moneyline(pc, side):
+    val = (pc.get(side) or {}).get("moneyLine")
+    return float(val) if val is not None else np.nan
 
 
 def _boxscore_adapter(players):
@@ -457,6 +502,14 @@ def _pbp_adapter(summary):
 
         plays.append(adapted)
 
+    # play_id -> home win probability in [0,1]; ESPN's summary already reports it
+    # home-relative on a 0-1 scale
+    win_prob = {
+        str(e["playId"]): e["homeWinPercentage"]
+        for e in (summary.get("winprobability") or [])
+        if e.get("playId") is not None and e.get("homeWinPercentage") is not None
+    }
+
     return {
         "pbp": {
             "tms": {
@@ -466,4 +519,5 @@ def _pbp_adapter(summary):
             "plays": plays,
         },
         "gmInfo": {"dtTm": comp["date"]},
+        "win_prob": win_prob,
     }
