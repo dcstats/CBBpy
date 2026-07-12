@@ -148,21 +148,29 @@ def _get_game(game_id, game_type, info, box, pbp, source="api"):
             else None
         )
 
+        # summary is None for a real 404 (game in pnf_) or any other persistent
+        # failure, already logged by _fetch_summary; distinguish the two here
         if info:
-            if game_id in pnf_ or summary is None:
+            if game_id in pnf_:
                 _log.error(f'{game_id} - Game Info: Page not found error')
+            elif summary is None:
+                _log.error(f'{game_id} - Game Info: summary unavailable')
             else:
                 game_info_df = espn_api._get_game_info_api(game_id, game_type, summary)
 
         if box:
-            if game_id in pnf_ or summary is None:
+            if game_id in pnf_:
                 _log.error(f'{game_id} - Boxscore: Page not found error')
+            elif summary is None:
+                _log.error(f'{game_id} - Boxscore: summary unavailable')
             else:
                 boxscore_df = espn_api._get_game_boxscore_api(game_id, game_type, summary)
 
         if pbp:
-            if game_id in pnf_ or summary is None:
+            if game_id in pnf_:
                 _log.error(f'{game_id} - PBP: Page not found error')
+            elif summary is None:
+                _log.error(f'{game_id} - PBP: summary unavailable')
             else:
                 pbp_df = espn_api._get_game_pbp_api(game_id, game_type, summary)
 
@@ -1214,8 +1222,36 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         )
         for x in all_plays
     ]
-    espn_play_types = [(x.get("type") or {}).get("txt", "") for x in all_plays]
-    espn_play_type_ids = [str((x.get("type") or {}).get("id", "")) for x in all_plays]
+    type_txts = [(x.get("type") or {}).get("txt", "") for x in all_plays]
+    play_type_ids = [str((x.get("type") or {}).get("id", "")) for x in all_plays]
+
+    # play_type carries the structured JSON type verbatim, falling back to the
+    # lossy text-parsed value only when the JSON type is absent (rare to never)
+    play_types = [txt if txt else fb for txt, fb in zip(type_txts, p_types)]
+
+    # primary actor's full name from the JSON (any attributed play); when the
+    # embed omits it, fall back to the text-parsed shooter on shooting plays only
+    json_player_names = [((x.get("athlete") or {}).get("name", "") or "") for x in all_plays]
+    player_names = [
+        jn if jn else (shooters[i] if shooting_play[i] else "")
+        for i, jn in enumerate(json_player_names)
+    ]
+
+    # assister's full name from the JSON, falling back to the text parse
+    json_assist_names = [
+        next(
+            (
+                p.get("name", "") or ""
+                for p in (x.get("participants") or [])
+                if p.get("description") == "AST"
+            ),
+            "",
+        )
+        for x in all_plays
+    ]
+    assist_players = [
+        jn if jn else assisted_pls[i] for i, jn in enumerate(json_assist_names)
+    ]
 
     # play-level shot coordinates (sole source when no shot chart, else fallback)
     play_shot_xs = []
@@ -1247,17 +1283,16 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         pd_type_sec: pd_secs_left,
         "secs_left_reg": reg_secs_left,
         "play_team": teams,
-        "play_type": p_types,
+        "play_type": play_types,
+        "play_type_id": play_type_ids,
         "shooting_play": shooting_play,
         "scoring_play": sc_play,
         "is_three": is_three,
-        "shooter": shooters,
+        "player_name": player_names,
         "is_assisted": is_assisted,
-        "assist_player": assisted_pls,
+        "assist_player": assist_players,
         "player_id": player_ids,
         "assist_player_id": assist_player_ids,
-        "espn_play_type": espn_play_types,
-        "espn_play_type_id": espn_play_type_ids,
         "shot_x": play_shot_xs,
         "shot_y": play_shot_ys,
     }

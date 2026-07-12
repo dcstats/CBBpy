@@ -59,20 +59,20 @@ def _fetch_summary(game_id, game_type):
             page = cu.r.get(url, headers=header, impersonate=cu.IMPERSONATE)
             js = page.json()
 
-            # a valid summary always carries a header; a missing game returns
-            # {"code": 404, "message": ...}
+            # a missing game deterministically returns {"code": 404, ...} (HTTP
+            # 404); bail immediately rather than retrying a game that won't exist
+            if js.get("code") == 404 or getattr(page, "status_code", None) == 404:
+                cu._log.error(f"{game_id} - API: Page not found error")
+                cu.pnf_.append(game_id)
+                return None
+
+            # a valid summary always carries a header
             if "header" not in js:
                 raise cu.CouldNotParseError(js.get("message", "no header in response"))
 
         except Exception as ex:
             if i + 1 == cu.ATTEMPTS:
-                if js is not None and js.get("code") == 404:
-                    cu._log.error(f"{game_id} - API: Page not found error")
-                    cu.pnf_.append(game_id)
-                else:
-                    cu._log.error(
-                        f"{game_id} - API: {ex}\n{traceback.format_exc()}"
-                    )
+                cu._log.error(f"{game_id} - API: {ex}\n{traceback.format_exc()}")
                 return None
             else:
                 time.sleep(np.random.uniform(low=1, high=3))
@@ -401,6 +401,15 @@ def _pbp_adapter(summary):
     home = next(c for c in comp["competitors"] if c["homeAway"] == "home")
     away = next(c for c in comp["competitors"] if c["homeAway"] == "away")
 
+    # the API's plays carry bare participant ids; the boxscore names them, so
+    # build an id->full name map to inject play-level player/assist names
+    id_to_name = {}
+    for team in (summary.get("boxscore") or {}).get("players") or []:
+        for a in (team.get("statistics") or [{}])[0].get("athletes") or []:
+            ath = a.get("athlete") or {}
+            if ath.get("id"):
+                id_to_name[str(ath["id"])] = ath.get("displayName", "")
+
     plays = []
     for p in summary.get("plays") or []:
         adapted = {"id": p.get("id", "")}
@@ -430,14 +439,15 @@ def _pbp_adapter(summary):
 
         participants = p.get("participants") or []
         if participants:
-            adapted["athlete"] = {
-                "id": (participants[0].get("athlete") or {}).get("id", "")
-            }
+            pid = str((participants[0].get("athlete") or {}).get("id", ""))
+            adapted["athlete"] = {"id": pid, "name": id_to_name.get(pid, "")}
         text = p.get("text", "") or ""
         if len(participants) > 1 and "assisted" in text.lower():
+            aid = str((participants[1].get("athlete") or {}).get("id", ""))
             adapted["participants"] = [
                 {
-                    "id": (participants[1].get("athlete") or {}).get("id", ""),
+                    "id": aid,
+                    "name": id_to_name.get(aid, ""),
                     "description": "AST",
                 }
             ]
