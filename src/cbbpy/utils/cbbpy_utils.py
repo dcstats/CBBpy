@@ -18,7 +18,7 @@ from rapidfuzz import process, distance, utils
 from pathlib import Path
 from platformdirs import user_log_dir
 from importlib.metadata import version
-from functools import wraps
+from functools import lru_cache, wraps
 
 
 warnings.filterwarnings('ignore', category=UserWarning)
@@ -810,7 +810,7 @@ def _parse_date(date):
     for parse in DATE_PARSES:
         try:
             date = datetime.strptime(date, parse)
-        except:
+        except ValueError:
             continue
         else:
             parsed = True
@@ -895,13 +895,19 @@ def _get_game_boxscore_helper(boxscore, game_id):
         _log.warning(f'{game_id} - No boxscore available')
         return pd.DataFrame([])
 
-    # SPLIT UP THE FG FIELDS
-    fgm = pd.to_numeric([x.split("-")[0] for x in df["fg"]], errors="coerce")
-    fga = pd.to_numeric([x.split("-")[1] for x in df["fg"]], errors="coerce")
-    thpm = pd.to_numeric([x.split("-")[0] for x in df["3pt"]], errors="coerce")
-    thpa = pd.to_numeric([x.split("-")[1] for x in df["3pt"]], errors="coerce")
-    ftm = pd.to_numeric([x.split("-")[0] for x in df["ft"]], errors="coerce")
-    fta = pd.to_numeric([x.split("-")[1] for x in df["ft"]], errors="coerce")
+    # SPLIT UP THE FG FIELDS (made-attempted strings; NaN when malformed)
+    def _split_stat(series, idx):
+        return pd.to_numeric(
+            [x.split("-")[idx] if isinstance(x, str) and "-" in x else np.nan for x in series],
+            errors="coerce",
+        )
+
+    fgm = _split_stat(df["fg"], 0)
+    fga = _split_stat(df["fg"], 1)
+    thpm = _split_stat(df["3pt"], 0)
+    thpa = _split_stat(df["3pt"], 1)
+    ftm = _split_stat(df["ft"], 0)
+    fta = _split_stat(df["ft"], 1)
 
     # GET RID OF UNWANTED COLUMNS
     df = df.drop(columns=["fg", "3pt", "ft"])
@@ -1288,7 +1294,7 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
 
     try:
         home_spread = gamepackage['gameOdds']['odds'][-1]['pointSpread']['primary']
-    except:
+    except (KeyError, IndexError, TypeError):
         home_spread = ''
 
     # over/under and moneylines: the archived HTML embed carries no gameOdds, so
@@ -1421,24 +1427,26 @@ def _get_schedule_helper(jsn, team, id_, season):
 
     # get info from each game
     for ev in tot_events:
-        mat = re.search(r'gameId/(\d+)/', ev['time']['link'])
+        mat = re.search(r'gameId/(\d+)/', ev.get('time', {}).get('link', ''))
         game_id = mat.group(1) if mat is not None else ''
 
         date = parser.parse(ev['date']['date']).astimezone(tz('America/Los_Angeles'))
         day = date.strftime('%B %d, %Y')
         time = date.strftime('%I:%M %p %Z')
 
-        opp = ev['opponent']['displayName']
-        opp_id = ev['opponent']['id']
+        opp_info = ev.get('opponent', {})
+        opp = opp_info.get('displayName', '')
+        opp_id = opp_info.get('id', '')
 
-        network = ev['network'][0]['name'] if len(ev['network']) > 0 else ''
-        season_type = ev['seasonType']['name']
-        status = ev['status']['description']
+        network_list = ev.get('network', [])
+        network = network_list[0]['name'] if len(network_list) > 0 else ''
+        season_type = ev.get('seasonType', {}).get('name', '')
+        status = ev.get('status', {}).get('description', '')
 
-        res = ev['result']
+        res = ev.get('result', {})
 
-        if status == 'Final':
-            result = res['winLossSymbol'] + ' ' + res['currentTeamScore'] + '-' + res['opponentTeamScore']
+        if status == 'Final' and res:
+            result = res.get('winLossSymbol', '') + ' ' + res.get('currentTeamScore', '') + '-' + res.get('opponentTeamScore', '')
         else:
             result = 'N/A'
 
@@ -1469,6 +1477,7 @@ def _get_schedule_helper(jsn, team, id_, season):
     return df.reset_index(drop=True)
 
 
+@lru_cache(maxsize=2)
 def _get_team_map(game_type):
     data_path = Path(__file__).parent / f'{game_type}_team_map.csv'
     return pd.read_csv(data_path)
