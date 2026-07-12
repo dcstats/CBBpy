@@ -247,9 +247,10 @@ def build_api_snapshots():
     """Rebuild the API-path snapshots (separate files from the HTML snapshots).
 
     Both sources share most columns; the API path additionally populates
-    player_id/assist_player_id/shot coordinates and the point spread that the
-    archived HTML embed leaves empty, so the two snapshot sets legitimately
-    differ on those columns (see the parity test's exclusion list).
+    player_id/assist_player_id/shot coordinates and the odds columns
+    (home_point_spread/over_under/home_moneyline/away_moneyline) that the archived
+    HTML embed leaves empty, so the two snapshot sets legitimately differ on those
+    columns (see the parity test's exclusion list).
     """
     SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
     games = json.loads((FIXTURE_DIR / "games.json").read_text())

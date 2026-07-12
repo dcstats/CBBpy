@@ -113,9 +113,15 @@ def test_games_range_offline(offline_espn, gender, source):
 # one source legitimately carries data the other omits. Each exclusion below is
 # justified; any OTHER mismatch is a real bug, not something to loosen.
 
-# game info: HTML leaves the point spread blank on archived games; the API fills
-# it from pickcenter. API is strictly better here, so it is not compared.
-INFO_PARITY_EXCLUDE = ["home_point_spread"]
+# game info: the odds columns come from the API's pickcenter block, which the
+# archived HTML embed lacks entirely, so the API is strictly better here and none
+# of these are value-compared (HTML leaves them blank/NaN).
+INFO_PARITY_EXCLUDE = [
+    "home_point_spread",
+    "over_under",
+    "home_moneyline",
+    "away_moneyline",
+]
 
 # pbp: the output `id` is a source-specific play identifier (different formats).
 PBP_PARITY_EXCLUDE = ["id"]
@@ -177,9 +183,8 @@ def test_pbp_source_parity(offline_espn, gender):
     for gid in recorded_games(gender):
         html = _canonical_pbp(sc.get_game_pbp(gid, source="html"))
         api = _canonical_pbp(sc.get_game_pbp(gid, source="api"))
-        # `id` aside, the schemas match. HTML drops its `id` column only for
-        # games that carry a shot chart, so the column set can differ by that one
-        # source-specific, excluded column; compare on the shared columns.
+        # `id` aside, the schemas match; its values are source-specific formats,
+        # so it is excluded from value comparison. Compare on the shared columns.
         common = [c for c in html.columns if c in api.columns]
 
         # id-derived athlete columns: the HTML __espnfitt__ embed omits per-play
@@ -191,7 +196,14 @@ def test_pbp_source_parity(offline_espn, gender):
         # differently (HTML embed athlete.name vs API boxscore displayName for
         # the same player_id), so only coverage is comparable, not the value.
         name_coverage_cols = ["player_name", "assist_player"]
-        coverage_cols = id_coverage_cols + name_coverage_cols + ["shot_x", "shot_y"]
+        # home_win_prob: both sources derive it from the same ESPN win-prob model
+        # (API summary["winprobability"] vs the game page's wnPrb block), so values
+        # match within float tolerance; compared separately with a numeric atol.
+        coverage_cols = (
+            id_coverage_cols
+            + name_coverage_cols
+            + ["shot_x", "shot_y", "home_win_prob"]
+        )
         exact = [
             c
             for c in common
@@ -222,6 +234,13 @@ def test_pbp_source_parity(offline_espn, gender):
             assert (api[col][both] == html[col][both]).all(), (
                 f"{gid}: {col} disagrees where both sources have a value"
             )
+
+        # home win probability: same underlying model, compared with a numeric
+        # tolerance where both sources have a value for the play.
+        both = html["home_win_prob"].notna() & api["home_win_prob"].notna()
+        assert np.allclose(
+            api["home_win_prob"][both], html["home_win_prob"][both], rtol=0, atol=1e-6
+        ), f"{gid}: home_win_prob disagrees where both sources have a value"
 
 
 def test_teams_from_conference_offline():

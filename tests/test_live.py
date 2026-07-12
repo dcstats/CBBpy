@@ -33,6 +33,9 @@ INFO_REQUIRED_COLS = {
     "home_point_spread", "home_win", "num_ots", "is_conference", "is_neutral",
     "is_postseason", "tournament", "game_day", "game_time", "game_loc", "arena",
     "arena_capacity", "attendance", "tv_network", "referee_1", "referee_2", "referee_3",
+    # odds: present in the schema but volatile/absent historically, so only their
+    # presence is asserted, never their values.
+    "over_under", "home_moneyline", "away_moneyline",
 }
 BOXSCORE_REQUIRED_COLS = {
     "game_id", "team", "player", "player_id", "position", "starter", "min",
@@ -45,6 +48,9 @@ PBP_REQUIRED_COLS = {
     "scoring_play", "is_three", "player_name", "is_assisted", "assist_player",
     "player_id", "assist_player_id",
     "shot_x", "shot_y",
+    # win probability: presence-only (values are model-driven and absent for
+    # older games).
+    "home_win_prob",
 }
 PLAYER_REQUIRED_COLS = {
     "player_id", "first_name", "last_name", "jersey_number", "pos", "status",
