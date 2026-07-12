@@ -345,8 +345,21 @@ def _get_games_conference(conference, season, game_type, info, box, pbp, source=
     teams = _get_teams_from_conference(conference, season, game_type)
     result = [_get_games_team(x, season, game_type, info, box, pbp, source) for x in teams]
 
+    # intra-conference games appear on both teams' schedules; keep only the
+    # first scraped copy of each game (#84)
+    def _drop_repeat_games(frames):
+        seen = set()
+        deduped = []
+        for f in frames:
+            if 'game_id' in f.columns:
+                keep = ~f.game_id.isin(seen)
+                seen.update(f.game_id)
+                f = f[keep]
+            deduped.append(f)
+        return deduped
+
     # sort returned dataframes to ensure consistency between runs
-    game_info_df = pd.concat([x[0] for x in result])
+    game_info_df = pd.concat(_drop_repeat_games([x[0] for x in result]))
     if info:
         game_info_df = game_info_df.sort_values(
             by=['game_day', 'game_time', 'game_id'], 
@@ -354,7 +367,7 @@ def _get_games_conference(conference, season, game_type, info, box, pbp, source=
                                                         regex=True)) if col.name != 'game_id' else col
         ).reset_index(drop=True)
 
-    game_boxscore_df = pd.concat([x[1] for x in result])
+    game_boxscore_df = pd.concat(_drop_repeat_games([x[1] for x in result]))
     if box:
         game_boxscore_df = game_boxscore_df.sort_values(
             by=['game_id', 'team'], 
@@ -362,7 +375,7 @@ def _get_games_conference(conference, season, game_type, info, box, pbp, source=
             kind='mergesort'
         ).reset_index(drop=True)
 
-    game_pbp_df = pd.concat([x[2] for x in result])
+    game_pbp_df = pd.concat(_drop_repeat_games([x[2] for x in result]))
     if pbp:
         game_pbp_df = game_pbp_df.sort_values(
             by=['game_id'],
