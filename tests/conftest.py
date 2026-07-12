@@ -39,10 +39,16 @@ def recorded_games(gender):
 
 
 class FakeResponse:
-    """Stands in for requests.Response; the scraper only ever reads .content."""
+    """Stands in for requests.Response.
+
+    The HTML path reads .content; the API path reads .json().
+    """
 
     def __init__(self, content: bytes):
         self.content = content
+
+    def json(self):
+        return json.loads(self.content)
 
 
 class FixtureStore:

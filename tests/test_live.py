@@ -43,6 +43,8 @@ PBP_REQUIRED_COLS = {
     "game_id", "home_team", "away_team", "play_desc", "home_score", "away_score",
     "secs_left_reg", "play_team", "play_type", "shooting_play", "scoring_play",
     "is_three", "shooter", "is_assisted", "assist_player",
+    "player_id", "assist_player_id", "espn_play_type", "espn_play_type_id",
+    "shot_x", "shot_y",
 }
 PLAYER_REQUIRED_COLS = {
     "player_id", "first_name", "last_name", "jersey_number", "pos", "status",
@@ -178,11 +180,15 @@ def stable_schedule_projection(df):
     )
 
 
+SOURCES = ["html", "api"]
+
+
+@pytest.mark.parametrize("source", SOURCES)
 @pytest.mark.parametrize("gender", GENDERS)
-def test_live_game_info(gender):
+def test_live_game_info(gender, source):
     sc = SCRAPERS[gender]
     for gid, f in GAME_FACTS[gender].items():
-        df = sc.get_game_info(gid)
+        df = sc.get_game_info(gid, source=source)
         assert len(df) == 1, f"{gid}: expected exactly one info row"
         assert_required_cols(df, INFO_REQUIRED_COLS)
         row = df.iloc[0]
@@ -197,11 +203,12 @@ def test_live_game_info(gender):
         assert row.game_day == f["game_day"]
 
 
+@pytest.mark.parametrize("source", SOURCES)
 @pytest.mark.parametrize("gender", GENDERS)
-def test_live_game_boxscore(gender):
+def test_live_game_boxscore(gender, source):
     sc = SCRAPERS[gender]
     for gid, f in GAME_FACTS[gender].items():
-        df = sc.get_game_boxscore(gid)
+        df = sc.get_game_boxscore(gid, source=source)
         assert_required_cols(df, BOXSCORE_REQUIRED_COLS)
         assert (df.game_id.astype(str) == gid).all()
         # cross-validate team totals against the known final scores
@@ -214,18 +221,20 @@ def test_live_game_boxscore(gender):
         # for older games doesn't attribute every point to a player
 
 
+@pytest.mark.parametrize("source", SOURCES)
 @pytest.mark.parametrize("gender", GENDERS)
-def test_live_game_pbp(gender):
+def test_live_game_pbp(gender, source):
     sc = SCRAPERS[gender]
     for gid, f in GAME_FACTS[gender].items():
-        df = sc.get_game_pbp(gid)
+        df = sc.get_game_pbp(gid, source=source)
         assert_required_cols(df, PBP_REQUIRED_COLS)
         # period columns depend on era: halves for mens and pre-2015 womens
         assert ("half" in df.columns and "secs_left_half" in df.columns) or (
             "quarter" in df.columns and "secs_left_qt" in df.columns
         ), f"{gid}: no period columns found"
         assert (df.game_id.astype(str) == gid).all()
-        # final running score of a finished game is immutable
+        # final running score of a finished game is immutable (pbp_final pins the
+        # archived feed's truncated ending, which both sources share)
         h, a = f.get("pbp_final", (f["home"], f["away"]))
         assert int(df.home_score.max()) == h and int(df.away_score.max()) == a
         assert_row_count_close(len(df), f["pbp_rows"])

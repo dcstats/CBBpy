@@ -138,5 +138,49 @@
   "https://www.espn.com/womens-college-basketball/team/schedule/_/id/13/season/2021": {
     "file": "womens_schedule_13_2021.html.gz",
     "recorded_at": "2026-06-13T01:46:22+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary?event=401581583": {
+    "file": "mens_api_summary_401581583.json.gz",
+    "recorded_at": "2026-07-11T20:06:39+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary?event=400498476": {
+    "file": "mens_api_summary_400498476.json.gz",
+    "recorded_at": "2026-07-11T20:06:40+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary?event=400871140": {
+    "file": "mens_api_summary_400871140.json.gz",
+    "recorded_at": "2026-07-11T20:06:42+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary?event=401310866": {
+    "file": "mens_api_summary_401310866.json.gz",
+    "recorded_at": "2026-07-11T20:06:44+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary?event=401310867": {
+    "file": "mens_api_summary_401310867.json.gz",
+    "recorded_at": "2026-07-11T20:06:46+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?dates=20210403&groups=50&limit=500": {
+    "file": "mens_api_scoreboard_20210403.json.gz",
+    "recorded_at": "2026-07-11T20:06:48+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/summary?event=401486000": {
+    "file": "womens_api_summary_401486000.json.gz",
+    "recorded_at": "2026-07-11T20:06:50+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/summary?event=303442739": {
+    "file": "womens_api_summary_303442739.json.gz",
+    "recorded_at": "2026-07-11T20:06:52+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/summary?event=401487896": {
+    "file": "womens_api_summary_401487896.json.gz",
+    "recorded_at": "2026-07-11T20:06:54+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/summary?event=401528028": {
+    "file": "womens_api_summary_401528028.json.gz",
+    "recorded_at": "2026-07-11T20:06:55+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/scoreboard?dates=20230402&groups=50&limit=500": {
+    "file": "womens_api_scoreboard_20230402.json.gz",
+    "recorded_at": "2026-07-11T20:06:57+00:00"
   }
 }

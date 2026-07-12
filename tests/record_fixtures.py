@@ -42,6 +42,7 @@ from conftest import (  # noqa: E402
 
 from cbbpy import mens_scraper as ms, womens_scraper as ws  # noqa: E402
 from cbbpy.utils import cbbpy_utils as cu  # noqa: E402
+from cbbpy.utils import espn_api as api  # noqa: E402
 
 
 URLS = {
@@ -130,6 +131,59 @@ def record_pages():
     print(f"Wrote {len(manifest)} pages + manifest.json")
 
 
+def fetch_json(url, required_key):
+    header = {"Referer": str(np.random.choice(cu.REFERERS))}
+    resp = requests.get(url, headers=header, impersonate="chrome")
+    resp.raise_for_status()
+    if required_key.encode() not in resp.content:
+        raise RuntimeError(
+            f"Fetched JSON has no {required_key!r} key (format change?): {url} -> "
+            f"HTTP {resp.status_code}, {len(resp.content)} bytes"
+        )
+    time.sleep(np.random.uniform(low=1, high=2))
+    return resp.content
+
+
+def record_api():
+    """Record ESPN JSON API summary + scoreboard responses, merged into the manifest.
+
+    Reuses the same game ids and scoreboard dates as the HTML fixtures so the two
+    sources are recorded for identical games (see the parity test).
+    """
+    PAGES_DIR.mkdir(parents=True, exist_ok=True)
+    manifest = json.loads((FIXTURE_DIR / "manifest.json").read_text())
+    games = json.loads((FIXTURE_DIR / "games.json").read_text())
+
+    def save(label, url, required_key):
+        fname = f"{label}.json.gz"
+        print(f"  {label} <- {url}")
+        (PAGES_DIR / fname).write_bytes(gzip.compress(fetch_json(url, required_key)))
+        manifest[url] = {
+            "file": fname,
+            "recorded_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        }
+
+    for gender in ("mens", "womens"):
+        print(f"Recording {gender} API responses...")
+        summary_url = (
+            api.MENS_API_SUMMARY_URL if gender == "mens" else api.WOMENS_API_SUMMARY_URL
+        )
+        scoreboard_url = (
+            api.MENS_API_SCOREBOARD_URL
+            if gender == "mens"
+            else api.WOMENS_API_SCOREBOARD_URL
+        )
+
+        for gid in games[gender]:
+            save(f"{gender}_api_summary_{gid}", summary_url.format(gid), "header")
+
+        d = datetime.strptime(SCOREBOARD_DATES[gender], "%Y-%m-%d").strftime("%Y%m%d")
+        save(f"{gender}_api_scoreboard_{d}", scoreboard_url.format(d), "events")
+
+    (FIXTURE_DIR / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    print("Merged API responses into manifest.json")
+
+
 def replay_offline():
     """Point the scraper at the recorded pages (same patches as the offline_espn fixture)."""
     store = FixtureStore(FIXTURE_DIR)
@@ -189,14 +243,60 @@ def build_snapshots():
     print("Snapshots built. Review `git diff --stat tests/fixtures/` before committing.")
 
 
+def build_api_snapshots():
+    """Rebuild the API-path snapshots (separate files from the HTML snapshots).
+
+    Both sources share most columns; the API path additionally populates
+    player_id/assist_player_id/shot coordinates and the point spread that the
+    archived HTML embed leaves empty, so the two snapshot sets legitimately
+    differ on those columns (see the parity test's exclusion list).
+    """
+    SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
+    games = json.loads((FIXTURE_DIR / "games.json").read_text())
+    store = replay_offline()
+
+    def save(df, name):
+        assert len(df) > 0, f"snapshot {name} came back empty"
+        df.to_parquet(SNAPSHOT_DIR / f"{name}.parquet")
+        print(f"  {name}.parquet: {len(df)} rows x {len(df.columns)} cols")
+
+    for gender in ("mens", "womens"):
+        print(f"Building {gender} API snapshots...")
+        sc = SCRAPERS[gender]
+
+        # source defaults to "api"
+        info = pd.concat([sc.get_game_info(g) for g in games[gender]], ignore_index=True)
+        box = pd.concat([sc.get_game_boxscore(g) for g in games[gender]], ignore_index=True)
+        pbp = pd.concat([sc.get_game_pbp(g) for g in games[gender]], ignore_index=True)
+        save(info, f"{gender}_game_info_api")
+        save(box, f"{gender}_game_boxscore_api")
+        save(pbp, f"{gender}_game_pbp_api")
+
+        d = SCOREBOARD_DATES[gender]
+        r_info, r_box, r_pbp = sc.get_games_range(d, d)
+        save(r_info, f"{gender}_range_info_api")
+        save(r_box, f"{gender}_range_boxscore_api")
+        save(r_pbp, f"{gender}_range_pbp_api")
+
+    assert not store.misses, f"API snapshot build requested unrecorded URLs: {store.misses}"
+    print("API snapshots built. Review `git diff --stat tests/fixtures/` before committing.")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__)
     group = ap.add_mutually_exclusive_group()
     group.add_argument("--pages-only", action="store_true", help="refresh pages, keep snapshots")
     group.add_argument("--snapshots-only", action="store_true", help="rebuild snapshots from saved pages")
+    group.add_argument("--api-only", action="store_true", help="record only API responses + build API snapshots")
     args = ap.parse_args()
 
-    if not args.snapshots_only:
-        record_pages()
-    if not args.pages_only:
-        build_snapshots()
+    if args.api_only:
+        record_api()
+        build_api_snapshots()
+    else:
+        if not args.snapshots_only:
+            record_pages()
+            record_api()
+        if not args.pages_only:
+            build_snapshots()
+            build_api_snapshots()

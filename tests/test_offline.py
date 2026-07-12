@@ -25,6 +25,14 @@ from tests.conftest import (
 
 SCRAPERS = {"mens": ms, "womens": ws}
 GENDERS = ["mens", "womens"]
+# both transports are exercised against their own frozen snapshots; the API is
+# the default source, HTML remains available and is pinned unchanged
+SOURCES = ["html", "api"]
+
+
+def _snapshot_name(gender, kind, source):
+    suffix = "" if source == "html" else "_api"
+    return f"{gender}_{kind}{suffix}"
 
 
 def assert_matches_snapshot(result, name):
@@ -38,30 +46,36 @@ def assert_matches_snapshot(result, name):
 
 
 @pytest.mark.parametrize("gender", GENDERS)
-def test_game_info_offline(offline_espn, gender):
+@pytest.mark.parametrize("source", SOURCES)
+def test_game_info_offline(offline_espn, gender, source):
     sc = SCRAPERS[gender]
     result = pd.concat(
-        [sc.get_game_info(g) for g in recorded_games(gender)], ignore_index=True
+        [sc.get_game_info(g, source=source) for g in recorded_games(gender)],
+        ignore_index=True,
     )
-    assert_matches_snapshot(result, f"{gender}_game_info")
+    assert_matches_snapshot(result, _snapshot_name(gender, "game_info", source))
 
 
 @pytest.mark.parametrize("gender", GENDERS)
-def test_game_boxscore_offline(offline_espn, gender):
+@pytest.mark.parametrize("source", SOURCES)
+def test_game_boxscore_offline(offline_espn, gender, source):
     sc = SCRAPERS[gender]
     result = pd.concat(
-        [sc.get_game_boxscore(g) for g in recorded_games(gender)], ignore_index=True
+        [sc.get_game_boxscore(g, source=source) for g in recorded_games(gender)],
+        ignore_index=True,
     )
-    assert_matches_snapshot(result, f"{gender}_game_boxscore")
+    assert_matches_snapshot(result, _snapshot_name(gender, "game_boxscore", source))
 
 
 @pytest.mark.parametrize("gender", GENDERS)
-def test_game_pbp_offline(offline_espn, gender):
+@pytest.mark.parametrize("source", SOURCES)
+def test_game_pbp_offline(offline_espn, gender, source):
     sc = SCRAPERS[gender]
     result = pd.concat(
-        [sc.get_game_pbp(g) for g in recorded_games(gender)], ignore_index=True
+        [sc.get_game_pbp(g, source=source) for g in recorded_games(gender)],
+        ignore_index=True,
     )
-    assert_matches_snapshot(result, f"{gender}_game_pbp")
+    assert_matches_snapshot(result, _snapshot_name(gender, "game_pbp", source))
 
 
 @pytest.mark.parametrize("gender", GENDERS)
@@ -84,13 +98,120 @@ def test_team_schedule_offline(offline_espn, gender):
 
 
 @pytest.mark.parametrize("gender", GENDERS)
-def test_games_range_offline(offline_espn, gender):
+@pytest.mark.parametrize("source", SOURCES)
+def test_games_range_offline(offline_espn, gender, source):
     sc = SCRAPERS[gender]
     d = SCOREBOARD_DATES[gender]
-    info, box, pbp = sc.get_games_range(d, d)
-    assert_matches_snapshot(info, f"{gender}_range_info")
-    assert_matches_snapshot(box, f"{gender}_range_boxscore")
-    assert_matches_snapshot(pbp, f"{gender}_range_pbp")
+    info, box, pbp = sc.get_games_range(d, d, source=source)
+    assert_matches_snapshot(info, _snapshot_name(gender, "range_info", source))
+    assert_matches_snapshot(box, _snapshot_name(gender, "range_boxscore", source))
+    assert_matches_snapshot(pbp, _snapshot_name(gender, "range_pbp", source))
+
+
+# --- cross-source parity ---------------------------------------------------
+# Both transports must emit the same schema and the same values, except where
+# one source legitimately carries data the other omits. Each exclusion below is
+# justified; any OTHER mismatch is a real bug, not something to loosen.
+
+# game info: HTML leaves the point spread blank on archived games; the API fills
+# it from pickcenter. API is strictly better here, so it is not compared.
+INFO_PARITY_EXCLUDE = ["home_point_spread"]
+
+# pbp: the output `id` is a source-specific play identifier (different formats).
+PBP_PARITY_EXCLUDE = ["id"]
+
+
+def _normalize_nan(df):
+    df = df.copy()
+    obj_cols = df.select_dtypes(include="object").columns
+    df[obj_cols] = df[obj_cols].where(pd.notna(df[obj_cols]), np.nan)
+    return df
+
+
+def _canonical_pbp(df):
+    # row order at equal timestamps is not a cross-source guarantee (buzzer
+    # plays vs "End of period" can be sequenced either way); sort on content
+    key = ["home_score", "away_score", "secs_left_reg", "play_desc", "play_type"]
+    return _normalize_nan(df.sort_values(key, na_position="first").reset_index(drop=True))
+
+
+@pytest.mark.parametrize("gender", GENDERS)
+def test_game_info_source_parity(offline_espn, gender):
+    sc = SCRAPERS[gender]
+    html = pd.concat(
+        [sc.get_game_info(g, source="html") for g in recorded_games(gender)],
+        ignore_index=True,
+    )
+    api = pd.concat(
+        [sc.get_game_info(g, source="api") for g in recorded_games(gender)],
+        ignore_index=True,
+    )
+    assert list(html.columns) == list(api.columns)
+    cols = [c for c in html.columns if c not in INFO_PARITY_EXCLUDE]
+    pd.testing.assert_frame_equal(
+        _normalize_nan(api[cols]), _normalize_nan(html[cols]), check_dtype=False
+    )
+
+
+@pytest.mark.parametrize("gender", GENDERS)
+def test_boxscore_source_parity(offline_espn, gender):
+    sc = SCRAPERS[gender]
+    sort_key = ["game_id", "team", "player_id"]
+    html = pd.concat(
+        [sc.get_game_boxscore(g, source="html") for g in recorded_games(gender)],
+        ignore_index=True,
+    ).sort_values(sort_key).reset_index(drop=True)
+    api = pd.concat(
+        [sc.get_game_boxscore(g, source="api") for g in recorded_games(gender)],
+        ignore_index=True,
+    ).sort_values(sort_key).reset_index(drop=True)
+    assert list(html.columns) == list(api.columns)
+    pd.testing.assert_frame_equal(
+        _normalize_nan(api), _normalize_nan(html), check_dtype=False
+    )
+
+
+@pytest.mark.parametrize("gender", GENDERS)
+def test_pbp_source_parity(offline_espn, gender):
+    sc = SCRAPERS[gender]
+    for gid in recorded_games(gender):
+        html = _canonical_pbp(sc.get_game_pbp(gid, source="html"))
+        api = _canonical_pbp(sc.get_game_pbp(gid, source="api"))
+        # `id` aside, the schemas match. HTML drops its `id` column only for
+        # games that carry a shot chart, so the column set can differ by that one
+        # source-specific, excluded column; compare on the shared columns.
+        common = [c for c in html.columns if c in api.columns]
+
+        # id-derived athlete columns: the HTML __espnfitt__ embed omits per-play
+        # athlete/participant data for many games; the API supplies it for every
+        # play. Require agreement wherever HTML has a value, and API coverage at
+        # least as good as HTML.
+        coverage_cols = ["player_id", "assist_player_id", "shot_x", "shot_y"]
+        exact = [
+            c
+            for c in common
+            if c not in PBP_PARITY_EXCLUDE and c not in coverage_cols
+        ]
+        pd.testing.assert_frame_equal(
+            api[exact], html[exact], check_dtype=False, obj=f"{gid} pbp"
+        )
+
+        for col in ("player_id", "assist_player_id"):
+            html_present = html[col].astype(str).str.len() > 0
+            assert (
+                api[col].astype(str)[html_present]
+                == html[col].astype(str)[html_present]
+            ).all(), f"{gid}: {col} disagrees where HTML has a value"
+            api_cov = (api[col].astype(str).str.len() > 0).sum()
+            assert api_cov >= html_present.sum(), f"{gid}: {col} API coverage regressed"
+
+        # shot coordinates: coverage is era/source-dependent (HTML shot chart vs
+        # API play coordinates); compare only where both sources have a value.
+        for col in ("shot_x", "shot_y"):
+            both = html[col].notna() & api[col].notna()
+            assert (api[col][both] == html[col][both]).all(), (
+                f"{gid}: {col} disagrees where both sources have a value"
+            )
 
 
 def test_teams_from_conference_offline():
