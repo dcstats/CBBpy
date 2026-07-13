@@ -204,7 +204,7 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp, source="ap
     date_range = pd.date_range(start_date, end_date)
     len_scrape = len(date_range)
     all_data = []
-    cpus = (os.cpu_count() or 2) - 1
+    cpus = max((os.cpu_count() or 2) - 1, 1)
 
     if len_scrape < 1:
         raise InvalidDateRangeError("The start date must be sooner than the end date.")
@@ -290,7 +290,7 @@ def _get_games_season(season, game_type, info, box, pbp, source="api"):
 @print_log_file_location
 def _get_games_team(team, season, game_type, info, box, pbp, source="api"):
     _validate_source(source)
-    cpus = (os.cpu_count() or 2) - 1
+    cpus = max((os.cpu_count() or 2) - 1, 1)
     schedule_df = _get_team_schedule(team, season, game_type)
 
     if schedule_df.empty:
