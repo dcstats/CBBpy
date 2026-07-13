@@ -1,4 +1,4 @@
-CBBpy.egg-info/
+*.egg-info/
 *.ipynb
 *.pyc
 .ipynb_checkpoints/

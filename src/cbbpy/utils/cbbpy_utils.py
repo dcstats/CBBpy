@@ -18,7 +18,7 @@ from rapidfuzz import process, distance, utils
 from pathlib import Path
 from platformdirs import user_log_dir
 from importlib.metadata import version
-from functools import wraps
+from functools import lru_cache, wraps
 
 
 warnings.filterwarnings('ignore', category=UserWarning)
@@ -204,7 +204,7 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp, source="ap
     date_range = pd.date_range(start_date, end_date)
     len_scrape = len(date_range)
     all_data = []
-    cpus = os.cpu_count() - 1
+    cpus = max((os.cpu_count() or 2) - 1, 1)
 
     if len_scrape < 1:
         raise InvalidDateRangeError("The start date must be sooner than the end date.")
@@ -236,7 +236,7 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp, source="ap
                 t.set_description(f"No games on {date.strftime('%D')}", refresh=False)
 
     if not len(all_data) > 0:
-        return ()
+        return (pd.DataFrame(), pd.DataFrame(), pd.DataFrame())
 
     # sort returned dataframes to ensure consistency between runs
     game_info_df = pd.concat([game[0] for day in all_data for game in day])
@@ -290,11 +290,19 @@ def _get_games_season(season, game_type, info, box, pbp, source="api"):
 @print_log_file_location
 def _get_games_team(team, season, game_type, info, box, pbp, source="api"):
     _validate_source(source)
-    cpus = os.cpu_count() - 1
+    cpus = max((os.cpu_count() or 2) - 1, 1)
     schedule_df = _get_team_schedule(team, season, game_type)
+
+    if schedule_df.empty:
+        _log.error(f'{team} - Schedule unavailable, cannot scrape games')
+        return (pd.DataFrame(), pd.DataFrame(), pd.DataFrame())
+
     game_ids = list(schedule_df[schedule_df.game_status.isin(GOOD_GAME_STATUSES)].game_id)
 
     print(f'Scraping {len(game_ids)} games for {schedule_df.team.iloc[0]}')
+
+    if not game_ids:
+        return (pd.DataFrame(), pd.DataFrame(), pd.DataFrame())
 
     result = Parallel(n_jobs=cpus)(
         delayed(_get_game)(gid, game_type, info, box, pbp, source)
@@ -337,8 +345,21 @@ def _get_games_conference(conference, season, game_type, info, box, pbp, source=
     teams = _get_teams_from_conference(conference, season, game_type)
     result = [_get_games_team(x, season, game_type, info, box, pbp, source) for x in teams]
 
+    # intra-conference games appear on both teams' schedules; keep only the
+    # first scraped copy of each game (#84)
+    def _drop_repeat_games(frames):
+        seen = set()
+        deduped = []
+        for f in frames:
+            if 'game_id' in f.columns:
+                keep = ~f.game_id.isin(seen)
+                seen.update(f.game_id)
+                f = f[keep]
+            deduped.append(f)
+        return deduped
+
     # sort returned dataframes to ensure consistency between runs
-    game_info_df = pd.concat([x[0] for x in result])
+    game_info_df = pd.concat(_drop_repeat_games([x[0] for x in result]))
     if info:
         game_info_df = game_info_df.sort_values(
             by=['game_day', 'game_time', 'game_id'], 
@@ -346,7 +367,7 @@ def _get_games_conference(conference, season, game_type, info, box, pbp, source=
                                                         regex=True)) if col.name != 'game_id' else col
         ).reset_index(drop=True)
 
-    game_boxscore_df = pd.concat([x[1] for x in result])
+    game_boxscore_df = pd.concat(_drop_repeat_games([x[1] for x in result]))
     if box:
         game_boxscore_df = game_boxscore_df.sort_values(
             by=['game_id', 'team'], 
@@ -354,7 +375,7 @@ def _get_games_conference(conference, season, game_type, info, box, pbp, source=
             kind='mergesort'
         ).reset_index(drop=True)
 
-    game_pbp_df = pd.concat([x[2] for x in result])
+    game_pbp_df = pd.concat(_drop_repeat_games([x[2] for x in result]))
     if pbp:
         game_pbp_df = game_pbp_df.sort_values(
             by=['game_id'],
@@ -373,6 +394,8 @@ def _get_game_ids(date, game_type, source="api"):
         return espn_api._get_game_ids_api(date, game_type)
 
     soup = None
+    scoreboard = None
+    ids = []
 
     if game_type == "mens":
         pre_url = MENS_SCOREBOARD_URL
@@ -418,7 +441,7 @@ def _get_game_ids(date, game_type, source="api"):
                     _log.error(
                         f'{date.strftime("%D")} - IDs: GET error\n{ex}\n{traceback.format_exc()}'
                     )
-                return pd.DataFrame([])
+                return []
             else:
                 # try again with a random sleep
                 time.sleep(np.random.uniform(low=1, high=3))
@@ -438,6 +461,7 @@ def _get_game_boxscore(game_id, game_type, source="api"):
         return espn_api._get_game_boxscore_api(game_id, game_type)
 
     soup = None
+    gamepackage = None
     game_id = str(game_id)
 
     if game_type == "mens":
@@ -538,6 +562,7 @@ def _get_game_pbp(game_id, game_type, source="api"):
         return espn_api._get_game_pbp_api(game_id, game_type)
 
     soup = None
+    gamepackage = None
     game_id = str(game_id)
 
     if game_type == "mens":
@@ -611,6 +636,7 @@ def _get_game_info(game_id, game_type, source="api"):
         return espn_api._get_game_info_api(game_id, game_type)
 
     soup = None
+    gamepackage = None
     game_id = str(game_id)
 
     if game_type == "mens":
@@ -675,7 +701,8 @@ def _get_game_info(game_id, game_type, source="api"):
 
 def _get_player_info(player_id, game_type):
     soup = None
-    df = None
+    raw_player = None
+    df = pd.DataFrame([])
 
     if game_type == "mens":
         pre_url = MENS_PLAYER_URL
@@ -699,7 +726,7 @@ def _get_player_info(player_id, game_type):
                 _log.error(
                     f'{player_id} - Player: Page not found error'
                 )
-                break
+                return pd.DataFrame([])
 
             if i + 1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
@@ -804,7 +831,7 @@ def _parse_date(date):
     for parse in DATE_PARSES:
         try:
             date = datetime.strptime(date, parse)
-        except:
+        except ValueError:
             continue
         else:
             parsed = True
@@ -819,251 +846,69 @@ def _parse_date(date):
     return date
 
 
+def _build_player_rows(players, team_name, game_id, labels, is_starter):
+    cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
+        x.lower() for x in labels
+    ]
+    if len(players) == 0:
+        return pd.DataFrame(columns=cols)
+
+    stat_dict = {
+        labels[i].lower(): [players[j]["stats"][i] for j in range(len(players))]
+        for i in range(len(labels))
+    }
+    positions = [x["athlt"].get("pos", "") for x in players]
+    # uid works for both transports: HTML embeds "s:40~l:41~a:<id>", the API
+    # adapter passes the bare athlete id (no colons)
+    ids = [
+        x["athlt"]["uid"].split(":")[-1] if "uid" in x["athlt"] else ""
+        for x in players
+    ]
+    names = [x["athlt"].get("shrtNm", "") for x in players]
+
+    df = pd.DataFrame(stat_dict)
+    df.insert(0, "starter", is_starter)
+    df.insert(0, "position", positions)
+    df.insert(0, "player_id", ids)
+    df.insert(0, "player", names)
+    df.insert(0, "team", team_name)
+    df.insert(0, "game_id", game_id)
+    return df
+
+
+def _build_totals_row(totals, team_name, game_id, labels):
+    cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
+        x.lower() for x in labels
+    ]
+    if len(totals) == 0:
+        return pd.DataFrame(columns=cols)
+
+    tot_dict = {labels[i].lower(): [totals[i]] for i in range(len(labels))}
+    df = pd.DataFrame(tot_dict)
+    df.insert(0, "starter", False)
+    df.insert(0, "position", "TOTAL")
+    df.insert(0, "player_id", "TOTAL")
+    df.insert(0, "player", "TEAM")
+    df.insert(0, "team", team_name)
+    df.insert(0, "game_id", game_id)
+    return df
+
+
+def _build_team_df(stats, team_name, game_id, labels):
+    return pd.concat([
+        _build_player_rows(stats[0]["athlts"], team_name, game_id, labels, True),
+        _build_player_rows(stats[1]["athlts"], team_name, game_id, labels, False),
+        _build_totals_row(stats[2]["ttls"], team_name, game_id, labels),
+    ])
+
+
 def _get_game_boxscore_helper(boxscore, game_id):
     tm1, tm2 = boxscore[0], boxscore[1]
     tm1_name, tm2_name = tm1["tm"]["dspNm"], tm2["tm"]["dspNm"]
-    tm1_stats, tm2_stats = tm1["stats"], tm2["stats"]
+    labels = tm1["stats"][0]["lbls"]
 
-    labels = tm1_stats[0]["lbls"]
-
-    tm1_starters, tm1_bench, tm1_totals = (
-        tm1_stats[0]["athlts"],
-        tm1_stats[1]["athlts"],
-        tm1_stats[2]["ttls"],
-    )
-    tm2_starters, tm2_bench, tm2_totals = (
-        tm2_stats[0]["athlts"],
-        tm2_stats[1]["athlts"],
-        tm2_stats[2]["ttls"],
-    )
-
-    # starters' stats
-    if len(tm1_starters) > 0:
-        tm1_st_dict = {
-            labels[i].lower(): [
-                tm1_starters[j]["stats"][i] for j in range(len(tm1_starters))
-            ]
-            for i in range(len(labels))
-        }
-
-        tm1_st_pos = [
-            (
-                tm1_starters[i]["athlt"]["pos"]
-                if "pos" in tm1_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_starters))
-        ]
-        tm1_st_id = [
-            (
-                tm1_starters[i]["athlt"]["uid"].split(":")[-1]
-                if "uid" in tm1_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_starters))
-        ]
-        tm1_st_nm = [
-            (
-                tm1_starters[i]["athlt"]["shrtNm"]
-                if "shrtNm" in tm1_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_starters))
-        ]
-
-        tm1_st_df = pd.DataFrame(tm1_st_dict)
-        tm1_st_df.insert(0, "starter", True)
-        tm1_st_df.insert(0, "position", tm1_st_pos)
-        tm1_st_df.insert(0, "player_id", tm1_st_id)
-        tm1_st_df.insert(0, "player", tm1_st_nm)
-        tm1_st_df.insert(0, "team", tm1_name)
-        tm1_st_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm1_st_df = pd.DataFrame(columns=cols)
-
-    # bench players' stats
-    if len(tm1_bench) > 0:
-        tm1_bn_dict = {
-            labels[i].lower(): [tm1_bench[j]["stats"][i] for j in range(len(tm1_bench))]
-            for i in range(len(labels))
-        }
-
-        tm1_bn_pos = [
-            (
-                tm1_bench[i]["athlt"]["pos"]
-                if "pos" in tm1_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_bench))
-        ]
-        tm1_bn_id = [
-            (
-                tm1_bench[i]["athlt"]["uid"].split(":")[-1]
-                if "uid" in tm1_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_bench))
-        ]
-        tm1_bn_nm = [
-            (
-                tm1_bench[i]["athlt"]["shrtNm"]
-                if "shrtNm" in tm1_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_bench))
-        ]
-
-        tm1_bn_df = pd.DataFrame(tm1_bn_dict)
-        tm1_bn_df.insert(0, "starter", False)
-        tm1_bn_df.insert(0, "position", tm1_bn_pos)
-        tm1_bn_df.insert(0, "player_id", tm1_bn_id)
-        tm1_bn_df.insert(0, "player", tm1_bn_nm)
-        tm1_bn_df.insert(0, "team", tm1_name)
-        tm1_bn_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm1_bn_df = pd.DataFrame(columns=cols)
-
-    # team totals
-    if len(tm1_totals) > 0:
-        tm1_tot_dict = {labels[i].lower(): [tm1_totals[i]] for i in range(len(labels))}
-
-        tm1_tot_df = pd.DataFrame(tm1_tot_dict)
-        tm1_tot_df.insert(0, "starter", False)
-        tm1_tot_df.insert(0, "position", "TOTAL")
-        tm1_tot_df.insert(0, "player_id", "TOTAL")
-        tm1_tot_df.insert(0, "player", "TEAM")
-        tm1_tot_df.insert(0, "team", tm1_name)
-        tm1_tot_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm1_tot_df = pd.DataFrame(columns=cols)
-
-    tm1_df = pd.concat([tm1_st_df, tm1_bn_df, tm1_tot_df])
-
-    # starters' stats
-    if len(tm2_starters) > 0:
-        tm2_st_dict = {
-            labels[i].lower(): [
-                tm2_starters[j]["stats"][i] for j in range(len(tm2_starters))
-            ]
-            for i in range(len(labels))
-        }
-
-        tm2_st_pos = [
-            (
-                tm2_starters[i]["athlt"]["pos"]
-                if "pos" in tm2_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_starters))
-        ]
-        tm2_st_id = [
-            (
-                tm2_starters[i]["athlt"]["uid"].split(":")[-1]
-                if "uid" in tm2_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_starters))
-        ]
-        tm2_st_nm = [
-            (
-                tm2_starters[i]["athlt"]["shrtNm"]
-                if "shrtNm" in tm2_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_starters))
-        ]
-
-        tm2_st_df = pd.DataFrame(tm2_st_dict)
-        tm2_st_df.insert(0, "starter", True)
-        tm2_st_df.insert(0, "position", tm2_st_pos)
-        tm2_st_df.insert(0, "player_id", tm2_st_id)
-        tm2_st_df.insert(0, "player", tm2_st_nm)
-        tm2_st_df.insert(0, "team", tm2_name)
-        tm2_st_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm2_st_df = pd.DataFrame(columns=cols)
-
-    # bench players' stats
-    if len(tm2_bench) > 0:
-        tm2_bn_dict = {
-            labels[i].lower(): [tm2_bench[j]["stats"][i] for j in range(len(tm2_bench))]
-            for i in range(len(labels))
-        }
-
-        tm2_bn_pos = [
-            (
-                tm2_bench[i]["athlt"]["pos"]
-                if "pos" in tm2_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_bench))
-        ]
-        tm2_bn_id = [
-            (
-                tm2_bench[i]["athlt"]["uid"].split(":")[-1]
-                if "uid" in tm2_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_bench))
-        ]
-        tm2_bn_nm = [
-            (
-                tm2_bench[i]["athlt"]["shrtNm"]
-                if "shrtNm" in tm2_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_bench))
-        ]
-
-        tm2_bn_df = pd.DataFrame(tm2_bn_dict)
-        tm2_bn_df.insert(0, "starter", False)
-        tm2_bn_df.insert(0, "position", tm2_bn_pos)
-        tm2_bn_df.insert(0, "player_id", tm2_bn_id)
-        tm2_bn_df.insert(0, "player", tm2_bn_nm)
-        tm2_bn_df.insert(0, "team", tm2_name)
-        tm2_bn_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm2_bn_df = pd.DataFrame(columns=cols)
-
-    # team totals
-    if len(tm2_totals) > 0:
-        tm2_tot_dict = {labels[i].lower(): [tm2_totals[i]] for i in range(len(labels))}
-
-        tm2_tot_df = pd.DataFrame(tm2_tot_dict)
-        tm2_tot_df.insert(0, "starter", False)
-        tm2_tot_df.insert(0, "position", "TOTAL")
-        tm2_tot_df.insert(0, "player_id", "TOTAL")
-        tm2_tot_df.insert(0, "player", "TEAM")
-        tm2_tot_df.insert(0, "team", tm2_name)
-        tm2_tot_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm2_tot_df = pd.DataFrame(columns=cols)
-
-    tm2_df = pd.concat([tm2_st_df, tm2_bn_df, tm2_tot_df])
+    tm1_df = _build_team_df(tm1["stats"], tm1_name, game_id, labels)
+    tm2_df = _build_team_df(tm2["stats"], tm2_name, game_id, labels)
 
     df = pd.concat([tm1_df, tm2_df])
 
@@ -1071,13 +916,19 @@ def _get_game_boxscore_helper(boxscore, game_id):
         _log.warning(f'{game_id} - No boxscore available')
         return pd.DataFrame([])
 
-    # SPLIT UP THE FG FIELDS
-    fgm = pd.to_numeric([x.split("-")[0] for x in df["fg"]], errors="coerce")
-    fga = pd.to_numeric([x.split("-")[1] for x in df["fg"]], errors="coerce")
-    thpm = pd.to_numeric([x.split("-")[0] for x in df["3pt"]], errors="coerce")
-    thpa = pd.to_numeric([x.split("-")[1] for x in df["3pt"]], errors="coerce")
-    ftm = pd.to_numeric([x.split("-")[0] for x in df["ft"]], errors="coerce")
-    fta = pd.to_numeric([x.split("-")[1] for x in df["ft"]], errors="coerce")
+    # SPLIT UP THE FG FIELDS (made-attempted strings; NaN when malformed)
+    def _split_stat(series, idx):
+        return pd.to_numeric(
+            [x.split("-")[idx] if isinstance(x, str) and "-" in x else np.nan for x in series],
+            errors="coerce",
+        )
+
+    fgm = _split_stat(df["fg"], 0)
+    fga = _split_stat(df["fg"], 1)
+    thpm = _split_stat(df["3pt"], 0)
+    thpa = _split_stat(df["3pt"], 1)
+    ftm = _split_stat(df["ft"], 0)
+    fta = _split_stat(df["ft"], 1)
 
     # GET RID OF UNWANTED COLUMNS
     df = df.drop(columns=["fg", "3pt", "ft"])
@@ -1142,12 +993,20 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         for x in all_plays
     ]
 
-    time_splits = [
-        x["clock"]["displayValue"].split(":") if "clock" in x.keys() else ""
-        for x in all_plays
-    ]
-    minutes = [int(x[0]) for x in time_splits]
-    seconds = [int(x[1]) for x in time_splits]
+    # a missing or malformed clock (no colon, non-numeric) degrades to 0:00
+    # for that play instead of crashing the whole game's parse
+    def _clock_parts(play):
+        parts = (play.get("clock") or {}).get("displayValue", "").split(":")
+        if len(parts) != 2:
+            return 0, 0
+        try:
+            return int(float(parts[0])), int(float(parts[1]))
+        except ValueError:
+            return 0, 0
+
+    clock_parts = [_clock_parts(x) for x in all_plays]
+    minutes = [m for m, _ in clock_parts]
+    seconds = [s for _, s in clock_parts]
     min_to_sec = [x * 60 for x in minutes]
     pd_secs_left = [x + y for x, y in zip(min_to_sec, seconds)]
 
@@ -1464,7 +1323,7 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
 
     try:
         home_spread = gamepackage['gameOdds']['odds'][-1]['pointSpread']['primary']
-    except:
+    except (KeyError, IndexError, TypeError):
         home_spread = ''
 
     # over/under and moneylines: the archived HTML embed carries no gameOdds, so
@@ -1597,24 +1456,26 @@ def _get_schedule_helper(jsn, team, id_, season):
 
     # get info from each game
     for ev in tot_events:
-        mat = re.search(r'gameId/(\d+)/', ev['time']['link'])
+        mat = re.search(r'gameId/(\d+)/', ev.get('time', {}).get('link', ''))
         game_id = mat.group(1) if mat is not None else ''
 
         date = parser.parse(ev['date']['date']).astimezone(tz('America/Los_Angeles'))
         day = date.strftime('%B %d, %Y')
         time = date.strftime('%I:%M %p %Z')
 
-        opp = ev['opponent']['displayName']
-        opp_id = ev['opponent']['id']
+        opp_info = ev.get('opponent', {})
+        opp = opp_info.get('displayName', '')
+        opp_id = opp_info.get('id', '')
 
-        network = ev['network'][0]['name'] if len(ev['network']) > 0 else ''
-        season_type = ev['seasonType']['name']
-        status = ev['status']['description']
+        network_list = ev.get('network', [])
+        network = network_list[0]['name'] if len(network_list) > 0 else ''
+        season_type = ev.get('seasonType', {}).get('name', '')
+        status = ev.get('status', {}).get('description', '')
 
-        res = ev['result']
+        res = ev.get('result', {})
 
-        if status == 'Final':
-            result = res['winLossSymbol'] + ' ' + res['currentTeamScore'] + '-' + res['opponentTeamScore']
+        if status == 'Final' and res:
+            result = res.get('winLossSymbol', '') + ' ' + res.get('currentTeamScore', '') + '-' + res.get('opponentTeamScore', '')
         else:
             result = 'N/A'
 
@@ -1645,6 +1506,7 @@ def _get_schedule_helper(jsn, team, id_, season):
     return df.reset_index(drop=True)
 
 
+@lru_cache(maxsize=2)
 def _get_team_map(game_type):
     data_path = Path(__file__).parent / f'{game_type}_team_map.csv'
     return pd.read_csv(data_path)
@@ -1736,63 +1598,44 @@ def _get_teams_from_conference(conference, season, game_type):
     return rel_team_df.location.tolist()
 
 
-def _get_json_from_soup(soup):
+def _parse_espn_json(soup):
     script_string = _find_json_in_content(soup)
 
     if script_string == "":
         return None
 
     pattern = re.compile(JSON_REGEX)
-    found = re.search(pattern, script_string).group(1)
-    js = "{" + found + "}"
-    jsn = json.loads(js)
+    match = re.search(pattern, script_string)
+    if match is None:
+        return None
 
-    return jsn
+    js = "{" + match.group(1) + "}"
+    return json.loads(js)
+
+
+def _get_json_from_soup(soup):
+    return _parse_espn_json(soup)
 
 
 def _get_gamepackage_from_soup(soup):
-    script_string = _find_json_in_content(soup)
-
-    if script_string == "":
+    jsn = _parse_espn_json(soup)
+    if jsn is None:
         return None
-
-    pattern = re.compile(JSON_REGEX)
-    found = re.search(pattern, script_string).group(1)
-    js = "{" + found + "}"
-    jsn = json.loads(js)
-    gamepackage = jsn["page"]["content"]["gamepackage"]
-
-    return gamepackage
+    return jsn["page"]["content"]["gamepackage"]
 
 
 def _get_player_from_soup(soup):
-    script_string = _find_json_in_content(soup)
-
-    if script_string == "":
+    jsn = _parse_espn_json(soup)
+    if jsn is None:
         return None
-
-    pattern = re.compile(JSON_REGEX)
-    found = re.search(pattern, script_string).group(1)
-    js = "{" + found + "}"
-    jsn = json.loads(js)
-    player = jsn["page"]["content"]["player"]
-
-    return player
+    return jsn["page"]["content"]["player"]
 
 
 def _get_scoreboard_from_soup(soup):
-    script_string = _find_json_in_content(soup)
-
-    if script_string == "":
+    jsn = _parse_espn_json(soup)
+    if jsn is None:
         return None
-
-    pattern = re.compile(JSON_REGEX)
-    found = re.search(pattern, script_string).group(1)
-    js = "{" + found + "}"
-    jsn = json.loads(js)
-    scoreboard = jsn["page"]["content"]["scoreboard"]["evts"]
-
-    return scoreboard
+    return jsn["page"]["content"]["scoreboard"]["evts"]
 
 
 def _find_json_in_content(soup):
