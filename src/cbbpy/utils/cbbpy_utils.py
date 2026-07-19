@@ -57,6 +57,9 @@ WOMENS_BOXSCORE_URL = (
 WOMENS_PBP_URL = "https://www.espn.com/womens-college-basketball/playbyplay/_/gameId/{}"
 WOMENS_PLAYER_URL = "https://www.espn.com/womens-college-basketball/player/_/id/{}"
 WOMENS_SCHEDULE_URL = "https://www.espn.com/womens-college-basketball/team/schedule/_/id/{}/season/{}"
+# logos are school-level assets keyed by ESPN team ID, shared across genders
+TEAM_LOGO_URL = "https://a.espncdn.com/i/teamlogos/ncaa/500/{}.png"
+TEAM_LOGO_DARK_URL = "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/{}.png"
 NON_SHOT_TYPES = [
     "TV Timeout",
     "Jump Ball",
@@ -1055,13 +1058,15 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
 
         added = False
         for pt in NON_SHOT_TYPES:
-            if pt in play:
+            # case-insensitive: ESPN lowercased play texts in recent seasons
+            # ("misses 12-foot jumper" vs the older "missed Jumper.")
+            if pt.lower() in play.lower():
                 p_types.append(pt.lower())
                 added = True
                 break
         if not added:
             for st in SHOT_TYPES:
-                if st in play:
+                if st.lower() in play.lower():
                     p_types.append(st.lower())
                     added = True
                     break
@@ -1070,8 +1075,15 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
             p_types.append("")
 
     # FIND SHOOTERS
+    # prefer ESPN's structured shootingPlay flag when the play carries it; fall
+    # back to the text-derived type (older embeds omit the flag)
     shooting_play = [
-        True if x in (y.lower() for y in SHOT_TYPES) or sc_play[i] else False for i,x in enumerate(p_types)
+        (
+            bool(x.get("shootingPlay"))
+            if "shootingPlay" in x
+            else p in (y.lower() for y in SHOT_TYPES) or sc_play[i]
+        )
+        for i, (x, p) in enumerate(zip(all_plays, p_types))
     ]
 
     scorers = [x[0].split(" made ")[0] if x[1] else "" for x in zip(descs, sc_play)]
@@ -1551,6 +1563,45 @@ def _get_id_from_team(team, season, game_type):
         id_ = id_map[best_match]
 
     return id_, best_match
+
+
+def _get_team_logos(teams, season, dest, game_type, dark=False, overwrite=False):
+    season = int(season)
+    team_map_df = _get_team_map(game_type)
+    season = _resolve_map_season(team_map_df, season)
+
+    if teams is None:
+        season_map = team_map_df[team_map_df.season == season]
+        pairs = list(season_map[["location", "id"]].itertuples(index=False, name=None))
+    else:
+        if isinstance(teams, str):
+            teams = [teams]
+        pairs = [_get_id_from_team(t, season, game_type)[::-1] for t in teams]
+
+    url = TEAM_LOGO_DARK_URL if dark else TEAM_LOGO_URL
+    dest = Path(dest)
+    dest.mkdir(parents=True, exist_ok=True)
+
+    rows = []
+    for name, id_ in pairs:
+        path = dest / f"{id_}.png"
+        if path.exists() and not overwrite:
+            rows.append((name, id_, str(path)))
+            continue
+        try:
+            header = {"Referer": str(np.random.choice(REFERERS))}
+            resp = r.get(url.format(id_), headers=header, impersonate=IMPERSONATE)
+            if resp.status_code == STATUS_OK and resp.content:
+                path.write_bytes(resp.content)
+                rows.append((name, id_, str(path)))
+            else:
+                _log.warning(f'"{name}" logo: request returned status {resp.status_code}')
+                rows.append((name, id_, None))
+        except Exception as ex:
+            _log.error(f'"{name}" logo: {ex}')
+            rows.append((name, id_, None))
+
+    return pd.DataFrame(rows, columns=["team", "id", "logo_path"])
 
 
 def _get_season_conferences(season, game_type):

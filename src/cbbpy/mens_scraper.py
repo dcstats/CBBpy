@@ -21,3 +21,4 @@ get_player_info = _scraper.get_player_info
 get_teams_from_conference = _scraper.get_teams_from_conference
 get_team_schedule = _scraper.get_team_schedule
 get_conference_schedule = _scraper.get_conference_schedule
+get_team_logos = _scraper.get_team_logos

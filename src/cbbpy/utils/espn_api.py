@@ -476,6 +476,8 @@ def _pbp_adapter(summary):
             adapted["clock"] = p["clock"]
         if p.get("scoringPlay"):
             adapted["scoringPlay"] = True
+        if p.get("shootingPlay"):
+            adapted["shootingPlay"] = True
         if "type" in p:
             adapted["type"] = {
                 "txt": p["type"].get("text", ""),

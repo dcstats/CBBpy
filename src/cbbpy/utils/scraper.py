@@ -22,6 +22,7 @@ from cbbpy.utils.cbbpy_utils import (
     _get_games_team,
     _get_games_conference,
     _get_current_season,
+    _get_team_logos,
 )
 
 
@@ -267,6 +268,42 @@ class GameScraper:
         if season is None:
             season = _get_current_season()
         return _get_team_schedule(team, season, self._game_type)
+
+    def get_team_logos(
+        self,
+        teams: Union[str, list] = None,
+        season: Union[str, int] = None,
+        dest: str = "team_logos",
+        dark: bool = False,
+        overwrite: bool = False,
+    ) -> pd.DataFrame:
+        """Downloads team logo PNGs from ESPN's CDN, saved as {team_id}.png.
+
+        Intended as a once-a-season utility (e.g. refresh logos when the new
+        team maps land). Existing files are skipped unless overwrite=True.
+
+        Args:
+            teams (str | list, optional): A team name or list of team names.
+                Defaults to None, which downloads logos for every team in the
+                given season's team map.
+            season (str | int, optional): The season whose team map to use.
+                Defaults to current season.
+                NOTE: season takes the form of the four-digit representation of the later year of the season.
+                So, as an example, the 2021-22 season is referred to by the integer 2022.
+            dest (str, optional): Directory to save logos into (created if
+                missing). Defaults to "team_logos".
+            dark (bool, optional): Download the dark-background variants.
+                Defaults to False.
+            overwrite (bool, optional): Re-download logos that already exist
+                on disk. Defaults to False.
+
+        Returns:
+            pd.DataFrame: One row per team with columns team, id, logo_path
+                (logo_path is None where the download failed).
+        """
+        if season is None:
+            season = _get_current_season()
+        return _get_team_logos(teams, season, dest, self._game_type, dark, overwrite)
 
     def get_conference_schedule(self, conference: str, season: Union[str, int] = None) -> pd.DataFrame:
         """Returns the given season's schedules for all teams in the given conference.
