@@ -17,6 +17,7 @@ import pandas as pd
 import pytest
 
 from cbbpy import mens_scraper as ms, womens_scraper as ws
+from cbbpy.utils import cbbpy_utils
 from cbbpy.utils.cbbpy_utils import (
     CBBpyWarning,
     InvalidDateRangeError,
@@ -420,3 +421,64 @@ def test_missing_fixture_fails_loudly(offline_espn):
     # clear so the fixture's teardown assertion (which guards real tests
     # against unrecorded URLs) doesn't fail this deliberate miss
     offline_espn.misses.clear()
+
+
+# --- politeness throttle (#79) and request timeout (#70) --------------------
+
+
+def test_throttle_sleeps_before_each_game(offline_espn, monkeypatch):
+    # the offline fixture no-ops time.sleep; re-patch to record calls instead.
+    # With ATTEMPTS=1 and no fetch failures, the throttle is the only sleeper.
+    sleeps = []
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", sleeps.append)
+    d = SCOREBOARD_DATES["mens"]
+    ms.get_games_range(d, d, box=False, pbp=False, throttle=0.5)
+    n_games = len(ms.get_game_ids(d))
+    assert len(sleeps) == n_games
+    assert all(0.25 <= s <= 0.75 for s in sleeps)
+
+
+def test_throttle_zero_disables_delay(offline_espn, monkeypatch):
+    sleeps = []
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", sleeps.append)
+    d = SCOREBOARD_DATES["mens"]
+    ms.get_games_range(d, d, box=False, pbp=False, throttle=0)
+    assert sleeps == []
+
+
+def test_every_request_passes_timeout(offline_espn, monkeypatch):
+    # every GET across both transports must carry timeout=REQUEST_TIMEOUT (#70)
+    timeouts = []
+    fixture_get = cbbpy_utils.r.get
+
+    def spy(url, *args, **kwargs):
+        timeouts.append(kwargs.get("timeout"))
+        return fixture_get(url, *args, **kwargs)
+
+    monkeypatch.setattr(cbbpy_utils.r, "get", spy)
+    d = SCOREBOARD_DATES["mens"]
+    for source in SOURCES:
+        ms.get_games_range(d, d, source=source, throttle=0)
+    ms.get_player_info(PLAYERS["mens"][0])
+    ms.get_team_schedule("Pacific", 2017)
+    assert timeouts
+    assert all(t == cbbpy_utils.REQUEST_TIMEOUT for t in timeouts)
+
+
+def test_timeout_error_is_retried(offline_espn, monkeypatch):
+    # a timed-out request must raise into the retry loop and succeed on the
+    # next attempt, not fail permanently (#70)
+    fixture_get = cbbpy_utils.r.get
+    calls = []
+
+    def flaky(url, *args, **kwargs):
+        calls.append(url)
+        if len(calls) == 1:
+            raise TimeoutError("simulated hung connection")
+        return fixture_get(url, *args, **kwargs)
+
+    monkeypatch.setattr(cbbpy_utils.r, "get", flaky)
+    monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 2)
+    df = ms.get_game_info(recorded_games("mens")[0])
+    assert not df.empty
+    assert len(calls) == 2

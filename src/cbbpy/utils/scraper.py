@@ -64,6 +64,8 @@ class GameScraper:
         box: bool = True,
         pbp: bool = True,
         source: str = "api",
+        throttle: float = 0.5,
+        n_jobs: int = None,
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """A function that scrapes a game information between a given range of dates.
 
@@ -74,6 +76,9 @@ class GameScraper:
             box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
             pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
             source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
+            throttle (float, optional): Mean delay in seconds each worker waits before
+                scraping a game (jittered ±50%). Set to 0 to disable. Defaults to 0.5.
+            n_jobs (int, optional): Number of parallel workers. Defaults to CPU count minus 1.
 
         Returns:
             a tuple containing
@@ -82,7 +87,9 @@ class GameScraper:
             - pd.DataFrame: The game's boxscore (both teams combined).\n
             - pd.DataFrame: The game's play-by-play.
         """
-        return _get_games_range(start_date, end_date, self._game_type, info, box, pbp, source)
+        return _get_games_range(
+            start_date, end_date, self._game_type, info, box, pbp, source, throttle, n_jobs
+        )
 
     def get_games_season(
         self,
@@ -91,6 +98,8 @@ class GameScraper:
         box: bool = True,
         pbp: bool = True,
         source: str = "api",
+        throttle: float = 0.5,
+        n_jobs: int = None,
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Scrapes desired game information (metadata, boxscore, play-by-play) for every game of a given season.
 
@@ -102,6 +111,9 @@ class GameScraper:
             box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
             pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
             source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
+            throttle (float, optional): Mean delay in seconds each worker waits before
+                scraping a game (jittered ±50%). Set to 0 to disable. Defaults to 0.5.
+            n_jobs (int, optional): Number of parallel workers. Defaults to CPU count minus 1.
 
         Returns:
             a tuple containing
@@ -112,7 +124,9 @@ class GameScraper:
         """
         if season is None:
             season = _get_current_season()
-        return _get_games_season(season, self._game_type, info, box, pbp, source)
+        return _get_games_season(
+            season, self._game_type, info, box, pbp, source, throttle, n_jobs
+        )
 
     def get_games_team(
         self,
@@ -122,6 +136,8 @@ class GameScraper:
         box: bool = True,
         pbp: bool = True,
         source: str = "api",
+        throttle: float = 0.5,
+        n_jobs: int = None,
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Scrapes desired game information (metadata, boxscore, play-by-play) for every game of a given team and season.
 
@@ -134,6 +150,9 @@ class GameScraper:
             box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
             pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
             source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
+            throttle (float, optional): Mean delay in seconds each worker waits before
+                scraping a game (jittered ±50%). Set to 0 to disable. Defaults to 0.5.
+            n_jobs (int, optional): Number of parallel workers. Defaults to CPU count minus 1.
 
         Returns:
             a tuple containing
@@ -144,7 +163,9 @@ class GameScraper:
         """
         if season is None:
             season = _get_current_season()
-        return _get_games_team(team, season, self._game_type, info, box, pbp, source)
+        return _get_games_team(
+            team, season, self._game_type, info, box, pbp, source, throttle, n_jobs
+        )
 
     def get_games_conference(
         self,
@@ -154,6 +175,8 @@ class GameScraper:
         box: bool = True,
         pbp: bool = True,
         source: str = "api",
+        throttle: float = 0.5,
+        n_jobs: int = None,
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Scrapes desired game information (metadata, boxscore, play-by-play) for every game for every team for a given conference and season.
 
@@ -166,6 +189,9 @@ class GameScraper:
             box (bool, optional): Whether the game boxscore is to be scraped. Defaults to True.
             pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
             source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
+            throttle (float, optional): Mean delay in seconds each worker waits before
+                scraping a game (jittered ±50%). Set to 0 to disable. Defaults to 0.5.
+            n_jobs (int, optional): Number of parallel workers. Defaults to CPU count minus 1.
 
         Returns:
             a tuple containing
@@ -176,7 +202,9 @@ class GameScraper:
         """
         if season is None:
             season = _get_current_season()
-        return _get_games_conference(conference, season, self._game_type, info, box, pbp, source)
+        return _get_games_conference(
+            conference, season, self._game_type, info, box, pbp, source, throttle, n_jobs
+        )
 
     def get_game_ids(self, date: Union[str, datetime], source: str = "api") -> list:
         """Scrapes all game IDs for a given date.

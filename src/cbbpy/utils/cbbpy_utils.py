@@ -28,6 +28,8 @@ class CBBpyWarning(Warning):
 
 
 ATTEMPTS = 15
+# seconds per request; a hung connection raises into the retry loop (#70)
+REQUEST_TIMEOUT = 30
 DATE_PARSES = [
     "%Y-%m-%d",
     "%Y/%m/%d",
@@ -155,8 +157,12 @@ def _validate_source(source):
         raise ValueError(f"source must be 'api' or 'html', got {source!r}")
 
 
-def _get_game(game_id, game_type, info, box, pbp, source="api"):
+def _get_game(game_id, game_type, info, box, pbp, source="api", throttle=0):
     _validate_source(source)
+    # baseline politeness delay before each game's requests (#79); jittered
+    # ±50% around the mean so parallel workers don't fire in lockstep
+    if throttle:
+        time.sleep(np.random.uniform(0.5 * throttle, 1.5 * throttle))
     game_id = str(game_id)
     game_info_df = boxscore_df = pbp_df = pd.DataFrame([])
 
@@ -217,7 +223,10 @@ def _get_game(game_id, game_type, info, box, pbp, source="api"):
 
 
 @print_log_file_location
-def _get_games_range(start_date, end_date, game_type, info, box, pbp, source="api"):
+def _get_games_range(
+    start_date, end_date, game_type, info, box, pbp, source="api",
+    throttle=0.5, n_jobs=None,
+):
     _validate_source(source)
     if isinstance(start_date, str):
         start_date = _parse_date(start_date)
@@ -226,7 +235,7 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp, source="ap
     date_range = pd.date_range(start_date, end_date)
     len_scrape = len(date_range)
     all_data = []
-    cpus = max((os.cpu_count() or 2) - 1, 1)
+    cpus = n_jobs if n_jobs is not None else max((os.cpu_count() or 2) - 1, 1)
 
     if len_scrape < 1:
         raise InvalidDateRangeError("The start date must be sooner than the end date.")
@@ -249,7 +258,7 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp, source="ap
 
             if len(game_ids) > 0:
                 result = Parallel(n_jobs=cpus)(
-                    delayed(_get_game)(gid, game_type, info, box, pbp, source)
+                    delayed(_get_game)(gid, game_type, info, box, pbp, source, throttle)
                     for gid in game_ids
                 )
                 all_data.append(result)
@@ -288,7 +297,9 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp, source="ap
 
 
 @print_log_file_location
-def _get_games_season(season, game_type, info, box, pbp, source="api"):
+def _get_games_season(
+    season, game_type, info, box, pbp, source="api", throttle=0.5, n_jobs=None
+):
     _validate_source(source)
     season_start_date = f"{season-1}-11-01"
     season_end_date = f"{season}-05-01"
@@ -302,16 +313,19 @@ def _get_games_season(season, game_type, info, box, pbp, source="api"):
         season_end_date = datetime.today().strftime("%Y-%m-%d")
 
     info = _get_games_range(
-        season_start_date, season_end_date, game_type, info, box, pbp, source
+        season_start_date, season_end_date, game_type, info, box, pbp, source,
+        throttle, n_jobs,
     )
 
     return info
 
 
 @print_log_file_location
-def _get_games_team(team, season, game_type, info, box, pbp, source="api"):
+def _get_games_team(
+    team, season, game_type, info, box, pbp, source="api", throttle=0.5, n_jobs=None
+):
     _validate_source(source)
-    cpus = max((os.cpu_count() or 2) - 1, 1)
+    cpus = n_jobs if n_jobs is not None else max((os.cpu_count() or 2) - 1, 1)
     schedule_df = _get_team_schedule(team, season, game_type)
 
     if schedule_df.empty:
@@ -326,7 +340,7 @@ def _get_games_team(team, season, game_type, info, box, pbp, source="api"):
         return (pd.DataFrame(), pd.DataFrame(), pd.DataFrame())
 
     result = Parallel(n_jobs=cpus)(
-        delayed(_get_game)(gid, game_type, info, box, pbp, source)
+        delayed(_get_game)(gid, game_type, info, box, pbp, source, throttle)
         for gid in game_ids
     )
 
@@ -360,10 +374,16 @@ def _get_games_team(team, season, game_type, info, box, pbp, source="api"):
 
 
 @print_log_file_location
-def _get_games_conference(conference, season, game_type, info, box, pbp, source="api"):
+def _get_games_conference(
+    conference, season, game_type, info, box, pbp, source="api",
+    throttle=0.5, n_jobs=None,
+):
     _validate_source(source)
     teams = _get_teams_from_conference(conference, season, game_type)
-    result = [_get_games_team(x, season, game_type, info, box, pbp, source) for x in teams]
+    result = [
+        _get_games_team(x, season, game_type, info, box, pbp, source, throttle, n_jobs)
+        for x in teams
+    ]
 
     # intra-conference games appear on both teams' schedules; keep only the
     # first scraped copy of each game (#84)
@@ -431,7 +451,7 @@ def _get_game_ids(date, game_type, source="api"):
             }
             d = date.strftime("%Y%m%d")
             url = pre_url.format(d)
-            page = r.get(url, headers=header, impersonate=IMPERSONATE)
+            page = r.get(url, headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
             soup = bs(page.content, "lxml")
             scoreboard = _get_scoreboard_from_soup(soup)
             ids = [x["id"] for x in scoreboard]
@@ -494,7 +514,7 @@ def _get_game_boxscore(game_id, game_type, source="api"):
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
-            page = r.get(url, headers=header, impersonate=IMPERSONATE)
+            page = r.get(url, headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
@@ -561,7 +581,7 @@ def _get_win_prob_html(game_id, game_type):
     pre_url = MENS_GAME_URL if game_type == "mens" else WOMENS_GAME_URL
     try:
         header = {"Referer": str(np.random.choice(REFERERS))}
-        page = r.get(pre_url.format(game_id), headers=header, impersonate=IMPERSONATE)
+        page = r.get(pre_url.format(game_id), headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
         gamepackage = _get_gamepackage_from_soup(bs(page.content, "lxml"))
         pts = (gamepackage.get("wnPrb") or {}).get("pts") or {}
     except Exception as ex:
@@ -595,7 +615,7 @@ def _get_game_pbp(game_id, game_type, source="api"):
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
-            page = r.get(url, headers=header, impersonate=IMPERSONATE)
+            page = r.get(url, headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
@@ -669,7 +689,7 @@ def _get_game_info(game_id, game_type, source="api"):
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(game_id)
-            page = r.get(url, headers=header, impersonate=IMPERSONATE)
+            page = r.get(url, headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
             soup = bs(page.content, "lxml")
             gamepackage = _get_gamepackage_from_soup(soup)
 
@@ -734,7 +754,7 @@ def _get_player_info(player_id, game_type):
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(player_id)
-            page = r.get(url, headers=header, impersonate=IMPERSONATE)
+            page = r.get(url, headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
             soup = bs(page.content, "lxml")
             raw_player = _get_player_from_soup(soup)
 
@@ -794,7 +814,7 @@ def _get_team_schedule(team, season, game_type):
                 "Referer": str(np.random.choice(REFERERS)),
             }
             url = pre_url.format(team_id, season)
-            page = r.get(url, headers=header, impersonate=IMPERSONATE)
+            page = r.get(url, headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
             soup = bs(page.content, "lxml")
             jsn = _get_json_from_soup(soup)
             df = _get_schedule_helper(jsn, team_name, team_id, season)
@@ -1620,7 +1640,7 @@ def _get_team_logos(teams, season, dest, game_type, dark=False, overwrite=False)
             continue
         try:
             header = {"Referer": str(np.random.choice(REFERERS))}
-            resp = r.get(url.format(id_), headers=header, impersonate=IMPERSONATE)
+            resp = r.get(url.format(id_), headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
             if resp.status_code == STATUS_OK and resp.content:
                 path.write_bytes(resp.content)
                 rows.append((name, id_, str(path)))

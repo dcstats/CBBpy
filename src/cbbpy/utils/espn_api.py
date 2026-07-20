@@ -56,7 +56,7 @@ def _fetch_summary(game_id, game_type):
         try:
             header = {"Referer": str(np.random.choice(cu.REFERERS))}
             url = pre_url.format(game_id)
-            page = cu.r.get(url, headers=header, impersonate=cu.IMPERSONATE)
+            page = cu.r.get(url, headers=header, impersonate=cu.IMPERSONATE, timeout=cu.REQUEST_TIMEOUT)
             js = page.json()
 
             # a missing game deterministically returns {"code": 404, ...} (HTTP
@@ -165,7 +165,7 @@ def _get_game_ids_api(date, game_type):
             header = {"Referer": str(np.random.choice(cu.REFERERS))}
             d = date.strftime("%Y%m%d")
             url = pre_url.format(d)
-            page = cu.r.get(url, headers=header, impersonate=cu.IMPERSONATE)
+            page = cu.r.get(url, headers=header, impersonate=cu.IMPERSONATE, timeout=cu.REQUEST_TIMEOUT)
             js = page.json()
             ids = [str(x["id"]) for x in js.get("events", [])]
         except Exception as ex:

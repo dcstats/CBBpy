@@ -73,6 +73,15 @@ NOTE: game ID, as far as CBBpy is concerned, is a valid **ESPN** game ID
 
 `s.get_conference_schedule(conference: str, season: Union[str, int] = None)` returns a DataFrame of the schedules for all teams in a given conference for a given season (defaults to the current season). If a given conference does not have an exact match in the static list of conferences scraped from ESPN's site, this function will scrape the schedules for the closest fuzzy-matched conference (e.g. if "am east" is provided as the conference, the function will scrape the schedules for "America East Conference").
 
+## Responsible use
+
+The bulk scraping functions (`get_games_season`, `get_games_range`, `get_games_team`, `get_games_conference`) fetch games in parallel. To stay polite to ESPN's servers, they accept two knobs:
+
+- `throttle` (default `0.5`): the mean delay, in seconds, each worker waits before scraping a game (jittered ±50% so workers don't fire in lockstep). Set `throttle=0` to disable the delay entirely and restore pre-2.2.0 behavior.
+- `n_jobs` (default: CPU count minus 1): the number of parallel workers.
+
+The defaults are a reasonable balance of speed and politeness for occasional bulk scrapes. If you're scraping many seasons back-to-back, consider raising `throttle` and/or lowering `n_jobs`. Every request also carries a 30-second timeout, so a hung connection is retried instead of stalling a worker indefinitely.
+
 ## A note on dates and times
 
 As of v2.2.0, every game info and schedule DataFrame includes `game_datetime`: the scheduled tipoff instant as an ISO-8601 UTC string (e.g. `2023-04-04T01:20:00Z`), which you can parse and convert to any timezone. The `game_day` and `game_time` columns (US/Pacific) are deprecated and will be removed in v3.0. Until then, `game_day` continues to reflect the Pacific calendar date of tipoff, which matches both ESPN's own scoreboard day grouping and the game's local calendar date in practice.
