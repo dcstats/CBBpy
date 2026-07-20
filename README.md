@@ -73,6 +73,10 @@ NOTE: game ID, as far as CBBpy is concerned, is a valid **ESPN** game ID
 
 `s.get_conference_schedule(conference: str, season: Union[str, int] = None)` returns a DataFrame of the schedules for all teams in a given conference for a given season (defaults to the current season). If a given conference does not have an exact match in the static list of conferences scraped from ESPN's site, this function will scrape the schedules for the closest fuzzy-matched conference (e.g. if "am east" is provided as the conference, the function will scrape the schedules for "America East Conference").
 
+## A note on dates and times
+
+As of v2.2.0, every game info and schedule DataFrame includes `game_datetime`: the scheduled tipoff instant as an ISO-8601 UTC string (e.g. `2023-04-04T01:20:00Z`), which you can parse and convert to any timezone. The `game_day` and `game_time` columns (US/Pacific) are deprecated and will be removed in v3.0. Until then, `game_day` continues to reflect the Pacific calendar date of tipoff, which matches both ESPN's own scoreboard day grouping and the game's local calendar date in practice.
+
 ## Examples
 
 Function call:
@@ -83,9 +87,9 @@ s.get_game_info('401522202')
 ```
 
 Returns:
-|    |   game_id | home_team     |   home_id |   home_rank | home_record   |   home_score | away_team              |   away_id |   away_rank | away_record   |   away_score | home_win   |   num_ots | is_conference   | is_neutral   | is_postseason   | tournament                                            | game_day       | game_time    | game_loc    | arena       |   arena_capacity |   attendance | tv_network   | referee_1   | referee_2     | referee_3    |
-|---:|----------:|:--------------|----------:|------------:|:--------------|-------------:|:-----------------------|----------:|------------:|:--------------|-------------:|:-----------|----------:|:----------------|:-------------|:----------------|:------------------------------------------------------|:---------------|:-------------|:------------|:------------|-----------------:|-------------:|:-------------|:------------|:--------------|:-------------|
-|  0 | 401522202 | UConn Huskies |        41 |           4 | 31-8          |           76 | San Diego State Aztecs |        21 |           5 | 32-7          |           59 | True       |         0 | False           | True         | True            | Men's Basketball Championship - National Championship | April 03, 2023 | 06:20 PM PDT | Houston, TX | NRG Stadium |                0 |        72423 | CBS          | Ron Groover | Terry Oglesby | Keith Kimble |
+|    |   game_id | home_team     |   home_id |   home_rank | home_record   |   home_score | away_team              |   away_id |   away_rank | away_record   |   away_score | home_win   |   num_ots | is_conference   | is_neutral   | is_postseason   | tournament                                            | game_datetime        | game_day       | game_time    | game_loc    | arena       |   arena_capacity |   attendance | tv_network   | referee_1   | referee_2     | referee_3    |
+|---:|----------:|:--------------|----------:|------------:|:--------------|-------------:|:-----------------------|----------:|------------:|:--------------|-------------:|:-----------|----------:|:----------------|:-------------|:----------------|:------------------------------------------------------|:---------------------|:---------------|:-------------|:------------|:------------|-----------------:|-------------:|:-------------|:------------|:--------------|:-------------|
+|  0 | 401522202 | UConn Huskies |        41 |           4 | 31-8          |           76 | San Diego State Aztecs |        21 |           5 | 32-7          |           59 | True       |         0 | False           | True         | True            | Men's Basketball Championship - National Championship | 2023-04-04T01:20:00Z | April 03, 2023 | 06:20 PM PDT | Houston, TX | NRG Stadium |                0 |        72423 | CBS          | Ron Groover | Terry Oglesby | Keith Kimble |
 
 Function call:
 
@@ -139,13 +143,13 @@ s.get_team_schedule('davidson', 2022)
 ```
 
 Returns (partially):
-|    | team     |   team_id |   season |   game_id | game_day          | game_time    | opponent                                  |   opponent_id | season_type    | game_status   | tv_network   | game_result   |
-|---:|:---------|----------:|---------:|----------:|:------------------|:-------------|:------------------------------------------|--------------:|:---------------|:--------------|:-------------|:--------------|
-|  0 | Davidson |      2166 |     2022 | 401370995 | November 09, 2021 | 04:00 PM PST | Delaware Blue Hens                        |            48 | Regular Season | Final         | ESPN+        | W 93-71       |
-|  1 | Davidson |      2166 |     2022 | 401370996 | November 13, 2021 | 05:30 PM PST | San Francisco Dons                        |          2539 | Regular Season | Final         |              | L 60-65       |
-|  2 | Davidson |      2166 |     2022 | 401365883 | November 18, 2021 | 09:00 AM PST | New Mexico State Aggies                   |           166 | Regular Season | Final         | ESPNU        | L 64-75       |
-|  3 | Davidson |      2166 |     2022 | 401377036 | November 19, 2021 | 11:30 AM PST | Pennsylvania Quakers                      |           219 | Regular Season | Final         | ESPNU        | W 72-60       |
-|  4 | Davidson |      2166 |     2022 | 401377040 | November 21, 2021 | 03:00 PM PST | East Carolina Pirates                     |           151 | Regular Season | Final         | ESPNU        | W 76-67       |
+|    | team     |   team_id |   season |   game_id | game_datetime        | game_day          | game_time    | opponent                                  |   opponent_id | season_type    | game_status   | tv_network   | game_result   |
+|---:|:---------|----------:|---------:|----------:|:---------------------|:------------------|:-------------|:------------------------------------------|--------------:|:---------------|:--------------|:-------------|:--------------|
+|  0 | Davidson |      2166 |     2022 | 401370995 | 2021-11-10T00:00:00Z | November 09, 2021 | 04:00 PM PST | Delaware Blue Hens                        |            48 | Regular Season | Final         | ESPN+        | W 93-71       |
+|  1 | Davidson |      2166 |     2022 | 401370996 | 2021-11-14T01:30:00Z | November 13, 2021 | 05:30 PM PST | San Francisco Dons                        |          2539 | Regular Season | Final         |              | L 60-65       |
+|  2 | Davidson |      2166 |     2022 | 401365883 | 2021-11-18T17:00:00Z | November 18, 2021 | 09:00 AM PST | New Mexico State Aggies                   |           166 | Regular Season | Final         | ESPNU        | L 64-75       |
+|  3 | Davidson |      2166 |     2022 | 401377036 | 2021-11-19T19:30:00Z | November 19, 2021 | 11:30 AM PST | Pennsylvania Quakers                      |           219 | Regular Season | Final         | ESPNU        | W 72-60       |
+|  4 | Davidson |      2166 |     2022 | 401377040 | 2021-11-21T23:00:00Z | November 21, 2021 | 03:00 PM PST | East Carolina Pirates                     |           151 | Regular Season | Final         | ESPNU        | W 76-67       |
 
 Function call:
 
@@ -155,13 +159,13 @@ s.get_conference_schedule('ovc', 2015)
 ```
 
 Returns (showing the middle of the output):
-|    | team             |   team_id |   season |   game_id | game_day          | game_time    | opponent                   |   opponent_id | season_type    | game_status   | tv_network   | game_result   |
-|---:|:-----------------|----------:|---------:|----------:|:------------------|:-------------|:---------------------------|--------------:|:---------------|:--------------|:-------------|:--------------|
-| 30 | Belmont          |      2057 |     2015 | 400766521 | March 06, 2015    | 07:15 PM PST | Eastern Kentucky Colonels  |          2198 | Regular Season | Final         | ESPNU        | W 53-52       |
-| 31 | Belmont          |      2057 |     2015 | 400766705 | March 07, 2015    | 04:00 PM PST | Murray State Racers        |            93 | Regular Season | Final         | ESPN2        | W 88-87       |
-| 32 | Belmont          |      2057 |     2015 | 400785349 | March 20, 2015    | 12:30 PM PDT | Virginia Cavaliers         |           258 | Postseason     | Final         | truTV        | L 67-79       |
-| 33 | Eastern Kentucky |      2198 |     2015 | 400596308 | November 14, 2014 | 04:00 PM PST | Savannah State Tigers      |          2542 | Regular Season | Final         |              | W 76-53       |
-| 34 | Eastern Kentucky |      2198 |     2015 | 400596315 | November 18, 2014 | 04:00 PM PST | Kentucky Christian Knights |          3077 | Regular Season | Final         |              | W 115-35      |
+|    | team             |   team_id |   season |   game_id | game_datetime        | game_day          | game_time    | opponent                   |   opponent_id | season_type    | game_status   | tv_network   | game_result   |
+|---:|:-----------------|----------:|---------:|----------:|:---------------------|:------------------|:-------------|:---------------------------|--------------:|:---------------|:--------------|:-------------|:--------------|
+| 30 | Belmont          |      2057 |     2015 | 400766521 | 2015-03-07T03:15:00Z | March 06, 2015    | 07:15 PM PST | Eastern Kentucky Colonels  |          2198 | Regular Season | Final         | ESPNU        | W 53-52       |
+| 31 | Belmont          |      2057 |     2015 | 400766705 | 2015-03-08T00:00:00Z | March 07, 2015    | 04:00 PM PST | Murray State Racers        |            93 | Regular Season | Final         | ESPN2        | W 88-87       |
+| 32 | Belmont          |      2057 |     2015 | 400785349 | 2015-03-20T19:30:00Z | March 20, 2015    | 12:30 PM PDT | Virginia Cavaliers         |           258 | Postseason     | Final         | truTV        | L 67-79       |
+| 33 | Eastern Kentucky |      2198 |     2015 | 400596308 | 2014-11-15T00:00:00Z | November 14, 2014 | 04:00 PM PST | Savannah State Tigers      |          2542 | Regular Season | Final         |              | W 76-53       |
+| 34 | Eastern Kentucky |      2198 |     2015 | 400596315 | 2014-11-19T00:00:00Z | November 18, 2014 | 04:00 PM PST | Kentucky Christian Knights |          3077 | Regular Season | Final         |              | W 115-35      |
 
 
 

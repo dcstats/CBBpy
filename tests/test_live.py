@@ -31,7 +31,7 @@ INFO_REQUIRED_COLS = {
     "game_id", "game_status", "home_team", "home_id", "home_rank", "home_record",
     "home_score", "away_team", "away_id", "away_rank", "away_record", "away_score",
     "home_point_spread", "home_win", "num_ots", "is_conference", "is_neutral",
-    "is_postseason", "tournament", "game_day", "game_time", "game_loc", "arena",
+    "is_postseason", "tournament", "game_datetime", "game_day", "game_time", "game_loc", "arena",
     "arena_capacity", "attendance", "tv_network", "referee_1", "referee_2", "referee_3",
     # odds: present in the schema but volatile/absent historically, so only their
     # presence is asserted, never their values.
@@ -57,7 +57,7 @@ PLAYER_REQUIRED_COLS = {
     "team", "experience", "height", "weight", "birthplace", "date_of_birth",
 }
 SCHEDULE_REQUIRED_COLS = {
-    "team", "team_id", "season", "game_id", "game_day", "game_time", "opponent",
+    "team", "team_id", "season", "game_id", "game_datetime", "game_day", "game_time", "opponent",
     "opponent_id", "season_type", "game_status", "tv_network", "game_result",
 }
 

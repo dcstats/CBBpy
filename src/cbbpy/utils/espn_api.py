@@ -232,7 +232,9 @@ def _parse_game_info(summary, game_id, game_type):
     tournament = header.get("gameNote") or ""
 
     gm_date = parser.parse(comp["date"])
+    game_datetime = gm_date.replace(tzinfo=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     game_date = gm_date.replace(tzinfo=timezone.utc).astimezone(tz=tz("US/Pacific"))
+    # game_day/game_time (Pacific) are deprecated in favor of game_datetime; removal in 3.0
     game_day = game_date.strftime("%B %d, %Y")
     game_time = game_date.strftime("%I:%M %p %Z")
 
@@ -305,6 +307,7 @@ def _parse_game_info(summary, game_id, game_type):
         is_neutral,
         is_postseason,
         tournament,
+        game_datetime,
         game_day,
         game_time,
         loc,
@@ -340,6 +343,7 @@ def _parse_game_info(summary, game_id, game_type):
         "is_neutral",
         "is_postseason",
         "tournament",
+        "game_datetime",
         "game_day",
         "game_time",
         "game_loc",

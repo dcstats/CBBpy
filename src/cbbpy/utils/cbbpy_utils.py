@@ -244,10 +244,9 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp, source="ap
     # sort returned dataframes to ensure consistency between runs
     game_info_df = pd.concat([game[0] for day in all_data for game in day])
     if info:
+        # fixed-width ISO-8601 UTC strings sort correctly lexicographically (#80)
         game_info_df = game_info_df.sort_values(
-            by=['game_day', 'game_time', 'game_id'], 
-            key=lambda col: pd.to_datetime(col.str.replace(r' P[SD]T', '', 
-                                                        regex=True)) if col.name != 'game_id' else col
+            by=['game_datetime', 'game_id']
         ).reset_index(drop=True)
 
     game_boxscore_df = pd.concat([game[1] for day in all_data for game in day])
@@ -315,10 +314,9 @@ def _get_games_team(team, season, game_type, info, box, pbp, source="api"):
     # sort returned dataframes to ensure consistency between runs
     game_info_df = pd.concat([x[0] for x in result])
     if info:
+        # fixed-width ISO-8601 UTC strings sort correctly lexicographically (#80)
         game_info_df = game_info_df.sort_values(
-            by=['game_day', 'game_time', 'game_id'], 
-            key=lambda col: pd.to_datetime(col.str.replace(r' P[SD]T', '', 
-                                                        regex=True)) if col.name != 'game_id' else col
+            by=['game_datetime', 'game_id']
         ).reset_index(drop=True)
 
     game_boxscore_df = pd.concat([x[1] for x in result])
@@ -364,10 +362,9 @@ def _get_games_conference(conference, season, game_type, info, box, pbp, source=
     # sort returned dataframes to ensure consistency between runs
     game_info_df = pd.concat(_drop_repeat_games([x[0] for x in result]))
     if info:
+        # fixed-width ISO-8601 UTC strings sort correctly lexicographically (#80)
         game_info_df = game_info_df.sort_values(
-            by=['game_day', 'game_time', 'game_id'], 
-            key=lambda col: pd.to_datetime(col.str.replace(r' P[SD]T', '', 
-                                                        regex=True)) if col.name != 'game_id' else col
+            by=['game_datetime', 'game_id']
         ).reset_index(drop=True)
 
     game_boxscore_df = pd.concat(_drop_repeat_games([x[1] for x in result]))
@@ -1247,7 +1244,9 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
     network = info.get("cvrg", "")
 
     gm_date = parser.parse(info["dtTm"])
+    game_datetime = gm_date.replace(tzinfo=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     game_date = gm_date.replace(tzinfo=timezone.utc).astimezone(tz=tz("US/Pacific"))
+    # game_day/game_time (Pacific) are deprecated in favor of game_datetime; removal in 3.0
     game_day = game_date.strftime("%B %d, %Y")
     game_time = game_date.strftime("%I:%M %p %Z")
     gm_status = more_info["status"]["desc"]
@@ -1365,6 +1364,7 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
         is_neutral,
         is_postseason,
         tournament,
+        game_datetime,
         game_day,
         game_time,
         loc,
@@ -1400,6 +1400,7 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
         "is_neutral",
         "is_postseason",
         "tournament",
+        "game_datetime",
         "game_day",
         "game_time",
         "game_loc",
@@ -1471,7 +1472,10 @@ def _get_schedule_helper(jsn, team, id_, season):
         mat = re.search(r'gameId/(\d+)/', ev.get('time', {}).get('link', ''))
         game_id = mat.group(1) if mat is not None else ''
 
-        date = parser.parse(ev['date']['date']).astimezone(tz('America/Los_Angeles'))
+        gm_dt = parser.parse(ev['date']['date'])
+        game_datetime = gm_dt.astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+        date = gm_dt.astimezone(tz('America/Los_Angeles'))
+        # game_day/game_time (Pacific) are deprecated in favor of game_datetime; removal in 3.0
         day = date.strftime('%B %d, %Y')
         time = date.strftime('%I:%M %p %Z')
 
@@ -1491,7 +1495,7 @@ def _get_schedule_helper(jsn, team, id_, season):
         else:
             result = 'N/A'
 
-        row = (team, id_, season, game_id, day, time, opp, opp_id, season_type, status, network, result)
+        row = (team, id_, season, game_id, game_datetime, day, time, opp, opp_id, season_type, status, network, result)
         data.append(row)
 
     cols = [
@@ -1499,6 +1503,7 @@ def _get_schedule_helper(jsn, team, id_, season):
         'team_id',
         'season',
         'game_id',
+        'game_datetime',
         'game_day',
         'game_time',
         'opponent',
@@ -1510,10 +1515,8 @@ def _get_schedule_helper(jsn, team, id_, season):
     ]
 
     df = pd.DataFrame(data, columns=cols)
-    df = df.sort_values(
-        by=['team', 'game_day'],
-        key=lambda x: x if x.name == 'team' else pd.to_datetime(x)
-    )
+    # fixed-width ISO-8601 UTC strings sort correctly lexicographically
+    df = df.sort_values(by=['team', 'game_datetime'])
 
     return df.reset_index(drop=True)
 

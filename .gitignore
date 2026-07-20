@@ -7,6 +7,7 @@ __pycache__/
 .DS_Store
 *.gz
 !tests/fixtures/pages/*.html.gz
+!tests/fixtures/pages/*.json.gz
 *.whl
 build/
 dist/
