@@ -216,8 +216,15 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
     if info:
         game_info_df = game_info_df.sort_values(
             by=['game_day', 'game_time', 'game_id'], 
-            key=lambda col: pd.to_datetime(col.str.replace(r' P[SD]T', '', 
-                                                        regex=True)) if col.name != 'game_id' else col
+            key=lambda col: (
+                pd.to_datetime(
+                    col.str.replace(r'\s+[A-Z]{2,5}$', '', regex=True),
+                    format='mixed',
+                    errors='coerce',
+                )
+                if col.name != 'game_id'
+                else col
+            )
         ).reset_index(drop=True)
 
     game_boxscore_df = pd.concat([game[1] for day in all_data for game in day])
@@ -277,8 +284,15 @@ def _get_games_team(team, season, game_type, info, box, pbp):
     if info:
         game_info_df = game_info_df.sort_values(
             by=['game_day', 'game_time', 'game_id'], 
-            key=lambda col: pd.to_datetime(col.str.replace(r' P[SD]T', '', 
-                                                        regex=True)) if col.name != 'game_id' else col
+            key=lambda col: (
+                pd.to_datetime(
+                    col.str.replace(r'\s+[A-Z]{2,5}$', '', regex=True),
+                    format='mixed',
+                    errors='coerce',
+                )
+                if col.name != 'game_id'
+                else col
+            )
         ).reset_index(drop=True)
 
     game_boxscore_df = pd.concat([x[1] for x in result])
@@ -312,8 +326,15 @@ def _get_games_conference(conference, season, game_type, info, box, pbp):
     if info:
         game_info_df = game_info_df.sort_values(
             by=['game_day', 'game_time', 'game_id'], 
-            key=lambda col: pd.to_datetime(col.str.replace(r' P[SD]T', '', 
-                                                        regex=True)) if col.name != 'game_id' else col
+            key=lambda col: (
+                pd.to_datetime(
+                    col.str.replace(r'\s+[A-Z]{2,5}$', '', regex=True),
+                    format='mixed',
+                    errors='coerce',
+                )
+                if col.name != 'game_id'
+                else col
+            )
         ).reset_index(drop=True)
 
     game_boxscore_df = pd.concat([x[1] for x in result])
@@ -730,7 +751,7 @@ def _parse_date(date):
     for parse in DATE_PARSES:
         try:
             date = datetime.strptime(date, parse)
-        except:
+        except ValueError:
             continue
         else:
             parsed = True
@@ -1343,7 +1364,7 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
 
     try:
         home_spread = gamepackage['gameOdds']['odds'][-1]['pointSpread']['primary']
-    except:
+    except (KeyError, IndexError, TypeError):
         home_spread = ''
 
     game_info_list = [
