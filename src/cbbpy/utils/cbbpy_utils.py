@@ -21,7 +21,10 @@ from importlib.metadata import version
 from functools import lru_cache, wraps
 
 
-warnings.filterwarnings('ignore', category=UserWarning)
+class CBBpyWarning(Warning):
+    # category for cbbpy's user-facing warnings (fuzzy-match/fallback notices)
+    # so consumers can silence them without touching other warnings
+    pass
 
 
 ATTEMPTS = 15
@@ -90,10 +93,18 @@ GOOD_GAME_STATUSES = ['In Progress', 'Final']
 
 # logging setup
 log_dir = user_log_dir(appname="CBBpy", appauthor="Daniel Cowan", version=version("cbbpy"))
-os.makedirs(log_dir, exist_ok=True)
 log_file = os.path.join(log_dir, "CBBpy.log")
 
-file_handler = logging.FileHandler(log_file)
+
+class _LazyFileHandler(logging.FileHandler):
+    # delay=True + creating the dir in _open means importing cbbpy does no
+    # filesystem I/O; the log dir/file appear only once something is logged
+    def _open(self):
+        os.makedirs(log_dir, exist_ok=True)
+        return super()._open()
+
+
+file_handler = _LazyFileHandler(log_file, delay=True)
 formatter = logging.Formatter('%(asctime)s | %(name)s | %(levelname)s: %(message)s')
 file_handler.setFormatter(formatter)
 
@@ -108,13 +119,21 @@ def print_log_file_location(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         _call_depth[0] += 1  # Increment call depth
+        start = time.time()
         try:
             result = func(*args, **kwargs)
             return result
         finally:
             _call_depth[0] -= 1  # Decrement call depth
             if _call_depth[0] == 0:
-                print(f"Log file is located at {log_file}")
+                # mtime check (not file_handler.stream) because joblib workers
+                # log errors in their own processes, not the parent's handler
+                try:
+                    errors_logged = os.path.getmtime(log_file) >= start
+                except OSError:
+                    errors_logged = False
+                if errors_logged:
+                    print(f"Errors were logged; see {log_file}")
     return wrapper
 
 
@@ -301,7 +320,7 @@ def _get_games_team(team, season, game_type, info, box, pbp, source="api"):
 
     game_ids = list(schedule_df[schedule_df.game_status.isin(GOOD_GAME_STATUSES)].game_id)
 
-    print(f'Scraping {len(game_ids)} games for {schedule_df.team.iloc[0]}')
+    _log.info(f'Scraping {len(game_ids)} games for {schedule_df.team.iloc[0]}')
 
     if not game_ids:
         return (pd.DataFrame(), pd.DataFrame(), pd.DataFrame())
@@ -1534,7 +1553,11 @@ def _resolve_map_season(team_map_df, season):
     if (team_map_df.season == season).any():
         return season
     fallback = int(team_map_df.season.max())
-    print(f"No team map data for the {season} season. Falling back to {fallback}.")
+    warnings.warn(
+        f"No team map data for the {season} season. Falling back to {fallback}.",
+        CBBpyWarning,
+        stacklevel=2,
+    )
     return fallback
 
 
@@ -1558,7 +1581,11 @@ def _get_id_from_team(team, season, game_type):
             processor=utils.default_process
         )
 
-        print(f"No exact match for '{team}'. Fetching closest team match: '{best_match}'.")
+        warnings.warn(
+            f"No exact match for '{team}'. Fetching closest team match: '{best_match}'.",
+            CBBpyWarning,
+            stacklevel=2,
+        )
         
         id_ = id_map[best_match]
     else:
@@ -1638,7 +1665,11 @@ def _get_teams_from_conference(conference, season, game_type):
         if best_match in abb_map:
             best_match = abb_map[best_match]
 
-        print(f"No exact match for '{conference}'. Fetching closest conference match: '{best_match}'.")
+        warnings.warn(
+            f"No exact match for '{conference}'. Fetching closest conference match: '{best_match}'.",
+            CBBpyWarning,
+            stacklevel=2,
+        )
     else:
         best_match = lowercase_map[conference.lower()]
 

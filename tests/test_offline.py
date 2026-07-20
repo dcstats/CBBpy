@@ -8,12 +8,17 @@ If ESPN intentionally changes its format, re-record with
 `python tests/record_fixtures.py` and review the diff.
 """
 
+import subprocess
+import sys
+import textwrap
+
 import numpy as np
 import pandas as pd
 import pytest
 
 from cbbpy import mens_scraper as ms, womens_scraper as ws
 from cbbpy.utils.cbbpy_utils import (
+    CBBpyWarning,
     InvalidDateRangeError,
     _get_game_pbp_helper,
     _get_id_from_team,
@@ -372,6 +377,38 @@ def test_games_team_failed_schedule_returns_empty(offline_espn):
     info, box, pbp = ms.get_games_team("UConn", 1999)
     assert info.empty and box.empty and pbp.empty
     offline_espn.misses.clear()
+
+
+def test_import_does_no_logging_io():
+    # importing cbbpy must not create the log dir/file (#78); the handler
+    # opens lazily on first emit. Run in a subprocess because cbbpy is
+    # already imported (and may have logged) in the pytest process.
+    script = textwrap.dedent(
+        """
+        import os, tempfile
+        from cbbpy.utils import cbbpy_utils as cu
+
+        # nothing opened at import time
+        assert cu.file_handler.stream is None
+
+        # first emitted record creates the dir and file
+        tmp = tempfile.mkdtemp()
+        cu.log_dir = os.path.join(tmp, "logs")
+        cu.file_handler.baseFilename = os.path.join(cu.log_dir, "CBBpy.log")
+        cu._log.error("test")
+        assert os.path.isfile(cu.file_handler.baseFilename)
+        """
+    )
+    subprocess.run([sys.executable, "-c", script], check=True)
+
+
+def test_fuzzy_match_and_fallback_warn():
+    # no fixtures needed: reads the bundled team-map CSVs only (#78)
+    with pytest.warns(CBBpyWarning, match="No exact match for 'Yukon'"):
+        assert _get_id_from_team("Yukon", 2025, "mens") == (41, "UConn")
+    latest = int(_get_team_map("mens").season.max())
+    with pytest.warns(CBBpyWarning, match="Falling back"):
+        _get_id_from_team("UConn", latest + 1, "mens")
 
 
 def test_missing_fixture_fails_loudly(offline_espn):
