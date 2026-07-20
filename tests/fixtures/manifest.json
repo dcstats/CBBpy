@@ -182,5 +182,21 @@
   "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/scoreboard?dates=20230402&groups=50&limit=500": {
     "file": "womens_api_scoreboard_20230402.json.gz",
     "recorded_at": "2026-07-11T20:06:57+00:00"
+  },
+  "https://www.espn.com/mens-college-basketball/game/_/gameId/401745972": {
+    "file": "mens_game_401745972.html.gz",
+    "recorded_at": "2026-07-20T01:15:29+00:00"
+  },
+  "https://www.espn.com/mens-college-basketball/boxscore/_/gameId/401745972": {
+    "file": "mens_boxscore_401745972.html.gz",
+    "recorded_at": "2026-07-20T01:15:30+00:00"
+  },
+  "https://www.espn.com/mens-college-basketball/playbyplay/_/gameId/401745972": {
+    "file": "mens_pbp_401745972.html.gz",
+    "recorded_at": "2026-07-20T01:15:33+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary?event=401745972": {
+    "file": "mens_api_summary_401745972.json.gz",
+    "recorded_at": "2026-07-20T01:15:34+00:00"
   }
 }

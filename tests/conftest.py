@@ -14,12 +14,13 @@ SNAPSHOT_DIR = FIXTURE_DIR / "snapshots"
 
 # Entities recorded by tests/record_fixtures.py and replayed by tests/test_offline.py.
 # Game pages cover: a recent neutral-site game, a 2013 edge case, a
-# conference-tournament game, an OT game, an NCAA-tournament game, and
+# conference-tournament game, an OT game, an NCAA-tournament game, a
+# substitution-era game (ESPN added sub plays to PBP mid-Feb 2025), and
 # (womens) a pre-2015 halves-era game. The scoreboard dates double as the
 # offline get_games_range input, so they are championship/Final Four dates
 # with very few games; those games' pages are recorded too (see games.json).
 STATIC_GAMES = {
-    "mens": ["401581583", "400498476", "400871140"],
+    "mens": ["401581583", "400498476", "400871140", "401745972"],
     "womens": ["401486000", "303442739", "401487896"],
 }
 # 2021-04-03 mens: Final Four (Gonzaga-UCLA went to OT; both games postseason)

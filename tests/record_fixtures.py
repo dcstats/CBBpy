@@ -69,7 +69,7 @@ SCRAPERS = {"mens": ms, "womens": ws}
 
 def fetch(url):
     header = {"Referer": str(np.random.choice(cu.REFERERS))}
-    resp = requests.get(url, headers=header, impersonate="chrome")
+    resp = requests.get(url, headers=header, impersonate=cu.IMPERSONATE)
     resp.raise_for_status()
     if cu.WINDOW_STRING.encode() not in resp.content:
         raise RuntimeError(
@@ -133,7 +133,7 @@ def record_pages():
 
 def fetch_json(url, required_key):
     header = {"Referer": str(np.random.choice(cu.REFERERS))}
-    resp = requests.get(url, headers=header, impersonate="chrome")
+    resp = requests.get(url, headers=header, impersonate=cu.IMPERSONATE)
     resp.raise_for_status()
     if required_key.encode() not in resp.content:
         raise RuntimeError(
@@ -233,6 +233,10 @@ def build_snapshots():
         # sanity guards: the recorded set must keep covering its edge cases
         assert (info.num_ots >= 1).any(), f"{gender}: no OT game in recorded set"
         assert info.is_postseason.any(), f"{gender}: no postseason game in recorded set"
+        if gender == "mens":
+            assert (pbp.play_type == "Substitution").any(), (
+                "mens: no substitution-era game in recorded set"
+            )
         if gender == "womens":
             halves_pbp = sc.get_game_pbp("303442739")
             assert "half" in halves_pbp.columns and "quarter" not in halves_pbp.columns, (
