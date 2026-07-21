@@ -37,6 +37,24 @@ import cbbpy.mens_scraper as s
 import cbbpy.womens_scraper as s
 ```
 
+## Command line
+
+Installing CBBpy also provides a `cbbpy` command for pulling data to files without writing Python. Each data command accepts `-g/--gender` (`mens` default, or `womens`), `--source` (`api` default, or `html`), `-o/--output-dir`, and `--format` (`csv` default, or `parquet`); one file is written per frame and its path printed to stdout.
+
+```shell
+# scrape one game (writes info, boxscore, and pbp files to the current dir)
+cbbpy game 401522202
+
+# a women's team's 2022 season as parquet, without play-by-play
+cbbpy team davidson -s 2022 -g womens --no-pbp --format parquet -o ./data
+
+# all games in a date range
+cbbpy range 11-30-2022 12-10-2022 -o ./data
+
+# list game IDs for a date (printed to stdout, no files)
+cbbpy ids 04-03-2021
+```
+
 ## Known Issues
 - Plenty of games are, for whatever reason, not available on ESPN's site due to a 'Page not found' error. Sometimes these errors appear randomly and resolve themselves in due time (either hours or days), and other games (like Game ID 400916268, for example) have had this error for years, as far as I can tell, and are not able to be scraped.
 - Sometimes the above issue will cause the scraper to take longer than expected. If it seems to be taking too long, **check the log file** for a list of errors that occurred during scraping (the log file location is outputted after the scraper finishes).

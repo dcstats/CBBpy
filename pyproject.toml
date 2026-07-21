@@ -53,6 +53,9 @@ dependencies = [
 ]
 requires-python = ">=3.9"
 
+[project.scripts]
+cbbpy = "cbbpy.cli:main"
+
 [project.optional-dependencies]
 dev = [
   'pytest>=7.0.0',
