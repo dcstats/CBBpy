@@ -39,11 +39,38 @@ import cbbpy.womens_scraper as s
 
 ## Command line
 
-Installing CBBpy also provides a `cbbpy` command for pulling data to files without writing Python. Each data command accepts `-g/--gender` (`mens` default, or `womens`), `--source` (`api` default, or `html`), `-o/--output-dir`, and `--format` (`csv` default, or `parquet`); one file is written per frame and its path printed to stdout.
+Installing CBBpy also provides a `cbbpy` command for pulling data to files without writing Python. One file is written per frame and its path printed to stdout.
+
+Subcommands:
+
+- `game GAME_ID ...` — scrape info, boxscore, and pbp for one or more games
+- `info GAME_ID ...` — scrape only game metadata
+- `box GAME_ID ...` — scrape only the boxscore
+- `pbp GAME_ID ...` — scrape only play-by-play
+- `range START END` — scrape every game in a date range
+- `season [SEASON]` — scrape a whole season (default: current)
+- `team TEAM` — scrape a team's season
+- `conference CONFERENCE` — scrape a conference's season
+- `ids DATE` — print game IDs for a date (stdout, no files)
+- `player PLAYER_ID` — scrape a player's bio
+- `schedule --team T | --conference C` — scrape a team or conference schedule
+
+Options (which commands they apply to):
+
+- `-g/--gender` (`mens` default, or `womens`) — all except none; every command
+- `--source` (`api` default, or `html`) — game/info/box/pbp/range/season/team/conference/ids
+- `-o/--output-dir`, `--format` (`csv` default, or `parquet`) — every command that writes files
+- `--stdout` — print the table instead of writing a file: info/box/pbp/player/schedule
+- `--no-info/--no-box/--no-pbp` — skip a frame: game/range/season/team/conference
+- `--throttle`, `--n-jobs` — bulk commands: range/season/team/conference
+- `-s/--season` — team/conference/schedule (season is a positional on `season`)
 
 ```shell
 # scrape one game (writes info, boxscore, and pbp files to the current dir)
 cbbpy game 401522202
+
+# just the metadata for one game, printed to the terminal
+cbbpy info 401522202 --stdout
 
 # a women's team's 2022 season as parquet, without play-by-play
 cbbpy team davidson -s 2022 -g womens --no-pbp --format parquet -o ./data

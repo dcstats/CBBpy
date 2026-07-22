@@ -27,11 +27,14 @@ def _write(df, path, fmt):
 
 
 def _emit(command, slug, kind, df, args):
-    """Write one frame to disk, skipping empties. Returns True if written."""
+    """Write one frame to disk (or stdout), skipping empties. Returns True if emitted."""
     if df.empty:
         label = f"{command} {kind}" if kind else command
         print(f"[cbbpy] skipping empty {label} frame", file=sys.stderr)
         return False
+    if getattr(args, "stdout", False):
+        print(df.to_string(index=False))
+        return True
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     ext = "parquet" if args.format == "parquet" else "csv"
@@ -63,6 +66,20 @@ def _cmd_game(scraper, args):
     ]
     frames = tuple(pd.concat(dfs, ignore_index=True) for dfs in zip(*results))
     _emit_frames("game", "-".join(args.game_id), frames, args)
+
+
+def _cmd_frame(scraper, args):
+    import pandas as pd
+
+    method = {
+        "info": scraper.get_game_info,
+        "box": scraper.get_game_boxscore,
+        "pbp": scraper.get_game_pbp,
+    }[args.command]
+    df = pd.concat(
+        [method(gid, source=args.source) for gid in args.game_id], ignore_index=True
+    )
+    _emit(args.command, "-".join(args.game_id), None, df, args)
 
 
 def _cmd_range(scraper, args):
@@ -144,6 +161,10 @@ def _build_parser():
     frames.add_argument("--no-box", dest="box", action="store_false", help="skip boxscore")
     frames.add_argument("--no-pbp", dest="pbp", action="store_false", help="skip play-by-play")
 
+    single = argparse.ArgumentParser(add_help=False)
+    single.add_argument("--stdout", action="store_true",
+                        help="print the table to stdout instead of writing a file")
+
     bulk = argparse.ArgumentParser(add_help=False)
     bulk.add_argument("--throttle", type=float, default=0.5,
                       help="mean per-worker delay in seconds (default: 0.5)")
@@ -155,6 +176,16 @@ def _build_parser():
     p = sub.add_parser("game", parents=game_data, help="scrape one or more games by ID")
     p.add_argument("game_id", nargs="+")
     p.set_defaults(func=_cmd_game)
+
+    frame_data = [gender, io, source, single]
+    for name, helptext in [
+        ("info", "scrape game metadata for one or more games by ID"),
+        ("box", "scrape the boxscore for one or more games by ID"),
+        ("pbp", "scrape play-by-play for one or more games by ID"),
+    ]:
+        p = sub.add_parser(name, parents=frame_data, help=helptext)
+        p.add_argument("game_id", nargs="+")
+        p.set_defaults(func=_cmd_frame)
 
     p = sub.add_parser("range", parents=game_data + [bulk], help="scrape games in a date range")
     p.add_argument("start_date")
@@ -179,11 +210,11 @@ def _build_parser():
     p.add_argument("date")
     p.set_defaults(func=_cmd_ids)
 
-    p = sub.add_parser("player", parents=[gender, io], help="scrape a player's bio")
+    p = sub.add_parser("player", parents=[gender, io, single], help="scrape a player's bio")
     p.add_argument("player_id")
     p.set_defaults(func=_cmd_player)
 
-    p = sub.add_parser("schedule", parents=[gender, io], help="scrape a team or conference schedule")
+    p = sub.add_parser("schedule", parents=[gender, io, single], help="scrape a team or conference schedule")
     grp = p.add_mutually_exclusive_group(required=True)
     grp.add_argument("--team")
     grp.add_argument("--conference")

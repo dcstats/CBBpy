@@ -29,6 +29,19 @@ def test_no_pbp_suppresses_pbp_file(offline_espn, tmp_path):
     assert f"mens_game_{GAME_ID}_boxscore.csv" in written
 
 
+def test_info_writes_one_file(offline_espn, tmp_path):
+    cli.main(["info", GAME_ID, "-o", str(tmp_path)])
+    written = [p for p in tmp_path.glob("*.csv")]
+    assert [p.name for p in written] == [f"mens_info_{GAME_ID}.csv"]
+    assert written[0].stat().st_size > 0
+
+
+def test_info_stdout_prints_no_file(offline_espn, tmp_path, capsys):
+    cli.main(["info", GAME_ID, "--stdout", "-o", str(tmp_path)])
+    assert list(tmp_path.glob("*")) == []
+    assert capsys.readouterr().out.strip() != ""
+
+
 def test_ids_prints_ids(offline_espn, capsys):
     cli.main(["ids", DATE])
     out = capsys.readouterr().out.split()
