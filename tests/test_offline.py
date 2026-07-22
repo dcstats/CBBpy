@@ -35,6 +35,7 @@ from cbbpy.utils.cbbpy_utils import (
 )
 
 from tests.conftest import (
+    FakeResponse,
     PLAYERS,
     SCHEDULES,
     SCOREBOARD_DATES,
@@ -482,6 +483,112 @@ def test_api_waf_challenge_logged_as_such(monkeypatch, caplog):
     assert df.empty
     assert "WAF challenge" in caplog.text
     assert "JSONDecodeError" not in caplog.text
+
+
+# --- retryable vs non-retryable error classification (#73) ------------------
+# A deterministic parse error against a payload that was successfully obtained
+# must not burn all ATTEMPTS retries with sleeps; only failures before the
+# payload was obtained (network / WAF challenge / page-not-found) retry.
+
+
+def _raise_key_error(*args, **kwargs):
+    raise KeyError("forced parse error")
+
+
+def test_html_parse_error_fails_fast(offline_espn, monkeypatch):
+    # a valid page is served, but the downstream helper raises → a deterministic
+    # parse error must return empty after a SINGLE fetch, with no retry sleeps
+    calls = []
+    sleeps = []
+    fixture_get = cbbpy_utils.r.get
+    monkeypatch.setattr(
+        cbbpy_utils.r, "get", lambda url, *a, **k: calls.append(url) or fixture_get(url, *a, **k)
+    )
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", sleeps.append)
+    monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 5)
+    monkeypatch.setattr(cbbpy_utils, "_get_game_boxscore_helper", _raise_key_error)
+
+    df = ms.get_game_boxscore(recorded_games("mens")[0], source="html")
+
+    assert df.empty
+    assert len(calls) == 1
+    assert sleeps == []
+
+
+def test_html_network_error_retries(monkeypatch):
+    # a network error happens before any payload is obtained → keep retrying the
+    # full ATTEMPTS budget, then return empty
+    calls = []
+
+    def boom(url, *a, **k):
+        calls.append(url)
+        raise ConnectionError("simulated network failure")
+
+    monkeypatch.setattr(cbbpy_utils.r, "get", boom)
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 4)
+
+    df = ms.get_game_info("401999999", source="html")
+
+    assert df.empty
+    assert len(calls) == 4
+
+
+def test_api_missing_header_fails_fast(monkeypatch):
+    # the summary JSON parsed cleanly but carries no "header": a deterministic bad
+    # payload → single fetch, return None / empty, no retries
+    calls = []
+
+    def fake_get(url, *a, **k):
+        calls.append(url)
+        return FakeResponse(b'{"note": "no header here"}', status_code=200)
+
+    monkeypatch.setattr(cbbpy_utils.r, "get", fake_get)
+    monkeypatch.setattr(espn_api.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 5)
+
+    assert espn_api._fetch_summary("401999999", "mens") is None
+    assert len(calls) == 1
+
+    calls.clear()
+    assert ms.get_game_info("401999999", source="api").empty
+    assert len(calls) == 1
+
+
+def test_api_waf_challenge_retries(monkeypatch):
+    # an empty 202 WAF challenge is obtained before any payload → keep retrying
+    # the full ATTEMPTS budget, then return None
+    calls = []
+
+    def fake_get(url, *a, **k):
+        calls.append(url)
+        return FakeResponse(b"", status_code=202)
+
+    monkeypatch.setattr(cbbpy_utils.r, "get", fake_get)
+    monkeypatch.setattr(espn_api.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 4)
+
+    assert espn_api._fetch_summary("401999999", "mens") is None
+    assert len(calls) == 4
+
+
+def test_api_game_ids_parse_error_fails_fast(monkeypatch):
+    # the scoreboard JSON parsed cleanly but an event lacks "id" → deterministic
+    # parse error, single fetch, empty list, no retries
+    calls = []
+
+    def fake_get(url, *a, **k):
+        calls.append(url)
+        return FakeResponse(b'{"events": [{"no_id": 1}]}', status_code=200)
+
+    monkeypatch.setattr(cbbpy_utils.r, "get", fake_get)
+    monkeypatch.setattr(espn_api.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 5)
+
+    ids = ms.get_game_ids("2021-04-03", source="api")
+
+    assert ids == []
+    assert len(calls) == 1
 
 
 def test_import_does_no_logging_io():

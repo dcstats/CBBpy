@@ -77,21 +77,26 @@ def _fetch_summary(game_id, game_type):
                 cu._log.error(f"{game_id} - API: Page not found error")
                 raise cu.PageNotFoundError(game_id)
 
-            # a valid summary always carries a header
-            if "header" not in js:
-                raise cu.CouldNotParseError(js.get("message", "no header in response"))
-
         except cu.PageNotFoundError:
             raise
         except Exception as ex:
+            # network error / WAF challenge / JSON decode: all transient → retry
             if i + 1 == cu.ATTEMPTS:
                 cu._log.error(f"{game_id} - API: {ex}\n{traceback.format_exc()}")
                 return None
             else:
                 time.sleep(np.random.uniform(low=1, high=3))
                 continue
-        else:
-            break
+
+        # the payload JSON was obtained; a missing header is a deterministic bad
+        # payload, not a transient fetch failure → fail fast (log once, no retries)
+        if "header" not in js:
+            cu._log.error(
+                f'{game_id} - API: {js.get("message", "no header in response")}'
+            )
+            return None
+
+        break
 
     return js
 
@@ -185,8 +190,8 @@ def _get_game_ids_api(date, game_type):
                 raise cu.CouldNotParseError(reason)
 
             js = page.json()
-            ids = [str(x["id"]) for x in js.get("events", [])]
         except Exception as ex:
+            # network error / WAF challenge / JSON decode: all transient → retry
             if i + 1 == cu.ATTEMPTS:
                 cu._log.error(
                     f'{date.strftime("%D")} - IDs (API): {ex}\n{traceback.format_exc()}'
@@ -195,8 +200,18 @@ def _get_game_ids_api(date, game_type):
             else:
                 time.sleep(np.random.uniform(low=1, high=3))
                 continue
-        else:
-            break
+
+        # the payload JSON was obtained; building the id list is deterministic →
+        # fail fast on a malformed event (log once, no retries)
+        try:
+            ids = [str(x["id"]) for x in js.get("events", [])]
+        except Exception as ex:
+            cu._log.error(
+                f'{date.strftime("%D")} - IDs (API): {ex}\n{traceback.format_exc()}'
+            )
+            return []
+
+        break
 
     return ids
 
