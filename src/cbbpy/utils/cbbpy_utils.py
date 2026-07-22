@@ -1300,14 +1300,16 @@ def _compute_num_ots(home_ls, away_ls, game_id, game_type, game_date, regulation
         _log.warning(f"{game_id} - No score info available")
         return -1
 
+    # men, and women before the 15-16 season, use halves; women (after 14-15) use quarters
+    rule_based_reg = (
+        2
+        if game_type == "mens"
+        or game_date.replace(tzinfo=None) < WOMEN_HALF_RULE_CHANGE_DATE
+        else 4
+    )
+
     if not regulation:
-        # men, and women before the 15-16 season, use halves; women (after 14-15) use quarters
-        regulation = (
-            2
-            if game_type == "mens"
-            or game_date.replace(tzinfo=None) < WOMEN_HALF_RULE_CHANGE_DATE
-            else 4
-        )
+        regulation = rule_based_reg
 
     h_ot, a_ot = len(home_ls) - regulation, len(away_ls) - regulation
 
@@ -1317,7 +1319,20 @@ def _compute_num_ots(home_ls, away_ls, game_id, game_type, game_date, regulation
             f"(home: {len(home_ls)}, away: {len(away_ls)}); using {max(h_ot, a_ot)} OTs"
         )
 
-    return max(h_ot, a_ot)
+    num_ots = max(h_ot, a_ot)
+
+    # ESPN occasionally mislabels a game's regulation period count (e.g. tagging
+    # a men's game as 4 quarters), which makes a complete linescore look shorter
+    # than regulation. A negative OT count is impossible, so fall back to the
+    # rule-based regulation, then floor at 0 for genuinely truncated linescores.
+    if num_ots < 0 and regulation != rule_based_reg:
+        _log.warning(
+            f"{game_id} - Reported regulation ({regulation}) disagrees with "
+            f"linescores; falling back to rule-based {rule_based_reg}"
+        )
+        num_ots = max(len(home_ls), len(away_ls)) - rule_based_reg
+
+    return max(num_ots, 0)
 
 
 def _get_game_info_helper(gamepackage, game_id, game_type):
