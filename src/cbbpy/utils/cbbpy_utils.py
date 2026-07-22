@@ -1218,6 +1218,13 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         "play_desc": descs,
         "home_score": hscores,
         "away_score": ascores,
+        "period": periods,
+        "secs_left_period": pd_secs_left,
+        # half/quarter + secs_left_half/secs_left_qt are deprecated in favor of
+        # period/secs_left_period; removal in 3.0. Only the pair matching the
+        # game's format is emitted, so concatenating games across the women's
+        # 15-16 rule change leaves each pair half-empty — the reason for the
+        # format-agnostic columns above.
         pd_type: periods,
         pd_type_sec: pd_secs_left,
         "secs_left_reg": reg_secs_left,
@@ -1271,7 +1278,7 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         df['shot_x'] = df_merged['x'].where(df_merged['x'].notna(), df['shot_x'])
         df['shot_y'] = df_merged['y'].where(df_merged['y'].notna(), df['shot_y'])
 
-    return df.sort_values(by=[pd_type, pd_type_sec], ascending=[True, False])
+    return df.sort_values(by=["period", "secs_left_period"], ascending=[True, False])
 
 
 def _compute_num_ots(home_ls, away_ls, game_id, game_type, game_date, regulation=None):

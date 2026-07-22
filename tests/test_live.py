@@ -44,6 +44,7 @@ BOXSCORE_REQUIRED_COLS = {
 }
 PBP_REQUIRED_COLS = {
     "game_id", "home_team", "away_team", "play_desc", "home_score", "away_score",
+    "period", "secs_left_period",
     "secs_left_reg", "play_team", "play_type", "play_type_id", "shooting_play",
     "scoring_play", "is_three", "player_name", "is_assisted", "assist_player",
     "player_id", "assist_player_id",
@@ -234,7 +235,8 @@ def test_live_game_pbp(gender, source):
     for gid, f in GAME_FACTS[gender].items():
         df = sc.get_game_pbp(gid, source=source)
         assert_required_cols(df, PBP_REQUIRED_COLS)
-        # period columns depend on era: halves for mens and pre-2015 womens
+        # deprecated era-specific period columns (removal in 3.0): halves for
+        # mens and pre-2015 womens, quarters otherwise
         assert ("half" in df.columns and "secs_left_half" in df.columns) or (
             "quarter" in df.columns and "secs_left_qt" in df.columns
         ), f"{gid}: no period columns found"

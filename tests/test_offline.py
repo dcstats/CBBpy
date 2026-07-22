@@ -358,9 +358,12 @@ def test_pbp_malformed_clock_does_not_crash():
     }
     df = _get_game_pbp_helper(gamepackage, "0", "mens")
     assert len(df) == 3
-    assert df.set_index("id").loc["1", "secs_left_half"] == 0
-    assert df.set_index("id").loc["2", "secs_left_half"] == 0
-    assert df.set_index("id").loc["3", "secs_left_half"] == 12 * 60 + 34
+    assert df.set_index("id").loc["1", "secs_left_period"] == 0
+    assert df.set_index("id").loc["2", "secs_left_period"] == 0
+    assert df.set_index("id").loc["3", "secs_left_period"] == 12 * 60 + 34
+    # deprecated alias mirrors the canonical column
+    assert (df["secs_left_half"] == df["secs_left_period"]).all()
+    assert (df["half"] == df["period"]).all()
 
 
 @pytest.mark.parametrize("source", ["html", "api"])

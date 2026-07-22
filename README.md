@@ -142,13 +142,20 @@ s.get_game_pbp('401522202')
 ```
 
 Returns (partially):
-|    |   game_id | home_team     | away_team              | play_desc                                                             |   home_score |   away_score |   half |   secs_left_half |   secs_left_reg | play_team              | play_type          | shooting_play   | scoring_play   | is_three   | shooter          | is_assisted   | assist_player   |   shot_x |   shot_y |
+|    |   game_id | home_team     | away_team              | play_desc                                                             |   home_score |   away_score |   period |   secs_left_period |   secs_left_reg | play_team              | play_type          | shooting_play   | scoring_play   | is_three   | shooter          | is_assisted   | assist_player   |   shot_x |   shot_y |
 |---:|----------:|:--------------|:-----------------------|:----------------------------------------------------------------------|-------------:|-------------:|-------:|-----------------:|----------------:|:-----------------------|:-------------------|:----------------|:---------------|:-----------|:-----------------|:--------------|:----------------|---------:|---------:|
 |  0 | 401522202 | UConn Huskies | San Diego State Aztecs | Jump Ball won by UConn                                                |            0 |            0 |      1 |             1200 |            2400 | UConn Huskies          | jump ball          | False           | False          | False      |                  | False         |                 |      nan |      nan |
 |  1 | 401522202 | UConn Huskies | San Diego State Aztecs | Jordan Hawkins made Jumper. Assisted by Adama Sanogo.                 |            2 |            0 |      1 |             1174 |            2374 | UConn Huskies          | jumper             | True            | True           | False      | Jordan Hawkins   | True          | Adama Sanogo    |       18 |       15 |
 |  2 | 401522202 | UConn Huskies | San Diego State Aztecs | Lamont Butler made Three Point Jumper. Assisted by Matt Bradley.      |            2 |            3 |      1 |             1152 |            2352 | San Diego State Aztecs | three point jumper | True            | True           | True       | Lamont Butler    | True          | Matt Bradley    |       39 |       22 |
 |  3 | 401522202 | UConn Huskies | San Diego State Aztecs | Tristen Newton Turnover.                                              |            2 |            3 |      1 |             1130 |            2330 | UConn Huskies          | turnover           | False           | False          | False      |                  | False         |                 |      nan |      nan |
 |  4 | 401522202 | UConn Huskies | San Diego State Aztecs | Darrion Trammell made Three Point Jumper. Assisted by Keshad Johnson. |            2 |            6 |      1 |             1108 |            2308 | San Diego State Aztecs | three point jumper | True            | True           | True       | Darrion Trammell | True          | Keshad Johnson  |        1 |        0 |
+
+`half`/`secs_left_half` (mens, and womens before 2015-16) and `quarter`/`secs_left_qt`
+(womens after 2014-15) are also emitted, but are **deprecated in favor of
+`period`/`secs_left_period` and will be removed in 3.0**. Only the pair matching a
+game's format is present, so concatenating games from either side of the womens
+rule change leaves each pair half-empty; `period`/`secs_left_period` are always
+populated.
 
 Function call:
 
