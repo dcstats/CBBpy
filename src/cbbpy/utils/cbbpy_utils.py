@@ -91,6 +91,16 @@ JSON_REGEX = r"window\[\'__espnfitt__\'\]={(.*)};"
 STATUS_OK = 200
 WOMEN_HALF_RULE_CHANGE_DATE = parser.parse("2015-05-01")
 GOOD_GAME_STATUSES = ['In Progress', 'Final']
+# Columns still emitted for backwards compatibility, mapped to their replacement and
+# the version that drops them. Source of truth for the docs and the removal test.
+DEPRECATED_COLUMNS = {
+    "game_day": ("game_datetime", "3.0"),
+    "game_time": ("game_datetime", "3.0"),
+    "half": ("period", "3.0"),
+    "secs_left_half": ("secs_left_period", "3.0"),
+    "quarter": ("period", "3.0"),
+    "secs_left_qt": ("secs_left_period", "3.0"),
+}
 
 
 # logging setup
@@ -1221,10 +1231,10 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         "period": periods,
         "secs_left_period": pd_secs_left,
         # half/quarter + secs_left_half/secs_left_qt are deprecated in favor of
-        # period/secs_left_period; removal in 3.0. Only the pair matching the
-        # game's format is emitted, so concatenating games across the women's
-        # 15-16 rule change leaves each pair half-empty — the reason for the
-        # format-agnostic columns above.
+        # period/secs_left_period; removal in 3.0 (see DEPRECATED_COLUMNS). Only
+        # the pair matching the game's format is emitted, so concatenating games
+        # across the women's 15-16 rule change leaves each pair half-empty — the
+        # reason for the format-agnostic columns above.
         pd_type: periods,
         pd_type_sec: pd_secs_left,
         "secs_left_reg": reg_secs_left,
@@ -1327,7 +1337,8 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
     gm_date = parser.parse(info["dtTm"])
     game_datetime = gm_date.replace(tzinfo=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     game_date = gm_date.replace(tzinfo=timezone.utc).astimezone(tz=tz("US/Pacific"))
-    # game_day/game_time (Pacific) are deprecated in favor of game_datetime; removal in 3.0
+    # game_day/game_time (Pacific) are deprecated in favor of game_datetime;
+    # removal in 3.0 (see DEPRECATED_COLUMNS)
     game_day = game_date.strftime("%B %d, %Y")
     game_time = game_date.strftime("%I:%M %p %Z")
     gm_status = more_info["status"]["desc"]
@@ -1548,7 +1559,8 @@ def _get_schedule_helper(jsn, team, id_, season):
         gm_dt = parser.parse(ev['date']['date'])
         game_datetime = gm_dt.astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
         date = gm_dt.astimezone(tz('America/Los_Angeles'))
-        # game_day/game_time (Pacific) are deprecated in favor of game_datetime; removal in 3.0
+        # game_day/game_time (Pacific) are deprecated in favor of game_datetime;
+    # removal in 3.0 (see DEPRECATED_COLUMNS)
         day = date.strftime('%B %d, %Y')
         time = date.strftime('%I:%M %p %Z')
 

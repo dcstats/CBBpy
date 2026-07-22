@@ -16,10 +16,12 @@ import numpy as np
 import pandas as pd
 import pytest
 
+import cbbpy
 from cbbpy import mens_scraper as ms, womens_scraper as ws
 from cbbpy.utils import cbbpy_utils
 from cbbpy.utils.cbbpy_utils import (
     CBBpyWarning,
+    DEPRECATED_COLUMNS,
     InvalidDateRangeError,
     _get_game_pbp_helper,
     _get_id_from_team,
@@ -485,3 +487,26 @@ def test_timeout_error_is_retried(offline_espn, monkeypatch):
     df = ms.get_game_info(recorded_games("mens")[0])
     assert not df.empty
     assert len(calls) == 2
+
+
+def test_deprecated_columns_removed_on_schedule(offline_espn):
+    # DEPRECATED_COLUMNS is the source of truth for what's on the way out. Before
+    # the removal version this asserts the replacement exists; once __version__
+    # reaches it, the test flips and fails until the old column is gone, so the
+    # removal can't be forgotten.
+    current = tuple(int(p) for p in cbbpy.__version__.split(".")[:2])
+    game = recorded_games("mens")[0]
+    emitted = set(ms.get_game_info(game).columns) | set(ms.get_game_pbp(game).columns)
+    emitted |= set(ws.get_game_pbp(recorded_games("womens")[0]).columns)
+
+    for col, (replacement, removal) in DEPRECATED_COLUMNS.items():
+        removal_version = tuple(int(p) for p in removal.split(".")[:2])
+        if current < removal_version:
+            assert replacement in emitted, (
+                f"{col} is deprecated in favor of {replacement}, which isn't emitted"
+            )
+        else:
+            assert col not in emitted, (
+                f"{col} was slated for removal in {removal} (current "
+                f"{cbbpy.__version__}) — drop it and use {replacement}"
+            )

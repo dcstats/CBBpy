@@ -100,6 +100,10 @@ The bulk scraping functions (`get_games_season`, `get_games_range`, `get_games_t
 
 The defaults are a reasonable balance of speed and politeness for occasional bulk scrapes. If you're scraping many seasons back-to-back, consider raising `throttle` and/or lowering `n_jobs`. Every request also carries a 30-second timeout, so a hung connection is retried instead of stalling a worker indefinitely.
 
+## Changelog
+
+Every release, including the columns currently deprecated and the version that removes them, is documented in [CHANGELOG.md](CHANGELOG.md).
+
 ## A note on dates and times
 
 As of v2.2.0, every game info and schedule DataFrame includes `game_datetime`: the scheduled tipoff instant as an ISO-8601 UTC string (e.g. `2023-04-04T01:20:00Z`), which you can parse and convert to any timezone. The `game_day` and `game_time` columns (US/Pacific) are deprecated and will be removed in v3.0. Until then, `game_day` continues to reflect the Pacific calendar date of tipoff, which matches both ESPN's own scoreboard day grouping and the game's local calendar date in practice.

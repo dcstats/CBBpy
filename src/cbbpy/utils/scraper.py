@@ -53,6 +53,11 @@ class GameScraper:
             - pd.DataFrame: The game's metadata.\n
             - pd.DataFrame: The game's boxscore (both teams combined).\n
             - pd.DataFrame: The game's play-by-play.
+
+        Deprecated:
+            game_day/game_time (US/Pacific) are superseded by game_datetime
+            (ISO-8601 UTC); half/secs_left_half and quarter/secs_left_qt are
+            superseded by period/secs_left_period. Both pairs are removed in 3.0.
         """
         return _get_game(game_id, self._game_type, info, box, pbp, source)
 
@@ -86,6 +91,11 @@ class GameScraper:
             - pd.DataFrame: The game's metadata.\n
             - pd.DataFrame: The game's boxscore (both teams combined).\n
             - pd.DataFrame: The game's play-by-play.
+
+        Deprecated:
+            game_day/game_time (US/Pacific) are superseded by game_datetime
+            (ISO-8601 UTC); half/secs_left_half and quarter/secs_left_qt are
+            superseded by period/secs_left_period. Both pairs are removed in 3.0.
         """
         return _get_games_range(
             start_date, end_date, self._game_type, info, box, pbp, source, throttle, n_jobs
@@ -121,6 +131,11 @@ class GameScraper:
             - pd.DataFrame: The game's metadata.\n
             - pd.DataFrame: The game's boxscore (both teams combined).\n
             - pd.DataFrame: The game's play-by-play.
+
+        Deprecated:
+            game_day/game_time (US/Pacific) are superseded by game_datetime
+            (ISO-8601 UTC); half/secs_left_half and quarter/secs_left_qt are
+            superseded by period/secs_left_period. Both pairs are removed in 3.0.
         """
         if season is None:
             season = _get_current_season()
@@ -160,6 +175,11 @@ class GameScraper:
             - pd.DataFrame: The team's games metadata.\n
             - pd.DataFrame: The team's season boxscores (both teams combined).\n
             - pd.DataFrame: The team's season play-by-plays.
+
+        Deprecated:
+            game_day/game_time (US/Pacific) are superseded by game_datetime
+            (ISO-8601 UTC); half/secs_left_half and quarter/secs_left_qt are
+            superseded by period/secs_left_period. Both pairs are removed in 3.0.
         """
         if season is None:
             season = _get_current_season()
@@ -199,6 +219,11 @@ class GameScraper:
             - pd.DataFrame: The conference's teams' games metadata.\n
             - pd.DataFrame: The conference's teams' season boxscores (both teams combined).\n
             - pd.DataFrame: The conference's teams' season play-by-plays.
+
+        Deprecated:
+            game_day/game_time (US/Pacific) are superseded by game_datetime
+            (ISO-8601 UTC); half/secs_left_half and quarter/secs_left_qt are
+            superseded by period/secs_left_period. Both pairs are removed in 3.0.
         """
         if season is None:
             season = _get_current_season()
@@ -239,6 +264,10 @@ class GameScraper:
 
         Returns:
             pd.DataFrame: The game's play-by-play information, with a row for each play.
+
+        Deprecated:
+            half/secs_left_half and quarter/secs_left_qt are superseded by
+            period/secs_left_period and will be removed in 3.0.
         """
         return _get_game_pbp(game_id, self._game_type, source)
 
@@ -251,6 +280,10 @@ class GameScraper:
 
         Returns:
             pd.DataFrame: The game's metadata scraped from the game page.
+
+        Deprecated:
+            game_day/game_time (US/Pacific) are superseded by game_datetime
+            (ISO-8601 UTC) and will be removed in 3.0.
         """
         return _get_game_info(game_id, self._game_type, source)
 
@@ -292,6 +325,10 @@ class GameScraper:
 
         Returns:
             pd.DataFrame: The given team's schedule for the year.
+
+        Deprecated:
+            game_day/game_time (US/Pacific) are superseded by game_datetime
+            (ISO-8601 UTC) and will be removed in 3.0.
         """
         if season is None:
             season = _get_current_season()
@@ -344,6 +381,10 @@ class GameScraper:
 
         Returns:
             pd.DataFrame: The conference schedules.
+
+        Deprecated:
+            game_day/game_time (US/Pacific) are superseded by game_datetime
+            (ISO-8601 UTC) and will be removed in 3.0.
         """
         if season is None:
             season = _get_current_season()
