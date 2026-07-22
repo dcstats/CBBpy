@@ -232,6 +232,31 @@ def _get_game(game_id, game_type, info, box, pbp, source="api", throttle=0):
     return (game_info_df, boxscore_df, pbp_df)
 
 
+def _sort_results(game_info_df, game_boxscore_df, game_pbp_df, info, box, pbp):
+    """Sort returned dataframes to ensure consistency between runs."""
+    if info:
+        # fixed-width ISO-8601 UTC strings sort correctly lexicographically (#80)
+        game_info_df = game_info_df.sort_values(
+            by=['game_datetime', 'game_id']
+        ).reset_index(drop=True)
+
+    if box:
+        game_boxscore_df = game_boxscore_df.sort_values(
+            by=['game_id', 'team'],
+            ascending=False,
+            kind='mergesort'
+        ).reset_index(drop=True)
+
+    if pbp:
+        game_pbp_df = game_pbp_df.sort_values(
+            by=['game_id'],
+            ascending=False,
+            kind='mergesort'
+        ).reset_index(drop=True)
+
+    return (game_info_df, game_boxscore_df, game_pbp_df)
+
+
 @print_log_file_location
 def _get_games_range(
     start_date, end_date, game_type, info, box, pbp, source="api",
@@ -279,31 +304,12 @@ def _get_games_range(
     if not len(all_data) > 0:
         return (pd.DataFrame(), pd.DataFrame(), pd.DataFrame())
 
-    # sort returned dataframes to ensure consistency between runs
-    game_info_df = pd.concat([game[0] for day in all_data for game in day])
-    if info:
-        # fixed-width ISO-8601 UTC strings sort correctly lexicographically (#80)
-        game_info_df = game_info_df.sort_values(
-            by=['game_datetime', 'game_id']
-        ).reset_index(drop=True)
-
-    game_boxscore_df = pd.concat([game[1] for day in all_data for game in day])
-    if box:
-        game_boxscore_df = game_boxscore_df.sort_values(
-            by=['game_id', 'team'], 
-            ascending=False, 
-            kind='mergesort'
-        ).reset_index(drop=True)
-
-    game_pbp_df = pd.concat([game[2] for day in all_data for game in day])
-    if pbp:
-        game_pbp_df = game_pbp_df.sort_values(
-            by=['game_id'],
-            ascending=False,
-            kind='mergesort'
-        ).reset_index(drop=True)
-
-    return (game_info_df, game_boxscore_df, game_pbp_df)
+    return _sort_results(
+        pd.concat([game[0] for day in all_data for game in day]),
+        pd.concat([game[1] for day in all_data for game in day]),
+        pd.concat([game[2] for day in all_data for game in day]),
+        info, box, pbp,
+    )
 
 
 @print_log_file_location
@@ -354,33 +360,14 @@ def _get_games_team(
         for gid in game_ids
     )
 
-    # sort returned dataframes to ensure consistency between runs
-    game_info_df = pd.concat([x[0] for x in result])
-    if info:
-        # fixed-width ISO-8601 UTC strings sort correctly lexicographically (#80)
-        game_info_df = game_info_df.sort_values(
-            by=['game_datetime', 'game_id']
-        ).reset_index(drop=True)
-
-    game_boxscore_df = pd.concat([x[1] for x in result])
-    if box:
-        game_boxscore_df = game_boxscore_df.sort_values(
-            by=['game_id', 'team'], 
-            ascending=False, 
-            kind='mergesort'
-        ).reset_index(drop=True)
-
-    game_pbp_df = pd.concat([x[2] for x in result])
-    if pbp:
-        game_pbp_df = game_pbp_df.sort_values(
-            by=['game_id'],
-            ascending=False,
-            kind='mergesort'
-        ).reset_index(drop=True)
-
     # print(f"Log file is located at {log_file}")
 
-    return (game_info_df, game_boxscore_df, game_pbp_df)
+    return _sort_results(
+        pd.concat([x[0] for x in result]),
+        pd.concat([x[1] for x in result]),
+        pd.concat([x[2] for x in result]),
+        info, box, pbp,
+    )
 
 
 @print_log_file_location
@@ -408,31 +395,12 @@ def _get_games_conference(
             deduped.append(f)
         return deduped
 
-    # sort returned dataframes to ensure consistency between runs
-    game_info_df = pd.concat(_drop_repeat_games([x[0] for x in result]))
-    if info:
-        # fixed-width ISO-8601 UTC strings sort correctly lexicographically (#80)
-        game_info_df = game_info_df.sort_values(
-            by=['game_datetime', 'game_id']
-        ).reset_index(drop=True)
-
-    game_boxscore_df = pd.concat(_drop_repeat_games([x[1] for x in result]))
-    if box:
-        game_boxscore_df = game_boxscore_df.sort_values(
-            by=['game_id', 'team'], 
-            ascending=False, 
-            kind='mergesort'
-        ).reset_index(drop=True)
-
-    game_pbp_df = pd.concat(_drop_repeat_games([x[2] for x in result]))
-    if pbp:
-        game_pbp_df = game_pbp_df.sort_values(
-            by=['game_id'],
-            ascending=False,
-            kind='mergesort'
-        ).reset_index(drop=True)
-
-    return (game_info_df, game_boxscore_df, game_pbp_df)
+    return _sort_results(
+        pd.concat(_drop_repeat_games([x[0] for x in result])),
+        pd.concat(_drop_repeat_games([x[1] for x in result])),
+        pd.concat(_drop_repeat_games([x[2] for x in result])),
+        info, box, pbp,
+    )
 
 
 def _get_game_ids(date, game_type, source="api"):
