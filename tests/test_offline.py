@@ -8,13 +8,16 @@ If ESPN intentionally changes its format, re-record with
 `python tests/record_fixtures.py` and review the diff.
 """
 
+import logging
 import subprocess
 import sys
 import textwrap
+from types import SimpleNamespace
 
 import numpy as np
 import pandas as pd
 import pytest
+from bs4 import BeautifulSoup as bs
 
 import cbbpy
 from cbbpy import mens_scraper as ms, womens_scraper as ws
@@ -23,6 +26,7 @@ from cbbpy.utils.cbbpy_utils import (
     CBBpyWarning,
     DEPRECATED_COLUMNS,
     InvalidDateRangeError,
+    _classify_page_failure,
     _get_game_pbp_helper,
     _get_id_from_team,
     _get_team_map,
@@ -383,6 +387,81 @@ def test_games_team_failed_schedule_returns_empty(offline_espn):
     info, box, pbp = ms.get_games_team("UConn", 1999)
     assert info.empty and box.empty and pbp.empty
     offline_espn.misses.clear()
+
+
+@pytest.mark.parametrize(
+    "status, body, expected",
+    [
+        # status code is the primary signal (#74)
+        (404, b"<html><body>no marker</body></html>", "Page not found error"),
+        (202, b"", "WAF challenge"),
+        (400, b"<html><body>no marker</body></html>", "HTTP 400"),
+        # body text stays a fallback: ESPN has served a 200 whose body is an
+        # error page for games whose data pipeline broke
+        (200, b"<html><body>Page not found.</body></html>", "Page not found error"),
+        (200, b"<html><body>Page error</body></html>", "Page error"),
+        # a healthy response means the failure was in parsing, not fetching
+        (200, b"<html><body>fine</body></html>", None),
+    ],
+)
+def test_classify_page_failure(status, body, expected):
+    soup = bs(body, "lxml")
+    page = SimpleNamespace(content=body, status_code=status)
+    assert _classify_page_failure(page, soup) == expected
+
+
+def test_classify_page_failure_without_status_falls_back_to_body():
+    # a response object carrying no status_code degrades to the text checks
+    body = b"<html><body>Page not found.</body></html>"
+    assert _classify_page_failure(None, bs(body, "lxml")) == "Page not found error"
+
+
+def test_html_404_marks_pnf_without_body_text(monkeypatch):
+    # a real 404 must be caught by status code alone, even when the body
+    # carries no "Page not found." marker (#74)
+    resp = SimpleNamespace(content=b"<html><body>no marker</body></html>", status_code=404)
+    monkeypatch.setattr(cbbpy_utils.r, "get", lambda url, *a, **k: resp)
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 1)
+    monkeypatch.setattr(cbbpy_utils, "pnf_", [])
+
+    df = ms.get_game_info("401999999", source="html")
+
+    assert df.empty
+    assert "401999999" in cbbpy_utils.pnf_
+
+
+def test_api_404_marks_pnf(monkeypatch):
+    # the API path bails on a 404 status without parsing the body (#74)
+    resp = SimpleNamespace(content=b"", status_code=404)
+    monkeypatch.setattr(cbbpy_utils.r, "get", lambda url, *a, **k: resp)
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 1)
+    monkeypatch.setattr(cbbpy_utils, "pnf_", [])
+
+    df = ms.get_game_info("401999999", source="api")
+
+    assert df.empty
+    assert "401999999" in cbbpy_utils.pnf_
+
+
+def test_api_waf_challenge_logged_as_such(monkeypatch, caplog):
+    # an empty 202 WAF challenge must be named in the log rather than surfacing
+    # as an opaque JSON decode error, so it is distinguishable from a 404 (#74)
+    resp = SimpleNamespace(content=b"", status_code=202)
+    monkeypatch.setattr(cbbpy_utils.r, "get", lambda url, *a, **k: resp)
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 1)
+    monkeypatch.setattr(cbbpy_utils, "pnf_", [])
+
+    with caplog.at_level(logging.ERROR, logger="CBBpy"):
+        df = ms.get_game_info("401999999", source="api")
+
+    assert df.empty
+    assert "WAF challenge" in caplog.text
+    assert "JSONDecodeError" not in caplog.text
+    # a transient WAF block is not a dead game
+    assert cbbpy_utils.pnf_ == []
 
 
 def test_import_does_no_logging_io():

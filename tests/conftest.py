@@ -45,8 +45,9 @@ class FakeResponse:
     The HTML path reads .content; the API path reads .json().
     """
 
-    def __init__(self, content: bytes):
+    def __init__(self, content: bytes, status_code: int = 200):
         self.content = content
+        self.status_code = status_code
 
     def json(self):
         return json.loads(self.content)

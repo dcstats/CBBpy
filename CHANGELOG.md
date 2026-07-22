@@ -33,6 +33,9 @@ All notable changes to CBBpy are documented here. The format is based on
 - Men's and women's team maps updated through the 2026 season, with a season fallback
   for unmapped years (#66).
 - Worker count is floored at 1 so single-core machines can scrape in parallel mode.
+- Failed page fetches are now classified by HTTP status code first, with the response
+  body text kept as a fallback, so a WAF challenge (202) is distinguishable from a real
+  not-found (404) in the logs (#74).
 
 ### Deprecated
 - `game_day` and `game_time` (US/Pacific) on game info and schedule frames, in favor of

@@ -47,6 +47,8 @@ def _fetch_summary(game_id, game_type):
 
     Returns the parsed JSON dict, or None on persistent failure. A 404 marks
     the game in ``cu.pnf_`` so the other scrapers skip it, mirroring the HTML path.
+    Failures are classified by status code before the body is parsed, so a WAF
+    challenge is logged as such rather than as an opaque JSON decode error.
     """
     game_id = str(game_id)
     pre_url = MENS_API_SUMMARY_URL if game_type == "mens" else WOMENS_API_SUMMARY_URL
@@ -57,11 +59,22 @@ def _fetch_summary(game_id, game_type):
             header = {"Referer": str(np.random.choice(cu.REFERERS))}
             url = pre_url.format(game_id)
             page = cu.r.get(url, headers=header, impersonate=cu.IMPERSONATE, timeout=cu.REQUEST_TIMEOUT)
+
+            # classify on status before parsing: a WAF challenge carries an empty
+            # body that would otherwise fail in .json() as an opaque decode error
+            reason = cu._classify_page_failure(page, None)
+            if reason == "Page not found error":
+                # bail immediately rather than retrying a game that won't exist
+                cu._log.error(f"{game_id} - API: {reason}")
+                cu.pnf_.append(game_id)
+                return None
+            elif reason is not None:
+                raise cu.CouldNotParseError(reason)
+
             js = page.json()
 
-            # a missing game deterministically returns {"code": 404, ...} (HTTP
-            # 404); bail immediately rather than retrying a game that won't exist
-            if js.get("code") == 404 or getattr(page, "status_code", None) == 404:
+            # fallback: a missing game also carries {"code": 404, ...} in the body
+            if js.get("code") == 404:
                 cu._log.error(f"{game_id} - API: Page not found error")
                 cu.pnf_.append(game_id)
                 return None
@@ -166,6 +179,11 @@ def _get_game_ids_api(date, game_type):
             d = date.strftime("%Y%m%d")
             url = pre_url.format(d)
             page = cu.r.get(url, headers=header, impersonate=cu.IMPERSONATE, timeout=cu.REQUEST_TIMEOUT)
+
+            reason = cu._classify_page_failure(page, None)
+            if reason is not None:
+                raise cu.CouldNotParseError(reason)
+
             js = page.json()
             ids = [str(x["id"]) for x in js.get("events", [])]
         except Exception as ex:

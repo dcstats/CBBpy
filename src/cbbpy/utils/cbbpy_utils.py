@@ -89,6 +89,9 @@ IMPERSONATE = "safari"
 WINDOW_STRING = "window['__espnfitt__']="
 JSON_REGEX = r"window\[\'__espnfitt__\'\]={(.*)};"
 STATUS_OK = 200
+# AWS WAF serves an empty 202 challenge; a genuinely missing page is a 404
+STATUS_WAF_CHALLENGE = 202
+STATUS_NOT_FOUND = 404
 WOMEN_HALF_RULE_CHANGE_DATE = parser.parse("2015-05-01")
 GOOD_GAME_STATUSES = ['In Progress', 'Final']
 # Columns still emitted for backwards compatibility, mapped to their replacement and
@@ -152,6 +155,34 @@ def print_log_file_location(func):
 # pnf_ will keep track of games w/ page not found errors
 # if game has error, don't run the other scrape functions to save time
 pnf_ = []
+
+
+def _classify_page_failure(page, soup):
+    """Classify a failed page fetch: status code first, body text as fallback.
+
+    Returns "Page not found error", "WAF challenge", "Page error", an
+    "HTTP {status}" string for any other non-200, or None when the response
+    itself looked fine (i.e. the failure was in parsing, not fetching).
+
+    The body-text checks stay as a fallback because ESPN has historically served
+    a 200 whose body is an error page for games whose data pipeline broke.
+    """
+    status = getattr(page, "status_code", None)
+
+    if status == STATUS_NOT_FOUND:
+        return "Page not found error"
+    elif status == STATUS_WAF_CHALLENGE:
+        return "WAF challenge"
+    elif status is not None and status != STATUS_OK:
+        return f"HTTP {status}"
+
+    if soup is not None:
+        if "Page not found." in soup.text:
+            return "Page not found error"
+        elif "Page error" in soup.text:
+            return "Page error"
+
+    return None
 
 
 class CouldNotParseError(Exception):
@@ -410,6 +441,7 @@ def _get_game_ids(date, game_type, source="api"):
 
         return espn_api._get_game_ids_api(date, game_type)
 
+    page = None
     soup = None
     scoreboard = None
     ids = []
@@ -438,13 +470,10 @@ def _get_game_ids(date, game_type, source="api"):
             if i + 1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
                 if soup is not None:
-                    if "Page not found." in soup.text:
+                    reason = _classify_page_failure(page, soup)
+                    if reason is not None:
                         _log.error(
-                            f'{date.strftime("%D")} - IDs: Page not found error'
-                        )
-                    elif "Page error" in soup.text:
-                        _log.error(
-                            f'{date.strftime("%D")} - IDs: Page error'
+                            f'{date.strftime("%D")} - IDs: {reason}'
                         )
                     elif scoreboard is None:
                         _log.error(
@@ -477,6 +506,7 @@ def _get_game_boxscore(game_id, game_type, source="api"):
 
         return espn_api._get_game_boxscore_api(game_id, game_type)
 
+    page = None
     soup = None
     gamepackage = None
     game_id = str(game_id)
@@ -516,15 +546,13 @@ def _get_game_boxscore(game_id, game_type, source="api"):
             if i + 1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
                 if soup is not None:
-                    if "Page not found." in soup.text:
+                    reason = _classify_page_failure(page, soup)
+                    if reason is not None:
                         _log.error(
-                            f'{game_id} - Boxscore: Page not found error'
+                            f'{game_id} - Boxscore: {reason}'
                         )
-                        pnf_.append(game_id)
-                    elif "Page error" in soup.text:
-                        _log.error(
-                            f'{game_id} - Boxscore: Page error'
-                        )
+                        if reason == "Page not found error":
+                            pnf_.append(game_id)
                     elif gamepackage is None:
                         _log.error(
                             f'{game_id} - Boxscore: Game JSON not found on page.'
@@ -578,6 +606,7 @@ def _get_game_pbp(game_id, game_type, source="api"):
 
         return espn_api._get_game_pbp_api(game_id, game_type)
 
+    page = None
     soup = None
     gamepackage = None
     game_id = str(game_id)
@@ -614,13 +643,11 @@ def _get_game_pbp(game_id, game_type, source="api"):
             if i + 1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
                 if soup is not None:
-                    if "Page not found." in soup.text:
-                        _log.error(
-                            f'{game_id} - PBP: Page not found error'
-                        )
-                        pnf_.append(game_id)
-                    elif "Page error" in soup.text:
-                        _log.error(f'{game_id} - PBP: Page error')
+                    reason = _classify_page_failure(page, soup)
+                    if reason is not None:
+                        _log.error(f'{game_id} - PBP: {reason}')
+                        if reason == "Page not found error":
+                            pnf_.append(game_id)
                     elif gamepackage is None:
                         _log.error(
                             f'{game_id} - PBP: Game JSON not found on page.'
@@ -652,6 +679,7 @@ def _get_game_info(game_id, game_type, source="api"):
 
         return espn_api._get_game_info_api(game_id, game_type)
 
+    page = None
     soup = None
     gamepackage = None
     game_id = str(game_id)
@@ -683,15 +711,13 @@ def _get_game_info(game_id, game_type, source="api"):
             if i + 1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
                 if soup is not None:
-                    if "Page not found." in soup.text:
+                    reason = _classify_page_failure(page, soup)
+                    if reason is not None:
                         _log.error(
-                            f'{game_id} - Game Info: Page not found error'
+                            f'{game_id} - Game Info: {reason}'
                         )
-                        pnf_.append(game_id)
-                    elif "Page error" in soup.text:
-                        _log.error(
-                            f'{game_id} - Game Info: Page error'
-                        )
+                        if reason == "Page not found error":
+                            pnf_.append(game_id)
                     elif gamepackage is None:
                         _log.error(
                             f'{game_id} - Game Info: Game JSON not found on page.'
@@ -717,6 +743,7 @@ def _get_game_info(game_id, game_type, source="api"):
 
 
 def _get_player_info(player_id, game_type):
+    page = None
     soup = None
     raw_player = None
     df = pd.DataFrame([])
@@ -739,18 +766,19 @@ def _get_player_info(player_id, game_type):
             df = _get_player_details_helper(player_id, raw_player, game_type)
 
         except Exception as ex:
-            if soup is not None and "Page not found." in soup.text:
+            reason = _classify_page_failure(page, soup) if soup is not None else None
+            if reason == "Page not found error":
                 _log.error(
-                    f'{player_id} - Player: Page not found error'
+                    f'{player_id} - Player: {reason}'
                 )
                 return pd.DataFrame([])
 
             if i + 1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
                 if soup is not None:
-                    if "Page error" in soup.text:
+                    if reason is not None:
                         _log.error(
-                            f'{player_id} - Player: Page error'
+                            f'{player_id} - Player: {reason}'
                         )
                     elif raw_player is None:
                         _log.error(
@@ -777,6 +805,7 @@ def _get_player_info(player_id, game_type):
 
 
 def _get_team_schedule(team, season, game_type):
+    page = None
     soup = None
 
     team_id, team_name = _get_id_from_team(team, season, game_type)
@@ -801,13 +830,10 @@ def _get_team_schedule(team, season, game_type):
             if i + 1 == ATTEMPTS:
                 # max number of attempts reached, so return blank df
                 if soup is not None:
-                    if "Page not found." in soup.text:
+                    reason = _classify_page_failure(page, soup)
+                    if reason is not None:
                         _log.error(
-                            f'{team} - Schedule: Page not found error'
-                        )
-                    elif "Page error" in soup.text:
-                        _log.error(
-                            f'{team} - Schedule: Page error'
+                            f'{team} - Schedule: {reason}'
                         )
                     else:
                         _log.error(
