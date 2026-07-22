@@ -8,6 +8,7 @@ from datetime import datetime
 import pandas as pd
 from typing import Union, Tuple
 from cbbpy.utils.cbbpy_utils import (
+    PageNotFoundError,
     _get_game,
     _get_games_range,
     _get_games_season,
@@ -253,7 +254,10 @@ class GameScraper:
         Returns:
             pd.DataFrame: The boxscores of both teams, combined into one table.
         """
-        return _get_game_boxscore(game_id, self._game_type, source)
+        try:
+            return _get_game_boxscore(game_id, self._game_type, source)
+        except PageNotFoundError:
+            return pd.DataFrame([])
 
     def get_game_pbp(self, game_id: Union[str, int], source: str = "api") -> pd.DataFrame:
         """Scrapes a game's play-by-play data.
@@ -269,7 +273,10 @@ class GameScraper:
             half/secs_left_half and quarter/secs_left_qt are superseded by
             period/secs_left_period and will be removed in 3.0.
         """
-        return _get_game_pbp(game_id, self._game_type, source)
+        try:
+            return _get_game_pbp(game_id, self._game_type, source)
+        except PageNotFoundError:
+            return pd.DataFrame([])
 
     def get_game_info(self, game_id: Union[str, int], source: str = "api") -> pd.DataFrame:
         """Scrapes game metadata from the ESPN game page.
@@ -285,7 +292,10 @@ class GameScraper:
             game_day/game_time (US/Pacific) are superseded by game_datetime
             (ISO-8601 UTC) and will be removed in 3.0.
         """
-        return _get_game_info(game_id, self._game_type, source)
+        try:
+            return _get_game_info(game_id, self._game_type, source)
+        except PageNotFoundError:
+            return pd.DataFrame([])
 
     def get_player_info(self, player_id: Union[str, int]) -> pd.DataFrame:
         """Scrapes player details from the player's bio page for a given player ID.

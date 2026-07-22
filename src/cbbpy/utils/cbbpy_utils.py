@@ -152,11 +152,6 @@ def print_log_file_location(func):
     return wrapper
 
 
-# pnf_ will keep track of games w/ page not found errors
-# if game has error, don't run the other scrape functions to save time
-pnf_ = []
-
-
 def _classify_page_failure(page, soup):
     """Classify a failed page fetch: status code first, body text as fallback.
 
@@ -189,6 +184,10 @@ class CouldNotParseError(Exception):
     pass
 
 
+class PageNotFoundError(Exception):
+    pass
+
+
 class InvalidDateRangeError(Exception):
     pass
 
@@ -211,16 +210,18 @@ def _get_game(game_id, game_type, info, box, pbp, source="api", throttle=0):
         from cbbpy.utils import espn_api
 
         # one summary request serves info + boxscore + pbp for the game
-        summary = (
-            espn_api._fetch_summary(game_id, game_type)
-            if (info or box or pbp) and game_id not in pnf_
-            else None
-        )
+        pnf = False
+        summary = None
+        if info or box or pbp:
+            try:
+                summary = espn_api._fetch_summary(game_id, game_type)
+            except PageNotFoundError:
+                pnf = True
 
-        # summary is None for a real 404 (game in pnf_) or any other persistent
-        # failure, already logged by _fetch_summary; distinguish the two here
+        # summary is None for a non-404 persistent failure (already logged by
+        # _fetch_summary); pnf distinguishes a real 404 from that here
         if info:
-            if game_id in pnf_:
+            if pnf:
                 _log.error(f'{game_id} - Game Info: Page not found error')
             elif summary is None:
                 _log.error(f'{game_id} - Game Info: summary unavailable')
@@ -228,7 +229,7 @@ def _get_game(game_id, game_type, info, box, pbp, source="api", throttle=0):
                 game_info_df = espn_api._get_game_info_api(game_id, game_type, summary)
 
         if box:
-            if game_id in pnf_:
+            if pnf:
                 _log.error(f'{game_id} - Boxscore: Page not found error')
             elif summary is None:
                 _log.error(f'{game_id} - Boxscore: summary unavailable')
@@ -236,7 +237,7 @@ def _get_game(game_id, game_type, info, box, pbp, source="api", throttle=0):
                 boxscore_df = espn_api._get_game_boxscore_api(game_id, game_type, summary)
 
         if pbp:
-            if game_id in pnf_:
+            if pnf:
                 _log.error(f'{game_id} - PBP: Page not found error')
             elif summary is None:
                 _log.error(f'{game_id} - PBP: summary unavailable')
@@ -245,20 +246,32 @@ def _get_game(game_id, game_type, info, box, pbp, source="api", throttle=0):
 
         return (game_info_df, boxscore_df, pbp_df)
 
-    if game_id in pnf_:
-        _log.error(f'{game_id} - Game Info: Page not found error')
-    elif info:
-        game_info_df = _get_game_info(game_id, game_type, source)
+    # a 404 in one section skips the rest; the raising scraper logs its own
+    # error, _get_game logs the sections it skips
+    pnf = False
+    if info:
+        try:
+            game_info_df = _get_game_info(game_id, game_type, source)
+        except PageNotFoundError:
+            pnf = True
 
-    if game_id in pnf_:
-        _log.error(f'{game_id} - Boxscore: Page not found error')
-    elif box:
-        boxscore_df = _get_game_boxscore(game_id, game_type, source)
+    if box:
+        if pnf:
+            _log.error(f'{game_id} - Boxscore: Page not found error')
+        else:
+            try:
+                boxscore_df = _get_game_boxscore(game_id, game_type, source)
+            except PageNotFoundError:
+                pnf = True
 
-    if game_id in pnf_:
-        _log.error(f'{game_id} - PBP: Page not found error')
-    elif pbp:
-        pbp_df = _get_game_pbp(game_id, game_type, source)
+    if pbp:
+        if pnf:
+            _log.error(f'{game_id} - PBP: Page not found error')
+        else:
+            try:
+                pbp_df = _get_game_pbp(game_id, game_type, source)
+            except PageNotFoundError:
+                pnf = True
 
     return (game_info_df, boxscore_df, pbp_df)
 
@@ -552,7 +565,7 @@ def _get_game_boxscore(game_id, game_type, source="api"):
                             f'{game_id} - Boxscore: {reason}'
                         )
                         if reason == "Page not found error":
-                            pnf_.append(game_id)
+                            raise PageNotFoundError(game_id)
                     elif gamepackage is None:
                         _log.error(
                             f'{game_id} - Boxscore: Game JSON not found on page.'
@@ -647,7 +660,7 @@ def _get_game_pbp(game_id, game_type, source="api"):
                     if reason is not None:
                         _log.error(f'{game_id} - PBP: {reason}')
                         if reason == "Page not found error":
-                            pnf_.append(game_id)
+                            raise PageNotFoundError(game_id)
                     elif gamepackage is None:
                         _log.error(
                             f'{game_id} - PBP: Game JSON not found on page.'
@@ -717,7 +730,7 @@ def _get_game_info(game_id, game_type, source="api"):
                             f'{game_id} - Game Info: {reason}'
                         )
                         if reason == "Page not found error":
-                            pnf_.append(game_id)
+                            raise PageNotFoundError(game_id)
                     elif gamepackage is None:
                         _log.error(
                             f'{game_id} - Game Info: Game JSON not found on page.'

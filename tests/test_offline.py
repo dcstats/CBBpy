@@ -22,10 +22,12 @@ from bs4 import BeautifulSoup as bs
 import cbbpy
 from cbbpy import mens_scraper as ms, womens_scraper as ws
 from cbbpy.utils import cbbpy_utils
+from cbbpy.utils import espn_api
 from cbbpy.utils.cbbpy_utils import (
     CBBpyWarning,
     DEPRECATED_COLUMNS,
     InvalidDateRangeError,
+    PageNotFoundError,
     _classify_page_failure,
     _get_game_pbp_helper,
     _get_id_from_team,
@@ -416,33 +418,50 @@ def test_classify_page_failure_without_status_falls_back_to_body():
     assert _classify_page_failure(None, bs(body, "lxml")) == "Page not found error"
 
 
-def test_html_404_marks_pnf_without_body_text(monkeypatch):
+def test_html_404_raises_page_not_found_without_body_text(monkeypatch):
     # a real 404 must be caught by status code alone, even when the body
-    # carries no "Page not found." marker (#74)
+    # carries no "Page not found." marker (#74). The private scraper raises
+    # PageNotFoundError; the public wrapper swallows it to an empty DF.
     resp = SimpleNamespace(content=b"<html><body>no marker</body></html>", status_code=404)
     monkeypatch.setattr(cbbpy_utils.r, "get", lambda url, *a, **k: resp)
     monkeypatch.setattr(cbbpy_utils.time, "sleep", lambda *_: None)
     monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 1)
-    monkeypatch.setattr(cbbpy_utils, "pnf_", [])
 
-    df = ms.get_game_info("401999999", source="html")
+    assert ms.get_game_info("401999999", source="html").empty
 
-    assert df.empty
-    assert "401999999" in cbbpy_utils.pnf_
+    with pytest.raises(PageNotFoundError):
+        cbbpy_utils._get_game_info("401999999", "mens", "html")
 
 
-def test_api_404_marks_pnf(monkeypatch):
-    # the API path bails on a 404 status without parsing the body (#74)
+def test_api_404_raises_page_not_found(monkeypatch):
+    # the API path bails on a 404 status without parsing the body (#74). The
+    # transport raises PageNotFoundError; the public wrapper swallows it.
     resp = SimpleNamespace(content=b"", status_code=404)
     monkeypatch.setattr(cbbpy_utils.r, "get", lambda url, *a, **k: resp)
     monkeypatch.setattr(cbbpy_utils.time, "sleep", lambda *_: None)
     monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 1)
-    monkeypatch.setattr(cbbpy_utils, "pnf_", [])
 
-    df = ms.get_game_info("401999999", source="api")
+    assert ms.get_game_info("401999999", source="api").empty
 
-    assert df.empty
-    assert "401999999" in cbbpy_utils.pnf_
+    with pytest.raises(PageNotFoundError):
+        espn_api._fetch_summary("401999999", "mens")
+
+
+def test_html_404_info_skips_box_and_pbp(monkeypatch):
+    # within one _get_game call, an info 404 must skip the boxscore and pbp
+    # scrapes: only the info GET is issued and all three DFs come back empty
+    resp = SimpleNamespace(content=b"<html><body>no marker</body></html>", status_code=404)
+    calls = []
+    monkeypatch.setattr(cbbpy_utils.r, "get", lambda url, *a, **k: calls.append(url) or resp)
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 1)
+
+    info, box, pbp = cbbpy_utils._get_game(
+        "401999999", "mens", True, True, True, source="html"
+    )
+
+    assert len(calls) == 1
+    assert info.empty and box.empty and pbp.empty
 
 
 def test_api_waf_challenge_logged_as_such(monkeypatch, caplog):
@@ -452,16 +471,17 @@ def test_api_waf_challenge_logged_as_such(monkeypatch, caplog):
     monkeypatch.setattr(cbbpy_utils.r, "get", lambda url, *a, **k: resp)
     monkeypatch.setattr(cbbpy_utils.time, "sleep", lambda *_: None)
     monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 1)
-    monkeypatch.setattr(cbbpy_utils, "pnf_", [])
 
     with caplog.at_level(logging.ERROR, logger="CBBpy"):
         df = ms.get_game_info("401999999", source="api")
 
+    # a transient WAF block is not a dead game: it must not raise
+    with caplog.at_level(logging.ERROR, logger="CBBpy"):
+        assert espn_api._fetch_summary("401999999", "mens") is None
+
     assert df.empty
     assert "WAF challenge" in caplog.text
     assert "JSONDecodeError" not in caplog.text
-    # a transient WAF block is not a dead game
-    assert cbbpy_utils.pnf_ == []
 
 
 def test_import_does_no_logging_io():

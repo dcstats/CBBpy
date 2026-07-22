@@ -7,8 +7,8 @@ is reshaped into the exact structures the HTML helpers in ``cbbpy_utils`` alread
 consume (``_get_game_boxscore_helper`` / ``_get_game_pbp_helper``) so column
 layout, dtypes, and text parsing stay identical across the two sources.
 
-Retry/backoff/logging/impersonation and the ``pnf_`` dead-game cache are reused
-from ``cbbpy_utils`` rather than duplicated.
+Retry/backoff/logging/impersonation are reused from ``cbbpy_utils`` rather than
+duplicated.
 """
 
 import re
@@ -45,8 +45,8 @@ WOMENS_API_SCOREBOARD_URL = (
 def _fetch_summary(game_id, game_type):
     """GET + parse the summary endpoint for a game, with retries.
 
-    Returns the parsed JSON dict, or None on persistent failure. A 404 marks
-    the game in ``cu.pnf_`` so the other scrapers skip it, mirroring the HTML path.
+    Returns the parsed JSON dict, or None on persistent failure. A 404 raises
+    ``cu.PageNotFoundError`` so the other scrapers skip it, mirroring the HTML path.
     Failures are classified by status code before the body is parsed, so a WAF
     challenge is logged as such rather than as an opaque JSON decode error.
     """
@@ -66,8 +66,7 @@ def _fetch_summary(game_id, game_type):
             if reason == "Page not found error":
                 # bail immediately rather than retrying a game that won't exist
                 cu._log.error(f"{game_id} - API: {reason}")
-                cu.pnf_.append(game_id)
-                return None
+                raise cu.PageNotFoundError(game_id)
             elif reason is not None:
                 raise cu.CouldNotParseError(reason)
 
@@ -76,13 +75,14 @@ def _fetch_summary(game_id, game_type):
             # fallback: a missing game also carries {"code": 404, ...} in the body
             if js.get("code") == 404:
                 cu._log.error(f"{game_id} - API: Page not found error")
-                cu.pnf_.append(game_id)
-                return None
+                raise cu.PageNotFoundError(game_id)
 
             # a valid summary always carries a header
             if "header" not in js:
                 raise cu.CouldNotParseError(js.get("message", "no header in response"))
 
+        except cu.PageNotFoundError:
+            raise
         except Exception as ex:
             if i + 1 == cu.ATTEMPTS:
                 cu._log.error(f"{game_id} - API: {ex}\n{traceback.format_exc()}")

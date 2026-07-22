@@ -95,8 +95,8 @@ def offline_espn(monkeypatch):
       DataFrame after ~45s of retries
     - joblib.Parallel runs serially in-process
 
-    Note: cbbpy_utils.pnf_ is a module-level cache of page-not-found game IDs.
-    No 404 pages are recorded today; if one is ever added, reset pnf_ here too.
+    Note: a page-not-found game raises PageNotFoundError from the scraper
+    rather than being cached, so there is no module-level state to reset here.
     """
     store = FixtureStore(FIXTURE_DIR)
 
