@@ -57,10 +57,10 @@ Subcommands:
 
 Options (which commands they apply to):
 
-- `-g/--gender` (`mens` default, or `womens`) — all except none; every command
+- `-g/--gender` (`mens` default, or `womens`) — every command
 - `--source` (`api` default, or `html`) — game/info/box/pbp/range/season/team/conference/ids
 - `-o/--output-dir`, `--format` (`csv` default, or `parquet`) — every command that writes files
-- `--stdout` — print the table instead of writing a file: info/box/pbp/player/schedule
+- `--stdout` — print instead of writing a file (info/player as a transposed `field: value` block; box/pbp/schedule open a scrollable view via `less -S` in an interactive terminal — arrow keys to pan, `q` to quit — or emit plain CSV when piped/redirected): info/box/pbp/player/schedule
 - `--no-info/--no-box/--no-pbp` — skip a frame: game/range/season/team/conference
 - `--throttle`, `--n-jobs` — bulk commands: range/season/team/conference
 - `-s/--season` — team/conference/schedule (season is a positional on `season`)
@@ -71,6 +71,10 @@ cbbpy game 401522202
 
 # just the metadata for one game, printed to the terminal
 cbbpy info 401522202 --stdout
+
+# pbp in the terminal opens a scrollable table automatically (q to quit); piping yields CSV
+cbbpy pbp 401581583 --stdout
+cbbpy pbp 401581583 --stdout | column -s, -t   # CSV when redirected
 
 # a women's team's 2022 season as parquet, without play-by-play
 cbbpy team davidson -s 2022 -g womens --no-pbp --format parquet -o ./data

@@ -2,6 +2,7 @@
 
 import argparse
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -26,6 +27,22 @@ def _write(df, path, fmt):
         df.to_csv(path, index=False)
 
 
+def _page(df):
+    """Wide-frame stdout: on a TTY scroll it through `less -S`, else emit CSV."""
+    if not sys.stdout.isatty():
+        df.to_csv(sys.stdout, index=False)
+        return
+    try:
+        pager = subprocess.Popen(["less", "-SFX"], stdin=subprocess.PIPE, text=True)
+    except FileNotFoundError:
+        df.to_csv(sys.stdout, index=False)
+        return
+    try:
+        pager.communicate(df.to_string(index=False))
+    except BrokenPipeError:
+        pass
+
+
 def _emit(command, slug, kind, df, args):
     """Write one frame to disk (or stdout), skipping empties. Returns True if emitted."""
     if df.empty:
@@ -33,7 +50,10 @@ def _emit(command, slug, kind, df, args):
         print(f"[cbbpy] skipping empty {label} frame", file=sys.stderr)
         return False
     if getattr(args, "stdout", False):
-        print(df.to_string(index=False))
+        if command in ("info", "player"):
+            print("\n\n".join(row.to_frame().to_string(header=False) for _, row in df.iterrows()))
+        else:
+            _page(df)
         return True
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)

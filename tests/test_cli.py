@@ -36,10 +36,37 @@ def test_info_writes_one_file(offline_espn, tmp_path):
     assert written[0].stat().st_size > 0
 
 
-def test_info_stdout_prints_no_file(offline_espn, tmp_path, capsys):
+def test_info_stdout_prints_transposed(offline_espn, tmp_path, capsys):
     cli.main(["info", GAME_ID, "--stdout", "-o", str(tmp_path)])
     assert list(tmp_path.glob("*")) == []
-    assert capsys.readouterr().out.strip() != ""
+    lines = capsys.readouterr().out.splitlines()
+    # transposed: each column is its own line, field name at the start
+    assert any(line.startswith("game_id") for line in lines)
+
+
+def test_box_stdout_prints_csv(offline_espn, tmp_path, capsys):
+    cli.main(["box", GAME_ID, "--stdout", "-o", str(tmp_path)])
+    assert list(tmp_path.glob("*")) == []
+    lines = capsys.readouterr().out.splitlines()
+    header = lines[0].split(",")
+    assert "game_id" in header
+
+
+def test_box_stdout_tty_pages_aligned(offline_espn, tmp_path, monkeypatch):
+    monkeypatch.setattr(cli.sys.stdout, "isatty", lambda: True, raising=False)
+    captured = {}
+
+    class FakePager:
+        def communicate(self, text):
+            captured["text"] = text
+
+    monkeypatch.setattr(cli.subprocess, "Popen", lambda *a, **k: FakePager())
+    cli.main(["box", GAME_ID, "--stdout", "-o", str(tmp_path)])
+    text = captured["text"]
+    header = text.splitlines()[0]
+    # aligned to_string rendering: space-separated columns, not comma-joined CSV
+    assert "game_id" in header
+    assert "," not in header
 
 
 def test_ids_prints_ids(offline_espn, capsys):
