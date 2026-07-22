@@ -1274,6 +1274,35 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     return df.sort_values(by=[pd_type, pd_type_sec], ascending=[True, False])
 
 
+def _compute_num_ots(home_ls, away_ls, game_id, game_type, game_date):
+    """Derive the number of OTs from both teams' linescores.
+
+    Returns -1 when either linescore is missing. If the two disagree (ESPN
+    occasionally publishes a truncated linescore for one team), warn and use
+    the larger of the two rather than raising.
+    """
+    if not home_ls or not away_ls:
+        _log.warning(f"{game_id} - No score info available")
+        return -1
+
+    # men, and women before the 15-16 season, use halves
+    if game_type == "mens" or game_date.replace(tzinfo=None) < WOMEN_HALF_RULE_CHANGE_DATE:
+        regulation = 2
+    # women (after 14-15) use quarters
+    else:
+        regulation = 4
+
+    h_ot, a_ot = len(home_ls) - regulation, len(away_ls) - regulation
+
+    if h_ot != a_ot:
+        _log.warning(
+            f"{game_id} - Inconsistent linescore lengths "
+            f"(home: {len(home_ls)}, away: {len(away_ls)}); using {max(h_ot, a_ot)} OTs"
+        )
+
+    return max(h_ot, a_ot)
+
+
 def _get_game_info_helper(gamepackage, game_id, game_type):
     info = gamepackage["gmInfo"]
     more_info = gamepackage["gmStrp"]
@@ -1354,22 +1383,9 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
     tournament = more_info.get("nte", "")
 
     # use number of entries in scoreline to determine number of OTs
-    if ("linescores" in ht_info) and ("linescores" in at_info):
-        # men, and women before the 15-16 season, use halves
-        if (
-            game_type == "mens"
-            or game_date.replace(tzinfo=None) < WOMEN_HALF_RULE_CHANGE_DATE
-        ):
-            h_ot, a_ot = len(ht_info["linescores"]) - 2, len(at_info["linescores"]) - 2
-        # women (after 14-15) use quarters
-        else:
-            h_ot, a_ot = len(ht_info["linescores"]) - 4, len(at_info["linescores"]) - 4
-
-        assert h_ot == a_ot
-        num_ots = h_ot
-    else:
-        _log.warning(f'{game_id} - No score info available')
-        num_ots = -1
+    num_ots = _compute_num_ots(
+        ht_info.get("linescores"), at_info.get("linescores"), game_id, game_type, game_date
+    )
 
     try:
         home_spread = gamepackage['gameOdds']['odds'][-1]['pointSpread']['primary']

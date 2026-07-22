@@ -238,22 +238,9 @@ def _parse_game_info(summary, game_id, game_type):
     game_day = game_date.strftime("%B %d, %Y")
     game_time = game_date.strftime("%I:%M %p %Z")
 
-    home_ls = ht.get("linescores")
-    away_ls = at.get("linescores")
-    if home_ls and away_ls:
-        # men, and women before the 15-16 season, use halves
-        if (
-            game_type == "mens"
-            or game_date.replace(tzinfo=None) < cu.WOMEN_HALF_RULE_CHANGE_DATE
-        ):
-            h_ot, a_ot = len(home_ls) - 2, len(away_ls) - 2
-        else:
-            h_ot, a_ot = len(home_ls) - 4, len(away_ls) - 4
-        assert h_ot == a_ot
-        num_ots = h_ot
-    else:
-        cu._log.warning(f"{game_id} - No score info available")
-        num_ots = -1
+    num_ots = cu._compute_num_ots(
+        ht.get("linescores"), at.get("linescores"), game_id, game_type, game_date
+    )
 
     game_info = summary.get("gameInfo") or {}
     venue = game_info.get("venue") or {}
