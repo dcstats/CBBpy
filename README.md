@@ -56,8 +56,8 @@ cbbpy ids 04-03-2021
 ```
 
 ## Known Issues
-- Plenty of games are, for whatever reason, not available on ESPN's site due to a 'Page not found' error. Sometimes these errors appear randomly and resolve themselves in due time (either hours or days), and other games have had this error for years, as far as I can tell, and are not able to be scraped.
-- Sometimes the above issue will cause the scraper to take longer than expected. If it seems to be taking too long, **check the log file** for a list of errors that occurred during scraping (the log file location is outputted after the scraper finishes).
+<!-- - Plenty of games are, for whatever reason, not available on ESPN's site due to a 'Page not found' error. Sometimes these errors appear randomly and resolve themselves in due time (either hours or days), and other games have had this error for years, as far as I can tell, and are not able to be scraped. -->
+- Sometimes an issue might cause the scraper to take longer than expected. If it seems to be taking too long, **check the log file** for a list of errors that occurred during scraping. The log file location is outputted after the scraper finishes, or you can see the location anytime by running `python -c "from cbbpy.utils.cbbpy_utils import log_file; print(log_file)"`.
 - Before the 16-17 season, Play-by-Play and Boxscores for women's games on ESPN are pretty sparse.
 - If both teams in a game are participating in the first game of conference play, the `is_conference` flag will incorrectly show `False` until the game goes final. This is not an issue after the game is over.
 
