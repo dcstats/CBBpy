@@ -9,15 +9,15 @@ This package is designed to bridge the gap between data and analysis for NCAA D1
 ## Installation and import
 CBBpy requires Python >= 3.9 as well as the following packages:
 * pandas>=2.0.0
-* numpy>=2.0.0
-* python-dateutil>=2.4.0
+* numpy>=1.21.6
+* python-dateutil>=2.8.2
 * pytz>=2022.1
 * tqdm>=4.63.0
-* lxml>=4.9.0
+* lxml>=4.9.2
 * joblib>=1.0.0
 * beautifulsoup4>=4.11.0
 * curl_cffi>=0.10.0
-* rapidfuzz>=3.9.0
+* rapidfuzz>=2.14.0
 * platformdirs>=4.0.0
 
 

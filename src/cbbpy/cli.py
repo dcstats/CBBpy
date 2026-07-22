@@ -6,6 +6,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pandas as pd
+
 from cbbpy.utils.scraper import GameScraper
 from cbbpy.utils.cbbpy_utils import _get_current_season
 
@@ -78,8 +80,6 @@ def _emit_frames(command, slug, frames, args):
 
 
 def _cmd_game(scraper, args):
-    import pandas as pd
-
     results = [
         scraper.get_game(gid, info=args.info, box=args.box, pbp=args.pbp, source=args.source)
         for gid in args.game_id
@@ -89,8 +89,6 @@ def _cmd_game(scraper, args):
 
 
 def _cmd_frame(scraper, args):
-    import pandas as pd
-
     method = {
         "info": scraper.get_game_info,
         "box": scraper.get_game_boxscore,
@@ -99,7 +97,9 @@ def _cmd_frame(scraper, args):
     df = pd.concat(
         [method(gid, source=args.source) for gid in args.game_id], ignore_index=True
     )
-    _emit(args.command, "-".join(args.game_id), None, df, args)
+    # "box" files are named "boxscore" to match the game subcommand's output
+    label = "boxscore" if args.command == "box" else args.command
+    _emit(label, "-".join(args.game_id), None, df, args)
 
 
 def _cmd_range(scraper, args):

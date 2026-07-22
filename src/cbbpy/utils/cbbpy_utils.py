@@ -1612,7 +1612,7 @@ def _get_schedule_helper(jsn, team, id_, season):
         game_datetime = gm_dt.astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
         date = gm_dt.astimezone(tz('America/Los_Angeles'))
         # game_day/game_time (Pacific) are deprecated in favor of game_datetime;
-    # removal in 3.0 (see DEPRECATED_COLUMNS)
+        # removal in 3.0 (see DEPRECATED_COLUMNS)
         day = date.strftime('%B %d, %Y')
         time = date.strftime('%I:%M %p %Z')
 

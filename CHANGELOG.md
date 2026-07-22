@@ -18,7 +18,7 @@ All notable changes to CBBpy are documented here. The format is based on
   in game info.
 - `cbbpy` command-line interface (`[project.scripts]`).
 - `get_team_logos()`.
-- `play_type`, `play_type_id`, and per-play player names/ids in play-by-play.
+- `play_type_id` and per-play player names/ids in play-by-play.
 - `throttle` and `n_jobs` parameters on the bulk scraping functions, and a 30s
   per-request timeout so a hung connection raises into the retry loop (#70, #79).
 
@@ -33,6 +33,10 @@ All notable changes to CBBpy are documented here. The format is based on
 - Men's and women's team maps updated through the 2026 season, with a season fallback
   for unmapped years (#66).
 - Worker count is floored at 1 so single-core machines can scrape in parallel mode.
+- `play_type` in play-by-play now carries ESPN's structured JSON play type verbatim
+  (e.g. `JumpShot`, `MadeFreeThrow`) instead of the lossy lowercase text-parsed value
+  (e.g. `jumper`, `free throw`); the old text parse remains only as a fallback for the
+  rare play with no JSON type. Filters written against the old strings need updating.
 - Failed page fetches are now classified by HTTP status code first, with the response
   body text kept as a fallback, so a WAF challenge (202) is distinguishable from a real
   not-found (404) in the logs (#74).
