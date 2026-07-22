@@ -239,7 +239,12 @@ def _parse_game_info(summary, game_id, game_type):
     game_time = game_date.strftime("%I:%M %p %Z")
 
     num_ots = cu._compute_num_ots(
-        ht.get("linescores"), at.get("linescores"), game_id, game_type, game_date
+        ht.get("linescores"),
+        at.get("linescores"),
+        game_id,
+        game_type,
+        game_date,
+        ((summary.get("format") or {}).get("regulation") or {}).get("periods"),
     )
 
     game_info = summary.get("gameInfo") or {}

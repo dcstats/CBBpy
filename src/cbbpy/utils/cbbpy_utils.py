@@ -1274,8 +1274,12 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     return df.sort_values(by=[pd_type, pd_type_sec], ascending=[True, False])
 
 
-def _compute_num_ots(home_ls, away_ls, game_id, game_type, game_date):
+def _compute_num_ots(home_ls, away_ls, game_id, game_type, game_date, regulation=None):
     """Derive the number of OTs from both teams' linescores.
+
+    `regulation` is the number of regulation periods as reported by ESPN
+    (API `format.regulation.periods`, HTML `gamepackage.maxPeriods`); when the
+    payload omits it, fall back to the rule-change date.
 
     Returns -1 when either linescore is missing. If the two disagree (ESPN
     occasionally publishes a truncated linescore for one team), warn and use
@@ -1285,12 +1289,14 @@ def _compute_num_ots(home_ls, away_ls, game_id, game_type, game_date):
         _log.warning(f"{game_id} - No score info available")
         return -1
 
-    # men, and women before the 15-16 season, use halves
-    if game_type == "mens" or game_date.replace(tzinfo=None) < WOMEN_HALF_RULE_CHANGE_DATE:
-        regulation = 2
-    # women (after 14-15) use quarters
-    else:
-        regulation = 4
+    if not regulation:
+        # men, and women before the 15-16 season, use halves; women (after 14-15) use quarters
+        regulation = (
+            2
+            if game_type == "mens"
+            or game_date.replace(tzinfo=None) < WOMEN_HALF_RULE_CHANGE_DATE
+            else 4
+        )
 
     h_ot, a_ot = len(home_ls) - regulation, len(away_ls) - regulation
 
@@ -1384,7 +1390,12 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
 
     # use number of entries in scoreline to determine number of OTs
     num_ots = _compute_num_ots(
-        ht_info.get("linescores"), at_info.get("linescores"), game_id, game_type, game_date
+        ht_info.get("linescores"),
+        at_info.get("linescores"),
+        game_id,
+        game_type,
+        game_date,
+        gamepackage.get("maxPeriods"),
     )
 
     try:
