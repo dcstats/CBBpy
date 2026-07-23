@@ -278,20 +278,20 @@ def _get_game(game_id, game_type, info, box, pbp, source="api", throttle=0):
 
 def _sort_results(game_info_df, game_boxscore_df, game_pbp_df, info, box, pbp):
     """Sort returned dataframes to ensure consistency between runs."""
-    if info:
+    if info and not game_info_df.empty:
         # fixed-width ISO-8601 UTC strings sort correctly lexicographically (#80)
         game_info_df = game_info_df.sort_values(
             by=['game_datetime', 'game_id']
         ).reset_index(drop=True)
 
-    if box:
+    if box and not game_boxscore_df.empty:
         game_boxscore_df = game_boxscore_df.sort_values(
             by=['game_id', 'team'],
             ascending=False,
             kind='mergesort'
         ).reset_index(drop=True)
 
-    if pbp:
+    if pbp and not game_pbp_df.empty:
         game_pbp_df = game_pbp_df.sort_values(
             by=['game_id'],
             ascending=False,

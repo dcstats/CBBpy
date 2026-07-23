@@ -407,6 +407,18 @@ def test_games_team_failed_schedule_returns_empty(offline_espn):
     offline_espn.misses.clear()
 
 
+def test_games_range_all_games_fail_returns_empty(offline_espn, monkeypatch):
+    # game-id discovery succeeds but every _get_game call fails, so each game
+    # yields three column-less empty frames. The concat then has no columns to
+    # sort by, which used to raise KeyError: 'game_datetime' in _sort_results.
+    # The all-failures path must return three empty DataFrames instead (#89).
+    empty = (pd.DataFrame([]), pd.DataFrame([]), pd.DataFrame([]))
+    monkeypatch.setattr(cbbpy_utils, "_get_game", lambda *a, **k: empty)
+    d = SCOREBOARD_DATES["mens"]
+    info, box, pbp = ms.get_games_range(d, d)
+    assert info.empty and box.empty and pbp.empty
+
+
 @pytest.mark.parametrize(
     "status, body, expected",
     [
