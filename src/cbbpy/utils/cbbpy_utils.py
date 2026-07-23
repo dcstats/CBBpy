@@ -361,6 +361,7 @@ def _get_games_season(
     season, game_type, info, box, pbp, source="api", throttle=0.5, n_jobs=None
 ):
     _validate_source(source)
+    season = int(season)
     season_start_date = f"{season-1}-11-01"
     season_end_date = f"{season}-05-01"
 

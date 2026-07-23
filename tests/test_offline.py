@@ -340,6 +340,21 @@ def test_season_future_raises(func):
         func(3000)
 
 
+@pytest.mark.parametrize("func", [ms.get_games_season, ws.get_games_season])
+def test_season_accepts_string(monkeypatch, func):
+    # #87: a string season must not raise TypeError from `season-1` arithmetic,
+    # and must produce the same date window as the int season
+    captured = []
+    monkeypatch.setattr(
+        cbbpy_utils,
+        "_get_games_range",
+        lambda start, end, *a, **kw: captured.append((start, end)),
+    )
+    func("2024")
+    func(2024)
+    assert captured[0] == captured[1] == ("2023-11-01", "2024-05-01")
+
+
 def test_pbp_malformed_clock_does_not_crash():
     # no fixtures needed: a play with no clock, and one with a colon-less
     # clock, degrade to 0:00 instead of killing the whole game's parse (#82)

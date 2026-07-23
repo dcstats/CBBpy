@@ -213,17 +213,17 @@ def _build_parser():
     p.set_defaults(func=_cmd_range)
 
     p = sub.add_parser("season", parents=game_data + [bulk], help="scrape a whole season")
-    p.add_argument("season", nargs="?", default=None, help="season (default: current)")
+    p.add_argument("season", nargs="?", type=int, default=None, help="season (default: current)")
     p.set_defaults(func=_cmd_season)
 
     p = sub.add_parser("team", parents=game_data + [bulk], help="scrape a team's season")
     p.add_argument("team")
-    p.add_argument("-s", "--season", default=None, help="season (default: current)")
+    p.add_argument("-s", "--season", type=int, default=None, help="season (default: current)")
     p.set_defaults(func=_cmd_team)
 
     p = sub.add_parser("conference", parents=game_data + [bulk], help="scrape a conference's season")
     p.add_argument("conference")
-    p.add_argument("-s", "--season", default=None, help="season (default: current)")
+    p.add_argument("-s", "--season", type=int, default=None, help="season (default: current)")
     p.set_defaults(func=_cmd_conference)
 
     p = sub.add_parser("ids", parents=[gender, source], help="print game IDs for a date")
@@ -238,7 +238,7 @@ def _build_parser():
     grp = p.add_mutually_exclusive_group(required=True)
     grp.add_argument("--team")
     grp.add_argument("--conference")
-    p.add_argument("-s", "--season", default=None, help="season (default: current)")
+    p.add_argument("-s", "--season", type=int, default=None, help="season (default: current)")
     p.set_defaults(func=_cmd_schedule)
 
     return parser
