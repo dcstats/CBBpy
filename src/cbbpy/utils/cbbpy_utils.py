@@ -110,6 +110,16 @@ CONFERENCE_ALIASES = {
     "western athletic conference": "united athletic conference",
     "united athletic conference": "western athletic conference",
 }
+# ESPN renamed two schools starting in season 2026. Old and new spellings name
+# the same school; map each to the other so a lookup by either resolves in any
+# season instead of falling through to fuzzy matching.
+TEAM_ALIASES = {
+    "st. francis (pa)": "saint francis",
+    "saint francis": "st. francis (pa)",
+    "st. francis pa": "saint francis",
+    "texas a&m-commerce": "east texas a&m",
+    "east texas a&m": "texas a&m-commerce",
+}
 GOOD_GAME_STATUSES = ['In Progress', 'Final']
 # Columns still emitted for backwards compatibility, mapped to their replacement and
 # the version that drops them. Source of truth for the docs and the removal test.
@@ -1710,6 +1720,11 @@ def _get_id_from_team(team, season, game_type):
     id_map = id_map.set_index('location')['id'].to_dict()
     lowercase_map = {x.lower(): x for x in id_map.keys()}
 
+    # if the given team is not in the list of teams, try the rename alias,
+    # then search for nearest match
+    if team.lower() not in lowercase_map and TEAM_ALIASES.get(team.lower()) in lowercase_map:
+        team = TEAM_ALIASES[team.lower()]
+
     # if the given team is not in the list of teams, search for nearest match
     if not team.lower() in lowercase_map:
         choices = list(id_map.keys())
@@ -1722,7 +1737,7 @@ def _get_id_from_team(team, season, game_type):
         )
 
         warnings.warn(
-            f"No exact match for '{team}'. Fetching closest team match: '{best_match}'.",
+            f"No exact match for '{team}'. Fetching closest team match: '{best_match}' (similarity {score:.2f}).",
             CBBpyWarning,
             stacklevel=2,
         )

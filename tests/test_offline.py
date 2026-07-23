@@ -307,6 +307,19 @@ def test_team_map_conference_aliases():
     assert ms.get_teams_from_conference("uac", 2025) == ms.get_teams_from_conference("wac", 2025)
 
 
+def test_team_map_team_aliases():
+    # no fixtures needed: reads the bundled team-map CSVs only
+    # ESPN renamed two schools starting in season 2026; an old or new spelling
+    # must resolve to the same school instead of fuzzy-mismatching
+    assert _get_id_from_team("Texas A&M-Commerce", 2026, "mens") == (2837, "East Texas A&M")
+    assert _get_id_from_team("East Texas A&M", 2024, "mens") == (2837, "Texas A&M-Commerce")
+    assert _get_id_from_team("St. Francis PA", 2026, "mens") == (2598, "Saint Francis")
+    # reverse direction: the new name resolves on a pre-rename season
+    assert _get_id_from_team("Saint Francis", 2024, "mens") == (2598, "St. Francis (PA)")
+    # the maps share the renames across genders
+    assert _get_id_from_team("Texas A&M-Commerce", 2026, "womens") == (2837, "East Texas A&M")
+
+
 @pytest.mark.parametrize("gender", ["mens", "womens"])
 def test_team_map_conference_abbs(gender):
     # guards the static CSVs against ESPN abbreviation drift when a new
