@@ -58,7 +58,8 @@ class GameScraper:
         Deprecated:
             game_day/game_time (US/Pacific) are superseded by game_datetime
             (ISO-8601 UTC); half/secs_left_half and quarter/secs_left_qt are
-            superseded by period/secs_left_period. Both pairs are removed in 3.0.
+            superseded by period/secs_left_period; shooter is superseded by
+            player_name. All are removed in 3.0.
         """
         return _get_game(game_id, self._game_type, info, box, pbp, source)
 
@@ -96,7 +97,8 @@ class GameScraper:
         Deprecated:
             game_day/game_time (US/Pacific) are superseded by game_datetime
             (ISO-8601 UTC); half/secs_left_half and quarter/secs_left_qt are
-            superseded by period/secs_left_period. Both pairs are removed in 3.0.
+            superseded by period/secs_left_period; shooter is superseded by
+            player_name. All are removed in 3.0.
         """
         return _get_games_range(
             start_date, end_date, self._game_type, info, box, pbp, source, throttle, n_jobs
@@ -136,7 +138,8 @@ class GameScraper:
         Deprecated:
             game_day/game_time (US/Pacific) are superseded by game_datetime
             (ISO-8601 UTC); half/secs_left_half and quarter/secs_left_qt are
-            superseded by period/secs_left_period. Both pairs are removed in 3.0.
+            superseded by period/secs_left_period; shooter is superseded by
+            player_name. All are removed in 3.0.
         """
         if season is None:
             season = _get_current_season()
@@ -180,7 +183,8 @@ class GameScraper:
         Deprecated:
             game_day/game_time (US/Pacific) are superseded by game_datetime
             (ISO-8601 UTC); half/secs_left_half and quarter/secs_left_qt are
-            superseded by period/secs_left_period. Both pairs are removed in 3.0.
+            superseded by period/secs_left_period; shooter is superseded by
+            player_name. All are removed in 3.0.
         """
         if season is None:
             season = _get_current_season()
@@ -224,7 +228,8 @@ class GameScraper:
         Deprecated:
             game_day/game_time (US/Pacific) are superseded by game_datetime
             (ISO-8601 UTC); half/secs_left_half and quarter/secs_left_qt are
-            superseded by period/secs_left_period. Both pairs are removed in 3.0.
+            superseded by period/secs_left_period; shooter is superseded by
+            player_name. All are removed in 3.0.
         """
         if season is None:
             season = _get_current_season()
@@ -271,7 +276,8 @@ class GameScraper:
 
         Deprecated:
             half/secs_left_half and quarter/secs_left_qt are superseded by
-            period/secs_left_period and will be removed in 3.0.
+            period/secs_left_period; shooter is superseded by player_name. All
+            are removed in 3.0.
         """
         try:
             return _get_game_pbp(game_id, self._game_type, source)

@@ -46,6 +46,7 @@ All notable changes to CBBpy are documented here. The format is based on
   `game_datetime`. Removal in 3.0.
 - `half`/`secs_left_half` and `quarter`/`secs_left_qt` in play-by-play, in favor of
   `period`/`secs_left_period`. Removal in 3.0.
+- `shooter` in play-by-play, in favor of `player_name`. Removal in 3.0.
 
 ### Fixed
 - Conference-game labelling change that broke the scraper (#64).

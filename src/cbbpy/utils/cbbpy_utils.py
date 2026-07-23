@@ -103,6 +103,7 @@ DEPRECATED_COLUMNS = {
     "secs_left_half": ("secs_left_period", "3.0"),
     "quarter": ("period", "3.0"),
     "secs_left_qt": ("secs_left_period", "3.0"),
+    "shooter": ("player_name", "3.0"),
 }
 
 
@@ -1282,6 +1283,9 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         "shooting_play": shooting_play,
         "scoring_play": sc_play,
         "is_three": is_three,
+        # shooter is deprecated in favor of player_name; removal in 3.0 (see
+        # DEPRECATED_COLUMNS)
+        "shooter": shooters,
         "player_name": player_names,
         "is_assisted": is_assisted,
         "assist_player": assist_players,
