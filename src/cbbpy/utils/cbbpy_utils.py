@@ -1697,12 +1697,15 @@ def _get_team_map(game_type):
 
 
 def _resolve_map_season(team_map_df, season):
-    # the team map is static; when the requested season isn't in it yet
-    # (e.g. a new season before the CSVs are updated), fall back to the
-    # latest available season since most teams/conferences don't change YOY
+    # the team map is static; when the requested season isn't in it, clamp
+    # to the nearest available season (latest for future seasons before the
+    # CSVs are updated, earliest for seasons predating the map's coverage)
     if (team_map_df.season == season).any():
         return season
-    fallback = int(team_map_df.season.max())
+    if season < int(team_map_df.season.min()):
+        fallback = int(team_map_df.season.min())
+    else:
+        fallback = int(team_map_df.season.max())
     warnings.warn(
         f"No team map data for the {season} season. Falling back to {fallback}.",
         CBBpyWarning,

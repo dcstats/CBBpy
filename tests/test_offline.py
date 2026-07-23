@@ -294,6 +294,13 @@ def test_team_map_season_fallback():
     assert ms.get_teams_from_conference("ACC", latest + 1) == ms.get_teams_from_conference(
         "ACC", latest
     )
+    # a season before the map clamps to the earliest available season, not
+    # the latest (womens coverage starts at 2010; a 2005 request must not
+    # resolve against the 2026 map)
+    earliest = int(_get_team_map("womens").season.min())
+    assert _get_id_from_team("UConn", earliest - 5, "womens") == _get_id_from_team(
+        "UConn", earliest, "womens"
+    )
 
 
 def test_team_map_conference_aliases():
