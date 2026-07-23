@@ -93,6 +93,23 @@ STATUS_OK = 200
 STATUS_WAF_CHALLENGE = 202
 STATUS_NOT_FOUND = 404
 WOMEN_HALF_RULE_CHANGE_DATE = parser.parse("2015-05-01")
+# ESPN renamed three conferences starting in season 2026. Old and new spellings
+# name the same conference lineage; map each to the other so a lookup by either
+# resolves in any season instead of falling through to fuzzy matching.
+CONFERENCE_ALIASES = {
+    "a-sun": "asun",
+    "asun": "a-sun",
+    "asun conference": "atlantic sun conference",
+    "atlantic sun conference": "asun conference",
+    "aac": "american",
+    "american": "aac",
+    "american athletic conference": "american conference",
+    "american conference": "american athletic conference",
+    "wac": "uac",
+    "uac": "wac",
+    "western athletic conference": "united athletic conference",
+    "united athletic conference": "western athletic conference",
+}
 GOOD_GAME_STATUSES = ['In Progress', 'Final']
 # Columns still emitted for backwards compatibility, mapped to their replacement and
 # the version that drops them. Source of truth for the docs and the removal test.
@@ -1774,6 +1791,11 @@ def _get_teams_from_conference(conference, season, game_type):
     abb_map = confs_df.set_index('conference_abb').conference.to_dict()
     choices = confs_df.conference.tolist() + confs_df.conference_abb.tolist()
     lowercase_map = {x.lower(): x for x in choices}
+
+    # if the given conference is not in the list of conferences, try the rename
+    # alias, then search for nearest match
+    if conference.lower() not in lowercase_map and CONFERENCE_ALIASES.get(conference.lower()) in lowercase_map:
+        conference = CONFERENCE_ALIASES[conference.lower()]
 
     # if the given conference is not in the list of conferences, search for nearest match
     if not conference.lower() in lowercase_map:

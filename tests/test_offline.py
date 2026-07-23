@@ -296,6 +296,17 @@ def test_team_map_season_fallback():
     )
 
 
+def test_team_map_conference_aliases():
+    # no fixtures needed: reads the bundled team-map CSVs only
+    # ESPN renamed three conferences starting in season 2026; an old or new
+    # spelling must resolve to the same lineage instead of fuzzy-mismatching
+    assert ms.get_teams_from_conference("wac", 2026) == ms.get_teams_from_conference("uac", 2026)
+    assert ms.get_teams_from_conference("aac", 2026) == ms.get_teams_from_conference("american", 2026)
+    assert ms.get_teams_from_conference("a-sun", 2026) == ms.get_teams_from_conference("asun", 2026)
+    # reverse direction: a new abb resolves on a pre-rename season
+    assert ms.get_teams_from_conference("uac", 2025) == ms.get_teams_from_conference("wac", 2025)
+
+
 @pytest.mark.parametrize("gender", ["mens", "womens"])
 def test_team_map_conference_abbs(gender):
     # guards the static CSVs against ESPN abbreviation drift when a new
