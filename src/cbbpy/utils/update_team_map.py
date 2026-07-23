@@ -12,6 +12,19 @@ ESPN API endpoints used:
     /groups?season=YYYY                 — conference assignments (partial)
     /scoreboard/conferences             — conference ID → name/abbreviation mapping
     /teams/{id}                         — individual team conference (fallback)
+
+Known ESPN data errors (issue #86): ESPN's 2026 team lists erroneously omitted
+some D1 members. These rows were hand-patched into the season-2026 blocks of the
+CSVs and are NOT produced by this script:
+    mens:   Lindenwood (2815), Queens University (2511), Southern Indiana (88)
+    womens: Mercyhurst (2385), West Georgia (2698)  # West Georgia later fixed by ESPN
+ESPN also retroactively scrubbed Saint Francis (2598) from the 2026 lists after
+their D3 reclassification (effective July 2026) — they played 2025-26 in the NEC,
+so the map's 2026 rows are correct and must be kept. Conversely, ESPN's 2026
+lists include West Florida (2697), whose first D1 season is 2026-27 — they are
+deliberately excluded from the 2026 blocks.
+If season 2026 is ever regenerated from scratch, re-verify these rows aren't
+silently dropped or wrongly added.
 """
 
 import argparse

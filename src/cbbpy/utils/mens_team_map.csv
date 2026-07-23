@@ -8041,6 +8041,7 @@ season,id,team,location,conference,conference_abb
 2026,288,Lipscomb Bisons,Lipscomb,Atlantic Sun Conference,asun
 2026,2453,North Alabama Lions,North Alabama,Atlantic Sun Conference,asun
 2026,2454,North Florida Ospreys,North Florida,Atlantic Sun Conference,asun
+2026,2511,Queens University Royals,Queens University,Atlantic Sun Conference,asun
 2026,56,Stetson Hatters,Stetson,Atlantic Sun Conference,asun
 2026,2698,West Georgia Wolves,West Georgia,Atlantic Sun Conference,asun
 2026,12,Arizona Wildcats,Arizona,Big 12 Conference,big12
@@ -8230,10 +8231,12 @@ season,id,team,location,conference,conference_abb
 2026,284,Stonehill Skyhawks,Stonehill,Northeast Conference,neast
 2026,2681,Wagner Seahawks,Wagner,Northeast Conference,neast
 2026,2197,Eastern Illinois Panthers,Eastern Illinois,Ohio Valley Conference,ovc
+2026,2815,Lindenwood Lions,Lindenwood,Ohio Valley Conference,ovc
 2026,2031,Little Rock Trojans,Little Rock,Ohio Valley Conference,ovc
 2026,2413,Morehead State Eagles,Morehead State,Ohio Valley Conference,ovc
 2026,2565,SIU Edwardsville Cougars,SIU Edwardsville,Ohio Valley Conference,ovc
 2026,2546,Southeast Missouri State Redhawks,Southeast Missouri State,Ohio Valley Conference,ovc
+2026,88,Southern Indiana Screaming Eagles,Southern Indiana,Ohio Valley Conference,ovc
 2026,2634,Tennessee State Tigers,Tennessee State,Ohio Valley Conference,ovc
 2026,2635,Tennessee Tech Golden Eagles,Tennessee Tech,Ohio Valley Conference,ovc
 2026,2630,UT Martin Skyhawks,UT Martin,Ohio Valley Conference,ovc
