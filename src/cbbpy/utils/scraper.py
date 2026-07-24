@@ -71,7 +71,7 @@ class GameScraper:
         box: bool = True,
         pbp: bool = True,
         source: str = "api",
-        throttle: float = 0.5,
+        throttle: float = 1.0,
         n_jobs: int = None,
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """A function that scrapes a game information between a given range of dates.
@@ -84,8 +84,8 @@ class GameScraper:
             pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
             source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
             throttle (float, optional): Mean delay in seconds each worker waits before
-                scraping a game (jittered ±50%). Set to 0 to disable. Defaults to 0.5.
-            n_jobs (int, optional): Number of parallel workers. Defaults to CPU count minus 1.
+                scraping a game (jittered ±50%). Set to 0 to disable. Defaults to 1.0.
+            n_jobs (int, optional): Number of parallel workers. Defaults to 8.
 
         Returns:
             a tuple containing
@@ -111,7 +111,7 @@ class GameScraper:
         box: bool = True,
         pbp: bool = True,
         source: str = "api",
-        throttle: float = 0.5,
+        throttle: float = 1.0,
         n_jobs: int = None,
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Scrapes desired game information (metadata, boxscore, play-by-play) for every game of a given season.
@@ -125,8 +125,8 @@ class GameScraper:
             pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
             source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
             throttle (float, optional): Mean delay in seconds each worker waits before
-                scraping a game (jittered ±50%). Set to 0 to disable. Defaults to 0.5.
-            n_jobs (int, optional): Number of parallel workers. Defaults to CPU count minus 1.
+                scraping a game (jittered ±50%). Set to 0 to disable. Defaults to 1.0.
+            n_jobs (int, optional): Number of parallel workers. Defaults to 8.
 
         Returns:
             a tuple containing
@@ -155,7 +155,7 @@ class GameScraper:
         box: bool = True,
         pbp: bool = True,
         source: str = "api",
-        throttle: float = 0.5,
+        throttle: float = 1.0,
         n_jobs: int = None,
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Scrapes desired game information (metadata, boxscore, play-by-play) for every game of a given team and season.
@@ -170,8 +170,8 @@ class GameScraper:
             pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
             source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
             throttle (float, optional): Mean delay in seconds each worker waits before
-                scraping a game (jittered ±50%). Set to 0 to disable. Defaults to 0.5.
-            n_jobs (int, optional): Number of parallel workers. Defaults to CPU count minus 1.
+                scraping a game (jittered ±50%). Set to 0 to disable. Defaults to 1.0.
+            n_jobs (int, optional): Number of parallel workers. Defaults to 8.
 
         Returns:
             a tuple containing
@@ -200,7 +200,7 @@ class GameScraper:
         box: bool = True,
         pbp: bool = True,
         source: str = "api",
-        throttle: float = 0.5,
+        throttle: float = 1.0,
         n_jobs: int = None,
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Scrapes desired game information (metadata, boxscore, play-by-play) for every game for every team for a given conference and season.
@@ -215,8 +215,8 @@ class GameScraper:
             pbp (bool, optional): Whether the game play-by-play is to be scraped. Defaults to True.
             source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
             throttle (float, optional): Mean delay in seconds each worker waits before
-                scraping a game (jittered ±50%). Set to 0 to disable. Defaults to 0.5.
-            n_jobs (int, optional): Number of parallel workers. Defaults to CPU count minus 1.
+                scraping a game (jittered ±50%). Set to 0 to disable. Defaults to 1.0.
+            n_jobs (int, optional): Number of parallel workers. Defaults to 8.
 
         Returns:
             a tuple containing

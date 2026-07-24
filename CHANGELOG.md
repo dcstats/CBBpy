@@ -32,7 +32,12 @@ All notable changes to CBBpy are documented here. The format is based on
   rule-change calculation, and an unexpected count warns rather than asserting (#71).
 - Men's and women's team maps updated through the 2026 season, with a season fallback
   for unmapped years (#66).
-- Worker count is floored at 1 so single-core machines can scrape in parallel mode.
+- Bulk scraping now defaults to `n_jobs=8` and `throttle=1.0` (~8 requests/sec) rather
+  than CPU count minus 1 at `throttle=0.5`. The work is I/O-bound, so the old default
+  scaled request rate with core count for no throughput gain — on a 14-core machine it
+  aimed ~26 req/s at ESPN's WAF, and a challenged run ends up slower than a polite one
+  once retries kick in. Machines with many cores will see longer wall-clock times; pass
+  `n_jobs`/`throttle` explicitly to tune.
 - `play_type` in play-by-play now carries ESPN's structured JSON play type verbatim
   (e.g. `JumpShot`, `MadeFreeThrow`) instead of the lossy lowercase text-parsed value
   (e.g. `jumper`, `free throw`); the old text parse remains only as a fallback for the

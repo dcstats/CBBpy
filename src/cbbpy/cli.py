@@ -186,10 +186,10 @@ def _build_parser():
                         help="print the table to stdout instead of writing a file")
 
     bulk = argparse.ArgumentParser(add_help=False)
-    bulk.add_argument("--throttle", type=float, default=0.5,
-                      help="mean per-worker delay in seconds (default: 0.5)")
+    bulk.add_argument("--throttle", type=float, default=1.0,
+                      help="mean per-worker delay in seconds (default: 1.0)")
     bulk.add_argument("--n-jobs", type=int, default=None,
-                      help="parallel workers (default: CPU count minus 1)")
+                      help="parallel workers (default: 8)")
 
     game_data = [gender, io, source, frames]
 

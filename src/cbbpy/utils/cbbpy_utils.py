@@ -30,6 +30,9 @@ class CBBpyWarning(Warning):
 ATTEMPTS = 15
 # seconds per request; a hung connection raises into the retry loop (#70)
 REQUEST_TIMEOUT = 30
+# bulk scraping is I/O-bound, so this is a request-rate knob rather than a CPU
+# one: with one request per game, the rate is roughly n_jobs / throttle req/s
+DEFAULT_N_JOBS = 8
 DATE_PARSES = [
     "%Y-%m-%d",
     "%Y/%m/%d",
@@ -332,7 +335,7 @@ def _sort_results(game_info_df, game_boxscore_df, game_pbp_df, info, box, pbp):
 @print_log_file_location
 def _get_games_range(
     start_date, end_date, game_type, info, box, pbp, source="api",
-    throttle=0.5, n_jobs=None,
+    throttle=1.0, n_jobs=None,
 ):
     _validate_source(source)
     if isinstance(start_date, str):
@@ -342,7 +345,7 @@ def _get_games_range(
     date_range = pd.date_range(start_date, end_date)
     len_scrape = len(date_range)
     all_data = []
-    cpus = n_jobs if n_jobs is not None else max((os.cpu_count() or 2) - 1, 1)
+    cpus = n_jobs if n_jobs is not None else DEFAULT_N_JOBS
 
     if len_scrape < 1:
         raise InvalidDateRangeError("The start date must be sooner than the end date.")
@@ -386,7 +389,7 @@ def _get_games_range(
 
 @print_log_file_location
 def _get_games_season(
-    season, game_type, info, box, pbp, source="api", throttle=0.5, n_jobs=None
+    season, game_type, info, box, pbp, source="api", throttle=1.0, n_jobs=None
 ):
     _validate_source(source)
     season = int(season)
@@ -411,10 +414,10 @@ def _get_games_season(
 
 @print_log_file_location
 def _get_games_team(
-    team, season, game_type, info, box, pbp, source="api", throttle=0.5, n_jobs=None
+    team, season, game_type, info, box, pbp, source="api", throttle=1.0, n_jobs=None
 ):
     _validate_source(source)
-    cpus = n_jobs if n_jobs is not None else max((os.cpu_count() or 2) - 1, 1)
+    cpus = n_jobs if n_jobs is not None else DEFAULT_N_JOBS
     schedule_df = _get_team_schedule(team, season, game_type)
 
     if schedule_df.empty:
@@ -446,7 +449,7 @@ def _get_games_team(
 @print_log_file_location
 def _get_games_conference(
     conference, season, game_type, info, box, pbp, source="api",
-    throttle=0.5, n_jobs=None,
+    throttle=1.0, n_jobs=None,
 ):
     _validate_source(source)
     teams = _get_teams_from_conference(conference, season, game_type)
