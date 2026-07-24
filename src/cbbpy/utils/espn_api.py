@@ -53,6 +53,7 @@ def _fetch_summary(game_id, game_type):
     game_id = str(game_id)
     pre_url = MENS_API_SUMMARY_URL if game_type == "mens" else WOMENS_API_SUMMARY_URL
     js = None
+    page = None
 
     for i in range(cu.ATTEMPTS):
         try:
@@ -81,6 +82,11 @@ def _fetch_summary(game_id, game_type):
             raise
         except Exception as ex:
             # network error / WAF challenge / JSON decode: all transient → retry
+            reason = cu._classify_page_failure(page, None)
+            cu._log.info(
+                f'{game_id} - API: attempt {i + 1}/{cu.ATTEMPTS} failed: '
+                f'{reason if reason is not None else ex}'
+            )
             if i + 1 == cu.ATTEMPTS:
                 cu._log.error(f"{game_id} - API: {ex}\n{traceback.format_exc()}")
                 return None
@@ -177,6 +183,7 @@ def _get_game_ids_api(date, game_type):
         MENS_API_SCOREBOARD_URL if game_type == "mens" else WOMENS_API_SCOREBOARD_URL
     )
     js = None
+    page = None
 
     for i in range(cu.ATTEMPTS):
         try:
@@ -192,6 +199,11 @@ def _get_game_ids_api(date, game_type):
             js = page.json()
         except Exception as ex:
             # network error / WAF challenge / JSON decode: all transient → retry
+            reason = cu._classify_page_failure(page, None)
+            cu._log.info(
+                f'{date.strftime("%D")} - IDs (API): attempt {i + 1}/{cu.ATTEMPTS} failed: '
+                f'{reason if reason is not None else ex}'
+            )
             if i + 1 == cu.ATTEMPTS:
                 cu._log.error(
                     f'{date.strftime("%D")} - IDs (API): {ex}\n{traceback.format_exc()}'

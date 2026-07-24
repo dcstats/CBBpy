@@ -479,17 +479,83 @@ def _get_games_conference(
     )
 
 
+def _fetch_with_retries(url, extractor, prefix, not_found_msg,
+                        on_not_found="ignore", not_found_id=None):
+    """Fetch an HTML page with retries and extract its embedded JSON.
+
+    Shared by the HTML scrapers, which differ only in the URL, the soup->JSON
+    ``extractor`` callable, the log ``prefix``, and how a 404 is handled. Returns
+    ``(soup, payload)`` on success, or None on persistent failure (already
+    logged). Sleeps a random 1-3s between attempts.
+
+    Every failed attempt is logged at INFO with its classified reason (a new
+    diagnostic; suppressed while _log is at WARNING). The final failed attempt is
+    still logged at ERROR exactly as before.
+
+    ``on_not_found`` controls 404 behavior:
+      "ignore" - a 404 is just another failure (get_game_ids, schedule)
+      "raise"  - the final attempt raises PageNotFoundError(not_found_id) once the
+                 reason is a 404 (boxscore / pbp / game info)
+      "return" - a 404 on any attempt logs at ERROR and returns None immediately
+                 (player)
+    ``not_found_msg`` is logged (as ``f'{prefix}: {not_found_msg}'``) when the
+    final attempt failed but the response itself looked fine; pass None to log the
+    exception and traceback instead (schedule).
+    """
+    page = None
+    soup = None
+
+    for i in range(ATTEMPTS):
+        try:
+            header = {
+                "Referer": str(np.random.choice(REFERERS)),
+            }
+            page = r.get(url, headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
+            soup = bs(page.content, "lxml")
+            payload = extractor(soup)
+            if payload is None:
+                # embedded JSON not obtained (WAF challenge / error page) → retry
+                raise CouldNotParseError(not_found_msg or "JSON not found on page.")
+
+        except Exception as ex:
+            reason = _classify_page_failure(page, soup) if soup is not None else None
+            _log.info(
+                f'{prefix} - attempt {i + 1}/{ATTEMPTS} failed: '
+                f'{reason if reason is not None else ex}'
+            )
+
+            if on_not_found == "return" and reason == "Page not found error":
+                _log.error(f'{prefix}: {reason}')
+                return None
+
+            if i + 1 == ATTEMPTS:
+                # max number of attempts reached
+                if soup is not None:
+                    if reason is not None:
+                        _log.error(f'{prefix}: {reason}')
+                        if on_not_found == "raise" and reason == "Page not found error":
+                            raise PageNotFoundError(not_found_id)
+                    elif not_found_msg is not None:
+                        _log.error(f'{prefix}: {not_found_msg}')
+                    else:
+                        _log.error(f'{prefix}: {ex}\n{traceback.format_exc()}')
+                else:
+                    _log.error(f'{prefix}: GET error\n{ex}\n{traceback.format_exc()}')
+                return None
+            else:
+                # try again with a random sleep
+                time.sleep(np.random.uniform(low=1, high=3))
+                continue
+
+        return soup, payload
+
+
 def _get_game_ids(date, game_type, source="api"):
     _validate_source(source)
     if source == "api":
         from cbbpy.utils import espn_api
 
         return espn_api._get_game_ids_api(date, game_type)
-
-    page = None
-    soup = None
-    scoreboard = None
-    ids = []
 
     if game_type == "mens":
         pre_url = MENS_SCOREBOARD_URL
@@ -499,54 +565,23 @@ def _get_game_ids(date, game_type, source="api"):
     if isinstance(date, str):
         date = _parse_date(date)
 
-    for i in range(ATTEMPTS):
-        try:
-            header = {
-                "Referer": str(np.random.choice(REFERERS)),
-            }
-            d = date.strftime("%Y%m%d")
-            url = pre_url.format(d)
-            page = r.get(url, headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
-            soup = bs(page.content, "lxml")
-            scoreboard = _get_scoreboard_from_soup(soup)
-            if scoreboard is None:
-                # embedded JSON not obtained (WAF challenge / error page) → retry
-                raise CouldNotParseError("JSON not found on page.")
+    url = pre_url.format(date.strftime("%Y%m%d"))
+    result = _fetch_with_retries(
+        url, _get_scoreboard_from_soup, f'{date.strftime("%D")} - IDs',
+        "JSON not found on page.",
+    )
+    if result is None:
+        return []
+    _, scoreboard = result
 
-        except Exception as ex:
-            if i + 1 == ATTEMPTS:
-                # max number of attempts reached, so return blank df
-                if soup is not None:
-                    reason = _classify_page_failure(page, soup)
-                    if reason is not None:
-                        _log.error(
-                            f'{date.strftime("%D")} - IDs: {reason}'
-                        )
-                    else:
-                        _log.error(
-                            f'{date.strftime("%D")} - IDs: JSON not found on page.'
-                        )
-                else:
-                    _log.error(
-                        f'{date.strftime("%D")} - IDs: GET error\n{ex}\n{traceback.format_exc()}'
-                    )
-                return []
-            else:
-                # try again with a random sleep
-                time.sleep(np.random.uniform(low=1, high=3))
-                continue
-
-        # valid payload obtained; parse errors below are deterministic → fail fast
-        try:
-            ids = [x["id"] for x in scoreboard]
-        except Exception as ex:
-            _log.error(
-                f'{date.strftime("%D")} - IDs: {ex}\n{traceback.format_exc()}'
-            )
-            return []
-        else:
-            # no exception thrown
-            break
+    # valid payload obtained; parse errors below are deterministic → fail fast
+    try:
+        ids = [x["id"] for x in scoreboard]
+    except Exception as ex:
+        _log.error(
+            f'{date.strftime("%D")} - IDs: {ex}\n{traceback.format_exc()}'
+        )
+        return []
 
     return ids
 
@@ -558,9 +593,6 @@ def _get_game_boxscore(game_id, game_type, source="api"):
 
         return espn_api._get_game_boxscore_api(game_id, game_type)
 
-    page = None
-    soup = None
-    gamepackage = None
     game_id = str(game_id)
 
     if game_type == "mens":
@@ -568,65 +600,33 @@ def _get_game_boxscore(game_id, game_type, source="api"):
     else:
         pre_url = WOMENS_BOXSCORE_URL
 
-    for i in range(ATTEMPTS):
-        try:
-            header = {
-                "Referer": str(np.random.choice(REFERERS)),
-            }
-            url = pre_url.format(game_id)
-            page = r.get(url, headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
-            soup = bs(page.content, "lxml")
-            gamepackage = _get_gamepackage_from_soup(soup)
-            if gamepackage is None:
-                # embedded JSON not obtained (WAF challenge / PNF page) → retry
-                raise CouldNotParseError("Game JSON not found on page.")
+    result = _fetch_with_retries(
+        pre_url.format(game_id), _get_gamepackage_from_soup,
+        f'{game_id} - Boxscore', "Game JSON not found on page.",
+        on_not_found="raise", not_found_id=game_id,
+    )
+    if result is None:
+        return pd.DataFrame([])
+    soup, gamepackage = result
 
-        except Exception as ex:
-            if i + 1 == ATTEMPTS:
-                # max number of attempts reached, so return blank df
-                if soup is not None:
-                    reason = _classify_page_failure(page, soup)
-                    if reason is not None:
-                        _log.error(
-                            f'{game_id} - Boxscore: {reason}'
-                        )
-                        if reason == "Page not found error":
-                            raise PageNotFoundError(game_id)
-                    else:
-                        _log.error(
-                            f'{game_id} - Boxscore: Game JSON not found on page.'
-                        )
-                else:
-                    _log.error(
-                        f'{game_id} - Boxscore: GET error\n{ex}\n{traceback.format_exc()}'
-                    )
-                return pd.DataFrame([])
-            else:
-                # try again with a random sleep
-                time.sleep(np.random.uniform(low=1, high=3))
-                continue
-
-        # valid payload obtained; parse errors below are deterministic → fail fast
-        try:
-            # check if game was postponed, cancelled, etc
-            gm_status = gamepackage["gmStrp"]["status"]["desc"]
-            gsbool = gm_status in GOOD_GAME_STATUSES
-            if not gsbool:
-                _log.warning(f'{game_id} - {gm_status}')
-                return pd.DataFrame([])
-
-            boxscore = gamepackage["bxscr"]
-
-            df = _get_game_boxscore_helper(boxscore, game_id)
-        except Exception as ex:
-            if soup is not None and "No Box Score Available" in soup.text:
-                _log.warning(f'{game_id} - No boxscore available')
-                return pd.DataFrame([])
-            _log.error(f'{game_id} - Boxscore: {ex}\n{traceback.format_exc()}')
+    # valid payload obtained; parse errors below are deterministic → fail fast
+    try:
+        # check if game was postponed, cancelled, etc
+        gm_status = gamepackage["gmStrp"]["status"]["desc"]
+        gsbool = gm_status in GOOD_GAME_STATUSES
+        if not gsbool:
+            _log.warning(f'{game_id} - {gm_status}')
             return pd.DataFrame([])
-        else:
-            # no exception thrown
-            break
+
+        boxscore = gamepackage["bxscr"]
+
+        df = _get_game_boxscore_helper(boxscore, game_id)
+    except Exception as ex:
+        if soup is not None and "No Box Score Available" in soup.text:
+            _log.warning(f'{game_id} - No boxscore available')
+            return pd.DataFrame([])
+        _log.error(f'{game_id} - Boxscore: {ex}\n{traceback.format_exc()}')
+        return pd.DataFrame([])
 
     return df.reset_index(drop=True)
 
@@ -660,9 +660,6 @@ def _get_game_pbp(game_id, game_type, source="api"):
 
         return espn_api._get_game_pbp_api(game_id, game_type)
 
-    page = None
-    soup = None
-    gamepackage = None
     game_id = str(game_id)
 
     if game_type == "mens":
@@ -670,62 +667,32 @@ def _get_game_pbp(game_id, game_type, source="api"):
     else:
         pre_url = WOMENS_PBP_URL
 
-    for i in range(ATTEMPTS):
-        try:
-            header = {
-                "Referer": str(np.random.choice(REFERERS)),
-            }
-            url = pre_url.format(game_id)
-            page = r.get(url, headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
-            soup = bs(page.content, "lxml")
-            gamepackage = _get_gamepackage_from_soup(soup)
-            if gamepackage is None:
-                # embedded JSON not obtained (WAF challenge / PNF page) → retry
-                raise CouldNotParseError("Game JSON not found on page.")
+    result = _fetch_with_retries(
+        pre_url.format(game_id), _get_gamepackage_from_soup,
+        f'{game_id} - PBP', "Game JSON not found on page.",
+        on_not_found="raise", not_found_id=game_id,
+    )
+    if result is None:
+        return pd.DataFrame([])
+    _, gamepackage = result
 
-        except Exception as ex:
-            if i + 1 == ATTEMPTS:
-                # max number of attempts reached, so return blank df
-                if soup is not None:
-                    reason = _classify_page_failure(page, soup)
-                    if reason is not None:
-                        _log.error(f'{game_id} - PBP: {reason}')
-                        if reason == "Page not found error":
-                            raise PageNotFoundError(game_id)
-                    else:
-                        _log.error(
-                            f'{game_id} - PBP: Game JSON not found on page.'
-                        )
-                else:
-                    _log.error(
-                        f'{game_id} - PBP: GET error\n{ex}\n{traceback.format_exc()}'
-                    )
-                return pd.DataFrame([])
-            else:
-                # try again with a random sleep
-                time.sleep(np.random.uniform(low=1, high=3))
-                continue
-
-        # valid payload obtained; parse errors below are deterministic → fail fast
-        try:
-            # check if game was postponed
-            gm_status = gamepackage["gmStrp"]["status"]["desc"]
-            gsbool = gm_status in GOOD_GAME_STATUSES
-            if not gsbool:
-                _log.warning(f'{game_id} - {gm_status}')
-                return pd.DataFrame([])
-
-            # win probability lives on the game page, not the PBP page, so fetch
-            # it separately (best-effort; leaves home_win_prob NaN on failure)
-            gamepackage["win_prob"] = _get_win_prob_html(game_id, game_type)
-
-            df = _get_game_pbp_helper(gamepackage, game_id, game_type)
-        except Exception as ex:
-            _log.error(f'{game_id} - PBP: {ex}\n{traceback.format_exc()}')
+    # valid payload obtained; parse errors below are deterministic → fail fast
+    try:
+        # check if game was postponed
+        gm_status = gamepackage["gmStrp"]["status"]["desc"]
+        gsbool = gm_status in GOOD_GAME_STATUSES
+        if not gsbool:
+            _log.warning(f'{game_id} - {gm_status}')
             return pd.DataFrame([])
-        else:
-            # no exception thrown
-            break
+
+        # win probability lives on the game page, not the PBP page, so fetch
+        # it separately (best-effort; leaves home_win_prob NaN on failure)
+        gamepackage["win_prob"] = _get_win_prob_html(game_id, game_type)
+
+        df = _get_game_pbp_helper(gamepackage, game_id, game_type)
+    except Exception as ex:
+        _log.error(f'{game_id} - PBP: {ex}\n{traceback.format_exc()}')
+        return pd.DataFrame([])
 
     return df.reset_index(drop=True)
 
@@ -737,9 +704,6 @@ def _get_game_info(game_id, game_type, source="api"):
 
         return espn_api._get_game_info_api(game_id, game_type)
 
-    page = None
-    soup = None
-    gamepackage = None
     game_id = str(game_id)
 
     if game_type == "mens":
@@ -747,67 +711,32 @@ def _get_game_info(game_id, game_type, source="api"):
     else:
         pre_url = WOMENS_GAME_URL
 
-    for i in range(ATTEMPTS):
-        try:
-            header = {
-                "Referer": str(np.random.choice(REFERERS)),
-            }
-            url = pre_url.format(game_id)
-            page = r.get(url, headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
-            soup = bs(page.content, "lxml")
-            gamepackage = _get_gamepackage_from_soup(soup)
-            if gamepackage is None:
-                # embedded JSON not obtained (WAF challenge / PNF page) → retry
-                raise CouldNotParseError("Game JSON not found on page.")
+    result = _fetch_with_retries(
+        pre_url.format(game_id), _get_gamepackage_from_soup,
+        f'{game_id} - Game Info', "Game JSON not found on page.",
+        on_not_found="raise", not_found_id=game_id,
+    )
+    if result is None:
+        return pd.DataFrame([])
+    _, gamepackage = result
 
-        except Exception as ex:
-            if i + 1 == ATTEMPTS:
-                # max number of attempts reached, so return blank df
-                if soup is not None:
-                    reason = _classify_page_failure(page, soup)
-                    if reason is not None:
-                        _log.error(
-                            f'{game_id} - Game Info: {reason}'
-                        )
-                        if reason == "Page not found error":
-                            raise PageNotFoundError(game_id)
-                    else:
-                        _log.error(
-                            f'{game_id} - Game Info: Game JSON not found on page.'
-                        )
-                else:
-                    _log.error(
-                        f'{game_id} - Game Info: GET error\n{ex}\n{traceback.format_exc()}'
-                    )
-                return pd.DataFrame([])
-            else:
-                # try again with a random sleep
-                time.sleep(np.random.uniform(low=1, high=3))
-                continue
+    # valid payload obtained; parse errors below are deterministic → fail fast
+    try:
+        # check if game was postponed
+        gm_status = gamepackage["gmStrp"]["status"]["desc"]
+        gsbool = gm_status in GOOD_GAME_STATUSES
+        if not gsbool:
+            _log.warning(f'{game_id} - {gm_status}')
 
-        # valid payload obtained; parse errors below are deterministic → fail fast
-        try:
-            # check if game was postponed
-            gm_status = gamepackage["gmStrp"]["status"]["desc"]
-            gsbool = gm_status in GOOD_GAME_STATUSES
-            if not gsbool:
-                _log.warning(f'{game_id} - {gm_status}')
-
-            df = _get_game_info_helper(gamepackage, game_id, game_type)
-        except Exception as ex:
-            _log.error(f'{game_id} - Game Info: {ex}\n{traceback.format_exc()}')
-            return pd.DataFrame([])
-        else:
-            # no exception thrown
-            break
+        df = _get_game_info_helper(gamepackage, game_id, game_type)
+    except Exception as ex:
+        _log.error(f'{game_id} - Game Info: {ex}\n{traceback.format_exc()}')
+        return pd.DataFrame([])
 
     return df
 
 
 def _get_player_info(player_id, game_type):
-    page = None
-    soup = None
-    raw_player = None
     df = pd.DataFrame([])
 
     if game_type == "mens":
@@ -815,65 +744,26 @@ def _get_player_info(player_id, game_type):
     else:
         pre_url = WOMENS_PLAYER_URL
 
-    for i in range(ATTEMPTS):
-        try:
-            header = {
-                "Referer": str(np.random.choice(REFERERS)),
-            }
-            url = pre_url.format(player_id)
-            page = r.get(url, headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
-            soup = bs(page.content, "lxml")
-            raw_player = _get_player_from_soup(soup)
-            if raw_player is None:
-                # embedded JSON not obtained (WAF challenge / PNF page) → retry
-                raise CouldNotParseError("Player JSON not found on page.")
+    result = _fetch_with_retries(
+        pre_url.format(player_id), _get_player_from_soup,
+        f'{player_id} - Player', "Player JSON not found on page.",
+        on_not_found="return",
+    )
+    if result is None:
+        return pd.DataFrame([])
+    _, raw_player = result
 
-        except Exception as ex:
-            reason = _classify_page_failure(page, soup) if soup is not None else None
-            if reason == "Page not found error":
-                _log.error(
-                    f'{player_id} - Player: {reason}'
-                )
-                return pd.DataFrame([])
-
-            if i + 1 == ATTEMPTS:
-                # max number of attempts reached, so return blank df
-                if soup is not None:
-                    if reason is not None:
-                        _log.error(
-                            f'{player_id} - Player: {reason}'
-                        )
-                    else:
-                        _log.error(
-                            f'{player_id} - Player: Player JSON not found on page.'
-                        )
-                else:
-                    _log.error(
-                        f'{player_id} - Player: GET error\n{ex}\n{traceback.format_exc()}'
-                    )
-                return pd.DataFrame([])
-            else:
-                # try again with a random sleep
-                time.sleep(np.random.uniform(low=1, high=3))
-                continue
-
-        # valid payload obtained; parse errors below are deterministic → fail fast
-        try:
-            df = _get_player_details_helper(player_id, raw_player, game_type)
-        except Exception as ex:
-            _log.error(f'{player_id} - Player: {ex}\n{traceback.format_exc()}')
-            return pd.DataFrame([])
-        else:
-            # no exception thrown
-            break
+    # valid payload obtained; parse errors below are deterministic → fail fast
+    try:
+        df = _get_player_details_helper(player_id, raw_player, game_type)
+    except Exception as ex:
+        _log.error(f'{player_id} - Player: {ex}\n{traceback.format_exc()}')
+        return pd.DataFrame([])
 
     return df
 
 
 def _get_team_schedule(team, season, game_type):
-    page = None
-    soup = None
-
     team_id, team_name = _get_id_from_team(team, season, game_type)
 
     if game_type == "mens":
@@ -881,51 +771,20 @@ def _get_team_schedule(team, season, game_type):
     else:
         pre_url = WOMENS_SCHEDULE_URL
 
-    for i in range(ATTEMPTS):
-        try:
-            header = {
-                "Referer": str(np.random.choice(REFERERS)),
-            }
-            url = pre_url.format(team_id, season)
-            page = r.get(url, headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
-            soup = bs(page.content, "lxml")
-            jsn = _get_json_from_soup(soup)
-            if jsn is None:
-                # embedded JSON not obtained (WAF challenge / error page) → retry
-                raise CouldNotParseError("JSON not found on page.")
+    result = _fetch_with_retries(
+        pre_url.format(team_id, season), _get_json_from_soup,
+        f'{team} - Schedule', None,
+    )
+    if result is None:
+        return pd.DataFrame([])
+    _, jsn = result
 
-        except Exception as ex:
-            if i + 1 == ATTEMPTS:
-                # max number of attempts reached, so return blank df
-                if soup is not None:
-                    reason = _classify_page_failure(page, soup)
-                    if reason is not None:
-                        _log.error(
-                            f'{team} - Schedule: {reason}'
-                        )
-                    else:
-                        _log.error(
-                            f'{team} - Schedule: {ex}\n{traceback.format_exc()}'
-                        )
-                else:
-                    _log.error(
-                        f'{team} - Schedule: GET error\n{ex}\n{traceback.format_exc()}'
-                    )
-                return pd.DataFrame([])
-            else:
-                # try again with a random sleep
-                time.sleep(np.random.uniform(low=1, high=3))
-                continue
-
-        # valid payload obtained; parse errors below are deterministic → fail fast
-        try:
-            df = _get_schedule_helper(jsn, team_name, team_id, season)
-        except Exception as ex:
-            _log.error(f'{team} - Schedule: {ex}\n{traceback.format_exc()}')
-            return pd.DataFrame([])
-        else:
-            # no exception thrown
-            break
+    # valid payload obtained; parse errors below are deterministic → fail fast
+    try:
+        df = _get_schedule_helper(jsn, team_name, team_id, season)
+    except Exception as ex:
+        _log.error(f'{team} - Schedule: {ex}\n{traceback.format_exc()}')
+        return pd.DataFrame([])
 
     return df
 
