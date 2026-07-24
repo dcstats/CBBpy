@@ -40,6 +40,7 @@ WOMENS_API_SCOREBOARD_URL = (
     "https://site.api.espn.com/apis/site/v2/sports/basketball/"
     "womens-college-basketball/scoreboard?dates={}&groups=50&limit=500"
 )
+EMPTY_STATS_REFETCHES = 3
 
 
 def _fetch_summary(game_id, game_type):
@@ -144,6 +145,28 @@ def _get_game_boxscore_api(game_id, game_type, summary=None):
         players = (summary.get("boxscore") or {}).get("players") or []
         if len(players) < 2:
             cu._log.warning(f"{game_id} - No boxscore available")
+            return pd.DataFrame([])
+
+        # ESPN sometimes serves a cached summary whose stat-line join partially
+        # failed: an athlete with didNotPlay false but stats == []. The condition
+        # is transient (#92), so re-fetch for a fresh copy rather than parse it
+        # (which would IndexError) or zero out real stats
+        for _ in range(EMPTY_STATS_REFETCHES):
+            if not _has_empty_stat_lines(players):
+                break
+            cu._log.info(
+                f"{game_id} - Boxscore (API): empty stat line, re-fetching summary"
+            )
+            time.sleep(np.random.uniform(low=1, high=3))
+            fresh = _fetch_summary(game_id, game_type)
+            fresh_players = ((fresh or {}).get("boxscore") or {}).get("players") or []
+            if len(fresh_players) >= 2:
+                players = fresh_players
+        if _has_empty_stat_lines(players):
+            cu._log.error(
+                f"{game_id} - Boxscore (API): empty stat line persisted after "
+                f"{EMPTY_STATS_REFETCHES} re-fetches"
+            )
             return pd.DataFrame([])
 
         boxscore = _boxscore_adapter(players)
@@ -433,6 +456,15 @@ def _pc_float(pc, key):
 def _pc_moneyline(pc, side):
     val = (pc.get(side) or {}).get("moneyLine")
     return float(val) if val is not None else np.nan
+
+
+def _has_empty_stat_lines(players):
+    """True if any non-DNP athlete carries an empty stats array (bad cached summary, #92)."""
+    for team in players:
+        for a in (team.get("statistics") or [{}])[0].get("athletes") or []:
+            if not a.get("didNotPlay") and not a.get("stats"):
+                return True
+    return False
 
 
 def _boxscore_adapter(players):

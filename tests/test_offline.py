@@ -8,6 +8,7 @@ If ESPN intentionally changes its format, re-record with
 `python tests/record_fixtures.py` and review the diff.
 """
 
+import copy
 import logging
 import subprocess
 import sys
@@ -628,6 +629,64 @@ def test_api_waf_challenge_retries(monkeypatch):
 
     assert espn_api._fetch_summary("401999999", "mens") is None
     assert len(calls) == 4
+
+
+# --- empty stat lines in a cached summary (#92) ------------------------------
+# ESPN sometimes serves a cached summary whose stat-line join partially failed:
+# an athlete with didNotPlay false but stats == []. The condition is transient,
+# so the boxscore path re-fetches rather than crashing or zeroing real stats.
+
+
+def _corrupt_stat_line(summary):
+    corrupt = copy.deepcopy(summary)
+    athletes = corrupt["boxscore"]["players"][0]["statistics"][0]["athletes"]
+    next(a for a in athletes if not a.get("didNotPlay"))["stats"] = []
+    return corrupt
+
+
+def test_api_empty_stat_line_refetches(offline_espn, monkeypatch):
+    # a bad cached copy is served first; the re-fetch gets a good one → the
+    # boxscore comes out complete
+    gid = recorded_games("mens")[0]
+    good = espn_api._fetch_summary(gid, "mens")
+    expected = ms.get_game_boxscore(gid, source="api")
+
+    fetches = []
+
+    def fake_fetch(game_id, game_type):
+        fetches.append(game_id)
+        return good
+
+    monkeypatch.setattr(espn_api, "_fetch_summary", fake_fetch)
+    monkeypatch.setattr(espn_api.time, "sleep", lambda *_: None)
+
+    df = espn_api._get_game_boxscore_api(gid, "mens", summary=_corrupt_stat_line(good))
+
+    assert fetches == [gid]
+    pd.testing.assert_frame_equal(df, expected)
+
+
+def test_api_empty_stat_line_persistent_returns_empty(offline_espn, monkeypatch, caplog):
+    # every re-fetch serves the same bad copy → bounded re-fetches, loud error,
+    # empty DataFrame (never a partial/zeroed boxscore)
+    gid = recorded_games("mens")[0]
+    corrupt = _corrupt_stat_line(espn_api._fetch_summary(gid, "mens"))
+
+    fetches = []
+
+    def fake_fetch(game_id, game_type):
+        fetches.append(game_id)
+        return corrupt
+
+    monkeypatch.setattr(espn_api, "_fetch_summary", fake_fetch)
+    monkeypatch.setattr(espn_api.time, "sleep", lambda *_: None)
+
+    with caplog.at_level(logging.ERROR, logger="CBBpy"):
+        df = espn_api._get_game_boxscore_api(gid, "mens", summary=corrupt)
+
+    assert df.empty
+    assert len(fetches) == espn_api.EMPTY_STATS_REFETCHES
+    assert "empty stat line persisted" in caplog.text
 
 
 def test_api_game_ids_parse_error_fails_fast(monkeypatch):
