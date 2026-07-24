@@ -138,13 +138,19 @@ DEPRECATED_COLUMNS = {
 
 
 # logging setup
-log_dir = user_log_dir(appname="CBBpy", appauthor="Daniel Cowan", version=version("cbbpy"))
-log_file = os.path.join(log_dir, "CBBpy.log")
+# CBBPY_LOG_FILE overrides the log file's full path (read at import so loky
+# workers and CLI subprocesses inherit it); otherwise the platformdirs default
+log_file = os.environ.get("CBBPY_LOG_FILE") or os.path.join(
+    user_log_dir(appname="CBBpy", appauthor="Daniel Cowan", version=version("cbbpy")),
+    "CBBpy.log",
+)
+log_dir = os.path.dirname(log_file)
 
 
 class _LazyFileHandler(logging.FileHandler):
     # delay=True + creating the dir in _open means importing cbbpy does no
-    # filesystem I/O; the log dir/file appear only once something is logged
+    # filesystem I/O; the log dir/file appear only once something is logged.
+    # log_dir is read at open time so an in-process repoint takes effect.
     def _open(self):
         os.makedirs(log_dir, exist_ok=True)
         return super()._open()
@@ -154,9 +160,49 @@ file_handler = _LazyFileHandler(log_file, delay=True)
 formatter = logging.Formatter('%(asctime)s | %(name)s | %(levelname)s: %(message)s')
 file_handler.setFormatter(formatter)
 
+_DEFAULT_LOG_LEVEL = "WARNING"
+_VALID_LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+
+
+def _resolve_log_level():
+    """Read the CBBPY_LOG_LEVEL env var, defaulting to WARNING when unset/invalid.
+
+    Read at import time so joblib/loky workers — which inherit os.environ and
+    re-import this module — pick up a level set (via set_log_level) before the
+    bulk run started.
+    """
+    level = os.environ.get("CBBPY_LOG_LEVEL", _DEFAULT_LOG_LEVEL).upper()
+    return level if level in _VALID_LOG_LEVELS else _DEFAULT_LOG_LEVEL
+
+
 _log = logging.getLogger("CBBpy")
-_log.setLevel(logging.WARNING)
+_log.setLevel(_resolve_log_level())
 _log.addHandler(file_handler)
+
+
+def set_log_level(level=_DEFAULT_LOG_LEVEL):
+    """Set CBBpy's log verbosity for this process and future worker processes.
+
+    CBBpy logs only to a file (the path printed after bulk scrapes); nothing is
+    written to the terminal, so raising verbosity here never disturbs the
+    progress bars. "INFO" surfaces the per-attempt retry diagnostics; "WARNING"
+    (the default) keeps only warnings and errors.
+
+    The level is stored in os.environ["CBBPY_LOG_LEVEL"] so parallel
+    (joblib/loky) workers, which re-import this module, inherit it. Resetting to
+    the default "WARNING" removes the variable so a later run in the same
+    interpreter isn't left verbose.
+    """
+    level = str(level).upper()
+    if level not in _VALID_LOG_LEVELS:
+        raise ValueError(
+            f"level must be one of {_VALID_LOG_LEVELS}, got {level!r}"
+        )
+    if level == _DEFAULT_LOG_LEVEL:
+        os.environ.pop("CBBPY_LOG_LEVEL", None)
+    else:
+        os.environ["CBBPY_LOG_LEVEL"] = level
+    _log.setLevel(level)
 
 
 _call_depth = [0]

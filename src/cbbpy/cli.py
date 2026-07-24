@@ -9,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 
 from cbbpy.utils.scraper import GameScraper
-from cbbpy.utils.cbbpy_utils import _get_current_season
+from cbbpy.utils.cbbpy_utils import _get_current_season, set_log_level
 
 
 def _slugify(text):
@@ -167,6 +167,10 @@ def _build_parser():
     gender.add_argument("-g", "--gender", choices=["mens", "womens"], default="mens",
                         help="which scraper to use (default: mens)")
 
+    verbose = argparse.ArgumentParser(add_help=False)
+    verbose.add_argument("-v", "--verbose", action="store_true",
+                         help="log per-attempt retry diagnostics to the log file (INFO)")
+
     io = argparse.ArgumentParser(add_help=False)
     io.add_argument("-o", "--output-dir", default=".", help="directory for output files (default: .)")
     io.add_argument("--format", choices=["csv", "parquet"], default="csv",
@@ -191,13 +195,13 @@ def _build_parser():
     bulk.add_argument("--n-jobs", type=int, default=None,
                       help="parallel workers (default: 8)")
 
-    game_data = [gender, io, source, frames]
+    game_data = [gender, io, source, frames, verbose]
 
     p = sub.add_parser("game", parents=game_data, help="scrape one or more games by ID")
     p.add_argument("game_id", nargs="+")
     p.set_defaults(func=_cmd_game)
 
-    frame_data = [gender, io, source, single]
+    frame_data = [gender, io, source, single, verbose]
     for name, helptext in [
         ("info", "scrape game metadata for one or more games by ID"),
         ("box", "scrape the boxscore for one or more games by ID"),
@@ -226,15 +230,15 @@ def _build_parser():
     p.add_argument("-s", "--season", type=int, default=None, help="season (default: current)")
     p.set_defaults(func=_cmd_conference)
 
-    p = sub.add_parser("ids", parents=[gender, source], help="print game IDs for a date")
+    p = sub.add_parser("ids", parents=[gender, source, verbose], help="print game IDs for a date")
     p.add_argument("date")
     p.set_defaults(func=_cmd_ids)
 
-    p = sub.add_parser("player", parents=[gender, io, single], help="scrape a player's bio")
+    p = sub.add_parser("player", parents=[gender, io, single, verbose], help="scrape a player's bio")
     p.add_argument("player_id")
     p.set_defaults(func=_cmd_player)
 
-    p = sub.add_parser("schedule", parents=[gender, io, single], help="scrape a team or conference schedule")
+    p = sub.add_parser("schedule", parents=[gender, io, single, verbose], help="scrape a team or conference schedule")
     grp = p.add_mutually_exclusive_group(required=True)
     grp.add_argument("--team")
     grp.add_argument("--conference")
@@ -246,6 +250,8 @@ def _build_parser():
 
 def main(argv=None):
     args = _build_parser().parse_args(argv)
+    if getattr(args, "verbose", False):
+        set_log_level("INFO")
     scraper = GameScraper(args.gender)
     args.func(scraper, args)
 

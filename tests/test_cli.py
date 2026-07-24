@@ -84,3 +84,13 @@ def test_bad_choice_exits_nonzero(argv):
     with pytest.raises(SystemExit) as exc:
         cli.main(argv)
     assert exc.value.code != 0
+
+
+def test_verbose_flag_sets_info(offline_espn, tmp_path, monkeypatch):
+    # -v raises the log level to INFO before scraping; patch set_log_level so the
+    # test neither mutates the real logger nor leaks CBBPY_LOG_LEVEL
+    calls = []
+    monkeypatch.setattr(cli, "set_log_level", lambda level: calls.append(level))
+    cli.main(["game", GAME_ID, "-o", str(tmp_path), "-v"])
+    assert calls == ["INFO"]
+    assert list(tmp_path.glob("*.csv"))

@@ -10,6 +10,7 @@ If ESPN intentionally changes its format, re-record with
 
 import copy
 import logging
+import os
 import subprocess
 import sys
 import textwrap
@@ -544,6 +545,51 @@ def test_api_waf_challenge_logged_as_such(monkeypatch, caplog):
     assert "JSONDecodeError" not in caplog.text
 
 
+def test_set_log_level_toggles_retry_info(monkeypatch, caplog):
+    # set_log_level("INFO") makes the per-attempt retry INFO records observable;
+    # resetting to WARNING restores the level AND removes the env var so a later
+    # run in the same interpreter isn't left verbose
+    prev_level = cbbpy_utils._log.level
+    monkeypatch.delenv("CBBPY_LOG_LEVEL", raising=False)
+    resp = SimpleNamespace(content=b"", status_code=202)  # WAF challenge
+    monkeypatch.setattr(cbbpy_utils.r, "get", lambda url, *a, **k: resp)
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 2)
+
+    def info_retry_records():
+        return [
+            r for r in caplog.records
+            if r.levelno == logging.INFO and "attempt" in r.getMessage()
+        ]
+
+    try:
+        cbbpy.set_log_level("INFO")
+        assert os.environ["CBBPY_LOG_LEVEL"] == "INFO"
+        assert cbbpy_utils._log.level == logging.INFO
+
+        caplog.clear()
+        ms.get_game_info("401999999", source="html")
+        records = info_retry_records()
+        assert records, "expected per-attempt retry INFO records at INFO level"
+        assert any("WAF challenge" in r.getMessage() for r in records)
+
+        cbbpy.set_log_level("WARNING")
+        assert "CBBPY_LOG_LEVEL" not in os.environ
+        assert cbbpy_utils._log.level == logging.WARNING
+
+        caplog.clear()
+        ms.get_game_info("401999999", source="html")
+        assert not info_retry_records()
+    finally:
+        os.environ.pop("CBBPY_LOG_LEVEL", None)
+        cbbpy_utils._log.setLevel(prev_level)
+
+
+def test_set_log_level_rejects_garbage():
+    with pytest.raises(ValueError):
+        cbbpy.set_log_level("loud")
+
+
 # --- retryable vs non-retryable error classification (#73) ------------------
 # A deterministic parse error against a payload that was successfully obtained
 # must not burn all ATTEMPTS retries with sleeps; only failures before the
@@ -729,6 +775,31 @@ def test_import_does_no_logging_io():
         """
     )
     subprocess.run([sys.executable, "-c", script], check=True)
+
+
+def test_log_file_env_override_no_import_io(tmp_path):
+    # CBBPY_LOG_FILE overrides the log path at import time, still with no I/O
+    # until the first emit. Subprocess so the override applies at import.
+    override = tmp_path / "custom" / "my.log"
+    script = textwrap.dedent(
+        f"""
+        import os
+        from cbbpy.utils import cbbpy_utils as cu
+
+        # the override resolves through the handler, but nothing is opened
+        assert cu.log_file == {str(override)!r}
+        assert cu.log_dir == {str(override.parent)!r}
+        assert cu.file_handler.baseFilename == os.path.abspath({str(override)!r})
+        assert not os.path.exists({str(override.parent)!r})
+        assert cu.file_handler.stream is None
+
+        # first emitted record creates the dir and file at the override path
+        cu._log.error("boom")
+        assert os.path.isfile({str(override)!r})
+        """
+    )
+    env = {**os.environ, "CBBPY_LOG_FILE": str(override)}
+    subprocess.run([sys.executable, "-c", script], check=True, env=env)
 
 
 def test_fuzzy_match_and_fallback_warn():

@@ -21,6 +21,15 @@ All notable changes to CBBpy are documented here. The format is based on
 - `play_type_id` and per-play player names/ids in play-by-play.
 - `throttle` and `n_jobs` parameters on the bulk scraping functions, and a 30s
   per-request timeout so a hung connection raises into the retry loop (#70, #79).
+- Per-attempt retry diagnostics: every failed fetch attempt is now logged at INFO with
+  its classified reason (WAF challenge / not found / HTTP status / parse failure), not
+  just the final attempt. Verbosity is controlled by `cbbpy.set_log_level("INFO")` (reset
+  with `set_log_level("WARNING")`), the `CBBPY_LOG_LEVEL` environment variable (inherited
+  by parallel workers), or the CLI `-v`/`--verbose` flag. Logs go to the log file printed
+  after bulk scrapes, never the terminal.
+- `CBBPY_LOG_FILE` environment variable to override the log file's full path (inherited by
+  parallel workers and CLI subprocesses); the test suite uses it to log to its own file
+  instead of the user's real log.
 
 ### Changed
 - HTTP now goes through `curl_cffi` with browser TLS impersonation. ESPN's AWS WAF

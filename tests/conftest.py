@@ -1,10 +1,35 @@
 import gzip
 import json
+import os
 from pathlib import Path
 
 import pytest
 
 from cbbpy.utils import cbbpy_utils
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _redirect_log_file():
+    """Send all test-run logs to a separate file, not the user's real CBBpy.log.
+
+    Intentional test-induced errors (no-fixture retries, malformed-page tests)
+    would otherwise be indistinguishable from genuine scrape failures in the real
+    log. CBBPY_LOG_FILE is set so any loky worker / CLI subprocess inherits the
+    override; the already-imported module's handler is repointed in-process,
+    since the env var alone can't reach the current process. The file lands next
+    to the real log (same platformdirs dir) for easy side-by-side tailing.
+    Nothing is restored: the env var dies with the pytest process.
+    """
+    test_log = os.path.join(cbbpy_utils.log_dir, "CBBPy-tests.log")
+    os.environ["CBBPY_LOG_FILE"] = test_log
+
+    if cbbpy_utils.file_handler.stream is not None:
+        cbbpy_utils.file_handler.close()
+    cbbpy_utils.log_file = test_log
+    cbbpy_utils.log_dir = os.path.dirname(test_log)
+    cbbpy_utils.file_handler.baseFilename = os.path.abspath(test_log)
+
+    yield
 
 
 FIXTURE_DIR = Path(__file__).parent / "fixtures"
