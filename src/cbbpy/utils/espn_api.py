@@ -12,7 +12,6 @@ duplicated.
 """
 
 import re
-import time
 import traceback
 
 import numpy as np
@@ -92,7 +91,7 @@ def _fetch_summary(game_id, game_type):
                 cu._log.error(f"{game_id} - API: {ex}\n{traceback.format_exc()}")
                 return None
             else:
-                time.sleep(np.random.uniform(low=1, high=3))
+                cu._backoff_sleep(i)
                 continue
 
         # the payload JSON was obtained; a missing header is a deterministic bad
@@ -151,13 +150,13 @@ def _get_game_boxscore_api(game_id, game_type, summary=None):
         # failed: an athlete with didNotPlay false but stats == []. The condition
         # is transient (#92), so re-fetch for a fresh copy rather than parse it
         # (which would IndexError) or zero out real stats
-        for _ in range(EMPTY_STATS_REFETCHES):
+        for i in range(EMPTY_STATS_REFETCHES):
             if not _has_empty_stat_lines(players):
                 break
             cu._log.info(
                 f"{game_id} - Boxscore (API): empty stat line, re-fetching summary"
             )
-            time.sleep(np.random.uniform(low=1, high=3))
+            cu._backoff_sleep(i)
             fresh = _fetch_summary(game_id, game_type)
             fresh_players = ((fresh or {}).get("boxscore") or {}).get("players") or []
             if len(fresh_players) >= 2:
@@ -233,7 +232,7 @@ def _get_game_ids_api(date, game_type):
                 )
                 return []
             else:
-                time.sleep(np.random.uniform(low=1, high=3))
+                cu._backoff_sleep(i)
                 continue
 
         # the payload JSON was obtained; building the id list is deterministic →

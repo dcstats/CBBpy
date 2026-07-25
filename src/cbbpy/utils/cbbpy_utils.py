@@ -27,9 +27,17 @@ class CBBpyWarning(Warning):
     pass
 
 
-ATTEMPTS = 15
+ATTEMPTS = 10
 # seconds per request; a hung connection raises into the retry loop (#70)
 REQUEST_TIMEOUT = 30
+# retry delay grows exponentially (±50% jitter) rather than staying flat. A flat
+# ~2s delay re-requests a degraded ESPN endpoint for the whole retry budget,
+# which adds load exactly when the origin is already failing; older seasons hit
+# this hardest, since cold archive data 5xxes under the same concurrency recent
+# data serves from cache. Observed transient 5xx windows clear in ~7-10s, so the
+# schedule (~2, 4, 8, 16, 20, 20...) is past that by the third retry.
+BACKOFF_BASE = 2.0
+BACKOFF_CAP = 20.0
 # bulk scraping is I/O-bound, so this is a request-rate knob rather than a CPU
 # one: with one request per game, the rate is roughly n_jobs / throttle req/s
 DEFAULT_N_JOBS = 8
@@ -227,6 +235,18 @@ def print_log_file_location(func):
                 if errors_logged:
                     print(f"Errors were logged; see {log_file}")
     return wrapper
+
+
+def _backoff_sleep(attempt):
+    """Sleep before retrying, growing the delay with each failed `attempt`.
+
+    `attempt` is the 0-indexed attempt that just failed, so the first retry
+    waits ~BACKOFF_BASE seconds and each subsequent one doubles up to
+    BACKOFF_CAP. Jitter is ±50% to keep parallel workers from retrying in
+    lockstep.
+    """
+    delay = min(BACKOFF_CAP, BACKOFF_BASE * 2**attempt)
+    time.sleep(delay * np.random.uniform(low=0.5, high=1.5))
 
 
 def _classify_page_failure(page, soup):
@@ -589,8 +609,8 @@ def _fetch_with_retries(url, extractor, prefix, not_found_msg,
                     _log.error(f'{prefix}: GET error\n{ex}\n{traceback.format_exc()}')
                 return None
             else:
-                # try again with a random sleep
-                time.sleep(np.random.uniform(low=1, high=3))
+                # try again after backing off
+                _backoff_sleep(i)
                 continue
 
         return soup, payload

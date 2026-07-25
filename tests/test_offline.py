@@ -639,6 +639,27 @@ def test_html_network_error_retries(monkeypatch):
     assert len(calls) == 4
 
 
+def test_retry_backoff_grows_and_caps(monkeypatch):
+    # retries must back off exponentially, not at a flat delay: a flat retry keeps
+    # hammering a degraded ESPN origin for the whole budget, which is what turned
+    # 5xx bursts on older seasons into a throughput collapse
+    sleeps = []
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", sleeps.append)
+
+    for i in range(8):
+        cbbpy_utils._backoff_sleep(i)
+
+    # jitter is ±50%, so compare against the nominal schedule's bounds
+    nominal = [
+        min(cbbpy_utils.BACKOFF_CAP, cbbpy_utils.BACKOFF_BASE * 2**i) for i in range(8)
+    ]
+    assert all(0.5 * n <= s <= 1.5 * n for s, n in zip(sleeps, nominal))
+    assert max(sleeps) <= 1.5 * cbbpy_utils.BACKOFF_CAP
+    # the delay must actually grow before the cap, so a transient 5xx window has
+    # time to clear between attempts
+    assert sleeps[0] < sleeps[3]
+
+
 def test_api_missing_header_fails_fast(monkeypatch):
     # the summary JSON parsed cleanly but carries no "header": a deterministic bad
     # payload → single fetch, return None / empty, no retries
@@ -649,7 +670,7 @@ def test_api_missing_header_fails_fast(monkeypatch):
         return FakeResponse(b'{"note": "no header here"}', status_code=200)
 
     monkeypatch.setattr(cbbpy_utils.r, "get", fake_get)
-    monkeypatch.setattr(espn_api.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", lambda *_: None)
     monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 5)
 
     assert espn_api._fetch_summary("401999999", "mens") is None
@@ -670,7 +691,7 @@ def test_api_waf_challenge_retries(monkeypatch):
         return FakeResponse(b"", status_code=202)
 
     monkeypatch.setattr(cbbpy_utils.r, "get", fake_get)
-    monkeypatch.setattr(espn_api.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", lambda *_: None)
     monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 4)
 
     assert espn_api._fetch_summary("401999999", "mens") is None
@@ -704,7 +725,7 @@ def test_api_empty_stat_line_refetches(offline_espn, monkeypatch):
         return good
 
     monkeypatch.setattr(espn_api, "_fetch_summary", fake_fetch)
-    monkeypatch.setattr(espn_api.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", lambda *_: None)
 
     df = espn_api._get_game_boxscore_api(gid, "mens", summary=_corrupt_stat_line(good))
 
@@ -725,7 +746,7 @@ def test_api_empty_stat_line_persistent_returns_empty(offline_espn, monkeypatch,
         return corrupt
 
     monkeypatch.setattr(espn_api, "_fetch_summary", fake_fetch)
-    monkeypatch.setattr(espn_api.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", lambda *_: None)
 
     with caplog.at_level(logging.ERROR, logger="CBBpy"):
         df = espn_api._get_game_boxscore_api(gid, "mens", summary=corrupt)
@@ -745,7 +766,7 @@ def test_api_game_ids_parse_error_fails_fast(monkeypatch):
         return FakeResponse(b'{"events": [{"no_id": 1}]}', status_code=200)
 
     monkeypatch.setattr(cbbpy_utils.r, "get", fake_get)
-    monkeypatch.setattr(espn_api.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(cbbpy_utils.time, "sleep", lambda *_: None)
     monkeypatch.setattr(cbbpy_utils, "ATTEMPTS", 5)
 
     ids = ms.get_game_ids("2021-04-03", source="api")
