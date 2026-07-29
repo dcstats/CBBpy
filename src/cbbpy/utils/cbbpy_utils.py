@@ -123,6 +123,11 @@ HOOP_SEPARATION_Y = 84
 COURT_WIDTH_X = 50
 MIN_SHOT_Y = -10
 MAX_SHOT_Y = 94
+# The basket. ESPN's HTML feed stamps every shooting play with this coordinate
+# for games it never located, where the API just omits the field; it is also
+# where ESPN puts every free throw, rather than at the line. See
+# _is_unlocated_game for how the two are told apart.
+PLACEHOLDER_SHOT_COORD = (25, 0)
 # AWS WAF challenges Chromium TLS fingerprints as of July 2026; Safari passes
 IMPERSONATE = "safari"
 WINDOW_STRING = "window['__espnfitt__']="
@@ -1078,6 +1083,28 @@ def _transform_shot_coordinate(coord, play_type=None, is_three=None):
     return x, y
 
 
+def _is_unlocated_game(shot_xs, shot_ys, play_types, has_shot_chart):
+    """True when ESPN never located this game's shots but stamped a placeholder.
+
+    ESPN's HTML feed gives every shooting play the coordinate (25, 0) -- the
+    basket -- for games it holds no shot data on, where the API omits the field
+    outright. That same coordinate is where ESPN legitimately places every free
+    throw, so a single play never gives it away; the tell is game-wide. A game
+    with real shot data has a shot chart and field goals spread over the floor,
+    so require both to be absent before discarding anything.
+    """
+    if has_shot_chart:
+        return False
+    located_fgs = [
+        (x, y)
+        for x, y, ptype in zip(shot_xs, shot_ys, play_types)
+        if not np.isnan(x) and "freethrow" not in (ptype or "").lower()
+    ]
+    return bool(located_fgs) and all(
+        c == PLACEHOLDER_SHOT_COORD for c in located_fgs
+    )
+
+
 def _get_game_pbp_helper(gamepackage, game_id, game_type):
     pbp = gamepackage["pbp"]
     home_team = pbp["tms"]["home"]["nm"]
@@ -1301,6 +1328,17 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     if dropped_coord:
         _log.warning(f'{game_id} - Some shot coordinates were out of range and dropped')
 
+    # ESPN holds no shot locations for this game and filled every play with the
+    # placeholder; emitting it would fabricate a dense pile of shots at the
+    # basket. The API reports the same games honestly, by omitting the field
+    # (#93).
+    if _is_unlocated_game(
+        play_shot_xs, play_shot_ys, play_types, "shtChrt" in gamepackage
+    ):
+        _log.warning(f'{game_id} - ESPN has no shot location data; coordinates dropped')
+        play_shot_xs = [np.nan] * len(play_shot_xs)
+        play_shot_ys = [np.nan] * len(play_shot_ys)
+
     # home win probability [0,1] per play, keyed by play id; both sources feed a
     # pre-normalized {play_id: home_prob} map (API from summary["winprobability"],
     # HTML from the game page's wnPrb block), NaN where a play has no win-prob point
@@ -1345,42 +1383,6 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     }
 
     df = pd.DataFrame(data)
-
-    # add shot data if it exists
-    is_shotchart = "shtChrt" in gamepackage
-
-    if is_shotchart:
-        chart = gamepackage["shtChrt"]["plays"]
-
-        ids = [str(x.get('id', '')) for x in chart]
-        # shotteams = [x.get('homeAway', '') for x in chart]
-        # shotdescs = [x.get('text', '') for x in chart]
-        # no play_type here, so these skip the wrong-basket correction; the
-        # merge below is disabled, and re-enabling it would need that applied
-        # after the join, where each chart entry has found its play
-        chart_coords = [_transform_shot_coordinate(x.get('coordinate')) for x in chart]
-        xs = [c[0] for c in chart_coords]
-        ys = [c[1] for c in chart_coords]
-
-        shot_data = {
-            "id": ids,
-            # "team": shotteams,
-            # "play_desc": shotdescs,
-            "x": xs,
-            "y": ys
-        }
-
-        shot_df = pd.DataFrame(shot_data)
-
-        # match shot data to pbp data
-        df_merged = df.merge(shot_df, left_on='id', right_on='id', how='left', suffixes=('', '_shot'))
-
-        if len(shot_df[~shot_df['id'].isin(df_merged['id'])]) > 0:
-            _log.warning(f'{game_id} - Some shot data could not be matched to PBP data')
-
-        # chart coordinates take precedence; keep play-level coords as fallback
-        # df['shot_x'] = df_merged['x'].where(df_merged['x'].notna(), df['shot_x'])
-        # df['shot_y'] = df_merged['y'].where(df_merged['y'].notna(), df['shot_y'])
 
     return df.sort_values(by=["period", "secs_left_period"], ascending=[True, False])
 

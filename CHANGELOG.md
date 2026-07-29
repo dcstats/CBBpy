@@ -54,6 +54,9 @@ All notable changes to CBBpy are documented here. The format is based on
 - Failed page fetches are now classified by HTTP status code first, with the response
   body text kept as a fallback, so a WAF challenge (202) is distinguishable from a real
   not-found (404) in the logs (#74).
+- Shot coordinates now come from the play-by-play feed alone. The HTML page also embeds
+  a shot chart, which the scraper used to read and prefer, but the two carry identical
+  coordinates for every play they share, so both transports now take the same path.
 
 ### Deprecated
 - `game_day` and `game_time` (US/Pacific) on game info and schedule frames, in favor of
@@ -64,7 +67,6 @@ All notable changes to CBBpy are documented here. The format is based on
 
 ### Fixed
 - Conference-game labelling change that broke the scraper (#64).
-- Shot chart coordinates are matched to plays by id rather than by position.
 - Shots that ESPN recorded against the wrong basket are rotated back to the correct
   half of the court (#54). Two cases give the error away: rim shots (a layup, dunk or
   tip-in cannot be taken 80 ft out) and two-point attempts (everything past ~22 ft is
@@ -81,7 +83,11 @@ All notable changes to CBBpy are documented here. The format is based on
   validated against the court's 50 ft width, and ESPN's int32-overflow sentinel is
   still rejected; a coordinate ESPN supplied but the scraper could not use is now
   logged, so a change in ESPN's format is visible rather than silent.
-- Shot chart entries with no coordinate no longer emit `(150, -100)`; they are `NaN`.
+- The HTML transport no longer reports fabricated shot coordinates for games ESPN
+  never located (#93). ESPN's HTML feed stamps every shooting play in such a game
+  with `(25, 0)` — the basket — where the API omits the field entirely; those games
+  now return `NaN` from both sources. Games with real shot data are untouched,
+  free throws included.
 - Home team detection.
 - Duplicate intra-conference games returned by `get_games_conference()` (#84).
 - Play-by-play clock parsing against missing or malformed clocks (#82).

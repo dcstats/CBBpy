@@ -254,8 +254,8 @@ def test_pbp_source_parity(offline_espn, gender):
             api_cov = (api[col].astype(str).str.len() > 0).sum()
             assert api_cov >= html_cov, f"{gid}: {col} API coverage regressed"
 
-        # shot coordinates: coverage is era/source-dependent (HTML shot chart vs
-        # API play coordinates); compare only where both sources have a value.
+        # shot coordinates: both sources read them off the play feed, but ESPN's
+        # coverage is era-dependent, so compare only where both have a value.
         # Also skip plays where the sources disagree on is_three, since the
         # wrong-basket correction keys off it: the API knows an attempt's value
         # outright and the HTML embed can only parse it from the description, so
@@ -474,6 +474,66 @@ def test_pbp_mirrored_rim_shots_rotated_back():
     assert (df.loc["4", "shot_x"], df.loc["4", "shot_y"]) == (25, -6)
     # two-point jumper past half court is impossible, so it is rotated too
     assert (df.loc["5", "shot_x"], df.loc["5", "shot_y"]) == (30, 3)
+
+
+def test_pbp_unlocated_game_placeholder_dropped(caplog):
+    # ESPN's HTML feed stamps every shooting play with (25, 0) -- the basket --
+    # for games it never located; emitting it fabricates a pile of shots on the
+    # rim. (25, 0) is also where every free throw legitimately sits, so the
+    # placeholder is only recognizable game-wide (#93)
+    def play(pid, txt, x, y):
+        return {
+            "id": pid,
+            "text": "Someone missed a shot.",
+            "type": {"txt": txt},
+            "shootingPlay": True,
+            "coordinate": {"x": x, "y": y},
+            "period": {"number": 1},
+            "clock": {"displayValue": "10:00"},
+        }
+
+    def run(plays, chart=False):
+        gp = {
+            "pbp": {
+                "tms": {"home": {"nm": "Home U"}, "away": {"nm": "Away U"}},
+                "plays": plays,
+            },
+            "gmInfo": {"dtTm": "2024-01-15T00:00Z"},
+            "win_prob": {},
+        }
+        if chart:
+            gp["shtChrt"] = {"plays": []}
+        return _get_game_pbp_helper(gp, "0", "mens").set_index("id")
+
+    # every field goal on the placeholder spot: the whole game is dropped
+    with caplog.at_level(logging.WARNING, logger="CBBpy"):
+        df = run([
+            play("1", "JumpShot", 25, 0),
+            play("2", "LayUpShot", 25, 0),
+            play("3", "MadeFreeThrow", 25, 0),
+        ])
+    assert df["shot_x"].isna().all() and df["shot_y"].isna().all()
+    assert "no shot location data" in caplog.text
+
+    # a game with real shot data is untouched, free throws included
+    caplog.clear()
+    with caplog.at_level(logging.WARNING, logger="CBBpy"):
+        df = run([
+            play("1", "JumpShot", 20, 18),
+            play("2", "LayUpShot", 25, 0),
+            play("3", "MadeFreeThrow", 25, 0),
+        ])
+    assert (df.loc["1", "shot_x"], df.loc["1", "shot_y"]) == (30, 18)
+    assert (df.loc["2", "shot_x"], df.loc["2", "shot_y"]) == (25, 0)
+    assert "no shot location data" not in caplog.text
+
+    # free throws alone never trigger it -- they legitimately live on that spot
+    df = run([play("1", "MadeFreeThrow", 25, 0), play("2", "MadeFreeThrow", 25, 0)])
+    assert (df.loc["1", "shot_x"], df.loc["1", "shot_y"]) == (25, 0)
+
+    # a game carrying a shot chart is never treated as unlocated
+    df = run([play("1", "JumpShot", 25, 0)], chart=True)
+    assert (df.loc["1", "shot_x"], df.loc["1", "shot_y"]) == (25, 0)
 
 
 def test_pbp_is_three_prefers_score_value():

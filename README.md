@@ -216,7 +216,9 @@ Two caveats about ESPN's own data:
   `play_type == "MadeFreeThrow"` to handle them however you like.
 - **Coordinates are missing for many older games.** ESPN simply did not record shot
   locations for most games before roughly the 2025-26 season, and `shot_x`/`shot_y`
-  are `NaN` there.
+  are `NaN` there. (ESPN's HTML feed fills those games with a placeholder at the
+  basket rather than leaving them empty; CBBpy detects that and returns `NaN`, so
+  both `source` values agree.)
 
 Function call:
 

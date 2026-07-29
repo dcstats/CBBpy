@@ -512,7 +512,7 @@ def _pbp_adapter(summary):
     Field renames (team.id -> homeAway, homeScore -> hmScr, type.text -> txt),
     and participant normalization: participants[0] becomes the primary athlete;
     participants[1] becomes an assist participant only when the text confirms it.
-    No shot chart is attached, so shot coordinates come from the plays themselves.
+    Shot coordinates come from the plays themselves, as they do on the HTML side.
     """
     comp = summary["header"]["competitions"][0]
     id_to_homeaway = {c["id"]: c["homeAway"] for c in comp["competitors"]}
