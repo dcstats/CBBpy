@@ -8,18 +8,12 @@ on:
       - 'tests/**'
       - 'pyproject.toml'
       - '.github/workflows/pytest.yml'
-  # the bulk live scrape is too slow (and too dependent on ESPN being healthy)
-  # to gate a PR, so it runs nightly and on demand instead
-  schedule:
-    - cron: '0 9 * * *'
   workflow_dispatch:
 
 jobs:
   # Deterministic tests against recorded ESPN pages — no network. A failure
   # here means the code changed behavior. Runs on every supported Python.
   offline:
-    # deterministic, so a nightly run would tell us nothing new
-    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
@@ -68,7 +62,6 @@ jobs:
   # supported interpreter; pytest/pyarrow are installed separately at their
   # latest versions since lowest-direct would otherwise pick ancient ones.
   offline-min-versions:
-    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -94,13 +87,11 @@ jobs:
   # differences are already covered by the offline matrix, and one job keeps
   # ESPN request volume (and flake odds) down.
   #
-  # PR-gating slice only: everything except the two bulk scrapes, which take
-  # ~35 min between them and put ~2,700 game requests at ESPN. Format drift —
-  # what a PR actually needs to know about — shows up here just as reliably.
+  # Runs the whole suite, bulk scrapes included (~2,700 games). Slow by
+  # design — the timeout is generous because a PR waits on this.
   live:
-    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 120
 
     steps:
       - name: Checkout code
@@ -130,36 +121,6 @@ jobs:
       - name: Run live tests
         # -v + unbuffered so a hang is visible in the log as it happens rather
         # than as a timeout with no output
-        env:
-          PYTHONUNBUFFERED: '1'
-        run: pytest tests/ -m "live and not slow" -v --durations=10
-
-  # The bulk scrapes (date range + conference seasons, ~2,700 games). Nightly
-  # and on demand, never gating a PR: it runs ~40 min and a failure is as
-  # likely to mean "ESPN was unhappy tonight" as "the scraper broke".
-  live-full:
-    if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    timeout-minutes: 90
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install package in editable mode
-        run: |
-          pip install --upgrade pip
-          pip install -e .
-
-      - name: Install testing tools
-        run: pip install pytest pyarrow
-
-      - name: Run full live suite
         env:
           PYTHONUNBUFFERED: '1'
         run: pytest tests/ -m live -v --durations=10
