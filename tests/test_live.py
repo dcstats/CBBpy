@@ -15,10 +15,47 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from curl_cffi import requests as r
 
 from cbbpy import mens_scraper as ms, womens_scraper as ws
+from cbbpy.utils import cbbpy_utils as cu
 
 pytestmark = pytest.mark.live
+
+
+@pytest.fixture(scope="session")
+def espn_html_reachable():
+    """Whether ESPN serves this machine the HTML site, probed once per session.
+
+    ESPN's WAF blocks www.espn.com from datacenter IPs regardless of TLS
+    fingerprint — every curl_cffi profile is challenged from a GitHub runner,
+    while site.api.espn.com is unaffected (see tests/waf_probe.py). Tests that
+    need the HTML transport are skipped rather than failed there; the parsing
+    they cover is exercised offline against recorded pages either way.
+    """
+    try:
+        resp = r.get(
+            cu.MENS_GAME_URL.format("401581583"),
+            headers={"Referer": cu.REFERERS[0]},
+            impersonate=cu.IMPERSONATE,
+            timeout=30,
+        )
+    except Exception:
+        return False
+    return cu.WINDOW_STRING.encode() in resp.content
+
+
+@pytest.fixture(autouse=True)
+def _skip_when_html_blocked(request, espn_html_reachable):
+    if espn_html_reachable:
+        return
+    callspec = getattr(request.node, "callspec", None)
+    needs_html = (callspec and callspec.params.get("source") == "html") or (
+        request.node.get_closest_marker("html_only") is not None
+    )
+    if needs_html:
+        pytest.skip("ESPN's WAF blocks the HTML site from this IP; covered offline instead")
+
 
 SCRAPERS = {"mens": ms, "womens": ws}
 GENDERS = ["mens", "womens"]
@@ -250,6 +287,7 @@ def test_live_game_pbp(gender, source):
         # not value-checked: they come from fragile string parsing of ESPN text
 
 
+@pytest.mark.html_only
 @pytest.mark.parametrize("gender", GENDERS)
 def test_live_player_info(gender):
     sc = SCRAPERS[gender]
@@ -259,6 +297,7 @@ def test_live_player_info(gender):
     assert set(df.player_id.astype(str)) == set(PLAYERS[gender])
 
 
+@pytest.mark.html_only
 @pytest.mark.parametrize("gender", GENDERS)
 def test_live_team_schedule(gender):
     sc = SCRAPERS[gender]
@@ -275,6 +314,7 @@ def test_live_team_schedule(gender):
     )
 
 
+@pytest.mark.html_only
 @pytest.mark.parametrize("gender", GENDERS)
 def test_live_conference_schedule(gender):
     sc = SCRAPERS[gender]
@@ -319,6 +359,7 @@ def test_live_games_range(gender):
 
 
 @pytest.mark.slow
+@pytest.mark.html_only
 @pytest.mark.parametrize("gender", GENDERS)
 def test_live_games_conference(gender):
     sc = SCRAPERS[gender]

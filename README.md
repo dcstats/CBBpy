@@ -92,6 +92,7 @@ cbbpy ids 04-03-2021
 - Sometimes an issue might cause the scraper to take longer than expected. If it seems to be taking too long, **check the log file** for a list of errors that occurred during scraping. The log file location is outputted after the scraper finishes, or you can see the location anytime by running `python -c "from cbbpy.utils.cbbpy_utils import log_file; print(log_file)"`. For per-attempt retry diagnostics, call `cbbpy.set_log_level("INFO")` before scraping (or pass `-v` on the command line); the extra detail goes to the log file only, never the terminal.
 - Before the 16-17 season, Play-by-Play and Boxscores for women's games on ESPN are pretty sparse.
 - If both teams in a game are participating in the first game of conference play, the `is_conference` flag will incorrectly show `False` until the game goes final. This is not an issue after the game is over.
+- From a datacenter IP (cloud VMs, CI runners, some notebook hosts), ESPN's WAF blocks `www.espn.com` regardless of which browser CBBpy impersonates, while its JSON API is unaffected. The default `source="api"` works fine there, but `source="html"` and the HTML-only functions (`get_player_info`, `get_team_schedule`, `get_conference_schedule`, and `get_games_conference`, which resolves games through schedules) will come back empty after exhausting their retries. Run those from a residential connection. `python tests/waf_probe.py` reports what a given machine can reach.
 
 
 ## Functions available in CBBpy

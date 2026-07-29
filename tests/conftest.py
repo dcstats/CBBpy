@@ -149,3 +149,8 @@ def pytest_configure(config):
         "markers",
         "slow: bulk live scrape of hundreds of games; deselect with -m 'live and not slow'",
     )
+    config.addinivalue_line(
+        "markers",
+        "html_only: live test of a function with no API path; skipped where ESPN's "
+        "WAF blocks the HTML site (datacenter IPs, incl. GitHub runners)",
+    )
