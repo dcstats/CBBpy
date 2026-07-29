@@ -10,6 +10,12 @@ on:
       - '.github/workflows/pytest.yml'
   workflow_dispatch:
 
+# One run per branch: a new push cancels the one it supersedes, so a long live
+# job doesn't keep scraping ESPN for a commit nobody is waiting on anymore.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # Deterministic tests against recorded ESPN pages — no network. A failure
   # here means the code changed behavior. Runs on every supported Python.
