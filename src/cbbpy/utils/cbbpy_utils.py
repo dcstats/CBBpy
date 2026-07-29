@@ -1137,7 +1137,7 @@ def _is_unlocated_game(shot_xs, shot_ys, play_types, has_shot_chart):
     located_fgs = [
         (x, y)
         for x, y, ptype in zip(shot_xs, shot_ys, play_types)
-        if not np.isnan(x) and "freethrow" not in (ptype or "").lower()
+        if not np.isnan(x) and "freethrow" not in (ptype or "").replace(" ", "").lower()
     ]
     return bool(located_fgs) and all(
         c == PLACEHOLDER_SHOT_COORD for c in located_fgs

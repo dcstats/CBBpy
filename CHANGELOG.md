@@ -54,6 +54,9 @@ All notable changes to CBBpy are documented here. The format is based on
 - Failed page fetches are now classified by HTTP status code first, with the response
   body text kept as a fallback, so a WAF challenge (202) is distinguishable from a real
   not-found (404) in the logs (#74).
+- Retries back off exponentially (~2s doubling to a 20s cap, ±50% jitter) over 10
+  attempts, instead of a flat 1-3s delay over 15 — a degraded ESPN endpoint is given
+  room to recover rather than being re-requested at full rate.
 - Shot coordinates now come from the play-by-play feed alone. The HTML page also embeds
   a shot chart, which the scraper used to read and prefer, but the two carry identical
   coordinates for every play they share, so both transports now take the same path.
