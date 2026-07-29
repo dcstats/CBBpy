@@ -1030,7 +1030,7 @@ def _get_game_boxscore_helper(boxscore, game_id):
     return df
 
 
-def _transform_shot_coordinate(coord, play_type=None):
+def _transform_shot_coordinate(coord, play_type=None, is_three=None):
     """Normalize one raw ESPN shot coordinate onto CBBpy's court frame.
 
     ESPN reports coordinates in feet relative to whichever basket the shooting
@@ -1040,8 +1040,9 @@ def _transform_shot_coordinate(coord, play_type=None):
     as seen from above with the basket at the bottom and the shooter's right
     hand side at low x.
 
-    `play_type` enables the wrong-basket correction below; omit it to skip that
-    step. Returns (nan, nan) for any play ESPN did not actually locate.
+    `play_type` and `is_three` enable the wrong-basket correction below; omit
+    them to skip that step. Returns (nan, nan) for any play ESPN did not
+    actually locate.
     """
     if not coord or "x" not in coord or "y" not in coord:
         return np.nan, np.nan
@@ -1055,12 +1056,22 @@ def _transform_shot_coordinate(coord, play_type=None):
     y = cy
 
     # ESPN occasionally records a shot against the wrong basket, leaving it
-    # mirrored onto the far half of the court. Rim shots are the unambiguous
-    # case -- a layup, dunk or tip-in cannot be taken 80 feet from the hoop --
-    # so rotate those back. Jumpers past half court are left alone, since a
-    # genuine end-of-period heave is indistinguishable from a mislabeled one.
-    if y > COURT_HALF_Y and play_type:
-        if any(k in play_type.lower() for k in RIM_SHOT_KEYS):
+    # mirrored onto the far half of the court. Two kinds of shot give it away:
+    #   - rim shots, since a layup, dunk or tip-in cannot be taken 80 ft out
+    #   - two-point attempts, since everything past ~22 ft is worth three, so a
+    #     two from beyond half court is impossible. ESPN's own description
+    #     ("makes 69-foot jumper") is no help -- it is generated from the same
+    #     bad coordinate -- but the scoreboard is independent, and it awards
+    #     these 2 points. The points are right, so the coordinate is wrong.
+    # Threes past half court are left alone. A game-clock heave is one reason,
+    # but the harder one is the shot-clock heave: a deflection recovered past
+    # midcourt and thrown up as the shot clock expires is a genuine full-court
+    # three with plenty of game clock left, so "a three, far out, but not near
+    # the end of a period" does not imply a mislabel. ESPN's pbp carries no shot
+    # clock, so there is nothing to separate those from mirrored shots.
+    if y > COURT_HALF_Y:
+        is_rim = bool(play_type) and any(k in play_type.lower() for k in RIM_SHOT_KEYS)
+        if is_rim or is_three is False:
             x = COURT_WIDTH_X - x
             y = HOOP_SEPARATION_Y - y
 
@@ -1209,7 +1220,17 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         for x in zip(descs, is_assisted)
     ]
 
-    is_three = ["three point" in x.lower() for x in descs]
+    # ESPN's API states what an attempt was worth (1/2/3) whether or not it went
+    # in, which types a shot far more reliably than the description does: the
+    # text omits "three point" on a small but meaningful slice of shots, and
+    # those skew toward long heaves -- exactly the shots the wrong-basket
+    # correction reasons about. Fall back to the text where the field is absent
+    # (the HTML embed has no equivalent, and older API games leave it 0).
+    is_three = [
+        x.get("scoreValue") == 3 if x.get("scoreValue") in (1, 2, 3)
+        else "three point" in d.lower()
+        for x, d in zip(all_plays, descs)
+    ]
 
     # STRUCTURED FIELDS FROM ESPN JSON (may be absent, esp. in older games)
     player_ids = [str((x.get("athlete") or {}).get("id", "")) for x in all_plays]
@@ -1259,13 +1280,15 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
     play_shot_xs = []
     play_shot_ys = []
     dropped_coord = False
-    for x, is_shot, ptype in zip(all_plays, shooting_play, play_types):
+    for x, is_shot, ptype, three in zip(
+        all_plays, shooting_play, play_types, is_three
+    ):
         if not is_shot:
             play_shot_xs.append(np.nan)
             play_shot_ys.append(np.nan)
             continue
         coord = x.get("coordinate")
-        sx, sy = _transform_shot_coordinate(coord, ptype)
+        sx, sy = _transform_shot_coordinate(coord, ptype, three)
         # a coordinate ESPN supplied but we could not use is worth surfacing: at
         # this rate (~0.1%, all of it ESPN's int32 sentinel) a spike means the
         # feed's format moved and these bounds are now discarding real shots.

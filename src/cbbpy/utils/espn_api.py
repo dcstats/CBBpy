@@ -551,6 +551,12 @@ def _pbp_adapter(summary):
             adapted["scoringPlay"] = True
         if p.get("shootingPlay"):
             adapted["shootingPlay"] = True
+        # what the attempt was worth (1/2/3), present even on a miss, so it
+        # types a shot far more reliably than parsing the description. 0 means
+        # ESPN never populated it, mostly in older games; the helper falls back
+        # to the text there. The HTML embed carries no equivalent field.
+        if p.get("scoreValue"):
+            adapted["scoreValue"] = p["scoreValue"]
         if "type" in p:
             adapted["type"] = {
                 "txt": p["type"].get("text", ""),

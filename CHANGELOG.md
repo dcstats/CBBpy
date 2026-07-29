@@ -65,6 +65,23 @@ All notable changes to CBBpy are documented here. The format is based on
 ### Fixed
 - Conference-game labelling change that broke the scraper (#64).
 - Shot chart coordinates are matched to plays by id rather than by position.
+- Shots that ESPN recorded against the wrong basket are rotated back to the correct
+  half of the court (#54). Two cases give the error away: rim shots (a layup, dunk or
+  tip-in cannot be taken 80 ft out) and two-point attempts (everything past ~22 ft is
+  worth three, and the scoreboard awards these 2 points, so it is the coordinate that
+  is wrong). Threes past half court are left alone, since neither a game-clock heave
+  nor a shot-clock heave off a deflection recovered past midcourt is distinguishable
+  from a mislabeled shot.
+- `is_three` now comes from the value ESPN's API assigns an attempt, falling back to
+  the play description only where that field is absent (the HTML transport, and older
+  API games). The description omits "three point" on a small share of shots, skewed
+  toward long heaves, which previously mistyped them as two-pointers.
+- Shots released from behind the backboard plane (a negative `shot_y`, which includes
+  corner jumpers near the baseline) are no longer discarded. `shot_x` is still
+  validated against the court's 50 ft width, and ESPN's int32-overflow sentinel is
+  still rejected; a coordinate ESPN supplied but the scraper could not use is now
+  logged, so a change in ESPN's format is visible rather than silent.
+- Shot chart entries with no coordinate no longer emit `(150, -100)`; they are `NaN`.
 - Home team detection.
 - Duplicate intra-conference games returned by `get_games_conference()` (#84).
 - Play-by-play clock parsing against missing or malformed clocks (#82).

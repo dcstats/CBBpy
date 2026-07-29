@@ -147,7 +147,11 @@ INFO_PARITY_EXCLUDE = [
 ]
 
 # pbp: the output `id` is a source-specific play identifier (different formats).
-PBP_PARITY_EXCLUDE = ["id"]
+# `is_three`: the API states an attempt's value outright (scoreValue), while the
+# HTML embed carries no such field and must parse it out of the description, so
+# the API is right where the two differ. Coordinates are handled below, since
+# the wrong-basket correction keys off is_three and can diverge with it.
+PBP_PARITY_EXCLUDE = ["id", "is_three"]
 
 
 def _normalize_nan(df):
@@ -252,8 +256,13 @@ def test_pbp_source_parity(offline_espn, gender):
 
         # shot coordinates: coverage is era/source-dependent (HTML shot chart vs
         # API play coordinates); compare only where both sources have a value.
+        # Also skip plays where the sources disagree on is_three, since the
+        # wrong-basket correction keys off it: the API knows an attempt's value
+        # outright and the HTML embed can only parse it from the description, so
+        # one source may rotate a shot the other leaves alone.
+        agree_three = api["is_three"] == html["is_three"]
         for col in ("shot_x", "shot_y"):
-            both = html[col].notna() & api[col].notna()
+            both = html[col].notna() & api[col].notna() & agree_three
             assert (api[col][both] == html[col][both]).all(), (
                 f"{gid}: {col} disagrees where both sources have a value"
             )
@@ -445,8 +454,9 @@ def test_pbp_mirrored_rim_shots_rotated_back():
             "plays": [
                 play("1", "Someone made Layup.", "LayUpShot", 30, 81),
                 play("2", "Someone made Layup.", "LayUpShot", 25, 3),
-                play("3", "Someone missed Jumper.", "JumpShot", 25, 80),
+                play("3", "Someone missed Three Point Jumper.", "JumpShot", 25, 80),
                 play("4", "Someone made Dunk.", "DunkShot", 25, 90),
+                play("5", "Someone missed Jumper.", "JumpShot", 30, 81),
             ],
         },
         "gmInfo": {"dtTm": "2024-01-15T00:00Z"},
@@ -457,11 +467,82 @@ def test_pbp_mirrored_rim_shots_rotated_back():
     assert (df.loc["1", "shot_x"], df.loc["1", "shot_y"]) == (30, 3)
     # normal layup untouched
     assert (df.loc["2", "shot_x"], df.loc["2", "shot_y"]) == (25, 3)
-    # jumper past half court left alone (could be a genuine heave)
+    # three past half court left alone (could be a genuine heave)
     assert (df.loc["3", "shot_x"], df.loc["3", "shot_y"]) == (25, 80)
     # extreme mirror lands behind the backboard plane: emitted as negative
     # rather than clamped, since y < 0 is a real location
     assert (df.loc["4", "shot_x"], df.loc["4", "shot_y"]) == (25, -6)
+    # two-point jumper past half court is impossible, so it is rotated too
+    assert (df.loc["5", "shot_x"], df.loc["5", "shot_y"]) == (30, 3)
+
+
+def test_pbp_is_three_prefers_score_value():
+    # ESPN's API states what an attempt was worth whether or not it went in, and
+    # the description does not always say "three point" -- notably on long
+    # heaves, the shots the wrong-basket correction reasons about
+    def play(pid, text, score_value=None):
+        p = {
+            "id": pid,
+            "text": text,
+            "type": {"txt": "JumpShot"},
+            "shootingPlay": True,
+            "coordinate": {"x": 20, "y": 22},
+            "period": {"number": 1},
+            "clock": {"displayValue": "10:00"},
+        }
+        if score_value is not None:
+            p["scoreValue"] = score_value
+        return p
+
+    gamepackage = {
+        "pbp": {
+            "tms": {"home": {"nm": "Home U"}, "away": {"nm": "Away U"}},
+            "plays": [
+                # scoreValue wins over a description that never says "three point"
+                play("1", "Someone misses 64-foot turnaround jump shot.", 3),
+                play("2", "Someone made Jumper.", 2),
+                # absent (HTML embed, or an older API game): fall back to the text
+                play("3", "Someone missed Three Point Jumper."),
+                play("4", "Someone made Jumper."),
+                # 0 means ESPN never populated it; the text is all we have
+                play("5", "Someone missed Three Point Jumper.", 0),
+            ],
+        },
+        "gmInfo": {"dtTm": "2024-01-15T00:00Z"},
+        "win_prob": {},
+    }
+    df = _get_game_pbp_helper(gamepackage, "0", "mens").set_index("id")
+    assert df.loc["1", "is_three"]
+    assert not df.loc["2", "is_three"]
+    assert df.loc["3", "is_three"]
+    assert not df.loc["4", "is_three"]
+    assert df.loc["5", "is_three"]
+
+
+def test_pbp_far_three_by_score_value_not_rotated():
+    # the 64-foot heave that the description alone would have mistyped as a two
+    # and wrongly rotated back to mid-range
+    play = {
+        "id": "1",
+        "text": "Someone misses 64-foot turnaround jump shot.",
+        "type": {"txt": "JumpShot"},
+        "shootingPlay": True,
+        "scoreValue": 3,
+        "coordinate": {"x": 37, "y": 63},
+        "period": {"number": 1},
+        "clock": {"displayValue": "10:00"},
+    }
+    gamepackage = {
+        "pbp": {
+            "tms": {"home": {"nm": "Home U"}, "away": {"nm": "Away U"}},
+            "plays": [play],
+        },
+        "gmInfo": {"dtTm": "2024-01-15T00:00Z"},
+        "win_prob": {},
+    }
+    df = _get_game_pbp_helper(gamepackage, "0", "mens").set_index("id")
+    assert df.loc["1", "is_three"]
+    assert (df.loc["1", "shot_x"], df.loc["1", "shot_y"]) == (13, 63)
 
 
 def test_pbp_out_of_range_coordinate_logged(caplog):
@@ -530,10 +611,18 @@ def test_shot_coordinate_transform():
         np.isnan(v) for v in _transform_shot_coordinate({"x": 25, "y": -214748365})
     )
 
-    # the wrong-basket rotation only fires with a rim play_type
+    # the wrong-basket rotation fires for a rim shot past half court...
     assert _transform_shot_coordinate({"x": 30, "y": 81}, "LayUpShot") == (30, 3)
+    # ...and for a two-point jumper, which cannot be taken from beyond half
+    # court (the scoreboard awards these 2 points, so the coordinate is wrong)
+    assert _transform_shot_coordinate({"x": 30, "y": 81}, "JumpShot", False) == (30, 3)
+    # ...but not for a three, which may be a genuine end-of-period heave
+    assert _transform_shot_coordinate({"x": 30, "y": 81}, "JumpShot", True) == (20, 81)
+    # ...nor when we have no idea, since the caller did not say
     assert _transform_shot_coordinate({"x": 30, "y": 81}, "JumpShot") == (20, 81)
     assert _transform_shot_coordinate({"x": 30, "y": 81}) == (20, 81)
+    # a normal two-point jumper is untouched
+    assert _transform_shot_coordinate({"x": 30, "y": 18}, "JumpShot", False) == (20, 18)
 
 
 @pytest.mark.parametrize("source", ["html", "api"])
