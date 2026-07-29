@@ -298,6 +298,7 @@ def test_live_game_ids(gender):
     assert set(map(str, sc.get_game_ids(date))) == expected_ids
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("gender", GENDERS)
 def test_live_games_range(gender):
     sc = SCRAPERS[gender]
@@ -317,6 +318,7 @@ def test_live_games_range(gender):
     assert_row_count_close(len(set(pbp.game_id.astype(str))), len(info))
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("gender", GENDERS)
 def test_live_games_conference(gender):
     sc = SCRAPERS[gender]

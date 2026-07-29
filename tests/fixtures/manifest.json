@@ -67,14 +67,6 @@
     "file": "mens_player_4433093.html.gz",
     "recorded_at": "2026-06-13T01:45:47+00:00"
   },
-  "https://www.espn.com/mens-college-basketball/team/schedule/_/id/279/season/2017": {
-    "file": "mens_schedule_279_2017.html.gz",
-    "recorded_at": "2026-06-13T01:45:50+00:00"
-  },
-  "https://www.espn.com/mens-college-basketball/team/schedule/_/id/2010/season/2010": {
-    "file": "mens_schedule_2010_2010.html.gz",
-    "recorded_at": "2026-06-13T01:45:51+00:00"
-  },
   "https://www.espn.com/womens-college-basketball/scoreboard/_/date/20230402/seasontype/2/group/50": {
     "file": "womens_scoreboard_20230402.html.gz",
     "recorded_at": "2026-06-13T01:45:53+00:00"
@@ -130,14 +122,6 @@
   "https://www.espn.com/womens-college-basketball/player/_/id/14670": {
     "file": "womens_player_14670.html.gz",
     "recorded_at": "2026-06-13T01:46:18+00:00"
-  },
-  "https://www.espn.com/womens-college-basketball/team/schedule/_/id/2628/season/2014": {
-    "file": "womens_schedule_2628_2014.html.gz",
-    "recorded_at": "2026-06-13T01:46:20+00:00"
-  },
-  "https://www.espn.com/womens-college-basketball/team/schedule/_/id/13/season/2021": {
-    "file": "womens_schedule_13_2021.html.gz",
-    "recorded_at": "2026-06-13T01:46:22+00:00"
   },
   "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary?event=401581583": {
     "file": "mens_api_summary_401581583.json.gz",
@@ -198,5 +182,21 @@
   "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary?event=401745972": {
     "file": "mens_api_summary_401745972.json.gz",
     "recorded_at": "2026-07-20T01:15:34+00:00"
+  },
+  "https://www.espn.com/mens-college-basketball/team/schedule/_/id/279/season/2017/seasontype/2": {
+    "file": "mens_schedule_279_2017.html.gz",
+    "recorded_at": "2026-07-29T17:09:43+00:00"
+  },
+  "https://www.espn.com/mens-college-basketball/team/schedule/_/id/2010/season/2010/seasontype/2": {
+    "file": "mens_schedule_2010_2010.html.gz",
+    "recorded_at": "2026-07-29T17:09:44+00:00"
+  },
+  "https://www.espn.com/womens-college-basketball/team/schedule/_/id/2628/season/2014/seasontype/2": {
+    "file": "womens_schedule_2628_2014.html.gz",
+    "recorded_at": "2026-07-29T17:09:47+00:00"
+  },
+  "https://www.espn.com/womens-college-basketball/team/schedule/_/id/13/season/2021/seasontype/2": {
+    "file": "womens_schedule_13_2021.html.gz",
+    "recorded_at": "2026-07-29T17:09:48+00:00"
   }
 }

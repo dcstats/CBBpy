@@ -145,3 +145,7 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "live: makes live requests to ESPN; deselect with -m 'not live'"
     )
+    config.addinivalue_line(
+        "markers",
+        "slow: bulk live scrape of hundreds of games; deselect with -m 'live and not slow'",
+    )

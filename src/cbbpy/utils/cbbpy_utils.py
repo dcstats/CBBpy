@@ -64,7 +64,10 @@ MENS_GAME_URL = "https://www.espn.com/mens-college-basketball/game/_/gameId/{}"
 MENS_BOXSCORE_URL = "https://www.espn.com/mens-college-basketball/boxscore/_/gameId/{}"
 MENS_PBP_URL = "https://www.espn.com/mens-college-basketball/playbyplay/_/gameId/{}"
 MENS_PLAYER_URL = "https://www.espn.com/mens-college-basketball/player/_/id/{}"
-MENS_SCHEDULE_URL = "https://www.espn.com/mens-college-basketball/team/schedule/_/id/{}/season/{}"
+# the trailing /seasontype is required: without it ESPN serves only the season
+# type the page defaults to (postseason, for a team with a tournament run),
+# silently dropping the rest of the schedule. Any value returns every type.
+MENS_SCHEDULE_URL = "https://www.espn.com/mens-college-basketball/team/schedule/_/id/{}/season/{}/seasontype/2"
 WOMENS_SCOREBOARD_URL = "https://www.espn.com/womens-college-basketball/scoreboard/_/date/{}/seasontype/2/group/50"
 WOMENS_GAME_URL = "https://www.espn.com/womens-college-basketball/game/_/gameId/{}"
 WOMENS_BOXSCORE_URL = (
@@ -72,7 +75,9 @@ WOMENS_BOXSCORE_URL = (
 )
 WOMENS_PBP_URL = "https://www.espn.com/womens-college-basketball/playbyplay/_/gameId/{}"
 WOMENS_PLAYER_URL = "https://www.espn.com/womens-college-basketball/player/_/id/{}"
-WOMENS_SCHEDULE_URL = "https://www.espn.com/womens-college-basketball/team/schedule/_/id/{}/season/{}"
+WOMENS_SCHEDULE_URL = (
+    "https://www.espn.com/womens-college-basketball/team/schedule/_/id/{}/season/{}/seasontype/2"
+)
 # logos are school-level assets keyed by ESPN team ID, shared across genders
 TEAM_LOGO_URL = "https://a.espncdn.com/i/teamlogos/ncaa/500/{}.png"
 TEAM_LOGO_DARK_URL = "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/{}.png"
@@ -932,10 +937,23 @@ def _get_conference_schedule(conference, season, game_type):
     teams = _get_teams_from_conference(conference, season, game_type)
 
     df = pd.DataFrame()
+    empty = []
 
     for team in teams:
         sch = _get_team_schedule(team, season, game_type)
+        if len(sch) == 0:
+            empty.append(team)
         df = pd.concat([df, sch])
+
+    # a team whose schedule fetch failed contributes nothing, which would
+    # otherwise leave the caller with a quietly incomplete conference
+    if empty:
+        warnings.warn(
+            f"No schedule returned for {len(empty)} of {len(teams)} teams in "
+            f"{conference} ({season}): {', '.join(empty)}. The result is incomplete.",
+            CBBpyWarning,
+            stacklevel=2,
+        )
 
     return df.reset_index(drop=True)
 

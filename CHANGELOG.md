@@ -91,6 +91,13 @@ All notable changes to CBBpy are documented here. The format is based on
   with `(25, 0)` — the basket — where the API omits the field entirely; those games
   now return `NaN` from both sources. Games with real shot data are untouched,
   free throws included.
+- Team and conference schedules are complete again. ESPN began serving only one
+  season type per schedule page — whichever the page defaults to — so a team viewed
+  in a season it reached the postseason in returned its tournament games and nothing
+  else, silently. This truncated `get_team_schedule`, `get_conference_schedule` and
+  `get_games_conference`; requesting a season type explicitly returns every type.
+- `get_conference_schedule()` now warns when a team's schedule comes back empty
+  instead of quietly returning an incomplete conference.
 - Boxscore string columns are no longer widened to `object` under pandas 3 when a
   team has no bench listed; the empty row group is dropped before the frames are
   concatenated, so dtypes no longer vary game to game.
