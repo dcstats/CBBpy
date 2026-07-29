@@ -5,11 +5,23 @@ on:
     branches: [master]
     paths:
       - 'src/**'
+      - 'tests/**'
+      - 'pyproject.toml'
+      - '.github/workflows/pytest.yml'
+  workflow_dispatch:
+
+# One run per branch: a new push cancels the one it supersedes, so a long live
+# job doesn't keep scraping ESPN for a commit nobody is waiting on anymore.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test:
+  # Deterministic tests against recorded ESPN pages — no network. A failure
+  # here means the code changed behavior. Runs on every supported Python.
+  offline:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     strategy:
       matrix:
         python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
@@ -17,28 +29,104 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-
 
       - name: Install package in editable mode
         run: |
           pip install --upgrade pip
           pip install -e .
 
-      - name: Install testing and linting tools
-        run: pip install pytest flake8 mypy
+      - name: Install testing tools
+        run: pip install pytest pyarrow flake8
+
+      # Errors only (syntax errors + undefined names) — catches latent
+      # NameErrors in branches the tests may not reach
+      - name: Lint with flake8
+        run: flake8 src/ --max-line-length=120 --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Run offline tests
+        run: pytest tests/ -m "not live"
+
+  # Same offline suite, but with every dependency installed at the minimum
+  # version pyproject.toml claims to support (uv resolves the floors directly
+  # from the metadata, so there's no separate pin list to keep in sync). A
+  # failure here means a declared floor is dishonest — raise it rather than
+  # working around it. Python 3.9 because the floors must hold on the oldest
+  # supported interpreter; pytest/pyarrow are installed separately at their
+  # latest versions since lowest-direct would otherwise pick ancient ones.
+  offline-min-versions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install package with lowest supported dependency versions
+        run: |
+          uv pip install --resolution lowest-direct -e .
+          uv pip install pytest pyarrow
+
+      - name: Run offline tests
+        run: uv run --no-project pytest tests/ -m "not live"
+
+  # Live invariant tests against real ESPN — verifies the scraper still works
+  # against today's site. Single Python version: cross-version parsing
+  # differences are already covered by the offline matrix, and one job keeps
+  # ESPN request volume (and flake odds) down.
+  #
+  # Runs the whole suite, bulk scrapes included (~2,700 games). Slow by
+  # design — the timeout is generous because a PR waits on this.
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
       - name: Cache pip dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+          key: ${{ runner.os }}-pip-3.12-${{ hashFiles('**/pyproject.toml') }}
           restore-keys: |
-            ${{ runner.os }}-pip-
+            ${{ runner.os }}-pip-3.12-
 
-      - name: Run pytest
-        run: pytest tests/
+      - name: Install package in editable mode
+        run: |
+          pip install --upgrade pip
+          pip install -e .
+
+      - name: Install testing tools
+        run: pip install pytest pyarrow
+
+      - name: Run live tests
+        # -v + unbuffered so a hang is visible in the log as it happens rather
+        # than as a timeout with no output
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: pytest tests/ -m live -v --durations=10

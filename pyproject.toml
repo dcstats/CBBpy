@@ -40,18 +40,28 @@ keywords = [
 ]
 dependencies = [
   'pandas>=2.0.0',
-  'numpy>=2.0.0',
-  'python-dateutil>=2.4.0',
+  'numpy>=1.21.6',
+  'python-dateutil>=2.8.2',
   'pytz>=2022.1',
   'tqdm>=4.63.0',
-  'lxml>=4.9.0',
+  'lxml>=4.9.2',
   'joblib>=1.0.0',
   'beautifulsoup4>=4.11.0',
-  'requests>=2.27.0',
-  'rapidfuzz>=3.9.0',
+  'curl_cffi>=0.10.0',
+  'rapidfuzz>=2.14.0',
   'platformdirs>=4.0.0',
 ]
 requires-python = ">=3.9"
+
+[project.scripts]
+cbbpy = "cbbpy.cli:main"
+
+[project.optional-dependencies]
+dev = [
+  'pytest>=7.0.0',
+  'flake8>=6.0.0',
+  'pyarrow>=14.0.0',
+]
 
 [project.urls]
 homepage = "https://github.com/dcstats/CBBpy/"

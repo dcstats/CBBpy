@@ -32,6 +32,20 @@ jobs:
         pip install build
     - name: Build package
       run: python -m build
+    # Nothing keeps __version__ and the release tag in sync, and a wrong
+    # filename on PyPI cannot be reused once uploaded — so check the built
+    # artifact against the tag before the one irreversible step.
+    - name: Verify tag matches built version
+      run: |
+        TAG="${{ github.event.release.tag_name }}"
+        DIST=$(ls dist/cbbpy-*.tar.gz)
+        BUILT="v$(basename "$DIST" .tar.gz | sed 's/^cbbpy-//')"
+        if [ "$TAG" != "$BUILT" ]; then
+          echo "release tag $TAG does not match built version $BUILT" >&2
+          echo "fix src/cbbpy/__init__.py or retag, then re-publish" >&2
+          exit 1
+        fi
+        echo "tag $TAG matches built version"
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
       with:

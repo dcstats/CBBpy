@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup as bs
-import requests as r
+from curl_cffi import requests as r
 import pandas as pd
 import numpy as np
 from datetime import datetime, timezone
@@ -18,38 +18,34 @@ from rapidfuzz import process, distance, utils
 from pathlib import Path
 from platformdirs import user_log_dir
 from importlib.metadata import version
-from functools import wraps
+from functools import lru_cache, wraps
 
 
-warnings.filterwarnings('ignore', category=UserWarning)
+class CBBpyWarning(Warning):
+    # category for cbbpy's user-facing warnings (fuzzy-match/fallback notices)
+    # so consumers can silence them without touching other warnings
+    pass
 
 
-ATTEMPTS = 15
+ATTEMPTS = 10
+# seconds per request; a hung connection raises into the retry loop (#70)
+REQUEST_TIMEOUT = 30
+# retry delay grows exponentially (±50% jitter) rather than staying flat. A flat
+# ~2s delay re-requests a degraded ESPN endpoint for the whole retry budget,
+# which adds load exactly when the origin is already failing; older seasons hit
+# this hardest, since cold archive data 5xxes under the same concurrency recent
+# data serves from cache. Observed transient 5xx windows clear in ~7-10s, so the
+# schedule (~2, 4, 8, 16, 20, 20...) is past that by the third retry.
+BACKOFF_BASE = 2.0
+BACKOFF_CAP = 20.0
+# bulk scraping is I/O-bound, so this is a request-rate knob rather than a CPU
+# one: with one request per game, the rate is roughly n_jobs / throttle req/s
+DEFAULT_N_JOBS = 8
 DATE_PARSES = [
     "%Y-%m-%d",
     "%Y/%m/%d",
     "%m-%d-%Y",
     "%m/%d/%Y",
-]
-USER_AGENTS = [
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 "
-    + "(KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36",
 ]
 REFERERS = [
     "https://google.com/",
@@ -68,7 +64,10 @@ MENS_GAME_URL = "https://www.espn.com/mens-college-basketball/game/_/gameId/{}"
 MENS_BOXSCORE_URL = "https://www.espn.com/mens-college-basketball/boxscore/_/gameId/{}"
 MENS_PBP_URL = "https://www.espn.com/mens-college-basketball/playbyplay/_/gameId/{}"
 MENS_PLAYER_URL = "https://www.espn.com/mens-college-basketball/player/_/id/{}"
-MENS_SCHEDULE_URL = "https://www.espn.com/mens-college-basketball/team/schedule/_/id/{}/season/{}"
+# the trailing /seasontype is required: without it ESPN serves only the season
+# type the page defaults to (postseason, for a team with a tournament run),
+# silently dropping the rest of the schedule. Any value returns every type.
+MENS_SCHEDULE_URL = "https://www.espn.com/mens-college-basketball/team/schedule/_/id/{}/season/{}/seasontype/2"
 WOMENS_SCOREBOARD_URL = "https://www.espn.com/womens-college-basketball/scoreboard/_/date/{}/seasontype/2/group/50"
 WOMENS_GAME_URL = "https://www.espn.com/womens-college-basketball/game/_/gameId/{}"
 WOMENS_BOXSCORE_URL = (
@@ -76,7 +75,12 @@ WOMENS_BOXSCORE_URL = (
 )
 WOMENS_PBP_URL = "https://www.espn.com/womens-college-basketball/playbyplay/_/gameId/{}"
 WOMENS_PLAYER_URL = "https://www.espn.com/womens-college-basketball/player/_/id/{}"
-WOMENS_SCHEDULE_URL = "https://www.espn.com/womens-college-basketball/team/schedule/_/id/{}/season/{}"
+WOMENS_SCHEDULE_URL = (
+    "https://www.espn.com/womens-college-basketball/team/schedule/_/id/{}/season/{}/seasontype/2"
+)
+# logos are school-level assets keyed by ESPN team ID, shared across genders
+TEAM_LOGO_URL = "https://a.espncdn.com/i/teamlogos/ncaa/500/{}.png"
+TEAM_LOGO_DARK_URL = "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/{}.png"
 NON_SHOT_TYPES = [
     "TV Timeout",
     "Jump Ball",
@@ -96,49 +100,265 @@ SHOT_TYPES = [
     "Layup",
     "Dunk",
 ]
+# Substrings identifying shots taken at the rim, matched against play_type
+# (JSON "LayUpShot"/"DunkShot"/"TipShot", or the lowercased text-parsed
+# fallback "layup"/"dunk"/"two point tip shot").
+RIM_SHOT_KEYS = ("layup", "dunk", "tip")
+# ESPN's grid is in feet, normalized to whichever basket the shooting team is
+# attacking: x spans the court's 50 ft width and y runs up the court from that
+# basket, with y = 0 on the backboard plane. Legitimate rim shots stay under
+# y = 15; ones recorded against the wrong basket land at y >= 80. This cutoff
+# sits in the empty band between -- across four seasons of men's data no rim
+# shot at all falls between y = 15 and y = 47.
+COURT_HALF_Y = 47
+# Separation between the two baskets on ESPN's grid. A shot recorded against the
+# wrong basket is rotated 180 degrees about center court, so
+# (x, y) -> (50 - x, HOOP_SEPARATION_Y - y) recovers it. Court geometry implies
+# 83.5 (a 94 ft court less the 5.25 ft each rim sits in from its baseline), and
+# since the grid is an integer lattice the offset must itself be an integer: 84
+# is the value that best fits four seasons of men's data, by two independent
+# estimates -- matching mirrored rim shots against the normal rim-shot
+# distribution, and matching mirrored three-pointers against the real arc.
+HOOP_SEPARATION_Y = 84
+# x spans the court's width, so a coordinate outside it is not a location. y,
+# however, may legitimately run a few feet negative: y = 0 is the backboard
+# plane, so a shot released from behind it is recorded below zero. Bound that
+# axis rather than rejecting every negative -- ESPN emits an int32-overflow
+# sentinel (y = -214748365) for plays it never located.
+COURT_WIDTH_X = 50
+MIN_SHOT_Y = -10
+MAX_SHOT_Y = 94
+# The basket. ESPN's HTML feed stamps every shooting play with this coordinate
+# for games it never located, where the API just omits the field; it is also
+# where ESPN puts every free throw, rather than at the line. See
+# _is_unlocated_game for how the two are told apart.
+PLACEHOLDER_SHOT_COORD = (25, 0)
+# AWS WAF challenges Chromium TLS fingerprints as of July 2026; Safari passes
+IMPERSONATE = "safari"
 WINDOW_STRING = "window['__espnfitt__']="
 JSON_REGEX = r"window\[\'__espnfitt__\'\]={(.*)};"
 STATUS_OK = 200
+# AWS WAF serves an empty 202 challenge; a genuinely missing page is a 404
+STATUS_WAF_CHALLENGE = 202
+STATUS_NOT_FOUND = 404
 WOMEN_HALF_RULE_CHANGE_DATE = parser.parse("2015-05-01")
+# ESPN renamed three conferences starting in season 2026. Old and new spellings
+# name the same conference lineage; map each to the other so a lookup by either
+# resolves in any season instead of falling through to fuzzy matching.
+CONFERENCE_ALIASES = {
+    "a-sun": "asun",
+    "asun": "a-sun",
+    "asun conference": "atlantic sun conference",
+    "atlantic sun conference": "asun conference",
+    "aac": "american",
+    "american": "aac",
+    "american athletic conference": "american conference",
+    "american conference": "american athletic conference",
+    "wac": "uac",
+    "uac": "wac",
+    "western athletic conference": "united athletic conference",
+    "united athletic conference": "western athletic conference",
+}
+# ESPN renamed two schools starting in season 2026. Old and new spellings name
+# the same school; map each to the other so a lookup by either resolves in any
+# season instead of falling through to fuzzy matching.
+TEAM_ALIASES = {
+    "st. francis (pa)": "saint francis",
+    "saint francis": "st. francis (pa)",
+    "st. francis pa": "saint francis",
+    "texas a&m-commerce": "east texas a&m",
+    "east texas a&m": "texas a&m-commerce",
+}
 GOOD_GAME_STATUSES = ['In Progress', 'Final']
+# Columns still emitted for backwards compatibility, mapped to their replacement and
+# the version that drops them. Source of truth for the docs and the removal test.
+DEPRECATED_COLUMNS = {
+    "game_day": ("game_datetime", "3.0"),
+    "game_time": ("game_datetime", "3.0"),
+    "half": ("period", "3.0"),
+    "secs_left_half": ("secs_left_period", "3.0"),
+    "quarter": ("period", "3.0"),
+    "secs_left_qt": ("secs_left_period", "3.0"),
+    "shooter": ("player_name", "3.0"),
+}
 
 
 # logging setup
-log_dir = user_log_dir(appname="CBBpy", appauthor="Daniel Cowan", version=version("cbbpy"))
-os.makedirs(log_dir, exist_ok=True)
-log_file = os.path.join(log_dir, "CBBpy.log")
+# CBBPY_LOG_FILE overrides the log file's full path (read at import so loky
+# workers and CLI subprocesses inherit it); otherwise the platformdirs default
+log_file = os.environ.get("CBBPY_LOG_FILE") or os.path.join(
+    user_log_dir(appname="CBBpy", appauthor="Daniel Cowan", version=version("cbbpy")),
+    "CBBpy.log",
+)
+log_dir = os.path.dirname(log_file)
 
-file_handler = logging.FileHandler(log_file)
+
+class _LazyFileHandler(logging.FileHandler):
+    # delay=True + creating the dir in _open means importing cbbpy does no
+    # filesystem I/O; the log dir/file appear only once something is logged.
+    # log_dir is read at open time so an in-process repoint takes effect.
+    def _open(self):
+        os.makedirs(log_dir, exist_ok=True)
+        return super()._open()
+
+
+file_handler = _LazyFileHandler(log_file, delay=True)
 formatter = logging.Formatter('%(asctime)s | %(name)s | %(levelname)s: %(message)s')
 file_handler.setFormatter(formatter)
 
+_DEFAULT_LOG_LEVEL = "WARNING"
+_VALID_LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+
+
+def _resolve_log_level():
+    """Read the CBBPY_LOG_LEVEL env var, defaulting to WARNING when unset/invalid.
+
+    Read at import time so joblib/loky workers — which inherit os.environ and
+    re-import this module — pick up a level set (via set_log_level) before the
+    bulk run started.
+    """
+    level = os.environ.get("CBBPY_LOG_LEVEL", _DEFAULT_LOG_LEVEL).upper()
+    return level if level in _VALID_LOG_LEVELS else _DEFAULT_LOG_LEVEL
+
+
 _log = logging.getLogger("CBBpy")
-_log.setLevel(logging.WARNING)
+_log.setLevel(_resolve_log_level())
 _log.addHandler(file_handler)
 
 
+def set_log_level(level=_DEFAULT_LOG_LEVEL):
+    """Set CBBpy's log verbosity for this process and future worker processes.
+
+    CBBpy logs only to a file (the path printed after bulk scrapes); nothing is
+    written to the terminal, so raising verbosity here never disturbs the
+    progress bars. "INFO" surfaces the per-attempt retry diagnostics; "WARNING"
+    (the default) keeps only warnings and errors.
+
+    The level is stored in os.environ["CBBPY_LOG_LEVEL"] so parallel
+    (joblib/loky) workers, which re-import this module, inherit it. Resetting to
+    the default "WARNING" removes the variable so a later run in the same
+    interpreter isn't left verbose.
+    """
+    level = str(level).upper()
+    if level not in _VALID_LOG_LEVELS:
+        raise ValueError(
+            f"level must be one of {_VALID_LOG_LEVELS}, got {level!r}"
+        )
+    if level == _DEFAULT_LOG_LEVEL:
+        os.environ.pop("CBBPY_LOG_LEVEL", None)
+    else:
+        os.environ["CBBPY_LOG_LEVEL"] = level
+    _log.setLevel(level)
+
+
 _call_depth = [0]
+
+_BANNER_RULE = "=" * 86
+
+
+def _write_session_banner(func, args, kwargs):
+    """Write a delimiter to the log naming the scrape that is about to start.
+
+    Written eagerly (before the scrape) rather than on the first log record so
+    it precedes anything joblib workers — separate processes appending to the
+    same file — write. Goes straight to the handler's stream so it isn't
+    prefixed by the record formatter.
+    """
+    params = ", ".join(
+        [repr(a) for a in args] + [f"{k}={v!r}" for k, v in kwargs.items()]
+    )
+    if len(params) > 200:
+        params = params[:197] + "..."
+    banner = (
+        f"\n{_BANNER_RULE}\n"
+        f"{datetime.now():%Y-%m-%d %H:%M:%S} | CBBpy {version('cbbpy')} | "
+        f"{func.__name__.lstrip('_')}({params})\n"
+        f"{_BANNER_RULE}\n"
+    )
+    file_handler.acquire()
+    try:
+        if file_handler.stream is None:
+            file_handler.stream = file_handler._open()
+        file_handler.stream.write(banner)
+        file_handler.flush()
+    finally:
+        file_handler.release()
+
 
 def print_log_file_location(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         _call_depth[0] += 1  # Increment call depth
+        if _call_depth[0] == 1:
+            try:
+                _write_session_banner(func, args, kwargs)
+            except OSError:
+                pass
+        start = time.time()
         try:
             result = func(*args, **kwargs)
             return result
         finally:
             _call_depth[0] -= 1  # Decrement call depth
             if _call_depth[0] == 0:
-                print(f"Log file is located at {log_file}")
+                # mtime check (not file_handler.stream) because joblib workers
+                # log errors in their own processes, not the parent's handler
+                try:
+                    # strict > so the session banner, written just before
+                    # `start`, can't be mistaken for a logged error
+                    errors_logged = os.path.getmtime(log_file) > start
+                except OSError:
+                    errors_logged = False
+                if errors_logged:
+                    print(f"Errors were logged; see {log_file}")
     return wrapper
 
 
-# pnf_ will keep track of games w/ page not found errors
-# if game has error, don't run the other scrape functions to save time
-pnf_ = []
+def _backoff_sleep(attempt):
+    """Sleep before retrying, growing the delay with each failed `attempt`.
+
+    `attempt` is the 0-indexed attempt that just failed, so the first retry
+    waits ~BACKOFF_BASE seconds and each subsequent one doubles up to
+    BACKOFF_CAP. Jitter is ±50% to keep parallel workers from retrying in
+    lockstep.
+    """
+    delay = min(BACKOFF_CAP, BACKOFF_BASE * 2**attempt)
+    time.sleep(delay * np.random.uniform(low=0.5, high=1.5))
+
+
+def _classify_page_failure(page, soup):
+    """Classify a failed page fetch: status code first, body text as fallback.
+
+    Returns "Page not found error", "WAF challenge", "Page error", an
+    "HTTP {status}" string for any other non-200, or None when the response
+    itself looked fine (i.e. the failure was in parsing, not fetching).
+
+    The body-text checks stay as a fallback because ESPN has historically served
+    a 200 whose body is an error page for games whose data pipeline broke.
+    """
+    status = getattr(page, "status_code", None)
+
+    if status == STATUS_NOT_FOUND:
+        return "Page not found error"
+    elif status == STATUS_WAF_CHALLENGE:
+        return "WAF challenge"
+    elif status is not None and status != STATUS_OK:
+        return f"HTTP {status}"
+
+    if soup is not None:
+        if "Page not found." in soup.text:
+            return "Page not found error"
+        elif "Page error" in soup.text:
+            return "Page error"
+
+    return None
 
 
 class CouldNotParseError(Exception):
+    pass
+
+
+class PageNotFoundError(Exception):
     pass
 
 
@@ -146,30 +366,121 @@ class InvalidDateRangeError(Exception):
     pass
 
 
-def _get_game(game_id, game_type, info, box, pbp):
+def _validate_source(source):
+    if source not in ("api", "html"):
+        raise ValueError(f"source must be 'api' or 'html', got {source!r}")
+
+
+def _get_game(game_id, game_type, info, box, pbp, source="api", throttle=0):
+    _validate_source(source)
+    # baseline politeness delay before each game's requests (#79); jittered
+    # ±50% around the mean so parallel workers don't fire in lockstep
+    if throttle:
+        time.sleep(np.random.uniform(0.5 * throttle, 1.5 * throttle))
     game_id = str(game_id)
     game_info_df = boxscore_df = pbp_df = pd.DataFrame([])
 
-    if game_id in pnf_:
-        _log.error(f'{game_id} - Game Info: Page not found error')
-    elif info:
-        game_info_df = _get_game_info(game_id, game_type)
+    if source == "api":
+        from cbbpy.utils import espn_api
 
-    if game_id in pnf_:
-        _log.error(f'{game_id} - Boxscore: Page not found error')
-    elif box:
-        boxscore_df = _get_game_boxscore(game_id, game_type)
+        # one summary request serves info + boxscore + pbp for the game
+        pnf = False
+        summary = None
+        if info or box or pbp:
+            try:
+                summary = espn_api._fetch_summary(game_id, game_type)
+            except PageNotFoundError:
+                pnf = True
 
-    if game_id in pnf_:
-        _log.error(f'{game_id} - PBP: Page not found error')
-    elif pbp:
-        pbp_df = _get_game_pbp(game_id, game_type)
+        # summary is None for a non-404 persistent failure (already logged by
+        # _fetch_summary); pnf distinguishes a real 404 from that here
+        if info:
+            if pnf:
+                _log.error(f'{game_id} - Game Info: Page not found error')
+            elif summary is None:
+                _log.error(f'{game_id} - Game Info: summary unavailable')
+            else:
+                game_info_df = espn_api._get_game_info_api(game_id, game_type, summary)
+
+        if box:
+            if pnf:
+                _log.error(f'{game_id} - Boxscore: Page not found error')
+            elif summary is None:
+                _log.error(f'{game_id} - Boxscore: summary unavailable')
+            else:
+                boxscore_df = espn_api._get_game_boxscore_api(game_id, game_type, summary)
+
+        if pbp:
+            if pnf:
+                _log.error(f'{game_id} - PBP: Page not found error')
+            elif summary is None:
+                _log.error(f'{game_id} - PBP: summary unavailable')
+            else:
+                pbp_df = espn_api._get_game_pbp_api(game_id, game_type, summary)
+
+        return (game_info_df, boxscore_df, pbp_df)
+
+    # a 404 in one section skips the rest; the raising scraper logs its own
+    # error, _get_game logs the sections it skips
+    pnf = False
+    if info:
+        try:
+            game_info_df = _get_game_info(game_id, game_type, source)
+        except PageNotFoundError:
+            pnf = True
+
+    if box:
+        if pnf:
+            _log.error(f'{game_id} - Boxscore: Page not found error')
+        else:
+            try:
+                boxscore_df = _get_game_boxscore(game_id, game_type, source)
+            except PageNotFoundError:
+                pnf = True
+
+    if pbp:
+        if pnf:
+            _log.error(f'{game_id} - PBP: Page not found error')
+        else:
+            try:
+                pbp_df = _get_game_pbp(game_id, game_type, source)
+            except PageNotFoundError:
+                pnf = True
 
     return (game_info_df, boxscore_df, pbp_df)
 
 
+def _sort_results(game_info_df, game_boxscore_df, game_pbp_df, info, box, pbp):
+    """Sort returned dataframes to ensure consistency between runs."""
+    if info and not game_info_df.empty:
+        # fixed-width ISO-8601 UTC strings sort correctly lexicographically (#80)
+        game_info_df = game_info_df.sort_values(
+            by=['game_datetime', 'game_id']
+        ).reset_index(drop=True)
+
+    if box and not game_boxscore_df.empty:
+        game_boxscore_df = game_boxscore_df.sort_values(
+            by=['game_id', 'team'],
+            ascending=False,
+            kind='mergesort'
+        ).reset_index(drop=True)
+
+    if pbp and not game_pbp_df.empty:
+        game_pbp_df = game_pbp_df.sort_values(
+            by=['game_id'],
+            ascending=False,
+            kind='mergesort'
+        ).reset_index(drop=True)
+
+    return (game_info_df, game_boxscore_df, game_pbp_df)
+
+
 @print_log_file_location
-def _get_games_range(start_date, end_date, game_type, info, box, pbp):
+def _get_games_range(
+    start_date, end_date, game_type, info, box, pbp, source="api",
+    throttle=1.0, n_jobs=None,
+):
+    _validate_source(source)
     if isinstance(start_date, str):
         start_date = _parse_date(start_date)
     if isinstance(end_date, str):
@@ -177,7 +488,7 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
     date_range = pd.date_range(start_date, end_date)
     len_scrape = len(date_range)
     all_data = []
-    cpus = os.cpu_count() - 1
+    cpus = n_jobs if n_jobs is not None else DEFAULT_N_JOBS
 
     if len_scrape < 1:
         raise InvalidDateRangeError("The start date must be sooner than the end date.")
@@ -195,12 +506,12 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
     with trange(len_scrape, bar_format=bar_format) as t:
         for i in t:
             date = date_range[i]
-            game_ids = _get_game_ids(date, game_type)
+            game_ids = _get_game_ids(date, game_type, source)
             t.set_description(f"Scraping {len(game_ids)} games on {date.strftime('%D')}")
 
             if len(game_ids) > 0:
                 result = Parallel(n_jobs=cpus)(
-                    delayed(_get_game)(gid, game_type, info, box, pbp)
+                    delayed(_get_game)(gid, game_type, info, box, pbp, source, throttle)
                     for gid in game_ids
                 )
                 all_data.append(result)
@@ -209,38 +520,22 @@ def _get_games_range(start_date, end_date, game_type, info, box, pbp):
                 t.set_description(f"No games on {date.strftime('%D')}", refresh=False)
 
     if not len(all_data) > 0:
-        return ()
+        return (pd.DataFrame(), pd.DataFrame(), pd.DataFrame())
 
-    # sort returned dataframes to ensure consistency between runs
-    game_info_df = pd.concat([game[0] for day in all_data for game in day])
-    if info:
-        game_info_df = game_info_df.sort_values(
-            by=['game_day', 'game_time', 'game_id'], 
-            key=lambda col: pd.to_datetime(col.str.replace(r' P[SD]T', '', 
-                                                        regex=True)) if col.name != 'game_id' else col
-        ).reset_index(drop=True)
-
-    game_boxscore_df = pd.concat([game[1] for day in all_data for game in day])
-    if box:
-        game_boxscore_df = game_boxscore_df.sort_values(
-            by=['game_id', 'team'], 
-            ascending=False, 
-            kind='mergesort'
-        ).reset_index(drop=True)
-
-    game_pbp_df = pd.concat([game[2] for day in all_data for game in day])
-    if pbp:
-        game_pbp_df = game_pbp_df.sort_values(
-            by=['game_id'],
-            ascending=False,
-            kind='mergesort'
-        ).reset_index(drop=True)
-
-    return (game_info_df, game_boxscore_df, game_pbp_df)
+    return _sort_results(
+        pd.concat([game[0] for day in all_data for game in day]),
+        pd.concat([game[1] for day in all_data for game in day]),
+        pd.concat([game[2] for day in all_data for game in day]),
+        info, box, pbp,
+    )
 
 
 @print_log_file_location
-def _get_games_season(season, game_type, info, box, pbp):
+def _get_games_season(
+    season, game_type, info, box, pbp, source="api", throttle=1.0, n_jobs=None
+):
+    _validate_source(source)
+    season = int(season)
     season_start_date = f"{season-1}-11-01"
     season_end_date = f"{season}-05-01"
 
@@ -253,90 +548,157 @@ def _get_games_season(season, game_type, info, box, pbp):
         season_end_date = datetime.today().strftime("%Y-%m-%d")
 
     info = _get_games_range(
-        season_start_date, season_end_date, game_type, info, box, pbp
+        season_start_date, season_end_date, game_type, info, box, pbp, source,
+        throttle, n_jobs,
     )
 
     return info
 
 
 @print_log_file_location
-def _get_games_team(team, season, game_type, info, box, pbp):
-    cpus = os.cpu_count() - 1
+def _get_games_team(
+    team, season, game_type, info, box, pbp, source="api", throttle=1.0, n_jobs=None
+):
+    _validate_source(source)
+    cpus = n_jobs if n_jobs is not None else DEFAULT_N_JOBS
     schedule_df = _get_team_schedule(team, season, game_type)
+
+    if schedule_df.empty:
+        _log.error(f'{team} - Schedule unavailable, cannot scrape games')
+        return (pd.DataFrame(), pd.DataFrame(), pd.DataFrame())
+
     game_ids = list(schedule_df[schedule_df.game_status.isin(GOOD_GAME_STATUSES)].game_id)
 
-    print(f'Scraping {len(game_ids)} games for {schedule_df.team.iloc[0]}')
+    _log.info(f'Scraping {len(game_ids)} games for {schedule_df.team.iloc[0]}')
+
+    if not game_ids:
+        return (pd.DataFrame(), pd.DataFrame(), pd.DataFrame())
 
     result = Parallel(n_jobs=cpus)(
-        delayed(_get_game)(gid, game_type, info, box, pbp)
+        delayed(_get_game)(gid, game_type, info, box, pbp, source, throttle)
         for gid in game_ids
     )
 
-    # sort returned dataframes to ensure consistency between runs
-    game_info_df = pd.concat([x[0] for x in result])
-    if info:
-        game_info_df = game_info_df.sort_values(
-            by=['game_day', 'game_time', 'game_id'], 
-            key=lambda col: pd.to_datetime(col.str.replace(r' P[SD]T', '', 
-                                                        regex=True)) if col.name != 'game_id' else col
-        ).reset_index(drop=True)
-
-    game_boxscore_df = pd.concat([x[1] for x in result])
-    if box:
-        game_boxscore_df = game_boxscore_df.sort_values(
-            by=['game_id', 'team'], 
-            ascending=False, 
-            kind='mergesort'
-        ).reset_index(drop=True)
-
-    game_pbp_df = pd.concat([x[2] for x in result])
-    if pbp:
-        game_pbp_df = game_pbp_df.sort_values(
-            by=['game_id'],
-            ascending=False,
-            kind='mergesort'
-        ).reset_index(drop=True)
-
     # print(f"Log file is located at {log_file}")
 
-    return (game_info_df, game_boxscore_df, game_pbp_df)
+    return _sort_results(
+        pd.concat([x[0] for x in result]),
+        pd.concat([x[1] for x in result]),
+        pd.concat([x[2] for x in result]),
+        info, box, pbp,
+    )
 
 
 @print_log_file_location
-def _get_games_conference(conference, season, game_type, info, box, pbp):
+def _get_games_conference(
+    conference, season, game_type, info, box, pbp, source="api",
+    throttle=1.0, n_jobs=None,
+):
+    _validate_source(source)
     teams = _get_teams_from_conference(conference, season, game_type)
-    result = [_get_games_team(x, season, game_type, info, box, pbp) for x in teams]
+    result = [
+        _get_games_team(x, season, game_type, info, box, pbp, source, throttle, n_jobs)
+        for x in teams
+    ]
 
-    # sort returned dataframes to ensure consistency between runs
-    game_info_df = pd.concat([x[0] for x in result])
-    if info:
-        game_info_df = game_info_df.sort_values(
-            by=['game_day', 'game_time', 'game_id'], 
-            key=lambda col: pd.to_datetime(col.str.replace(r' P[SD]T', '', 
-                                                        regex=True)) if col.name != 'game_id' else col
-        ).reset_index(drop=True)
+    # intra-conference games appear on both teams' schedules; keep only the
+    # first scraped copy of each game (#84)
+    def _drop_repeat_games(frames):
+        seen = set()
+        deduped = []
+        for f in frames:
+            if 'game_id' in f.columns:
+                keep = ~f.game_id.isin(seen)
+                seen.update(f.game_id)
+                f = f[keep]
+            deduped.append(f)
+        return deduped
 
-    game_boxscore_df = pd.concat([x[1] for x in result])
-    if box:
-        game_boxscore_df = game_boxscore_df.sort_values(
-            by=['game_id', 'team'], 
-            ascending=False, 
-            kind='mergesort'
-        ).reset_index(drop=True)
-
-    game_pbp_df = pd.concat([x[2] for x in result])
-    if pbp:
-        game_pbp_df = game_pbp_df.sort_values(
-            by=['game_id'],
-            ascending=False,
-            kind='mergesort'
-        ).reset_index(drop=True)
-
-    return (game_info_df, game_boxscore_df, game_pbp_df)
+    return _sort_results(
+        pd.concat(_drop_repeat_games([x[0] for x in result])),
+        pd.concat(_drop_repeat_games([x[1] for x in result])),
+        pd.concat(_drop_repeat_games([x[2] for x in result])),
+        info, box, pbp,
+    )
 
 
-def _get_game_ids(date, game_type):
+def _fetch_with_retries(url, extractor, prefix, not_found_msg,
+                        on_not_found="ignore", not_found_id=None):
+    """Fetch an HTML page with retries and extract its embedded JSON.
+
+    Shared by the HTML scrapers, which differ only in the URL, the soup->JSON
+    ``extractor`` callable, the log ``prefix``, and how a 404 is handled. Returns
+    ``(soup, payload)`` on success, or None on persistent failure (already
+    logged). Sleeps a random 1-3s between attempts.
+
+    Every failed attempt is logged at INFO with its classified reason (a new
+    diagnostic; suppressed while _log is at WARNING). The final failed attempt is
+    still logged at ERROR exactly as before.
+
+    ``on_not_found`` controls 404 behavior:
+      "ignore" - a 404 is just another failure (get_game_ids, schedule)
+      "raise"  - the final attempt raises PageNotFoundError(not_found_id) once the
+                 reason is a 404 (boxscore / pbp / game info)
+      "return" - a 404 on any attempt logs at ERROR and returns None immediately
+                 (player)
+    ``not_found_msg`` is logged (as ``f'{prefix}: {not_found_msg}'``) when the
+    final attempt failed but the response itself looked fine; pass None to log the
+    exception and traceback instead (schedule).
+    """
+    page = None
     soup = None
+
+    for i in range(ATTEMPTS):
+        try:
+            header = {
+                "Referer": str(np.random.choice(REFERERS)),
+            }
+            page = r.get(url, headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
+            soup = bs(page.content, "lxml")
+            payload = extractor(soup)
+            if payload is None:
+                # embedded JSON not obtained (WAF challenge / error page) → retry
+                raise CouldNotParseError(not_found_msg or "JSON not found on page.")
+
+        except Exception as ex:
+            reason = _classify_page_failure(page, soup) if soup is not None else None
+            _log.info(
+                f'{prefix} - attempt {i + 1}/{ATTEMPTS} failed: '
+                f'{reason if reason is not None else ex}'
+            )
+
+            if on_not_found == "return" and reason == "Page not found error":
+                _log.error(f'{prefix}: {reason}')
+                return None
+
+            if i + 1 == ATTEMPTS:
+                # max number of attempts reached
+                if soup is not None:
+                    if reason is not None:
+                        _log.error(f'{prefix}: {reason}')
+                        if on_not_found == "raise" and reason == "Page not found error":
+                            raise PageNotFoundError(not_found_id)
+                    elif not_found_msg is not None:
+                        _log.error(f'{prefix}: {not_found_msg}')
+                    else:
+                        _log.error(f'{prefix}: {ex}\n{traceback.format_exc()}')
+                else:
+                    _log.error(f'{prefix}: GET error\n{ex}\n{traceback.format_exc()}')
+                return None
+            else:
+                # try again after backing off
+                _backoff_sleep(i)
+                continue
+
+        return soup, payload
+
+
+def _get_game_ids(date, game_type, source="api"):
+    _validate_source(source)
+    if source == "api":
+        from cbbpy.utils import espn_api
+
+        return espn_api._get_game_ids_api(date, game_type)
 
     if game_type == "mens":
         pre_url = MENS_SCOREBOARD_URL
@@ -346,57 +708,34 @@ def _get_game_ids(date, game_type):
     if isinstance(date, str):
         date = _parse_date(date)
 
-    for i in range(ATTEMPTS):
-        try:
-            header = {
-                "User-Agent": str(np.random.choice(USER_AGENTS)),
-                "Referer": str(np.random.choice(REFERERS)),
-            }
-            d = date.strftime("%Y%m%d")
-            url = pre_url.format(d)
-            page = r.get(url, headers=header)
-            soup = bs(page.content, "lxml")
-            scoreboard = _get_scoreboard_from_soup(soup)
-            ids = [x["id"] for x in scoreboard]
+    url = pre_url.format(date.strftime("%Y%m%d"))
+    result = _fetch_with_retries(
+        url, _get_scoreboard_from_soup, f'{date.strftime("%D")} - IDs',
+        "JSON not found on page.",
+    )
+    if result is None:
+        return []
+    _, scoreboard = result
 
-        except Exception as ex:
-            if i + 1 == ATTEMPTS:
-                # max number of attempts reached, so return blank df
-                if soup is not None:
-                    if "Page not found." in soup.text:
-                        _log.error(
-                            f'{date.strftime("%D")} - IDs: Page not found error'
-                        )
-                    elif "Page error" in soup.text:
-                        _log.error(
-                            f'{date.strftime("%D")} - IDs: Page error'
-                        )
-                    elif scoreboard is None:
-                        _log.error(
-                            f'{date.strftime("%D")} - IDs: JSON not found on page.'
-                        )
-                    else:
-                        _log.error(
-                            f'{date.strftime("%D")} - IDs: {ex}\n{traceback.format_exc()}'
-                        )
-                else:
-                    _log.error(
-                        f'{date.strftime("%D")} - IDs: GET error\n{ex}\n{traceback.format_exc()}'
-                    )
-                return pd.DataFrame([])
-            else:
-                # try again with a random sleep
-                time.sleep(np.random.uniform(low=1, high=3))
-                continue
-        else:
-            # no exception thrown
-            break
+    # valid payload obtained; parse errors below are deterministic → fail fast
+    try:
+        ids = [x["id"] for x in scoreboard]
+    except Exception as ex:
+        _log.error(
+            f'{date.strftime("%D")} - IDs: {ex}\n{traceback.format_exc()}'
+        )
+        return []
 
     return ids
 
 
-def _get_game_boxscore(game_id, game_type):
-    soup = None
+def _get_game_boxscore(game_id, game_type, source="api"):
+    _validate_source(source)
+    if source == "api":
+        from cbbpy.utils import espn_api
+
+        return espn_api._get_game_boxscore_api(game_id, game_type)
+
     game_id = str(game_id)
 
     if game_type == "mens":
@@ -404,72 +743,66 @@ def _get_game_boxscore(game_id, game_type):
     else:
         pre_url = WOMENS_BOXSCORE_URL
 
-    for i in range(ATTEMPTS):
-        try:
-            header = {
-                "User-Agent": str(np.random.choice(USER_AGENTS)),
-                "Referer": str(np.random.choice(REFERERS)),
-            }
-            url = pre_url.format(game_id)
-            page = r.get(url, headers=header)
-            soup = bs(page.content, "lxml")
-            gamepackage = _get_gamepackage_from_soup(soup)
+    result = _fetch_with_retries(
+        pre_url.format(game_id), _get_gamepackage_from_soup,
+        f'{game_id} - Boxscore', "Game JSON not found on page.",
+        on_not_found="raise", not_found_id=game_id,
+    )
+    if result is None:
+        return pd.DataFrame([])
+    soup, gamepackage = result
 
-            # check if game was postponed, cancelled, etc
-            gm_status = gamepackage["gmStrp"]["status"]["desc"]
-            gsbool = gm_status in GOOD_GAME_STATUSES
-            if not gsbool:
-                _log.warning(f'{game_id} - {gm_status}')
-                return pd.DataFrame([])
+    # valid payload obtained; parse errors below are deterministic → fail fast
+    try:
+        # check if game was postponed, cancelled, etc
+        gm_status = gamepackage["gmStrp"]["status"]["desc"]
+        gsbool = gm_status in GOOD_GAME_STATUSES
+        if not gsbool:
+            _log.warning(f'{game_id} - {gm_status}')
+            return pd.DataFrame([])
 
-            boxscore = gamepackage["bxscr"]
+        boxscore = gamepackage["bxscr"]
 
-            df = _get_game_boxscore_helper(boxscore, game_id)
-
-        except Exception as ex:
-            if soup is not None:
-                if "No Box Score Available" in soup.text:
-                    _log.warning(f'{game_id} - No boxscore available')
-                    return pd.DataFrame([])
-
-            if i + 1 == ATTEMPTS:
-                # max number of attempts reached, so return blank df
-                if soup is not None:
-                    if "Page not found." in soup.text:
-                        _log.error(
-                            f'{game_id} - Boxscore: Page not found error'
-                        )
-                        pnf_.append(game_id)
-                    elif "Page error" in soup.text:
-                        _log.error(
-                            f'{game_id} - Boxscore: Page error'
-                        )
-                    elif gamepackage is None:
-                        _log.error(
-                            f'{game_id} - Boxscore: Game JSON not found on page.'
-                        )
-                    else:
-                        _log.error(
-                            f'{game_id} - Boxscore: {ex}\n{traceback.format_exc()}'
-                        )
-                else:
-                    _log.error(
-                        f'{game_id} - Boxscore: GET error\n{ex}\n{traceback.format_exc()}'
-                    )
-                return pd.DataFrame([])
-            else:
-                # try again with a random sleep
-                time.sleep(np.random.uniform(low=1, high=3))
-                continue
-        else:
-            # no exception thrown
-            break
+        df = _get_game_boxscore_helper(boxscore, game_id)
+    except Exception as ex:
+        if soup is not None and "No Box Score Available" in soup.text:
+            _log.warning(f'{game_id} - No boxscore available')
+            return pd.DataFrame([])
+        _log.error(f'{game_id} - Boxscore: {ex}\n{traceback.format_exc()}')
+        return pd.DataFrame([])
 
     return df.reset_index(drop=True)
 
 
-def _get_game_pbp(game_id, game_type):
-    soup = None
+def _get_win_prob_html(game_id, game_type):
+    """Fetch the game page's win-probability block (absent from the PBP page).
+
+    Returns {play_id: home_win_prob in [0,1]}, or {} on failure / when ESPN has
+    no win-prob data. ESPN stores the AWAY win pct on a 0-100 scale, so flip and
+    rescale to a home probability.
+    """
+    pre_url = MENS_GAME_URL if game_type == "mens" else WOMENS_GAME_URL
+    try:
+        header = {"Referer": str(np.random.choice(REFERERS))}
+        page = r.get(pre_url.format(game_id), headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
+        gamepackage = _get_gamepackage_from_soup(bs(page.content, "lxml"))
+        pts = (gamepackage.get("wnPrb") or {}).get("pts") or {}
+    except Exception as ex:
+        _log.warning(f'{game_id} - PBP: win probability fetch failed, leaving home_win_prob empty\n{ex}')
+        return {}
+
+    return {
+        str(k): (100 - v["a"]) / 100 for k, v in pts.items() if "a" in v
+    }
+
+
+def _get_game_pbp(game_id, game_type, source="api"):
+    _validate_source(source)
+    if source == "api":
+        from cbbpy.utils import espn_api
+
+        return espn_api._get_game_pbp_api(game_id, game_type)
+
     game_id = str(game_id)
 
     if game_type == "mens":
@@ -477,63 +810,43 @@ def _get_game_pbp(game_id, game_type):
     else:
         pre_url = WOMENS_PBP_URL
 
-    for i in range(ATTEMPTS):
-        try:
-            header = {
-                "User-Agent": str(np.random.choice(USER_AGENTS)),
-                "Referer": str(np.random.choice(REFERERS)),
-            }
-            url = pre_url.format(game_id)
-            page = r.get(url, headers=header)
-            soup = bs(page.content, "lxml")
-            gamepackage = _get_gamepackage_from_soup(soup)
+    result = _fetch_with_retries(
+        pre_url.format(game_id), _get_gamepackage_from_soup,
+        f'{game_id} - PBP', "Game JSON not found on page.",
+        on_not_found="raise", not_found_id=game_id,
+    )
+    if result is None:
+        return pd.DataFrame([])
+    _, gamepackage = result
 
-            # check if game was postponed
-            gm_status = gamepackage["gmStrp"]["status"]["desc"]
-            gsbool = gm_status in GOOD_GAME_STATUSES
-            if not gsbool:
-                _log.warning(f'{game_id} - {gm_status}')
-                return pd.DataFrame([])
+    # valid payload obtained; parse errors below are deterministic → fail fast
+    try:
+        # check if game was postponed
+        gm_status = gamepackage["gmStrp"]["status"]["desc"]
+        gsbool = gm_status in GOOD_GAME_STATUSES
+        if not gsbool:
+            _log.warning(f'{game_id} - {gm_status}')
+            return pd.DataFrame([])
 
-            df = _get_game_pbp_helper(gamepackage, game_id, game_type)
+        # win probability lives on the game page, not the PBP page, so fetch
+        # it separately (best-effort; leaves home_win_prob NaN on failure)
+        gamepackage["win_prob"] = _get_win_prob_html(game_id, game_type)
 
-        except Exception as ex:
-            if i + 1 == ATTEMPTS:
-                # max number of attempts reached, so return blank df
-                if soup is not None:
-                    if "Page not found." in soup.text:
-                        _log.error(
-                            f'{game_id} - PBP: Page not found error'
-                        )
-                        pnf_.append(game_id)
-                    elif "Page error" in soup.text:
-                        _log.error(f'{game_id} - PBP: Page error')
-                    elif gamepackage is None:
-                        _log.error(
-                            f'{game_id} - PBP: Game JSON not found on page.'
-                        )
-                    else:
-                        _log.error(
-                            f'{game_id} - PBP: {ex}\n{traceback.format_exc()}'
-                        )
-                else:
-                    _log.error(
-                        f'{game_id} - PBP: GET error\n{ex}\n{traceback.format_exc()}'
-                    )
-                return pd.DataFrame([])
-            else:
-                # try again with a random sleep
-                time.sleep(np.random.uniform(low=1, high=3))
-                continue
-        else:
-            # no exception thrown
-            break
+        df = _get_game_pbp_helper(gamepackage, game_id, game_type)
+    except Exception as ex:
+        _log.error(f'{game_id} - PBP: {ex}\n{traceback.format_exc()}')
+        return pd.DataFrame([])
 
     return df.reset_index(drop=True)
 
 
-def _get_game_info(game_id, game_type):
-    soup = None
+def _get_game_info(game_id, game_type, source="api"):
+    _validate_source(source)
+    if source == "api":
+        from cbbpy.utils import espn_api
+
+        return espn_api._get_game_info_api(game_id, game_type)
+
     game_id = str(game_id)
 
     if game_type == "mens":
@@ -541,125 +854,59 @@ def _get_game_info(game_id, game_type):
     else:
         pre_url = WOMENS_GAME_URL
 
-    for i in range(ATTEMPTS):
-        try:
-            header = {
-                "User-Agent": str(np.random.choice(USER_AGENTS)),
-                "Referer": str(np.random.choice(REFERERS)),
-            }
-            url = pre_url.format(game_id)
-            page = r.get(url, headers=header)
-            soup = bs(page.content, "lxml")
-            gamepackage = _get_gamepackage_from_soup(soup)
+    result = _fetch_with_retries(
+        pre_url.format(game_id), _get_gamepackage_from_soup,
+        f'{game_id} - Game Info', "Game JSON not found on page.",
+        on_not_found="raise", not_found_id=game_id,
+    )
+    if result is None:
+        return pd.DataFrame([])
+    _, gamepackage = result
 
-            # check if game was postponed
-            gm_status = gamepackage["gmStrp"]["status"]["desc"]
-            gsbool = gm_status in GOOD_GAME_STATUSES
-            if not gsbool:
-                _log.warning(f'{game_id} - {gm_status}')
+    # valid payload obtained; parse errors below are deterministic → fail fast
+    try:
+        # check if game was postponed
+        gm_status = gamepackage["gmStrp"]["status"]["desc"]
+        gsbool = gm_status in GOOD_GAME_STATUSES
+        if not gsbool:
+            _log.warning(f'{game_id} - {gm_status}')
 
-            df = _get_game_info_helper(gamepackage, game_id, game_type)
-
-        except Exception as ex:
-            if i + 1 == ATTEMPTS:
-                # max number of attempts reached, so return blank df
-                if soup is not None:
-                    if "Page not found." in soup.text:
-                        _log.error(
-                            f'{game_id} - Game Info: Page not found error'
-                        )
-                        pnf_.append(game_id)
-                    elif "Page error" in soup.text:
-                        _log.error(
-                            f'{game_id} - Game Info: Page error'
-                        )
-                    elif gamepackage is None:
-                        _log.error(
-                            f'{game_id} - Game Info: Game JSON not found on page.'
-                        )
-                    else:
-                        _log.error(
-                            f'{game_id} - Game Info: {ex}\n{traceback.format_exc()}'
-                        )
-                else:
-                    _log.error(
-                        f'{game_id} - Game Info: GET error\n{ex}\n{traceback.format_exc()}'
-                    )
-                return pd.DataFrame([])
-            else:
-                # try again with a random sleep
-                time.sleep(np.random.uniform(low=1, high=3))
-                continue
-        else:
-            # no exception thrown
-            break
+        df = _get_game_info_helper(gamepackage, game_id, game_type)
+    except Exception as ex:
+        _log.error(f'{game_id} - Game Info: {ex}\n{traceback.format_exc()}')
+        return pd.DataFrame([])
 
     return df
 
 
 def _get_player_info(player_id, game_type):
-    soup = None
-    df = None
+    df = pd.DataFrame([])
 
     if game_type == "mens":
         pre_url = MENS_PLAYER_URL
     else:
         pre_url = WOMENS_PLAYER_URL
 
-    for i in range(ATTEMPTS):
-        try:
-            header = {
-                "User-Agent": str(np.random.choice(USER_AGENTS)),
-                "Referer": str(np.random.choice(REFERERS)),
-            }
-            url = pre_url.format(player_id)
-            page = r.get(url, headers=header)
-            soup = bs(page.content, "lxml")
-            raw_player = _get_player_from_soup(soup)
+    result = _fetch_with_retries(
+        pre_url.format(player_id), _get_player_from_soup,
+        f'{player_id} - Player', "Player JSON not found on page.",
+        on_not_found="return",
+    )
+    if result is None:
+        return pd.DataFrame([])
+    _, raw_player = result
 
-            df = _get_player_details_helper(player_id, raw_player, game_type)
-
-        except Exception as ex:
-            if "Page not found." in soup.text:
-                _log.error(
-                    f'{player_id} - Player: Page not found error'
-                )
-                break
-
-            if i + 1 == ATTEMPTS:
-                # max number of attempts reached, so return blank df
-                if soup is not None:
-                    if "Page error" in soup.text:
-                        _log.error(
-                            f'{player_id} - Player: Page error'
-                        )
-                    elif raw_player is None:
-                        _log.error(
-                            f'{player_id} - Player: Player JSON not found on page.'
-                        )
-                    else:
-                        _log.error(
-                            f'{player_id} - Player: {ex}\n{traceback.format_exc()}'
-                        )
-                else:
-                    _log.error(
-                        f'{player_id} - Player: GET error\n{ex}\n{traceback.format_exc()}'
-                    )
-                return pd.DataFrame([])
-            else:
-                # try again with a random sleep
-                time.sleep(np.random.uniform(low=1, high=3))
-                continue
-        else:
-            # no exception thrown
-            break
+    # valid payload obtained; parse errors below are deterministic → fail fast
+    try:
+        df = _get_player_details_helper(player_id, raw_player, game_type)
+    except Exception as ex:
+        _log.error(f'{player_id} - Player: {ex}\n{traceback.format_exc()}')
+        return pd.DataFrame([])
 
     return df
 
 
 def _get_team_schedule(team, season, game_type):
-    soup = None
-
     team_id, team_name = _get_id_from_team(team, season, game_type)
 
     if game_type == "mens":
@@ -667,46 +914,20 @@ def _get_team_schedule(team, season, game_type):
     else:
         pre_url = WOMENS_SCHEDULE_URL
 
-    for i in range(ATTEMPTS):
-        try:
-            header = {
-                "User-Agent": str(np.random.choice(USER_AGENTS)),
-                "Referer": str(np.random.choice(REFERERS)),
-            }
-            url = pre_url.format(team_id, season)
-            page = r.get(url, headers=header)
-            soup = bs(page.content, "lxml")
-            jsn = _get_json_from_soup(soup)
-            df = _get_schedule_helper(jsn, team_name, team_id, season)
+    result = _fetch_with_retries(
+        pre_url.format(team_id, season), _get_json_from_soup,
+        f'{team} - Schedule', None,
+    )
+    if result is None:
+        return pd.DataFrame([])
+    _, jsn = result
 
-        except Exception as ex:
-            if i + 1 == ATTEMPTS:
-                # max number of attempts reached, so return blank df
-                if soup is not None:
-                    if "Page not found." in soup.text:
-                        _log.error(
-                            f'{team} - Schedule: Page not found error'
-                        )
-                    elif "Page error" in soup.text:
-                        _log.error(
-                            f'{team} - Schedule: Page error'
-                        )
-                    else:
-                        _log.error(
-                            f'{team} - Schedule: {ex}\n{traceback.format_exc()}'
-                        )
-                else:
-                    _log.error(
-                        f'{team} - Schedule: GET error\n{ex}\n{traceback.format_exc()}'
-                    )
-                return pd.DataFrame([])
-            else:
-                # try again with a random sleep
-                time.sleep(np.random.uniform(low=1, high=3))
-                continue
-        else:
-            # no exception thrown
-            break
+    # valid payload obtained; parse errors below are deterministic → fail fast
+    try:
+        df = _get_schedule_helper(jsn, team_name, team_id, season)
+    except Exception as ex:
+        _log.error(f'{team} - Schedule: {ex}\n{traceback.format_exc()}')
+        return pd.DataFrame([])
 
     return df
 
@@ -716,10 +937,23 @@ def _get_conference_schedule(conference, season, game_type):
     teams = _get_teams_from_conference(conference, season, game_type)
 
     df = pd.DataFrame()
+    empty = []
 
     for team in teams:
         sch = _get_team_schedule(team, season, game_type)
+        if len(sch) == 0:
+            empty.append(team)
         df = pd.concat([df, sch])
+
+    # a team whose schedule fetch failed contributes nothing, which would
+    # otherwise leave the caller with a quietly incomplete conference
+    if empty:
+        warnings.warn(
+            f"No schedule returned for {len(empty)} of {len(teams)} teams in "
+            f"{conference} ({season}): {', '.join(empty)}. The result is incomplete.",
+            CBBpyWarning,
+            stacklevel=2,
+        )
 
     return df.reset_index(drop=True)
 
@@ -730,7 +964,7 @@ def _parse_date(date):
     for parse in DATE_PARSES:
         try:
             date = datetime.strptime(date, parse)
-        except:
+        except ValueError:
             continue
         else:
             parsed = True
@@ -745,251 +979,74 @@ def _parse_date(date):
     return date
 
 
+def _build_player_rows(players, team_name, game_id, labels, is_starter):
+    cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
+        x.lower() for x in labels
+    ]
+    if len(players) == 0:
+        return pd.DataFrame(columns=cols)
+
+    stat_dict = {
+        labels[i].lower(): [players[j]["stats"][i] for j in range(len(players))]
+        for i in range(len(labels))
+    }
+    positions = [x["athlt"].get("pos", "") for x in players]
+    # uid works for both transports: HTML embeds "s:40~l:41~a:<id>", the API
+    # adapter passes the bare athlete id (no colons)
+    ids = [
+        x["athlt"]["uid"].split(":")[-1] if "uid" in x["athlt"] else ""
+        for x in players
+    ]
+    names = [x["athlt"].get("shrtNm", "") for x in players]
+
+    df = pd.DataFrame(stat_dict)
+    df.insert(0, "starter", is_starter)
+    df.insert(0, "position", positions)
+    df.insert(0, "player_id", ids)
+    df.insert(0, "player", names)
+    df.insert(0, "team", team_name)
+    df.insert(0, "game_id", game_id)
+    return df
+
+
+def _build_totals_row(totals, team_name, game_id, labels):
+    cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
+        x.lower() for x in labels
+    ]
+    if len(totals) == 0:
+        return pd.DataFrame(columns=cols)
+
+    tot_dict = {labels[i].lower(): [totals[i]] for i in range(len(labels))}
+    df = pd.DataFrame(tot_dict)
+    df.insert(0, "starter", False)
+    df.insert(0, "position", "TOTAL")
+    df.insert(0, "player_id", "TOTAL")
+    df.insert(0, "player", "TEAM")
+    df.insert(0, "team", team_name)
+    df.insert(0, "game_id", game_id)
+    return df
+
+
+def _build_team_df(stats, team_name, game_id, labels):
+    parts = [
+        _build_player_rows(stats[0]["athlts"], team_name, game_id, labels, True),
+        _build_player_rows(stats[1]["athlts"], team_name, game_id, labels, False),
+        _build_totals_row(stats[2]["ttls"], team_name, game_id, labels),
+    ]
+    # a group with no rows (e.g. a game ESPN lists no bench for) carries
+    # object-dtype columns, which on concat would widen the string columns of
+    # the real rows back to object under pandas 3; drop the empties first
+    non_empty = [x for x in parts if not x.empty]
+    return pd.concat(non_empty) if non_empty else parts[0]
+
+
 def _get_game_boxscore_helper(boxscore, game_id):
     tm1, tm2 = boxscore[0], boxscore[1]
     tm1_name, tm2_name = tm1["tm"]["dspNm"], tm2["tm"]["dspNm"]
-    tm1_stats, tm2_stats = tm1["stats"], tm2["stats"]
+    labels = tm1["stats"][0]["lbls"]
 
-    labels = tm1_stats[0]["lbls"]
-
-    tm1_starters, tm1_bench, tm1_totals = (
-        tm1_stats[0]["athlts"],
-        tm1_stats[1]["athlts"],
-        tm1_stats[2]["ttls"],
-    )
-    tm2_starters, tm2_bench, tm2_totals = (
-        tm2_stats[0]["athlts"],
-        tm2_stats[1]["athlts"],
-        tm2_stats[2]["ttls"],
-    )
-
-    # starters' stats
-    if len(tm1_starters) > 0:
-        tm1_st_dict = {
-            labels[i].lower(): [
-                tm1_starters[j]["stats"][i] for j in range(len(tm1_starters))
-            ]
-            for i in range(len(labels))
-        }
-
-        tm1_st_pos = [
-            (
-                tm1_starters[i]["athlt"]["pos"]
-                if "pos" in tm1_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_starters))
-        ]
-        tm1_st_id = [
-            (
-                tm1_starters[i]["athlt"]["uid"].split(":")[-1]
-                if "uid" in tm1_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_starters))
-        ]
-        tm1_st_nm = [
-            (
-                tm1_starters[i]["athlt"]["shrtNm"]
-                if "shrtNm" in tm1_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_starters))
-        ]
-
-        tm1_st_df = pd.DataFrame(tm1_st_dict)
-        tm1_st_df.insert(0, "starter", True)
-        tm1_st_df.insert(0, "position", tm1_st_pos)
-        tm1_st_df.insert(0, "player_id", tm1_st_id)
-        tm1_st_df.insert(0, "player", tm1_st_nm)
-        tm1_st_df.insert(0, "team", tm1_name)
-        tm1_st_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm1_st_df = pd.DataFrame(columns=cols)
-
-    # bench players' stats
-    if len(tm1_bench) > 0:
-        tm1_bn_dict = {
-            labels[i].lower(): [tm1_bench[j]["stats"][i] for j in range(len(tm1_bench))]
-            for i in range(len(labels))
-        }
-
-        tm1_bn_pos = [
-            (
-                tm1_bench[i]["athlt"]["pos"]
-                if "pos" in tm1_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_bench))
-        ]
-        tm1_bn_id = [
-            (
-                tm1_bench[i]["athlt"]["uid"].split(":")[-1]
-                if "uid" in tm1_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_bench))
-        ]
-        tm1_bn_nm = [
-            (
-                tm1_bench[i]["athlt"]["shrtNm"]
-                if "shrtNm" in tm1_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm1_bench))
-        ]
-
-        tm1_bn_df = pd.DataFrame(tm1_bn_dict)
-        tm1_bn_df.insert(0, "starter", False)
-        tm1_bn_df.insert(0, "position", tm1_bn_pos)
-        tm1_bn_df.insert(0, "player_id", tm1_bn_id)
-        tm1_bn_df.insert(0, "player", tm1_bn_nm)
-        tm1_bn_df.insert(0, "team", tm1_name)
-        tm1_bn_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm1_bn_df = pd.DataFrame(columns=cols)
-
-    # team totals
-    if len(tm1_totals) > 0:
-        tm1_tot_dict = {labels[i].lower(): [tm1_totals[i]] for i in range(len(labels))}
-
-        tm1_tot_df = pd.DataFrame(tm1_tot_dict)
-        tm1_tot_df.insert(0, "starter", False)
-        tm1_tot_df.insert(0, "position", "TOTAL")
-        tm1_tot_df.insert(0, "player_id", "TOTAL")
-        tm1_tot_df.insert(0, "player", "TEAM")
-        tm1_tot_df.insert(0, "team", tm1_name)
-        tm1_tot_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm1_tot_df = pd.DataFrame(columns=cols)
-
-    tm1_df = pd.concat([tm1_st_df, tm1_bn_df, tm1_tot_df])
-
-    # starters' stats
-    if len(tm2_starters) > 0:
-        tm2_st_dict = {
-            labels[i].lower(): [
-                tm2_starters[j]["stats"][i] for j in range(len(tm2_starters))
-            ]
-            for i in range(len(labels))
-        }
-
-        tm2_st_pos = [
-            (
-                tm2_starters[i]["athlt"]["pos"]
-                if "pos" in tm2_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_starters))
-        ]
-        tm2_st_id = [
-            (
-                tm2_starters[i]["athlt"]["uid"].split(":")[-1]
-                if "uid" in tm2_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_starters))
-        ]
-        tm2_st_nm = [
-            (
-                tm2_starters[i]["athlt"]["shrtNm"]
-                if "shrtNm" in tm2_starters[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_starters))
-        ]
-
-        tm2_st_df = pd.DataFrame(tm2_st_dict)
-        tm2_st_df.insert(0, "starter", True)
-        tm2_st_df.insert(0, "position", tm2_st_pos)
-        tm2_st_df.insert(0, "player_id", tm2_st_id)
-        tm2_st_df.insert(0, "player", tm2_st_nm)
-        tm2_st_df.insert(0, "team", tm2_name)
-        tm2_st_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm2_st_df = pd.DataFrame(columns=cols)
-
-    # bench players' stats
-    if len(tm2_bench) > 0:
-        tm2_bn_dict = {
-            labels[i].lower(): [tm2_bench[j]["stats"][i] for j in range(len(tm2_bench))]
-            for i in range(len(labels))
-        }
-
-        tm2_bn_pos = [
-            (
-                tm2_bench[i]["athlt"]["pos"]
-                if "pos" in tm2_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_bench))
-        ]
-        tm2_bn_id = [
-            (
-                tm2_bench[i]["athlt"]["uid"].split(":")[-1]
-                if "uid" in tm2_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_bench))
-        ]
-        tm2_bn_nm = [
-            (
-                tm2_bench[i]["athlt"]["shrtNm"]
-                if "shrtNm" in tm2_bench[i]["athlt"].keys()
-                else ""
-            )
-            for i in range(len(tm2_bench))
-        ]
-
-        tm2_bn_df = pd.DataFrame(tm2_bn_dict)
-        tm2_bn_df.insert(0, "starter", False)
-        tm2_bn_df.insert(0, "position", tm2_bn_pos)
-        tm2_bn_df.insert(0, "player_id", tm2_bn_id)
-        tm2_bn_df.insert(0, "player", tm2_bn_nm)
-        tm2_bn_df.insert(0, "team", tm2_name)
-        tm2_bn_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm2_bn_df = pd.DataFrame(columns=cols)
-
-    # team totals
-    if len(tm2_totals) > 0:
-        tm2_tot_dict = {labels[i].lower(): [tm2_totals[i]] for i in range(len(labels))}
-
-        tm2_tot_df = pd.DataFrame(tm2_tot_dict)
-        tm2_tot_df.insert(0, "starter", False)
-        tm2_tot_df.insert(0, "position", "TOTAL")
-        tm2_tot_df.insert(0, "player_id", "TOTAL")
-        tm2_tot_df.insert(0, "player", "TEAM")
-        tm2_tot_df.insert(0, "team", tm2_name)
-        tm2_tot_df.insert(0, "game_id", game_id)
-
-    else:
-        cols = ["starter", "position", "player_id", "player", "team", "game_id"] + [
-            x.lower() for x in labels
-        ]
-        tm2_tot_df = pd.DataFrame(columns=cols)
-
-    tm2_df = pd.concat([tm2_st_df, tm2_bn_df, tm2_tot_df])
+    tm1_df = _build_team_df(tm1["stats"], tm1_name, game_id, labels)
+    tm2_df = _build_team_df(tm2["stats"], tm2_name, game_id, labels)
 
     df = pd.concat([tm1_df, tm2_df])
 
@@ -997,13 +1054,19 @@ def _get_game_boxscore_helper(boxscore, game_id):
         _log.warning(f'{game_id} - No boxscore available')
         return pd.DataFrame([])
 
-    # SPLIT UP THE FG FIELDS
-    fgm = pd.to_numeric([x.split("-")[0] for x in df["fg"]], errors="coerce")
-    fga = pd.to_numeric([x.split("-")[1] for x in df["fg"]], errors="coerce")
-    thpm = pd.to_numeric([x.split("-")[0] for x in df["3pt"]], errors="coerce")
-    thpa = pd.to_numeric([x.split("-")[1] for x in df["3pt"]], errors="coerce")
-    ftm = pd.to_numeric([x.split("-")[0] for x in df["ft"]], errors="coerce")
-    fta = pd.to_numeric([x.split("-")[1] for x in df["ft"]], errors="coerce")
+    # SPLIT UP THE FG FIELDS (made-attempted strings; NaN when malformed)
+    def _split_stat(series, idx):
+        return pd.to_numeric(
+            [x.split("-")[idx] if isinstance(x, str) and "-" in x else np.nan for x in series],
+            errors="coerce",
+        )
+
+    fgm = _split_stat(df["fg"], 0)
+    fga = _split_stat(df["fg"], 1)
+    thpm = _split_stat(df["3pt"], 0)
+    thpa = _split_stat(df["3pt"], 1)
+    ftm = _split_stat(df["ft"], 0)
+    fta = _split_stat(df["ft"], 1)
 
     # GET RID OF UNWANTED COLUMNS
     df = df.drop(columns=["fg", "3pt", "ft"])
@@ -1034,19 +1097,90 @@ def _get_game_boxscore_helper(boxscore, game_id):
     return df
 
 
+def _transform_shot_coordinate(coord, play_type=None, is_three=None):
+    """Normalize one raw ESPN shot coordinate onto CBBpy's court frame.
+
+    ESPN reports coordinates in feet relative to whichever basket the shooting
+    team is attacking, so both teams' shots already share one half court. Its x
+    axis increases toward the shooter's right; flipping it yields a conventional
+    top-down frame, where plotting x rightward and y upward draws the half court
+    as seen from above with the basket at the bottom and the shooter's right
+    hand side at low x.
+
+    `play_type` and `is_three` enable the wrong-basket correction below; omit
+    them to skip that step. Returns (nan, nan) for any play ESPN did not
+    actually locate.
+    """
+    if not coord or "x" not in coord or "y" not in coord:
+        return np.nan, np.nan
+
+    cx = int(coord["x"])
+    cy = int(coord["y"])
+    if not 0 <= cx <= COURT_WIDTH_X or not MIN_SHOT_Y <= cy <= MAX_SHOT_Y:
+        return np.nan, np.nan
+
+    x = COURT_WIDTH_X - cx
+    y = cy
+
+    # ESPN occasionally records a shot against the wrong basket, leaving it
+    # mirrored onto the far half of the court. Two kinds of shot give it away:
+    #   - rim shots, since a layup, dunk or tip-in cannot be taken 80 ft out
+    #   - two-point attempts, since everything past ~22 ft is worth three, so a
+    #     two from beyond half court is impossible. ESPN's own description
+    #     ("makes 69-foot jumper") is no help -- it is generated from the same
+    #     bad coordinate -- but the scoreboard is independent, and it awards
+    #     these 2 points. The points are right, so the coordinate is wrong.
+    # Threes past half court are left alone. A game-clock heave is one reason,
+    # but the harder one is the shot-clock heave: a deflection recovered past
+    # midcourt and thrown up as the shot clock expires is a genuine full-court
+    # three with plenty of game clock left, so "a three, far out, but not near
+    # the end of a period" does not imply a mislabel. ESPN's pbp carries no shot
+    # clock, so there is nothing to separate those from mirrored shots.
+    if y > COURT_HALF_Y:
+        is_rim = bool(play_type) and any(k in play_type.lower() for k in RIM_SHOT_KEYS)
+        if is_rim or is_three is False:
+            x = COURT_WIDTH_X - x
+            y = HOOP_SEPARATION_Y - y
+
+    return x, y
+
+
+def _is_unlocated_game(shot_xs, shot_ys, play_types, has_shot_chart):
+    """True when ESPN never located this game's shots but stamped a placeholder.
+
+    ESPN's HTML feed gives every shooting play the coordinate (25, 0) -- the
+    basket -- for games it holds no shot data on, where the API omits the field
+    outright. That same coordinate is where ESPN legitimately places every free
+    throw, so a single play never gives it away; the tell is game-wide. A game
+    with real shot data has a shot chart and field goals spread over the floor,
+    so require both to be absent before discarding anything.
+    """
+    if has_shot_chart:
+        return False
+    located_fgs = [
+        (x, y)
+        for x, y, ptype in zip(shot_xs, shot_ys, play_types)
+        if not np.isnan(x) and "freethrow" not in (ptype or "").replace(" ", "").lower()
+    ]
+    return bool(located_fgs) and all(
+        c == PLACEHOLDER_SHOT_COORD for c in located_fgs
+    )
+
+
 def _get_game_pbp_helper(gamepackage, game_id, game_type):
     pbp = gamepackage["pbp"]
-    home_team = pbp["tms"]["home"]["displayName"]
-    away_team = pbp["tms"]["away"]["displayName"]
+    home_team = pbp["tms"]["home"]["nm"]
+    away_team = pbp["tms"]["away"]["nm"]
     game_date = parser.parse(gamepackage["gmInfo"]["dtTm"])
 
-    all_plays = [play for period in pbp["playGrps"] for play in period]
+    all_plays = pbp["plays"]
 
     # check if PBP exists
     if len(all_plays) <= 0:
         _log.warning(f'{game_id} - No PBP available')
         return pd.DataFrame([])
 
+    play_ids = [str(x.get('id', '')) for x in all_plays]
     descs = [x["text"] if "text" in x.keys() else "" for x in all_plays]
     teams = [
         (
@@ -1057,22 +1191,30 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         for x in all_plays
     ]
     hscores = [
-        int(x["homeScore"]) if "homeScore" in x.keys() else np.nan for x in all_plays
+        int(x["hmScr"]) if "hmScr" in x.keys() else np.nan for x in all_plays
     ]
     ascores = [
-        int(x["awayScore"]) if "awayScore" in x.keys() else np.nan for x in all_plays
+        int(x["awScr"]) if "awScr" in x.keys() else np.nan for x in all_plays
     ]
     periods = [
         int(x["period"]["number"]) if "period" in x.keys() else np.nan
         for x in all_plays
     ]
 
-    time_splits = [
-        x["clock"]["displayValue"].split(":") if "clock" in x.keys() else ""
-        for x in all_plays
-    ]
-    minutes = [int(x[0]) for x in time_splits]
-    seconds = [int(x[1]) for x in time_splits]
+    # a missing or malformed clock (no colon, non-numeric) degrades to 0:00
+    # for that play instead of crashing the whole game's parse
+    def _clock_parts(play):
+        parts = (play.get("clock") or {}).get("displayValue", "").split(":")
+        if len(parts) != 2:
+            return 0, 0
+        try:
+            return int(float(parts[0])), int(float(parts[1]))
+        except ValueError:
+            return 0, 0
+
+    clock_parts = [_clock_parts(x) for x in all_plays]
+    minutes = [m for m, _ in clock_parts]
+    seconds = [s for _, s in clock_parts]
     min_to_sec = [x * 60 for x in minutes]
     pd_secs_left = [x + y for x, y in zip(min_to_sec, seconds)]
 
@@ -1121,13 +1263,15 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
 
         added = False
         for pt in NON_SHOT_TYPES:
-            if pt in play:
+            # case-insensitive: ESPN lowercased play texts in recent seasons
+            # ("misses 12-foot jumper" vs the older "missed Jumper.")
+            if pt.lower() in play.lower():
                 p_types.append(pt.lower())
                 added = True
                 break
         if not added:
             for st in SHOT_TYPES:
-                if st in play:
+                if st.lower() in play.lower():
                     p_types.append(st.lower())
                     added = True
                     break
@@ -1136,8 +1280,15 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
             p_types.append("")
 
     # FIND SHOOTERS
+    # prefer ESPN's structured shootingPlay flag when the play carries it; fall
+    # back to the text-derived type (older embeds omit the flag)
     shooting_play = [
-        True if x in (y.lower() for y in SHOT_TYPES) else False for x in p_types
+        (
+            bool(x.get("shootingPlay"))
+            if "shootingPlay" in x
+            else p in (y.lower() for y in SHOT_TYPES) or sc_play[i]
+        )
+        for i, (x, p) in enumerate(zip(all_plays, p_types))
     ]
 
     scorers = [x[0].split(" made ")[0] if x[1] else "" for x in zip(descs, sc_play)]
@@ -1158,98 +1309,194 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         for x in zip(descs, is_assisted)
     ]
 
-    is_three = ["three point" in x.lower() for x in descs]
+    # ESPN's API states what an attempt was worth (1/2/3) whether or not it went
+    # in, which types a shot far more reliably than the description does: the
+    # text omits "three point" on a small but meaningful slice of shots, and
+    # those skew toward long heaves -- exactly the shots the wrong-basket
+    # correction reasons about. Fall back to the text where the field is absent
+    # (the HTML embed has no equivalent, and older API games leave it 0).
+    is_three = [
+        x.get("scoreValue") == 3 if x.get("scoreValue") in (1, 2, 3)
+        else "three point" in d.lower()
+        for x, d in zip(all_plays, descs)
+    ]
+
+    # STRUCTURED FIELDS FROM ESPN JSON (may be absent, esp. in older games)
+    player_ids = [str((x.get("athlete") or {}).get("id", "")) for x in all_plays]
+    assist_player_ids = [
+        next(
+            (
+                str(p.get("id", ""))
+                for p in (x.get("participants") or [])
+                if p.get("description") == "AST"
+            ),
+            "",
+        )
+        for x in all_plays
+    ]
+    type_txts = [(x.get("type") or {}).get("txt", "") for x in all_plays]
+    play_type_ids = [str((x.get("type") or {}).get("id", "")) for x in all_plays]
+
+    # play_type carries the structured JSON type verbatim, falling back to the
+    # lossy text-parsed value only when the JSON type is absent (rare to never)
+    play_types = [txt if txt else fb for txt, fb in zip(type_txts, p_types)]
+
+    # primary actor's full name from the JSON (any attributed play); when the
+    # embed omits it, fall back to the text-parsed shooter on shooting plays only
+    json_player_names = [((x.get("athlete") or {}).get("name", "") or "") for x in all_plays]
+    player_names = [
+        jn if jn else (shooters[i] if shooting_play[i] else "")
+        for i, jn in enumerate(json_player_names)
+    ]
+
+    # assister's full name from the JSON, falling back to the text parse
+    json_assist_names = [
+        next(
+            (
+                p.get("name", "") or ""
+                for p in (x.get("participants") or [])
+                if p.get("description") == "AST"
+            ),
+            "",
+        )
+        for x in all_plays
+    ]
+    assist_players = [
+        jn if jn else assisted_pls[i] for i, jn in enumerate(json_assist_names)
+    ]
+
+    # play-level shot coordinates
+    play_shot_xs = []
+    play_shot_ys = []
+    dropped_coord = False
+    for x, is_shot, ptype, three in zip(
+        all_plays, shooting_play, play_types, is_three
+    ):
+        if not is_shot:
+            play_shot_xs.append(np.nan)
+            play_shot_ys.append(np.nan)
+            continue
+        coord = x.get("coordinate")
+        sx, sy = _transform_shot_coordinate(coord, ptype, three)
+        # a coordinate ESPN supplied but we could not use is worth surfacing: at
+        # this rate (~0.1%, all of it ESPN's int32 sentinel) a spike means the
+        # feed's format moved and these bounds are now discarding real shots.
+        # A coordinate ESPN never supplied is routine and stays silent.
+        if np.isnan(sx) and coord and "x" in coord and "y" in coord:
+            dropped_coord = True
+        play_shot_xs.append(sx)
+        play_shot_ys.append(sy)
+
+    if dropped_coord:
+        _log.warning(f'{game_id} - Some shot coordinates were out of range and dropped')
+
+    # ESPN holds no shot locations for this game and filled every play with the
+    # placeholder; emitting it would fabricate a dense pile of shots at the
+    # basket. The API reports the same games honestly, by omitting the field
+    # (#93).
+    if _is_unlocated_game(
+        play_shot_xs, play_shot_ys, play_types, "shtChrt" in gamepackage
+    ):
+        _log.warning(f'{game_id} - ESPN has no shot location data; coordinates dropped')
+        play_shot_xs = [np.nan] * len(play_shot_xs)
+        play_shot_ys = [np.nan] * len(play_shot_ys)
+
+    # home win probability [0,1] per play, keyed by play id; both sources feed a
+    # pre-normalized {play_id: home_prob} map (API from summary["winprobability"],
+    # HTML from the game page's wnPrb block), NaN where a play has no win-prob point
+    wp_map = gamepackage.get("win_prob") or {}
+    home_win_prob = [wp_map.get(pid, np.nan) for pid in play_ids]
 
     data = {
+        "id": play_ids,
         "game_id": game_id,
         "home_team": home_team,
         "away_team": away_team,
         "play_desc": descs,
         "home_score": hscores,
         "away_score": ascores,
+        "period": periods,
+        "secs_left_period": pd_secs_left,
+        # half/quarter + secs_left_half/secs_left_qt are deprecated in favor of
+        # period/secs_left_period; removal in 3.0 (see DEPRECATED_COLUMNS). Only
+        # the pair matching the game's format is emitted, so concatenating games
+        # across the women's 15-16 rule change leaves each pair half-empty — the
+        # reason for the format-agnostic columns above.
         pd_type: periods,
         pd_type_sec: pd_secs_left,
         "secs_left_reg": reg_secs_left,
         "play_team": teams,
-        "play_type": p_types,
+        "play_type": play_types,
+        "play_type_id": play_type_ids,
         "shooting_play": shooting_play,
         "scoring_play": sc_play,
         "is_three": is_three,
+        # shooter is deprecated in favor of player_name; removal in 3.0 (see
+        # DEPRECATED_COLUMNS)
         "shooter": shooters,
+        "player_name": player_names,
         "is_assisted": is_assisted,
-        "assist_player": assisted_pls,
+        "assist_player": assist_players,
+        "player_id": player_ids,
+        "assist_player_id": assist_player_ids,
+        "shot_x": play_shot_xs,
+        "shot_y": play_shot_ys,
+        "home_win_prob": home_win_prob,
     }
 
     df = pd.DataFrame(data)
 
-    # add shot data if it exists
-    is_shotchart = "shtChrt" in gamepackage
+    return df.sort_values(by=["period", "secs_left_period"], ascending=[True, False])
 
-    if is_shotchart:
-        chart = gamepackage["shtChrt"]["plays"]
 
-        shotteams = [x["homeAway"] for x in chart]
-        shotdescs = [x["text"] for x in chart]
-        xs = [50 - int(x["coordinate"]["x"]) for x in chart]
-        ys = [int(x["coordinate"]["y"]) for x in chart]
+def _compute_num_ots(home_ls, away_ls, game_id, game_type, game_date, regulation=None):
+    """Derive the number of OTs from both teams' linescores.
 
-        shot_data = {"team": shotteams, "play_desc": shotdescs, "x": xs, "y": ys}
+    `regulation` is the number of regulation periods as reported by ESPN
+    (API `format.regulation.periods`, HTML `gamepackage.maxPeriods`); when the
+    payload omits it, fall back to the rule-change date.
 
-        shot_df = pd.DataFrame(shot_data)
+    Returns -1 when either linescore is missing. If the two disagree (ESPN
+    occasionally publishes a truncated linescore for one team), warn and use
+    the larger of the two rather than raising.
+    """
+    if not home_ls or not away_ls:
+        _log.warning(f"{game_id} - No score info available")
+        return -1
 
-        # shot matching
-        shot_info = {
-            "shot_x": [],
-            "shot_y": [],
-        }
-        shot_count = 0
+    # men, and women before the 15-16 season, use halves; women (after 14-15) use quarters
+    rule_based_reg = (
+        2
+        if game_type == "mens"
+        or game_date.replace(tzinfo=None) < WOMEN_HALF_RULE_CHANGE_DATE
+        else 4
+    )
 
-        for play, isshot in zip(df.play_desc, df.shooting_play):
-            if shot_count >= len(shot_df):
-                shot_info["shot_x"].append(np.nan)
-                shot_info["shot_y"].append(np.nan)
-                continue
+    if not regulation:
+        regulation = rule_based_reg
 
-            if not isshot:
-                shot_info["shot_x"].append(np.nan)
-                shot_info["shot_y"].append(np.nan)
-                continue
+    h_ot, a_ot = len(home_ls) - regulation, len(away_ls) - regulation
 
-            if "free throw" in play.lower():
-                shot_info["shot_x"].append(np.nan)
-                shot_info["shot_y"].append(np.nan)
-                shot_count += 1
-                continue
+    if h_ot != a_ot:
+        _log.warning(
+            f"{game_id} - Inconsistent linescore lengths "
+            f"(home: {len(home_ls)}, away: {len(away_ls)}); using {max(h_ot, a_ot)} OTs"
+        )
 
-            shot_play = shot_df.play_desc.iloc[shot_count]
+    num_ots = max(h_ot, a_ot)
 
-            if play == shot_play:
-                shot_info["shot_x"].append(shot_df.x.iloc[shot_count])
-                shot_info["shot_y"].append(shot_df.y.iloc[shot_count])
-                shot_count += 1
-            else:
-                shot_info["shot_x"].append(np.nan)
-                shot_info["shot_y"].append(np.nan)
+    # ESPN occasionally mislabels a game's regulation period count (e.g. tagging
+    # a men's game as 4 quarters), which makes a complete linescore look shorter
+    # than regulation. A negative OT count is impossible, so fall back to the
+    # rule-based regulation, then floor at 0 for genuinely truncated linescores.
+    if num_ots < 0 and regulation != rule_based_reg:
+        _log.warning(
+            f"{game_id} - Reported regulation ({regulation}) disagrees with "
+            f"linescores; falling back to rule-based {rule_based_reg}"
+        )
+        num_ots = max(len(home_ls), len(away_ls)) - rule_based_reg
 
-        # make sure that length of shot data matches number of shots in PBP data
-        if (not (len(shot_info["shot_x"]) == len(df))) or (
-            not (len(shot_info["shot_y"]) == len(df))
-        ):
-            _log.warning(
-                f'{game_id} - Shot data length does not match PBP data'
-            )
-            df["shot_x"] = np.nan
-            df["shot_y"] = np.nan
-            return df.sort_values(by=[pd_type, pd_type_sec], ascending=[True, False])
-
-        df["shot_x"] = shot_info["shot_x"]
-        df["shot_y"] = shot_info["shot_y"]
-
-    else:
-        df["shot_x"] = np.nan
-        df["shot_y"] = np.nan
-
-    return df.sort_values(by=[pd_type, pd_type_sec], ascending=[True, False])
+    return max(num_ots, 0)
 
 
 def _get_game_info_helper(gamepackage, game_id, game_type):
@@ -1261,7 +1508,10 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
     network = info.get("cvrg", "")
 
     gm_date = parser.parse(info["dtTm"])
+    game_datetime = gm_date.replace(tzinfo=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     game_date = gm_date.replace(tzinfo=timezone.utc).astimezone(tz=tz("US/Pacific"))
+    # game_day/game_time (Pacific) are deprecated in favor of game_datetime;
+    # removal in 3.0 (see DEPRECATED_COLUMNS)
     game_day = game_date.strftime("%B %d, %Y")
     game_time = game_date.strftime("%I:%M %p %Z")
     gm_status = more_info["status"]["desc"]
@@ -1279,7 +1529,8 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
     ref_3 = tot_refs[2]["dspNm"] if len(tot_refs) > 2 else ""
 
     teams = more_info["tms"]
-    ht_info, at_info = teams[0], teams[1]
+    ht_info = next(team for team in teams if team['isHome'])
+    at_info = next(team for team in teams if not team['isHome'])
 
     home_team, away_team = ht_info["displayName"], at_info["displayName"]
 
@@ -1315,7 +1566,11 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
     home_win = True if home_score > away_score and gm_status == 'Final' else False
 
     is_postseason = True if more_info["seasonType"] == 3 else False
-    is_conference = more_info["isConferenceGame"]
+
+    # TODO: fix for in-progress games which are first of conference play
+    vs_conf = [x for y in more_info['tms'] for x in y['records'] if x['type'] == 'vsconf']
+    # is a conference game if both teams have a vsconf record and neither is 0-0
+    is_conference = True if len(vs_conf) == 2 and any(x['summary'] != '0-0' for x in vs_conf) else False
 
     if "neutralSite" in more_info:
         is_neutral = True
@@ -1324,27 +1579,27 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
 
     tournament = more_info.get("nte", "")
 
-    if ("linescores" in ht_info) and ("linescores" in at_info):
-        # men, and women before the 15-16 season, use halves
-        if (
-            game_type == "mens"
-            or game_date.replace(tzinfo=None) < WOMEN_HALF_RULE_CHANGE_DATE
-        ):
-            h_ot, a_ot = len(ht_info["linescores"]) - 2, len(at_info["linescores"]) - 2
-        # women (after 14-15) use quarters
-        else:
-            h_ot, a_ot = len(ht_info["linescores"]) - 4, len(at_info["linescores"]) - 4
-
-        assert h_ot == a_ot
-        num_ots = h_ot
-    else:
-        _log.warning(f'{game_id} - No score info available')
-        num_ots = -1
+    # use number of entries in scoreline to determine number of OTs
+    num_ots = _compute_num_ots(
+        ht_info.get("linescores"),
+        at_info.get("linescores"),
+        game_id,
+        game_type,
+        game_date,
+        gamepackage.get("maxPeriods"),
+    )
 
     try:
         home_spread = gamepackage['gameOdds']['odds'][-1]['pointSpread']['primary']
-    except:
+    except (KeyError, IndexError, TypeError):
         home_spread = ''
+
+    # over/under and moneylines: the archived HTML embed carries no gameOdds, so
+    # these stay NaN for recorded games (the API path fills them from pickcenter;
+    # all three are on the parity exclusion list)
+    over_under = np.nan
+    home_ml = np.nan
+    away_ml = np.nan
 
     game_info_list = [
         game_id,
@@ -1366,6 +1621,7 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
         is_neutral,
         is_postseason,
         tournament,
+        game_datetime,
         game_day,
         game_time,
         loc,
@@ -1376,6 +1632,9 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
         ref_1,
         ref_2,
         ref_3,
+        over_under,
+        home_ml,
+        away_ml,
     ]
 
     game_info_cols = [
@@ -1398,6 +1657,7 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
         "is_neutral",
         "is_postseason",
         "tournament",
+        "game_datetime",
         "game_day",
         "game_time",
         "game_loc",
@@ -1408,6 +1668,9 @@ def _get_game_info_helper(gamepackage, game_id, game_type):
         "referee_1",
         "referee_2",
         "referee_3",
+        "over_under",
+        "home_moneyline",
+        "away_moneyline",
     ]
 
     return pd.DataFrame([game_info_list], columns=game_info_cols)
@@ -1463,28 +1726,34 @@ def _get_schedule_helper(jsn, team, id_, season):
 
     # get info from each game
     for ev in tot_events:
-        mat = re.search(r'gameId/(\d+)/', ev['time']['link'])
+        mat = re.search(r'gameId/(\d+)/', ev.get('time', {}).get('link', ''))
         game_id = mat.group(1) if mat is not None else ''
 
-        date = parser.parse(ev['date']['date']).astimezone(tz('America/Los_Angeles'))
+        gm_dt = parser.parse(ev['date']['date'])
+        game_datetime = gm_dt.astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+        date = gm_dt.astimezone(tz('America/Los_Angeles'))
+        # game_day/game_time (Pacific) are deprecated in favor of game_datetime;
+        # removal in 3.0 (see DEPRECATED_COLUMNS)
         day = date.strftime('%B %d, %Y')
         time = date.strftime('%I:%M %p %Z')
 
-        opp = ev['opponent']['displayName']
-        opp_id = ev['opponent']['id']
+        opp_info = ev.get('opponent', {})
+        opp = opp_info.get('displayName', '')
+        opp_id = opp_info.get('id', '')
 
-        network = ev['network'][0]['name'] if len(ev['network']) > 0 else ''
-        season_type = ev['seasonType']['name']
-        status = ev['status']['description']
+        network_list = ev.get('network', [])
+        network = network_list[0]['name'] if len(network_list) > 0 else ''
+        season_type = ev.get('seasonType', {}).get('name', '')
+        status = ev.get('status', {}).get('description', '')
 
-        res = ev['result']
+        res = ev.get('result', {})
 
-        if status == 'Final':
-            result = res['winLossSymbol'] + ' ' + res['currentTeamScore'] + '-' + res['opponentTeamScore']
+        if status == 'Final' and res:
+            result = res.get('winLossSymbol', '') + ' ' + res.get('currentTeamScore', '') + '-' + res.get('opponentTeamScore', '')
         else:
             result = 'N/A'
 
-        row = (team, id_, season, game_id, day, time, opp, opp_id, season_type, status, network, result)
+        row = (team, id_, season, game_id, game_datetime, day, time, opp, opp_id, season_type, status, network, result)
         data.append(row)
 
     cols = [
@@ -1492,6 +1761,7 @@ def _get_schedule_helper(jsn, team, id_, season):
         'team_id',
         'season',
         'game_id',
+        'game_datetime',
         'game_day',
         'game_time',
         'opponent',
@@ -1503,26 +1773,49 @@ def _get_schedule_helper(jsn, team, id_, season):
     ]
 
     df = pd.DataFrame(data, columns=cols)
-    df = df.sort_values(
-        by=['team', 'game_day'],
-        key=lambda x: x if x.name == 'team' else pd.to_datetime(x)
-    )
+    # fixed-width ISO-8601 UTC strings sort correctly lexicographically
+    df = df.sort_values(by=['team', 'game_datetime'])
 
     return df.reset_index(drop=True)
 
 
+@lru_cache(maxsize=2)
 def _get_team_map(game_type):
     data_path = Path(__file__).parent / f'{game_type}_team_map.csv'
     return pd.read_csv(data_path)
+
+
+def _resolve_map_season(team_map_df, season):
+    # the team map is static; when the requested season isn't in it, clamp
+    # to the nearest available season (latest for future seasons before the
+    # CSVs are updated, earliest for seasons predating the map's coverage)
+    if (team_map_df.season == season).any():
+        return season
+    if season < int(team_map_df.season.min()):
+        fallback = int(team_map_df.season.min())
+    else:
+        fallback = int(team_map_df.season.max())
+    warnings.warn(
+        f"No team map data for the {season} season. Falling back to {fallback}.",
+        CBBpyWarning,
+        stacklevel=2,
+    )
+    return fallback
 
 
 def _get_id_from_team(team, season, game_type):
     # fetch list of teams and team IDs for given season
     season = int(season)
     team_map_df = _get_team_map(game_type)
+    season = _resolve_map_season(team_map_df, season)
     id_map = team_map_df[team_map_df.season == season][['id', 'location']]
     id_map = id_map.set_index('location')['id'].to_dict()
     lowercase_map = {x.lower(): x for x in id_map.keys()}
+
+    # if the given team is not in the list of teams, try the rename alias,
+    # then search for nearest match
+    if team.lower() not in lowercase_map and TEAM_ALIASES.get(team.lower()) in lowercase_map:
+        team = TEAM_ALIASES[team.lower()]
 
     # if the given team is not in the list of teams, search for nearest match
     if not team.lower() in lowercase_map:
@@ -1535,7 +1828,11 @@ def _get_id_from_team(team, season, game_type):
             processor=utils.default_process
         )
 
-        print(f"No exact match for '{team}'. Fetching closest team match: '{best_match}'.")
+        warnings.warn(
+            f"No exact match for '{team}'. Fetching closest team match: '{best_match}' (similarity {score:.2f}).",
+            CBBpyWarning,
+            stacklevel=2,
+        )
         
         id_ = id_map[best_match]
     else:
@@ -1545,9 +1842,49 @@ def _get_id_from_team(team, season, game_type):
     return id_, best_match
 
 
+def _get_team_logos(teams, season, dest, game_type, dark=False, overwrite=False):
+    season = int(season)
+    team_map_df = _get_team_map(game_type)
+    season = _resolve_map_season(team_map_df, season)
+
+    if teams is None:
+        season_map = team_map_df[team_map_df.season == season]
+        pairs = list(season_map[["location", "id"]].itertuples(index=False, name=None))
+    else:
+        if isinstance(teams, str):
+            teams = [teams]
+        pairs = [_get_id_from_team(t, season, game_type)[::-1] for t in teams]
+
+    url = TEAM_LOGO_DARK_URL if dark else TEAM_LOGO_URL
+    dest = Path(dest)
+    dest.mkdir(parents=True, exist_ok=True)
+
+    rows = []
+    for name, id_ in pairs:
+        path = dest / f"{id_}.png"
+        if path.exists() and not overwrite:
+            rows.append((name, id_, str(path)))
+            continue
+        try:
+            header = {"Referer": str(np.random.choice(REFERERS))}
+            resp = r.get(url.format(id_), headers=header, impersonate=IMPERSONATE, timeout=REQUEST_TIMEOUT)
+            if resp.status_code == STATUS_OK and resp.content:
+                path.write_bytes(resp.content)
+                rows.append((name, id_, str(path)))
+            else:
+                _log.warning(f'"{name}" logo: request returned status {resp.status_code}')
+                rows.append((name, id_, None))
+        except Exception as ex:
+            _log.error(f'"{name}" logo: {ex}')
+            rows.append((name, id_, None))
+
+    return pd.DataFrame(rows, columns=["team", "id", "logo_path"])
+
+
 def _get_season_conferences(season, game_type):
     season = int(season)
     team_map_df = _get_team_map(game_type)
+    season = _resolve_map_season(team_map_df, season)
     confs_df = team_map_df[team_map_df.season == season][['conference', 'conference_abb']].drop_duplicates()
     return confs_df.reset_index(drop=True)
 
@@ -1555,10 +1892,17 @@ def _get_season_conferences(season, game_type):
 def _get_teams_from_conference(conference, season, game_type):
     # fetch list of teams and team IDs for given season
     season = int(season)
-    team_map_df, confs_df = _get_team_map(game_type), _get_season_conferences(season, game_type)
+    team_map_df = _get_team_map(game_type)
+    season = _resolve_map_season(team_map_df, season)
+    confs_df = _get_season_conferences(season, game_type)
     abb_map = confs_df.set_index('conference_abb').conference.to_dict()
     choices = confs_df.conference.tolist() + confs_df.conference_abb.tolist()
     lowercase_map = {x.lower(): x for x in choices}
+
+    # if the given conference is not in the list of conferences, try the rename
+    # alias, then search for nearest match
+    if conference.lower() not in lowercase_map and CONFERENCE_ALIASES.get(conference.lower()) in lowercase_map:
+        conference = CONFERENCE_ALIASES[conference.lower()]
 
     # if the given conference is not in the list of conferences, search for nearest match
     if not conference.lower() in lowercase_map:
@@ -1573,7 +1917,11 @@ def _get_teams_from_conference(conference, season, game_type):
         if best_match in abb_map:
             best_match = abb_map[best_match]
 
-        print(f"No exact match for '{conference}'. Fetching closest conference match: '{best_match}'.")
+        warnings.warn(
+            f"No exact match for '{conference}'. Fetching closest conference match: '{best_match}'.",
+            CBBpyWarning,
+            stacklevel=2,
+        )
     else:
         best_match = lowercase_map[conference.lower()]
 
@@ -1587,63 +1935,44 @@ def _get_teams_from_conference(conference, season, game_type):
     return rel_team_df.location.tolist()
 
 
-def _get_json_from_soup(soup):
+def _parse_espn_json(soup):
     script_string = _find_json_in_content(soup)
 
     if script_string == "":
         return None
 
     pattern = re.compile(JSON_REGEX)
-    found = re.search(pattern, script_string).group(1)
-    js = "{" + found + "}"
-    jsn = json.loads(js)
+    match = re.search(pattern, script_string)
+    if match is None:
+        return None
 
-    return jsn
+    js = "{" + match.group(1) + "}"
+    return json.loads(js)
+
+
+def _get_json_from_soup(soup):
+    return _parse_espn_json(soup)
 
 
 def _get_gamepackage_from_soup(soup):
-    script_string = _find_json_in_content(soup)
-
-    if script_string == "":
+    jsn = _parse_espn_json(soup)
+    if jsn is None:
         return None
-
-    pattern = re.compile(JSON_REGEX)
-    found = re.search(pattern, script_string).group(1)
-    js = "{" + found + "}"
-    jsn = json.loads(js)
-    gamepackage = jsn["page"]["content"]["gamepackage"]
-
-    return gamepackage
+    return jsn["page"]["content"]["gamepackage"]
 
 
 def _get_player_from_soup(soup):
-    script_string = _find_json_in_content(soup)
-
-    if script_string == "":
+    jsn = _parse_espn_json(soup)
+    if jsn is None:
         return None
-
-    pattern = re.compile(JSON_REGEX)
-    found = re.search(pattern, script_string).group(1)
-    js = "{" + found + "}"
-    jsn = json.loads(js)
-    player = jsn["page"]["content"]["player"]
-
-    return player
+    return jsn["page"]["content"]["player"]
 
 
 def _get_scoreboard_from_soup(soup):
-    script_string = _find_json_in_content(soup)
-
-    if script_string == "":
+    jsn = _parse_espn_json(soup)
+    if jsn is None:
         return None
-
-    pattern = re.compile(JSON_REGEX)
-    found = re.search(pattern, script_string).group(1)
-    js = "{" + found + "}"
-    jsn = json.loads(js)
-    scoreboard = jsn["page"]["content"]["scoreboard"]["evts"]
-
-    return scoreboard
+    return jsn["page"]["content"]["scoreboard"]["evts"]
 
 
 def _find_json_in_content(soup):

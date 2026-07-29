@@ -1,0 +1,32 @@
+name: WAF probe
+
+# Manual diagnostic: reports which curl_cffi impersonation profiles ESPN's WAF
+# accepts from a GitHub runner. The answer differs from a workstation's — a
+# fingerprint accepted from a residential IP can be challenged from a
+# datacenter one — so run this before changing IMPERSONATE for CI's benefit.
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install package
+        run: |
+          pip install --upgrade pip
+          pip install -e .
+
+      - name: Probe impersonation profiles
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: python tests/waf_probe.py

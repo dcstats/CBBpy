@@ -1,4 +1,4 @@
-CBBpy.egg-info/
+*.egg-info/
 *.ipynb
 *.pyc
 .ipynb_checkpoints/
@@ -6,8 +6,13 @@ testing/
 __pycache__/
 .DS_Store
 *.gz
+!tests/fixtures/pages/*.html.gz
+!tests/fixtures/pages/*.json.gz
 *.whl
 build/
 dist/
 *.log
 *.xlsx
+.vscode/
+.claude/
+.pytest_cache/
