@@ -1010,11 +1010,16 @@ def _build_totals_row(totals, team_name, game_id, labels):
 
 
 def _build_team_df(stats, team_name, game_id, labels):
-    return pd.concat([
+    parts = [
         _build_player_rows(stats[0]["athlts"], team_name, game_id, labels, True),
         _build_player_rows(stats[1]["athlts"], team_name, game_id, labels, False),
         _build_totals_row(stats[2]["ttls"], team_name, game_id, labels),
-    ])
+    ]
+    # a group with no rows (e.g. a game ESPN lists no bench for) carries
+    # object-dtype columns, which on concat would widen the string columns of
+    # the real rows back to object under pandas 3; drop the empties first
+    non_empty = [x for x in parts if not x.empty]
+    return pd.concat(non_empty) if non_empty else parts[0]
 
 
 def _get_game_boxscore_helper(boxscore, game_id):

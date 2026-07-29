@@ -91,6 +91,9 @@ All notable changes to CBBpy are documented here. The format is based on
   with `(25, 0)` — the basket — where the API omits the field entirely; those games
   now return `NaN` from both sources. Games with real shot data are untouched,
   free throws included.
+- Boxscore string columns are no longer widened to `object` under pandas 3 when a
+  team has no bench listed; the empty row group is dropped before the frames are
+  concatenated, so dtypes no longer vary game to game.
 - Home team detection.
 - Duplicate intra-conference games returned by `get_games_conference()` (#84).
 - Play-by-play clock parsing against missing or malformed clocks (#82).

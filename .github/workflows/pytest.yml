@@ -75,7 +75,6 @@ jobs:
 
       - name: Install package with lowest supported dependency versions
         run: |
-          uv venv
           uv pip install --resolution lowest-direct -e .
           uv pip install pytest pyarrow
 
