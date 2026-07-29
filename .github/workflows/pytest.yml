@@ -11,6 +11,22 @@ on:
   workflow_dispatch:
 
 jobs:
+  # TEMPORARY diagnostic: which impersonation profiles ESPN accepts from a
+  # runner. Never gates the PR. Remove once IMPERSONATE is settled for CI.
+  waf-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --upgrade pip && pip install -e .
+      - env:
+          PYTHONUNBUFFERED: '1'
+        run: python tests/waf_probe.py
+
   # Deterministic tests against recorded ESPN pages — no network. A failure
   # here means the code changed behavior. Runs on every supported Python.
   offline:
