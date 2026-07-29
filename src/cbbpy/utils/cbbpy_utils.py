@@ -248,10 +248,47 @@ def set_log_level(level=_DEFAULT_LOG_LEVEL):
 
 _call_depth = [0]
 
+_BANNER_RULE = "=" * 86
+
+
+def _write_session_banner(func, args, kwargs):
+    """Write a delimiter to the log naming the scrape that is about to start.
+
+    Written eagerly (before the scrape) rather than on the first log record so
+    it precedes anything joblib workers — separate processes appending to the
+    same file — write. Goes straight to the handler's stream so it isn't
+    prefixed by the record formatter.
+    """
+    params = ", ".join(
+        [repr(a) for a in args] + [f"{k}={v!r}" for k, v in kwargs.items()]
+    )
+    if len(params) > 200:
+        params = params[:197] + "..."
+    banner = (
+        f"\n{_BANNER_RULE}\n"
+        f"{datetime.now():%Y-%m-%d %H:%M:%S} | CBBpy {version('cbbpy')} | "
+        f"{func.__name__.lstrip('_')}({params})\n"
+        f"{_BANNER_RULE}\n"
+    )
+    file_handler.acquire()
+    try:
+        if file_handler.stream is None:
+            file_handler.stream = file_handler._open()
+        file_handler.stream.write(banner)
+        file_handler.flush()
+    finally:
+        file_handler.release()
+
+
 def print_log_file_location(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         _call_depth[0] += 1  # Increment call depth
+        if _call_depth[0] == 1:
+            try:
+                _write_session_banner(func, args, kwargs)
+            except OSError:
+                pass
         start = time.time()
         try:
             result = func(*args, **kwargs)
@@ -262,7 +299,9 @@ def print_log_file_location(func):
                 # mtime check (not file_handler.stream) because joblib workers
                 # log errors in their own processes, not the parent's handler
                 try:
-                    errors_logged = os.path.getmtime(log_file) >= start
+                    # strict > so the session banner, written just before
+                    # `start`, can't be mistaken for a logged error
+                    errors_logged = os.path.getmtime(log_file) > start
                 except OSError:
                     errors_logged = False
                 if errors_logged:
