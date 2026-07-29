@@ -531,6 +531,10 @@ def test_pbp_unlocated_game_placeholder_dropped(caplog):
     df = run([play("1", "MadeFreeThrow", 25, 0), play("2", "MadeFreeThrow", 25, 0)])
     assert (df.loc["1", "shot_x"], df.loc["1", "shot_y"]) == (25, 0)
 
+    # same for the space-spelled free throw types womens HTML embeds carry
+    df = run([play("1", "Free Throw 1 of 1", 25, 0), play("2", "Free Throw 1 of 2", 25, 0)])
+    assert (df.loc["1", "shot_x"], df.loc["1", "shot_y"]) == (25, 0)
+
     # a game carrying a shot chart is never treated as unlocated
     df = run([play("1", "JumpShot", 25, 0)], chart=True)
     assert (df.loc["1", "shot_x"], df.loc["1", "shot_y"]) == (25, 0)
