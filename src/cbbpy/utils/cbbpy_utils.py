@@ -95,6 +95,34 @@ SHOT_TYPES = [
     "Layup",
     "Dunk",
 ]
+# Substrings identifying shots taken at the rim, matched against play_type
+# (JSON "LayUpShot"/"DunkShot"/"TipShot", or the lowercased text-parsed
+# fallback "layup"/"dunk"/"two point tip shot").
+RIM_SHOT_KEYS = ("layup", "dunk", "tip")
+# ESPN's grid is in feet, normalized to whichever basket the shooting team is
+# attacking: x spans the court's 50 ft width and y runs up the court from that
+# basket, with y = 0 on the backboard plane. Legitimate rim shots stay under
+# y = 15; ones recorded against the wrong basket land at y >= 80. This cutoff
+# sits in the empty band between -- across four seasons of men's data no rim
+# shot at all falls between y = 15 and y = 47.
+COURT_HALF_Y = 47
+# Separation between the two baskets on ESPN's grid. A shot recorded against the
+# wrong basket is rotated 180 degrees about center court, so
+# (x, y) -> (50 - x, HOOP_SEPARATION_Y - y) recovers it. Court geometry implies
+# 83.5 (a 94 ft court less the 5.25 ft each rim sits in from its baseline), and
+# since the grid is an integer lattice the offset must itself be an integer: 84
+# is the value that best fits four seasons of men's data, by two independent
+# estimates -- matching mirrored rim shots against the normal rim-shot
+# distribution, and matching mirrored three-pointers against the real arc.
+HOOP_SEPARATION_Y = 84
+# x spans the court's width, so a coordinate outside it is not a location. y,
+# however, may legitimately run a few feet negative: y = 0 is the backboard
+# plane, so a shot released from behind it is recorded below zero. Bound that
+# axis rather than rejecting every negative -- ESPN emits an int32-overflow
+# sentinel (y = -214748365) for plays it never located.
+COURT_WIDTH_X = 50
+MIN_SHOT_Y = -10
+MAX_SHOT_Y = 94
 # AWS WAF challenges Chromium TLS fingerprints as of July 2026; Safari passes
 IMPERSONATE = "safari"
 WINDOW_STRING = "window['__espnfitt__']="
@@ -1002,6 +1030,43 @@ def _get_game_boxscore_helper(boxscore, game_id):
     return df
 
 
+def _transform_shot_coordinate(coord, play_type=None):
+    """Normalize one raw ESPN shot coordinate onto CBBpy's court frame.
+
+    ESPN reports coordinates in feet relative to whichever basket the shooting
+    team is attacking, so both teams' shots already share one half court. Its x
+    axis increases toward the shooter's right; flipping it yields a conventional
+    top-down frame, where plotting x rightward and y upward draws the half court
+    as seen from above with the basket at the bottom and the shooter's right
+    hand side at low x.
+
+    `play_type` enables the wrong-basket correction below; omit it to skip that
+    step. Returns (nan, nan) for any play ESPN did not actually locate.
+    """
+    if not coord or "x" not in coord or "y" not in coord:
+        return np.nan, np.nan
+
+    cx = int(coord["x"])
+    cy = int(coord["y"])
+    if not 0 <= cx <= COURT_WIDTH_X or not MIN_SHOT_Y <= cy <= MAX_SHOT_Y:
+        return np.nan, np.nan
+
+    x = COURT_WIDTH_X - cx
+    y = cy
+
+    # ESPN occasionally records a shot against the wrong basket, leaving it
+    # mirrored onto the far half of the court. Rim shots are the unambiguous
+    # case -- a layup, dunk or tip-in cannot be taken 80 feet from the hoop --
+    # so rotate those back. Jumpers past half court are left alone, since a
+    # genuine end-of-period heave is indistinguishable from a mislabeled one.
+    if y > COURT_HALF_Y and play_type:
+        if any(k in play_type.lower() for k in RIM_SHOT_KEYS):
+            x = COURT_WIDTH_X - x
+            y = HOOP_SEPARATION_Y - y
+
+    return x, y
+
+
 def _get_game_pbp_helper(gamepackage, game_id, game_type):
     pbp = gamepackage["pbp"]
     home_team = pbp["tms"]["home"]["nm"]
@@ -1190,23 +1255,28 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         jn if jn else assisted_pls[i] for i, jn in enumerate(json_assist_names)
     ]
 
-    # play-level shot coordinates (sole source when no shot chart, else fallback)
+    # play-level shot coordinates
     play_shot_xs = []
     play_shot_ys = []
-    for x, is_shot in zip(all_plays, shooting_play):
-        coord = x.get("coordinate") or {}
-        if not is_shot or "x" not in coord or "y" not in coord:
+    dropped_coord = False
+    for x, is_shot, ptype in zip(all_plays, shooting_play, play_types):
+        if not is_shot:
             play_shot_xs.append(np.nan)
             play_shot_ys.append(np.nan)
             continue
-        cx = int(coord["x"])
-        cy = int(coord["y"])
-        if cx < 0 or cy < 0:
-            play_shot_xs.append(np.nan)
-            play_shot_ys.append(np.nan)
-        else:
-            play_shot_xs.append(50 - cx)
-            play_shot_ys.append(cy)
+        coord = x.get("coordinate")
+        sx, sy = _transform_shot_coordinate(coord, ptype)
+        # a coordinate ESPN supplied but we could not use is worth surfacing: at
+        # this rate (~0.1%, all of it ESPN's int32 sentinel) a spike means the
+        # feed's format moved and these bounds are now discarding real shots.
+        # A coordinate ESPN never supplied is routine and stays silent.
+        if np.isnan(sx) and coord and "x" in coord and "y" in coord:
+            dropped_coord = True
+        play_shot_xs.append(sx)
+        play_shot_ys.append(sy)
+
+    if dropped_coord:
+        _log.warning(f'{game_id} - Some shot coordinates were out of range and dropped')
 
     # home win probability [0,1] per play, keyed by play id; both sources feed a
     # pre-normalized {play_id: home_prob} map (API from summary["winprobability"],
@@ -1262,8 +1332,12 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
         ids = [str(x.get('id', '')) for x in chart]
         # shotteams = [x.get('homeAway', '') for x in chart]
         # shotdescs = [x.get('text', '') for x in chart]
-        xs = [50-int((x.get('coordinate') or {}).get('x', -100)) for x in chart]
-        ys = [int((x.get('coordinate') or {}).get('y', -100)) for x in chart]
+        # no play_type here, so these skip the wrong-basket correction; the
+        # merge below is disabled, and re-enabling it would need that applied
+        # after the join, where each chart entry has found its play
+        chart_coords = [_transform_shot_coordinate(x.get('coordinate')) for x in chart]
+        xs = [c[0] for c in chart_coords]
+        ys = [c[1] for c in chart_coords]
 
         shot_data = {
             "id": ids,
@@ -1282,8 +1356,8 @@ def _get_game_pbp_helper(gamepackage, game_id, game_type):
             _log.warning(f'{game_id} - Some shot data could not be matched to PBP data')
 
         # chart coordinates take precedence; keep play-level coords as fallback
-        df['shot_x'] = df_merged['x'].where(df_merged['x'].notna(), df['shot_x'])
-        df['shot_y'] = df_merged['y'].where(df_merged['y'].notna(), df['shot_y'])
+        # df['shot_x'] = df_merged['x'].where(df_merged['x'].notna(), df['shot_x'])
+        # df['shot_y'] = df_merged['y'].where(df_merged['y'].notna(), df['shot_y'])
 
     return df.sort_values(by=["period", "secs_left_period"], ascending=[True, False])
 

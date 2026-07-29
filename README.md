@@ -197,6 +197,27 @@ rule change leaves each pair half-empty; `period`/`secs_left_period` are always
 populated. `shooter` is likewise emitted but **deprecated in favor of `player_name`
 and will be removed in 3.0**.
 
+### Shot coordinates
+
+`shot_x`/`shot_y` are in **feet**, normalized to whichever basket the shooting team
+is attacking, so both teams' shots share a single half court. `shot_x` spans the
+court's 50 ft width (`25` is the midline) and `shot_y` runs up the court away from
+that basket, with `0` sitting at the basket. Plotting `shot_x` rightward and
+`shot_y` upward therefore draws the half court as seen from above, basket at the
+bottom, with the shooter's right hand side at low `shot_x`. `shot_y` is
+occasionally slightly negative — the origin is the backboard plane, a few feet in
+from the baseline, so shots released from behind it are recorded below zero.
+
+Two caveats about ESPN's own data:
+
+- **Free throws** are all stamped at `(25, 0)` — the basket — rather than at the
+  free-throw line. This is a fixed placeholder, not a measured location, so it will
+  skew any shot chart or shot-distance calculation that includes them. Filter on
+  `play_type == "MadeFreeThrow"` to handle them however you like.
+- **Coordinates are missing for many older games.** ESPN simply did not record shot
+  locations for most games before roughly the 2025-26 season, and `shot_x`/`shot_y`
+  are `NaN` there.
+
 Function call:
 
 ```python

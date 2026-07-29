@@ -32,6 +32,7 @@ from cbbpy.utils.cbbpy_utils import (
     PageNotFoundError,
     _classify_page_failure,
     _get_game_pbp_helper,
+    _transform_shot_coordinate,
     _get_id_from_team,
     _get_team_map,
 )
@@ -421,6 +422,118 @@ def test_pbp_malformed_clock_does_not_crash():
     # deprecated alias mirrors the canonical column
     assert (df["secs_left_half"] == df["secs_left_period"]).all()
     assert (df["half"] == df["period"]).all()
+
+
+def test_pbp_mirrored_rim_shots_rotated_back():
+    # no fixtures needed: rim shots ESPN recorded against the wrong basket
+    # (shot_y past half court) are rotated back about center court; jumpers
+    # past half court are left alone (#54)
+    def play(pid, text, txt, x, y):
+        return {
+            "id": pid,
+            "text": text,
+            "type": {"txt": txt},
+            "shootingPlay": True,
+            "coordinate": {"x": x, "y": y},
+            "period": {"number": 1},
+            "clock": {"displayValue": "10:00"},
+        }
+
+    gamepackage = {
+        "pbp": {
+            "tms": {"home": {"nm": "Home U"}, "away": {"nm": "Away U"}},
+            "plays": [
+                play("1", "Someone made Layup.", "LayUpShot", 30, 81),
+                play("2", "Someone made Layup.", "LayUpShot", 25, 3),
+                play("3", "Someone missed Jumper.", "JumpShot", 25, 80),
+                play("4", "Someone made Dunk.", "DunkShot", 25, 90),
+            ],
+        },
+        "gmInfo": {"dtTm": "2024-01-15T00:00Z"},
+        "win_prob": {},
+    }
+    df = _get_game_pbp_helper(gamepackage, "0", "mens").set_index("id")
+    # mirrored layup: stored (50-30, 81), rotated back to (30, 84-81)
+    assert (df.loc["1", "shot_x"], df.loc["1", "shot_y"]) == (30, 3)
+    # normal layup untouched
+    assert (df.loc["2", "shot_x"], df.loc["2", "shot_y"]) == (25, 3)
+    # jumper past half court left alone (could be a genuine heave)
+    assert (df.loc["3", "shot_x"], df.loc["3", "shot_y"]) == (25, 80)
+    # extreme mirror lands behind the backboard plane: emitted as negative
+    # rather than clamped, since y < 0 is a real location
+    assert (df.loc["4", "shot_x"], df.loc["4", "shot_y"]) == (25, -6)
+
+
+def test_pbp_out_of_range_coordinate_logged(caplog):
+    # a coordinate ESPN supplied but we rejected is a drift tripwire, so it is
+    # logged; one ESPN never supplied is routine and stays silent
+    def play(pid, coord):
+        p = {
+            "id": pid,
+            "text": "Someone missed Jumper.",
+            "type": {"txt": "JumpShot"},
+            "shootingPlay": True,
+            "period": {"number": 1},
+            "clock": {"displayValue": "10:00"},
+        }
+        if coord is not None:
+            p["coordinate"] = coord
+        return p
+
+    def run(plays):
+        gamepackage = {
+            "pbp": {
+                "tms": {"home": {"nm": "Home U"}, "away": {"nm": "Away U"}},
+                "plays": plays,
+            },
+            "gmInfo": {"dtTm": "2024-01-15T00:00Z"},
+            "win_prob": {},
+        }
+        return _get_game_pbp_helper(gamepackage, "0", "mens").set_index("id")
+
+    # ESPN's int32 sentinel: rejected and logged
+    with caplog.at_level(logging.WARNING, logger="CBBpy"):
+        df = run([play("1", {"x": 25, "y": -214748365})])
+    assert np.isnan(df.loc["1", "shot_x"])
+    assert "out of range" in caplog.text
+
+    # no coordinate at all: still NaN, but nothing logged
+    caplog.clear()
+    with caplog.at_level(logging.WARNING, logger="CBBpy"):
+        df = run([play("2", None)])
+    assert np.isnan(df.loc["2", "shot_x"])
+    assert "out of range" not in caplog.text
+
+
+def test_shot_coordinate_transform():
+    # ESPN's x increases toward the shooter's right; CBBpy flips it so that
+    # plotting x rightward and y upward draws a conventional top-down half court
+    assert _transform_shot_coordinate({"x": 48, "y": 2}) == (2, 2)
+    assert _transform_shot_coordinate({"x": 25, "y": 0}) == (25, 0)
+
+    # a play ESPN never located
+    assert all(np.isnan(v) for v in _transform_shot_coordinate(None))
+    assert all(np.isnan(v) for v in _transform_shot_coordinate({}))
+    assert all(np.isnan(v) for v in _transform_shot_coordinate({"x": 25}))
+
+    # x outside the court's 50 ft width is not a location
+    assert all(np.isnan(v) for v in _transform_shot_coordinate({"x": -1, "y": 5}))
+    assert all(np.isnan(v) for v in _transform_shot_coordinate({"x": 51, "y": 5}))
+
+    # y = 0 is the backboard plane, so a shot released from behind it is
+    # legitimately negative and must survive
+    assert _transform_shot_coordinate({"x": 20, "y": -1}) == (30, -1)
+    assert _transform_shot_coordinate({"x": 20, "y": -3}) == (30, -3)
+
+    # ...but ESPN's int32-overflow sentinel is not a location
+    assert all(
+        np.isnan(v) for v in _transform_shot_coordinate({"x": 25, "y": -214748365})
+    )
+
+    # the wrong-basket rotation only fires with a rim play_type
+    assert _transform_shot_coordinate({"x": 30, "y": 81}, "LayUpShot") == (30, 3)
+    assert _transform_shot_coordinate({"x": 30, "y": 81}, "JumpShot") == (20, 81)
+    assert _transform_shot_coordinate({"x": 30, "y": 81}) == (20, 81)
 
 
 @pytest.mark.parametrize("source", ["html", "api"])
