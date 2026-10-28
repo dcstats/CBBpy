@@ -50,10 +50,7 @@ def _skip_when_html_blocked(request, espn_html_reachable):
     if espn_html_reachable:
         return
     callspec = getattr(request.node, "callspec", None)
-    needs_html = (callspec and callspec.params.get("source") == "html") or (
-        request.node.get_closest_marker("html_only") is not None
-    )
-    if needs_html:
+    if callspec and callspec.params.get("source") == "html":
         pytest.skip("ESPN's WAF blocks the HTML site from this IP; covered offline instead")
 
 
@@ -287,22 +284,28 @@ def test_live_game_pbp(gender, source):
         # not value-checked: they come from fragile string parsing of ESPN text
 
 
-@pytest.mark.html_only
 @pytest.mark.parametrize("gender", GENDERS)
-def test_live_player_info(gender):
+@pytest.mark.parametrize("source", SOURCES)
+def test_live_player_info(gender, source):
     sc = SCRAPERS[gender]
-    df = pd.concat([sc.get_player_info(p) for p in PLAYERS[gender]], ignore_index=True)
+    df = pd.concat(
+        [sc.get_player_info(p, source=source) for p in PLAYERS[gender]],
+        ignore_index=True,
+    )
     assert_required_cols(df, PLAYER_REQUIRED_COLS)
     # names/bios are not compared: ESPN reformats them routinely
     assert set(df.player_id.astype(str)) == set(PLAYERS[gender])
 
 
-@pytest.mark.html_only
 @pytest.mark.parametrize("gender", GENDERS)
-def test_live_team_schedule(gender):
+@pytest.mark.parametrize("source", SOURCES)
+def test_live_team_schedule(gender, source):
     sc = SCRAPERS[gender]
     result = pd.concat(
-        [sc.get_team_schedule(team, season) for season, team in TEAM_SCHEDULES[gender]],
+        [
+            sc.get_team_schedule(team, season, source=source)
+            for season, team in TEAM_SCHEDULES[gender]
+        ],
         ignore_index=True,
     )
     assert_required_cols(result, SCHEDULE_REQUIRED_COLS)
@@ -314,7 +317,6 @@ def test_live_team_schedule(gender):
     )
 
 
-@pytest.mark.html_only
 @pytest.mark.parametrize("gender", GENDERS)
 def test_live_conference_schedule(gender):
     sc = SCRAPERS[gender]
@@ -359,7 +361,6 @@ def test_live_games_range(gender):
 
 
 @pytest.mark.slow
-@pytest.mark.html_only
 @pytest.mark.parametrize("gender", GENDERS)
 def test_live_games_conference(gender):
     sc = SCRAPERS[gender]

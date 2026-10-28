@@ -7,9 +7,11 @@ All notable changes to CBBpy are documented here. The format is based on
 ## [2.2.0] - Unreleased
 
 ### Added
-- ESPN's JSON API as a second transport for game data, selectable per call with
-  `source="api"` (new default) or `source="html"`. Both sources emit an identical
-  output schema.
+- ESPN's JSON API as a second transport, selectable per call with `source="api"`
+  (new default) or `source="html"`. Both sources emit an identical output schema.
+  Covers game data, schedules (`get_team_schedule`, `get_conference_schedule`, and
+  `get_games_conference`/`get_games_team`, which resolve their game lists through
+  schedules) and player bios (`get_player_info`) (#95).
 - `game_datetime` on game info and schedule frames: the scheduled tipoff instant as an
   ISO-8601 UTC string, so consumers can convert to any timezone.
 - `period` and `secs_left_period` in play-by-play: format-agnostic replacements for the
@@ -95,7 +97,11 @@ All notable changes to CBBpy are documented here. The format is based on
   season type per schedule page — whichever the page defaults to — so a team viewed
   in a season it reached the postseason in returned its tournament games and nothing
   else, silently. This truncated `get_team_schedule`, `get_conference_schedule` and
-  `get_games_conference`; requesting a season type explicitly returns every type.
+  `get_games_conference`. The new default API transport requests each season type
+  explicitly and merges them, which fixes it. `source="html"` remains subject to the
+  underlying problem: ESPN's page cache intermittently serves one season type, or an
+  empty schedule, for a URL that returned everything minutes earlier, and no choice
+  of URL avoids it — prefer `source="api"` for schedules.
 - `get_conference_schedule()` now warns when a team's schedule comes back empty
   instead of quietly returning an incomplete conference.
 - Boxscore string columns are no longer widened to `object` under pandas 3 when a

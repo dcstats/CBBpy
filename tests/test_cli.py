@@ -3,7 +3,7 @@
 import pytest
 
 from cbbpy import cli
-from tests.conftest import SCOREBOARD_DATES
+from tests.conftest import PLAYERS, SCHEDULES, SCOREBOARD_DATES
 
 GAME_ID = "401581583"  # mens, has recorded api + html fixtures
 DATE = SCOREBOARD_DATES["mens"]
@@ -76,9 +76,33 @@ def test_ids_prints_ids(offline_espn, capsys):
     assert all(gid.isdigit() for gid in out)
 
 
+@pytest.mark.parametrize("source", ["api", "html"])
+def test_schedule_writes_file_for_both_sources(offline_espn, tmp_path, source):
+    season, team = SCHEDULES["mens"][0]
+    cli.main(
+        ["schedule", "--team", team, "-s", str(season), "--source", source,
+         "-o", str(tmp_path)]
+    )
+    written = [p for p in tmp_path.glob("*.csv")]
+    assert [p.name for p in written] == [f"mens_schedule_{team.lower()}_{season}.csv"]
+    assert written[0].stat().st_size > 0
+
+
+@pytest.mark.parametrize("source", ["api", "html"])
+def test_player_stdout_for_both_sources(offline_espn, tmp_path, capsys, source):
+    pid = PLAYERS["mens"][0]
+    cli.main(["player", pid, "--stdout", "--source", source, "-o", str(tmp_path)])
+    assert list(tmp_path.glob("*")) == []
+    assert any(
+        line.startswith("player_id") for line in capsys.readouterr().out.splitlines()
+    )
+
+
 @pytest.mark.parametrize("argv", [
     ["game", GAME_ID, "--source", "xml"],
     ["game", GAME_ID, "-g", "coed"],
+    ["schedule", "--team", "Pacific", "--source", "xml"],
+    ["player", "4433093", "--source", "xml"],
 ])
 def test_bad_choice_exits_nonzero(argv):
     with pytest.raises(SystemExit) as exc:

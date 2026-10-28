@@ -303,16 +303,24 @@ class GameScraper:
         except PageNotFoundError:
             return pd.DataFrame([])
 
-    def get_player_info(self, player_id: Union[str, int]) -> pd.DataFrame:
-        """Scrapes player details from the player's bio page for a given player ID.
+    def get_player_info(self, player_id: Union[str, int], source: str = "api") -> pd.DataFrame:
+        """Scrapes player details for a given player ID.
 
         Args:
             player_id (int | str): The player's ESPN player ID.
+            source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
 
         Returns:
             pd.DataFrame: The given player's details.
+
+        Note:
+            For a player who has since turned professional, the two sources
+            describe different points in their career: "api" reports the team,
+            jersey number and class they had in college, while "html" reports
+            their current professional status ("NBA"/"WNBA" experience, "N/A"
+            jersey number).
         """
-        return _get_player_info(player_id, self._game_type)
+        return _get_player_info(player_id, self._game_type, source)
 
     def get_teams_from_conference(self, conference: str, season: Union[str, int] = None) -> list:
         """Fetches the list of teams from the given conference during a given season.
@@ -330,7 +338,9 @@ class GameScraper:
             season = _get_current_season()
         return _get_teams_from_conference(conference, season, self._game_type)
 
-    def get_team_schedule(self, team: str, season: Union[str, int] = None) -> pd.DataFrame:
+    def get_team_schedule(
+        self, team: str, season: Union[str, int] = None, source: str = "api"
+    ) -> pd.DataFrame:
         """Scrapes a given team's schedule for a specified season.
 
         Args:
@@ -338,6 +348,7 @@ class GameScraper:
             season (str | int, optional): The season to be scraped. Defaults to current season.
                 NOTE: season takes the form of the four-digit representation of the later year of the season.
                 So, as an example, the 2021-22 season is referred to by the integer 2022.
+            source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
 
         Returns:
             pd.DataFrame: The given team's schedule for the year.
@@ -348,7 +359,7 @@ class GameScraper:
         """
         if season is None:
             season = _get_current_season()
-        return _get_team_schedule(team, season, self._game_type)
+        return _get_team_schedule(team, season, self._game_type, source)
 
     def get_team_logos(
         self,
@@ -386,7 +397,9 @@ class GameScraper:
             season = _get_current_season()
         return _get_team_logos(teams, season, dest, self._game_type, dark, overwrite)
 
-    def get_conference_schedule(self, conference: str, season: Union[str, int] = None) -> pd.DataFrame:
+    def get_conference_schedule(
+        self, conference: str, season: Union[str, int] = None, source: str = "api"
+    ) -> pd.DataFrame:
         """Returns the given season's schedules for all teams in the given conference.
 
         Args:
@@ -394,6 +407,7 @@ class GameScraper:
             season (int, optional): The season to return conferences for. Defaults to current season.
                 NOTE: season takes the form of the four-digit representation of the later year of the season.
                 So, as an example, the 2021-22 season is referred to by the integer 2022.
+            source (str, optional): Data source, "api" (ESPN JSON API) or "html" (page scraping). Defaults to "api".
 
         Returns:
             pd.DataFrame: The conference schedules.
@@ -404,4 +418,4 @@ class GameScraper:
         """
         if season is None:
             season = _get_current_season()
-        return _get_conference_schedule(conference, season, self._game_type)
+        return _get_conference_schedule(conference, season, self._game_type, source)

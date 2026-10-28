@@ -561,7 +561,7 @@ def _get_games_team(
 ):
     _validate_source(source)
     cpus = n_jobs if n_jobs is not None else DEFAULT_N_JOBS
-    schedule_df = _get_team_schedule(team, season, game_type)
+    schedule_df = _get_team_schedule(team, season, game_type, source)
 
     if schedule_df.empty:
         _log.error(f'{team} - Schedule unavailable, cannot scrape games')
@@ -879,7 +879,13 @@ def _get_game_info(game_id, game_type, source="api"):
     return df
 
 
-def _get_player_info(player_id, game_type):
+def _get_player_info(player_id, game_type, source="api"):
+    _validate_source(source)
+    if source == "api":
+        from cbbpy.utils import espn_api
+
+        return espn_api._get_player_info_api(player_id, game_type)
+
     df = pd.DataFrame([])
 
     if game_type == "mens":
@@ -906,7 +912,13 @@ def _get_player_info(player_id, game_type):
     return df
 
 
-def _get_team_schedule(team, season, game_type):
+def _get_team_schedule(team, season, game_type, source="api"):
+    _validate_source(source)
+    if source == "api":
+        from cbbpy.utils import espn_api
+
+        return espn_api._get_team_schedule_api(team, season, game_type)
+
     team_id, team_name = _get_id_from_team(team, season, game_type)
 
     if game_type == "mens":
@@ -924,7 +936,12 @@ def _get_team_schedule(team, season, game_type):
 
     # valid payload obtained; parse errors below are deterministic → fail fast
     try:
-        df = _get_schedule_helper(jsn, team_name, team_id, season)
+        # reg season, playoffs, etc are separated
+        season_types = jsn["page"]["content"]['scheduleData']['teamSchedule']
+        events = []
+        for x in season_types[::-1]:
+            events.extend(x['events']['pre'] + x['events']['post'])
+        df = _get_schedule_helper(events, team_name, team_id, season)
     except Exception as ex:
         _log.error(f'{team} - Schedule: {ex}\n{traceback.format_exc()}')
         return pd.DataFrame([])
@@ -933,14 +950,15 @@ def _get_team_schedule(team, season, game_type):
 
 
 @print_log_file_location
-def _get_conference_schedule(conference, season, game_type):
+def _get_conference_schedule(conference, season, game_type, source="api"):
+    _validate_source(source)
     teams = _get_teams_from_conference(conference, season, game_type)
 
     df = pd.DataFrame()
     empty = []
 
     for team in teams:
-        sch = _get_team_schedule(team, season, game_type)
+        sch = _get_team_schedule(team, season, game_type, source)
         if len(sch) == 0:
             empty.append(team)
         df = pd.concat([df, sch])
@@ -1709,25 +1727,22 @@ def _get_player_details_helper(player_id, info, game_type):
     }])
 
 
-def _get_schedule_helper(jsn, team, id_, season):
-    # reg season, playoffs, etc are separated
-    season_types = jsn["page"]["content"]['scheduleData']['teamSchedule']
-
-    tot_events = []
-
-    # combine data from diff season types
-    for x in season_types[::-1]:
-        y = x['events']['pre'] + x['events']['post']
-        tot_events.extend(y)
-
-    tot_events = [x for x in tot_events if 'date' in x]
+def _get_schedule_helper(events, team, id_, season):
+    # events arrive already flattened across season types; both transports have
+    # to fetch each type separately, so neither can hand over a single block
+    tot_events = [x for x in events if 'date' in x]
 
     data = []
 
     # get info from each game
     for ev in tot_events:
-        mat = re.search(r'gameId/(\d+)/', ev.get('time', {}).get('link', ''))
-        game_id = mat.group(1) if mat is not None else ''
+        # the API transport carries the id as a field; the HTML embed only has it
+        # inside the game link
+        if 'gameId' in ev:
+            game_id = ev['gameId']
+        else:
+            mat = re.search(r'gameId/(\d+)/', ev.get('time', {}).get('link', ''))
+            game_id = mat.group(1) if mat is not None else ''
 
         gm_dt = parser.parse(ev['date']['date'])
         game_datetime = gm_dt.astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')

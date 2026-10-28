@@ -125,47 +125,47 @@
   },
   "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary?event=401581583": {
     "file": "mens_api_summary_401581583.json.gz",
-    "recorded_at": "2026-07-11T20:06:39+00:00"
+    "recorded_at": "2026-08-04T01:50:40+00:00"
   },
   "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary?event=400498476": {
     "file": "mens_api_summary_400498476.json.gz",
-    "recorded_at": "2026-07-11T20:06:40+00:00"
+    "recorded_at": "2026-08-04T01:50:41+00:00"
   },
   "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary?event=400871140": {
     "file": "mens_api_summary_400871140.json.gz",
-    "recorded_at": "2026-07-11T20:06:42+00:00"
+    "recorded_at": "2026-08-04T01:50:43+00:00"
   },
   "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary?event=401310866": {
     "file": "mens_api_summary_401310866.json.gz",
-    "recorded_at": "2026-07-11T20:06:44+00:00"
+    "recorded_at": "2026-08-04T01:50:47+00:00"
   },
   "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary?event=401310867": {
     "file": "mens_api_summary_401310867.json.gz",
-    "recorded_at": "2026-07-11T20:06:46+00:00"
+    "recorded_at": "2026-08-04T01:50:49+00:00"
   },
   "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?dates=20210403&groups=50&limit=500": {
     "file": "mens_api_scoreboard_20210403.json.gz",
-    "recorded_at": "2026-07-11T20:06:48+00:00"
+    "recorded_at": "2026-08-04T01:50:50+00:00"
   },
   "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/summary?event=401486000": {
     "file": "womens_api_summary_401486000.json.gz",
-    "recorded_at": "2026-07-11T20:06:50+00:00"
+    "recorded_at": "2026-08-04T01:51:00+00:00"
   },
   "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/summary?event=303442739": {
     "file": "womens_api_summary_303442739.json.gz",
-    "recorded_at": "2026-07-11T20:06:52+00:00"
+    "recorded_at": "2026-08-04T01:51:04+00:00"
   },
   "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/summary?event=401487896": {
     "file": "womens_api_summary_401487896.json.gz",
-    "recorded_at": "2026-07-11T20:06:54+00:00"
+    "recorded_at": "2026-08-04T01:51:05+00:00"
   },
   "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/summary?event=401528028": {
     "file": "womens_api_summary_401528028.json.gz",
-    "recorded_at": "2026-07-11T20:06:55+00:00"
+    "recorded_at": "2026-08-04T01:51:07+00:00"
   },
   "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/scoreboard?dates=20230402&groups=50&limit=500": {
     "file": "womens_api_scoreboard_20230402.json.gz",
-    "recorded_at": "2026-07-11T20:06:57+00:00"
+    "recorded_at": "2026-08-04T01:51:09+00:00"
   },
   "https://www.espn.com/mens-college-basketball/game/_/gameId/401745972": {
     "file": "mens_game_401745972.html.gz",
@@ -181,7 +181,7 @@
   },
   "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/summary?event=401745972": {
     "file": "mens_api_summary_401745972.json.gz",
-    "recorded_at": "2026-07-20T01:15:34+00:00"
+    "recorded_at": "2026-08-04T01:50:45+00:00"
   },
   "https://www.espn.com/mens-college-basketball/team/schedule/_/id/279/season/2017/seasontype/2": {
     "file": "mens_schedule_279_2017.html.gz",
@@ -198,5 +198,45 @@
   "https://www.espn.com/womens-college-basketball/team/schedule/_/id/13/season/2021/seasontype/2": {
     "file": "womens_schedule_13_2021.html.gz",
     "recorded_at": "2026-07-29T17:09:48+00:00"
+  },
+  "https://site.web.api.espn.com/apis/common/v3/sports/basketball/mens-college-basketball/athletes/4433093": {
+    "file": "mens_api_athlete_4433093.json.gz",
+    "recorded_at": "2026-08-04T01:50:52+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/279/schedule?season=2017&seasontype=2": {
+    "file": "mens_api_schedule_279_2017_2.json.gz",
+    "recorded_at": "2026-08-04T01:50:53+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/279/schedule?season=2017&seasontype=3": {
+    "file": "mens_api_schedule_279_2017_3.json.gz",
+    "recorded_at": "2026-08-04T01:50:55+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/2010/schedule?season=2010&seasontype=2": {
+    "file": "mens_api_schedule_2010_2010_2.json.gz",
+    "recorded_at": "2026-08-04T01:50:57+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/2010/schedule?season=2010&seasontype=3": {
+    "file": "mens_api_schedule_2010_2010_3.json.gz",
+    "recorded_at": "2026-08-04T01:50:59+00:00"
+  },
+  "https://site.web.api.espn.com/apis/common/v3/sports/basketball/womens-college-basketball/athletes/14670": {
+    "file": "womens_api_athlete_14670.json.gz",
+    "recorded_at": "2026-08-04T01:51:11+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/teams/2628/schedule?season=2014&seasontype=2": {
+    "file": "womens_api_schedule_2628_2014_2.json.gz",
+    "recorded_at": "2026-08-04T01:51:13+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/teams/2628/schedule?season=2014&seasontype=3": {
+    "file": "womens_api_schedule_2628_2014_3.json.gz",
+    "recorded_at": "2026-08-04T01:51:14+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/teams/13/schedule?season=2021&seasontype=2": {
+    "file": "womens_api_schedule_13_2021_2.json.gz",
+    "recorded_at": "2026-08-04T01:51:16+00:00"
+  },
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/teams/13/schedule?season=2021&seasontype=3": {
+    "file": "womens_api_schedule_13_2021_3.json.gz",
+    "recorded_at": "2026-08-04T01:51:17+00:00"
   }
 }

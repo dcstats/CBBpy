@@ -102,22 +102,28 @@ def test_game_pbp_offline(offline_espn, gender, source):
 
 
 @pytest.mark.parametrize("gender", GENDERS)
-def test_player_info_offline(offline_espn, gender):
+@pytest.mark.parametrize("source", SOURCES)
+def test_player_info_offline(offline_espn, gender, source):
     sc = SCRAPERS[gender]
     result = pd.concat(
-        [sc.get_player_info(p) for p in PLAYERS[gender]], ignore_index=True
+        [sc.get_player_info(p, source=source) for p in PLAYERS[gender]],
+        ignore_index=True,
     )
-    assert_matches_snapshot(result, f"{gender}_player")
+    assert_matches_snapshot(result, _snapshot_name(gender, "player", source))
 
 
 @pytest.mark.parametrize("gender", GENDERS)
-def test_team_schedule_offline(offline_espn, gender):
+@pytest.mark.parametrize("source", SOURCES)
+def test_team_schedule_offline(offline_espn, gender, source):
     sc = SCRAPERS[gender]
     result = pd.concat(
-        [sc.get_team_schedule(team, season) for season, team in SCHEDULES[gender]],
+        [
+            sc.get_team_schedule(team, season, source=source)
+            for season, team in SCHEDULES[gender]
+        ],
         ignore_index=True,
     )
-    assert_matches_snapshot(result, f"{gender}_team_schedule")
+    assert_matches_snapshot(result, _snapshot_name(gender, "team_schedule", source))
 
 
 @pytest.mark.parametrize("gender", GENDERS)
@@ -273,6 +279,80 @@ def test_pbp_source_parity(offline_espn, gender):
         assert np.allclose(
             api["home_win_prob"][both], html["home_win_prob"][both], rtol=0, atol=1e-6
         ), f"{gid}: home_win_prob disagrees where both sources have a value"
+
+
+# schedule: tv_network is coverage-only. Both read ESPN's broadcast block, but
+# the archived HTML embed leaves it blank for games the API still names a network
+# for, so require the API to cover at least as many rows and agree wherever HTML
+# has a value.
+SCHEDULE_COVERAGE_COLS = ["tv_network"]
+
+# player: `pos` is coverage-only for the same reason (the page's header block
+# omits a position the athlete endpoint still carries).
+PLAYER_COVERAGE_COLS = ["pos"]
+
+
+@pytest.mark.parametrize("gender", GENDERS)
+def test_team_schedule_source_parity(offline_espn, gender):
+    sc = SCRAPERS[gender]
+    html = pd.concat(
+        [
+            sc.get_team_schedule(team, season, source="html")
+            for season, team in SCHEDULES[gender]
+        ],
+        ignore_index=True,
+    ).sort_values("game_id").reset_index(drop=True)
+    api = pd.concat(
+        [
+            sc.get_team_schedule(team, season, source="api")
+            for season, team in SCHEDULES[gender]
+        ],
+        ignore_index=True,
+    ).sort_values("game_id").reset_index(drop=True)
+
+    assert list(html.columns) == list(api.columns)
+    # the same games, so any row-count difference is a truncated schedule
+    assert list(html.game_id) == list(api.game_id)
+
+    exact = [c for c in html.columns if c not in SCHEDULE_COVERAGE_COLS]
+    pd.testing.assert_frame_equal(
+        _normalize_nan(api[exact]), _normalize_nan(html[exact]), check_dtype=False
+    )
+
+    for col in SCHEDULE_COVERAGE_COLS:
+        html_present = html[col].astype(str).str.len() > 0
+        assert (
+            api[col].astype(str)[html_present] == html[col].astype(str)[html_present]
+        ).all(), f"{col} disagrees where HTML has a value"
+        api_cov = (api[col].astype(str).str.len() > 0).sum()
+        assert api_cov >= html_present.sum(), f"{col} API coverage regressed"
+
+
+@pytest.mark.parametrize("gender", GENDERS)
+def test_player_info_source_parity(offline_espn, gender):
+    sc = SCRAPERS[gender]
+    html = pd.concat(
+        [sc.get_player_info(p, source="html") for p in PLAYERS[gender]],
+        ignore_index=True,
+    )
+    api = pd.concat(
+        [sc.get_player_info(p, source="api") for p in PLAYERS[gender]],
+        ignore_index=True,
+    )
+
+    assert list(html.columns) == list(api.columns)
+    exact = [c for c in html.columns if c not in PLAYER_COVERAGE_COLS]
+    pd.testing.assert_frame_equal(
+        _normalize_nan(api[exact]), _normalize_nan(html[exact]), check_dtype=False
+    )
+
+    for col in PLAYER_COVERAGE_COLS:
+        html_present = html[col].astype(str).str.len() > 0
+        assert (
+            api[col].astype(str)[html_present] == html[col].astype(str)[html_present]
+        ).all(), f"{col} disagrees where HTML has a value"
+        api_cov = (api[col].astype(str).str.len() > 0).sum()
+        assert api_cov >= html_present.sum(), f"{col} API coverage regressed"
 
 
 def test_teams_from_conference_offline():
@@ -1130,6 +1210,29 @@ def test_throttle_zero_disables_delay(offline_espn, monkeypatch):
     d = SCOREBOARD_DATES["mens"]
     ms.get_games_range(d, d, box=False, pbp=False, throttle=0)
     assert sleeps == []
+
+
+def test_api_source_never_requests_the_html_site(offline_espn, monkeypatch):
+    # the point of the API transport: ESPN's WAF blocks www.espn.com from
+    # datacenter IPs while the api hosts are unaffected, so source="api" must not
+    # touch www.espn.com for ANY function, or it breaks wherever the WAF applies
+    urls = []
+    fixture_get = cbbpy_utils.r.get
+
+    def spy(url, *args, **kwargs):
+        urls.append(url)
+        return fixture_get(url, *args, **kwargs)
+
+    monkeypatch.setattr(cbbpy_utils.r, "get", spy)
+    d = SCOREBOARD_DATES["mens"]
+    ms.get_games_range(d, d, throttle=0)
+    ms.get_game_ids(d)
+    ms.get_player_info(PLAYERS["mens"][0])
+    season, team = SCHEDULES["mens"][0]
+    ms.get_team_schedule(team, season)
+
+    assert urls
+    assert not [u for u in urls if "www.espn.com" in u]
 
 
 def test_every_request_passes_timeout(offline_espn, monkeypatch):

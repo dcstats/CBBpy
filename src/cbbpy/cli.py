@@ -144,17 +144,17 @@ def _cmd_ids(scraper, args):
 
 
 def _cmd_player(scraper, args):
-    df = scraper.get_player_info(args.player_id)
+    df = scraper.get_player_info(args.player_id, source=args.source)
     _emit("player", args.player_id, None, df, args)
 
 
 def _cmd_schedule(scraper, args):
     season = _resolve_season(args.season)
     if args.team:
-        df = scraper.get_team_schedule(args.team, season)
+        df = scraper.get_team_schedule(args.team, season, source=args.source)
         slug = f"{args.team}_{season}"
     else:
-        df = scraper.get_conference_schedule(args.conference, season)
+        df = scraper.get_conference_schedule(args.conference, season, source=args.source)
         slug = f"{args.conference}_{season}"
     _emit("schedule", slug, None, df, args)
 
@@ -234,11 +234,12 @@ def _build_parser():
     p.add_argument("date")
     p.set_defaults(func=_cmd_ids)
 
-    p = sub.add_parser("player", parents=[gender, io, single, verbose], help="scrape a player's bio")
+    p = sub.add_parser("player", parents=[gender, io, source, single, verbose], help="scrape a player's bio")
     p.add_argument("player_id")
     p.set_defaults(func=_cmd_player)
 
-    p = sub.add_parser("schedule", parents=[gender, io, single, verbose], help="scrape a team or conference schedule")
+    p = sub.add_parser("schedule", parents=[gender, io, source, single, verbose],
+                       help="scrape a team or conference schedule")
     grp = p.add_mutually_exclusive_group(required=True)
     grp.add_argument("--team")
     grp.add_argument("--conference")

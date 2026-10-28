@@ -145,10 +145,12 @@ def fetch_json(url, required_key):
 
 
 def record_api():
-    """Record ESPN JSON API summary + scoreboard responses, merged into the manifest.
+    """Record ESPN JSON API responses, merged into the manifest.
 
-    Reuses the same game ids and scoreboard dates as the HTML fixtures so the two
-    sources are recorded for identical games (see the parity test).
+    Covers the summary + scoreboard endpoints (game data) and the schedule +
+    athlete endpoints (schedules, player bios). Reuses the same game ids,
+    scoreboard dates, teams and players as the HTML fixtures so the two sources
+    are recorded for identical subjects (see the parity tests).
     """
     PAGES_DIR.mkdir(parents=True, exist_ok=True)
     manifest = json.loads((FIXTURE_DIR / "manifest.json").read_text())
@@ -174,11 +176,32 @@ def record_api():
             else api.WOMENS_API_SCOREBOARD_URL
         )
 
+        schedule_url = (
+            api.MENS_API_SCHEDULE_URL if gender == "mens" else api.WOMENS_API_SCHEDULE_URL
+        )
+        athlete_url = (
+            api.MENS_API_ATHLETE_URL if gender == "mens" else api.WOMENS_API_ATHLETE_URL
+        )
+
         for gid in games[gender]:
             save(f"{gender}_api_summary_{gid}", summary_url.format(gid), "header")
 
         d = datetime.strptime(SCOREBOARD_DATES[gender], "%Y-%m-%d").strftime("%Y%m%d")
         save(f"{gender}_api_scoreboard_{d}", scoreboard_url.format(d), "events")
+
+        for pid in PLAYERS[gender]:
+            save(f"{gender}_api_athlete_{pid}", athlete_url.format(pid), "athlete")
+
+        # one response per season type: the endpoint scopes a request to one, so
+        # the scraper fetches both and the fixtures must cover both
+        for season, team in SCHEDULES[gender]:
+            team_id, _ = cu._get_id_from_team(team, season, gender)
+            for season_type in api.SCHEDULE_SEASON_TYPES:
+                save(
+                    f"{gender}_api_schedule_{team_id}_{season}_{season_type}",
+                    schedule_url.format(team_id, season, season_type),
+                    "team",
+                )
 
     (FIXTURE_DIR / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print("Merged API responses into manifest.json")
@@ -215,11 +238,17 @@ def build_snapshots():
         save(box, f"{gender}_game_boxscore")
         save(pbp, f"{gender}_game_pbp")
 
-        players = pd.concat([sc.get_player_info(p) for p in PLAYERS[gender]], ignore_index=True)
+        players = pd.concat(
+            [sc.get_player_info(p, source="html") for p in PLAYERS[gender]],
+            ignore_index=True,
+        )
         save(players, f"{gender}_player")
 
         sched = pd.concat(
-            [sc.get_team_schedule(team, season) for season, team in SCHEDULES[gender]],
+            [
+                sc.get_team_schedule(team, season, source="html")
+                for season, team in SCHEDULES[gender]
+            ],
             ignore_index=True,
         )
         save(sched, f"{gender}_team_schedule")
@@ -254,7 +283,9 @@ def build_api_snapshots():
     player_id/assist_player_id/shot coordinates and the odds columns
     (home_point_spread/over_under/home_moneyline/away_moneyline) that the archived
     HTML embed leaves empty, so the two snapshot sets legitimately differ on those
-    columns (see the parity test's exclusion list).
+    columns (see the parity test's exclusion list). Schedules and player bios
+    likewise differ where the API carries a value the page omits (tv_network, pos)
+    and, for a player who later turned pro, on career stage.
     """
     SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
     games = json.loads((FIXTURE_DIR / "games.json").read_text())
@@ -276,6 +307,15 @@ def build_api_snapshots():
         save(info, f"{gender}_game_info_api")
         save(box, f"{gender}_game_boxscore_api")
         save(pbp, f"{gender}_game_pbp_api")
+
+        players = pd.concat([sc.get_player_info(p) for p in PLAYERS[gender]], ignore_index=True)
+        save(players, f"{gender}_player_api")
+
+        sched = pd.concat(
+            [sc.get_team_schedule(team, season) for season, team in SCHEDULES[gender]],
+            ignore_index=True,
+        )
+        save(sched, f"{gender}_team_schedule_api")
 
         d = SCOREBOARD_DATES[gender]
         r_info, r_box, r_pbp = sc.get_games_range(d, d)

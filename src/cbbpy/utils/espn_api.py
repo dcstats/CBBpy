@@ -1,11 +1,14 @@
-"""ESPN JSON API transport for game data (the default `source="api"`).
+"""ESPN JSON API transport for game data, schedules, and player bios (the
+default `source="api"`).
 
 A single summary request per game
 (`site.api.espn.com/.../summary?event={id}`) carries the header, boxscore, and
-plays, so one fetch serves game info + boxscore + play-by-play. The parsed JSON
-is reshaped into the exact structures the HTML helpers in ``cbbpy_utils`` already
-consume (``_get_game_boxscore_helper`` / ``_get_game_pbp_helper``) so column
-layout, dtypes, and text parsing stay identical across the two sources.
+plays, so one fetch serves game info + boxscore + play-by-play. Schedules and
+player bios have their own endpoints. The parsed JSON is reshaped into the exact
+structures the HTML helpers in ``cbbpy_utils`` already consume
+(``_get_game_boxscore_helper`` / ``_get_game_pbp_helper`` /
+``_get_schedule_helper`` / ``_get_player_details_helper``) so column layout,
+dtypes, and text parsing stay identical across the two sources.
 
 Retry/backoff/logging/impersonation are reused from ``cbbpy_utils`` rather than
 duplicated.
@@ -16,7 +19,7 @@ import traceback
 
 import numpy as np
 import pandas as pd
-from datetime import timezone
+from datetime import datetime, timezone
 from dateutil import parser
 from pytz import timezone as tz
 
@@ -39,7 +42,28 @@ WOMENS_API_SCOREBOARD_URL = (
     "https://site.api.espn.com/apis/site/v2/sports/basketball/"
     "womens-college-basketball/scoreboard?dates={}&groups=50&limit=500"
 )
+MENS_API_SCHEDULE_URL = (
+    "https://site.api.espn.com/apis/site/v2/sports/basketball/"
+    "mens-college-basketball/teams/{}/schedule?season={}&seasontype={}"
+)
+WOMENS_API_SCHEDULE_URL = (
+    "https://site.api.espn.com/apis/site/v2/sports/basketball/"
+    "womens-college-basketball/teams/{}/schedule?season={}&seasontype={}"
+)
+MENS_API_ATHLETE_URL = (
+    "https://site.web.api.espn.com/apis/common/v3/sports/basketball/"
+    "mens-college-basketball/athletes/{}"
+)
+WOMENS_API_ATHLETE_URL = (
+    "https://site.web.api.espn.com/apis/common/v3/sports/basketball/"
+    "womens-college-basketball/athletes/{}"
+)
 EMPTY_STATS_REFETCHES = 3
+# regular season + postseason. The endpoint scopes a request to one season type,
+# so both must be fetched and merged or the schedule comes back truncated.
+# Preseason (1) is always empty for college basketball, and the HTML page groups
+# only these two, so requesting it would only add a request and break parity.
+SCHEDULE_SEASON_TYPES = (2, 3)
 
 
 def _fetch_summary(game_id, game_type):
@@ -105,6 +129,97 @@ def _fetch_summary(game_id, game_type):
         break
 
     return js
+
+
+def _fetch_json(url, prefix):
+    """GET + parse a JSON endpoint with retries. Returns the dict, or None.
+
+    Used by the schedule and athlete fetchers. Simpler than ``_fetch_summary``:
+    those endpoints have no per-game 404 contract to honor — a 404 means a bad
+    team or player id, not a game the other scrapers should skip — so it fails
+    immediately rather than burning ten attempts on an id that won't appear.
+    """
+    page = None
+
+    for i in range(cu.ATTEMPTS):
+        try:
+            header = {"Referer": str(np.random.choice(cu.REFERERS))}
+            page = cu.r.get(url, headers=header, impersonate=cu.IMPERSONATE, timeout=cu.REQUEST_TIMEOUT)
+
+            # classify on status before parsing: a WAF challenge carries an empty
+            # body that would otherwise fail in .json() as an opaque decode error
+            reason = cu._classify_page_failure(page, None)
+            if reason == "Page not found error":
+                cu._log.error(f"{prefix}: {reason}")
+                return None
+            elif reason is not None:
+                raise cu.CouldNotParseError(reason)
+
+            return page.json()
+
+        except Exception as ex:
+            # network error / WAF challenge / JSON decode: all transient → retry
+            reason = cu._classify_page_failure(page, None)
+            cu._log.info(
+                f"{prefix}: attempt {i + 1}/{cu.ATTEMPTS} failed: "
+                f"{reason if reason is not None else ex}"
+            )
+            if i + 1 == cu.ATTEMPTS:
+                cu._log.error(f"{prefix}: {ex}\n{traceback.format_exc()}")
+                return None
+            cu._backoff_sleep(i)
+
+    return None
+
+
+def _get_team_schedule_api(team, season, game_type):
+    team_id, team_name = cu._get_id_from_team(team, season, game_type)
+    pre_url = MENS_API_SCHEDULE_URL if game_type == "mens" else WOMENS_API_SCHEDULE_URL
+    prefix = f"{team} - Schedule (API)"
+
+    events = []
+    for season_type in SCHEDULE_SEASON_TYPES:
+        js = _fetch_json(pre_url.format(team_id, season, season_type), prefix)
+        if js is None:
+            # a partial answer here would be a silently truncated schedule, which
+            # is the failure this transport exists to rule out → give up instead
+            cu._log.error(f"{prefix}: season type {season_type} unavailable")
+            return pd.DataFrame([])
+        # a team that didn't reach the postseason legitimately has no type-3
+        # events; that's an empty list, not a failure
+        events.extend(js.get("events") or [])
+
+    # valid payload obtained; parse errors below are deterministic → fail fast
+    try:
+        return cu._get_schedule_helper(
+            _schedule_adapter(events, team_id), team_name, team_id, season
+        )
+    except Exception as ex:
+        cu._log.error(f"{prefix}: {ex}\n{traceback.format_exc()}")
+        return pd.DataFrame([])
+
+
+def _get_player_info_api(player_id, game_type):
+    pre_url = MENS_API_ATHLETE_URL if game_type == "mens" else WOMENS_API_ATHLETE_URL
+    prefix = f"{player_id} - Player (API)"
+
+    js = _fetch_json(pre_url.format(player_id), prefix)
+    if js is None:
+        return pd.DataFrame([])
+
+    athlete = js.get("athlete")
+    if not athlete:
+        cu._log.error(f"{prefix}: no athlete in response")
+        return pd.DataFrame([])
+
+    # valid payload obtained; parse errors below are deterministic → fail fast
+    try:
+        return cu._get_player_details_helper(
+            player_id, _player_adapter(athlete, prefix), game_type
+        )
+    except Exception as ex:
+        cu._log.error(f"{prefix}: {ex}\n{traceback.format_exc()}")
+        return pd.DataFrame([])
 
 
 def _game_status(summary):
@@ -455,6 +570,105 @@ def _pc_float(pc, key):
 def _pc_moneyline(pc, side):
     val = (pc.get(side) or {}).get("moneyLine")
     return float(val) if val is not None else np.nan
+
+
+def _schedule_adapter(events, team_id):
+    """Reshape schedule events into the shape ``_get_schedule_helper`` consumes.
+
+    Field renames only, plus ``gameId`` (the helper's other caller carries the id
+    inside a link it regexes out; here it is already a field). The requested team
+    and its opponent are told apart by competitor id.
+    """
+    team_id = str(team_id)
+    adapted = []
+
+    for ev in events:
+        comp = (ev.get("competitions") or [{}])[0]
+        competitors = comp.get("competitors") or []
+        us = next((c for c in competitors if str(c.get("id")) == team_id), None)
+        them = next((c for c in competitors if str(c.get("id")) != team_id), None)
+        if us is None or them is None:
+            continue
+
+        broadcasts = comp.get("broadcasts") or []
+        network = (broadcasts[0].get("media") or {}).get("shortName", "") if broadcasts else ""
+
+        opp_team = them.get("team") or {}
+        entry = {
+            "gameId": str(ev.get("id", "")),
+            "date": {"date": ev.get("date")},
+            "opponent": {
+                "displayName": opp_team.get("displayName", ""),
+                "id": str(them.get("id", "")),
+            },
+            "network": [{"name": network}] if network else [],
+            "seasonType": {"name": (ev.get("seasonType") or {}).get("name", "")},
+            "status": {
+                "description": ((comp.get("status") or {}).get("type") or {}).get(
+                    "description", ""
+                )
+            },
+        }
+
+        our_score = (us.get("score") or {}).get("displayValue")
+        their_score = (them.get("score") or {}).get("displayValue")
+        if our_score is not None and their_score is not None:
+            # neither side carries `winner` on a game ESPN scores 0-0 (a
+            # cancellation it still marks Final), which the page reports as a tie
+            if our_score == their_score:
+                symbol = "T"
+            else:
+                symbol = "W" if us.get("winner") else "L"
+            entry["result"] = {
+                "winLossSymbol": symbol,
+                "currentTeamScore": our_score,
+                "opponentTeamScore": their_score,
+            }
+
+        adapted.append(entry)
+
+    return adapted
+
+
+def _dob_to_month_first(dob, prefix):
+    """ESPN's athlete endpoint reports DOB day-first (13/7/1999).
+
+    The player page uses month-first and ``_parse_date`` only accepts that, so a
+    day-first string either raises (13/7) or silently transposes (6/7), which is
+    worse. Convert here; an unrecognized format yields no date rather than a wrong one.
+    """
+    try:
+        return datetime.strptime(dob, "%d/%m/%Y").strftime("%m/%d/%Y")
+    except ValueError:
+        cu._log.info(f"{prefix}: unrecognized date of birth {dob!r}, dropping")
+        return ""
+
+
+def _player_adapter(athlete, prefix=""):
+    """Reshape an athlete response into the shape ``_get_player_details_helper`` wants.
+
+    The college endpoint always describes a player's college career, so the
+    helper's professional branch (keyed off ``collegeTeam``) is never taken: a
+    player who later turned pro reports the school, jersey and class they had in
+    college rather than the ``N/A``/``NBA`` the player page shows for them today.
+    """
+    more_details = dict(athlete)
+    more_details["collegeTeam"] = []
+    dob = athlete.get("displayDOB")
+    more_details["displayDOB"] = _dob_to_month_first(dob, prefix) if dob else ""
+
+    position = athlete.get("position") or {}
+    # ESPN's placeholder position; the player page omits the block entirely
+    pos_name = "" if str(position.get("id")) == "0" else position.get("displayName", "")
+
+    details = {
+        "fNm": athlete.get("firstName"),
+        "lNm": athlete.get("lastName"),
+        "dspNum": athlete.get("jersey", ""),
+        "position": {"displayName": pos_name},
+    }
+
+    return {"plyrHdr": {"ath": details}, "prtlCmnApiRsp": {"athlete": more_details}}
 
 
 def _has_empty_stat_lines(players):
